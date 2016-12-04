@@ -850,7 +850,7 @@ void eHandle::verify_property_5_helper(
 ****************************************************************************************************
 */
 void eHandle::rotate_left(
-	eObject *n)
+	eHandle *n)
 {
     eHandle 
         *r;
@@ -886,7 +886,7 @@ void eHandle::rotate_left(
 ****************************************************************************************************
 */
 void eHandle::rotate_right(
-	eObject *n)
+	eHandle *n)
 {
     eHandle 
         *l;
@@ -1258,38 +1258,36 @@ void eHandle::rbtree_remove(
   The this pointer points to the parent object in eobjects object hierarcy. The red/black tree
   manipulated here is tree of child objects.
 
+  @param   n Pointer to the removed node.
   @return  None.
 
 ****************************************************************************************************
 */
-void eHandle::delete_case2() 
+void eHandle::delete_case2(
+	eHandle *n)
 {
-    eHandle
-        *s;
-
-    if (isred(sibling(this))) 
-    {
-        m_up->setred();
-        sibling(this)->setblack();
-
-        if (this == m_up->m_left)
-            m_up->rotate_left();
-        else
-            m_up->rotate_right();
-    }
-
-    s = sibling(this);
-    if (isblack(m_up) &&
-        isblack(s) &&
-        isblack(s->m_left) &&
-        isblack(s->m_right))
-    {
-        s->setred();
-		if (m_up->m_up) m_up->delete_case2();
-    }
-    else
+	if (isred(sibling(n)))
 	{
-        delete_case4();
+		n->m_up->setred();
+		sibling(n)->setblack();
+
+		if (n == n->m_up->m_left)
+			rotate_left(n->m_up);
+		else
+			rotate_right(n->m_up);
+	}
+
+	if (isblack(n->m_up) &&
+		isblack(sibling(n)) &&
+		isblack(sibling(n)->m_left) &&
+		isblack(sibling(n)->m_right))
+	{
+		sibling(n)->setred();
+		if (n->m_up->m_up) delete_case2(n->m_up);
+	}
+	else
+	{
+		delete_case4(n);
 	}
 }
 
@@ -1307,26 +1305,24 @@ void eHandle::delete_case2()
   The this pointer points to the parent object in eobjects object hierarcy. The red/black tree
   manipulated here is tree of child objects.
 
+  @param   n Pointer to the removed node.
   @return  None.
 
 ****************************************************************************************************
 */
-void eHandle::delete_case4() 
+void eHandle::delete_case4(
+	eHandle *n)
 {
-    eHandle
-        *s;
-
-    s = sibling(this);
-    if (isred(m_up) &&
-        isblack(s) &&
-        isblack(s->m_left) &&
-        isblack(s->m_right))
-    {
-        s->setred();
-        m_up->setblack();
-    }
-    else
-        delete_case5();
+	if (isred(n->m_up) &&
+		isblack(sibling(n)) &&
+		isblack(sibling(n)->m_left) &&
+		isblack(sibling(n)->m_right))
+	{
+		sibling(n)->setred();
+		n->m_up->setblack();
+	}
+	else
+		delete_case5(n);
 }
 
 
@@ -1348,35 +1344,33 @@ void eHandle::delete_case4()
   The this pointer points to the parent object in eobjects object hierarcy. The red/black tree
   manipulated here is tree of child objects.
 
+  @param   n Pointer to the removed node.
   @return  None.
 
 ****************************************************************************************************
 */
-void eHandle::delete_case5() 
+void eHandle::delete_case5(
+	eHandle *n)
 {
-    eHandle
-        *s;
-
-    s = sibling(this);
-    if (this == m_up->m_left &&
-        isblack(s) &&
-        isred(s->m_left) &&
-        isblack(s->m_right))
-    {
-        s->setred();
-        s->m_left->setblack();
-        s->rotate_right();
-    }
-    else if (this == m_up->m_right &&
-        isblack(s) &&
-        isred(s->m_right) &&
-        isblack(s->m_left))
-    {
-        s->setred();
-        s->m_right->setblack();
-        s->rotate_left();
-    }
-    delete_case6();
+	if (n == n->m_up->m_left &&
+		isblack(sibling(n)) &&
+		isred(sibling(n)->m_left) &&
+		isblack(sibling(n)->m_right))
+	{
+		sibling(n)->setred();
+		sibling(n)->m_left->setblack();
+		rotate_right(sibling(n));
+	}
+	else if (n == n->m_up->m_right &&
+		isblack(sibling(n)) &&
+		isred(sibling(n)->m_right) &&
+		isblack(sibling(n)->m_left))
+	{
+		sibling(n)->setred();
+		sibling(n)->m_right->setblack();
+		rotate_left(sibling(n));
+	}
+	delete_case6(n);
 }
 
 
@@ -1412,35 +1406,31 @@ void eHandle::delete_case5()
 
 ****************************************************************************************************
 */
-void eHandle::delete_case6() 
+void eHandle::delete_case6(
+	eHandle *n)
 {
-    eHandle
-        *s;
+	if (isblack(n->m_up))
+		sibling(n)->setblack();
+	else
+		sibling(n)->setred();
 
-    s = sibling(this);
-
-    if (isblack(m_up)) 
-        s->setblack();
-    else
-        s->setred();
-
-    m_up->setblack();
-    if (this == m_up->m_left) 
-    {
+	n->m_up->setblack();
+	if (n == n->m_up->m_left)
+	{
 #if EOBJECT_DBTREE_DEBUG
-        edebug_assert(isred(s->m_right));
+		edebug_assert(isred(sibling(n)->m_right));
 #endif
-        s->m_right->setblack();
-        m_up->rotate_left();
-    }
-    else
-    {
+		sibling(n)->m_right->setblack();
+		rotate_left(n->m_up);
+	}
+	else
+	{
 #if EOBJECT_DBTREE_DEBUG
-        edebug_assert(isred(s->m_left));
+		edebug_assert(isred(sibling(n)->m_left));
 #endif
-        s->m_left->setblack();
-        m_up->rotate_right();
-    }
+		sibling(n)->m_left->setblack();
+		rotate_right(n->m_up);
+	}
 }
 
 

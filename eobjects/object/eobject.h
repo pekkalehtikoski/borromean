@@ -24,7 +24,6 @@
 #ifndef EOBJECT_INCLUDED
 #define EOBJECT_INCLUDED
 
-// class eClass;
 class eHandle;
 class eRoot;
 class eVariable;
@@ -33,44 +32,6 @@ class eName;
 class eStream;
 
 
-/**
-****************************************************************************************************
-
-  @name Object flags
-
-  X...
-
-
-****************************************************************************************************
-*/
-/*@{*/
-#define EOBJ_DEFAULT       0x00000000
-#define EOBJ_IS_ATTACHMENT 0x00000001
-#define EOBJ_HAS_NAMESPACE 0x00000002
-#define EOBJ_NOT_CLONABLE  0x00000004
-#define EOBJ_NOT_SERIALIZABLE  0x00000008
-
-#define EOBJ_CUST_FLAG1    0x00000010
-#define EOBJ_CUST_FLAG2    0x00000020
-#define EOBJ_CUST_FLAG3    0x00000040
-#define EOBJ_CUST_FLAG4    0x00000080
-
-/** Flag EOBJ_FAST_DELETE is used internallly to speed up deletion: When an object is being deleted,
-    there is no need to detach it's children from red/black of the object. The EOBJ_FAST_DELETE 
-    flag is set by delete_children() to child object, so child object doesn't need to preserve
-    the treee structure after deletion. This changes deleting object trees from NlogN to N algorithm.
- */
-#define EOBJ_FAST_DELETE   0x20000000
-
-/** Red/black tree's red or black node bit.
- */
-#define EOBJ_IS_RED        0x40000000
-
-/** Serialization mask, which bits to save.
- */
-#define EOBJ_SERIALIZATION_MASK 0x0000FFFF
-
-/*@}*/
 
 
 

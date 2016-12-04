@@ -91,7 +91,7 @@ eNameSpace::eNameSpace(
 	{
 		/* Flag this as attachment.
 		 */
-		setflags(EOBJ_IS_ATTACHMENT|EOBJ_CLONABLE|EOBJ_SERIALIZABLE);
+		setflags(EOBJ_IS_ATTACHMENT);
 
 		/* If we have parent object, flag parent that it has name space.
 		 */
