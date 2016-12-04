@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/defs/osal_backbone.h"
+#include "eosal/osalx.h"
 
 #if OSAL_FUNCTION_POINTER_SUPPORT
 

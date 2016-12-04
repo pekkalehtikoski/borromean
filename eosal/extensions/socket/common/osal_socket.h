@@ -18,14 +18,6 @@
 #ifndef OSAL_SOCKET_INCLUDED
 #define OSAL_SOCKET_INCLUDED
 
-/* Make sure that OSAL base is included.
- */
-#include "eosal/backbone/defs/osal_backbone.h"
-
-/* Include common socket worker thread header.
- */
-#include "eosal/backbone/socket/osal_socket_worker.h"
-
 /** Stream interface structure for sockets.
  */
 #if OSAL_FUNCTION_POINTER_SUPPORT

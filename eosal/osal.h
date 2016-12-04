@@ -28,7 +28,7 @@
 
 /* Include definitions common to all operating systems.
  */
-#include "eosal/backbone/defs/osal_common_defs.h"
+#include "eosal/backbone/defs/common/osal_common_defs.h"
 
 /* If C++ compilation, all functions, etc. from this point on in this header file are
    plain C and must be left undecorated.
@@ -37,24 +37,24 @@ OSAL_C_HEADER_BEGINS
 
 /* Include generic OSAL headers.
  */
-#include "eosal/backbone/int64/osal_int64.h"
-#include "eosal/backbone/memory/osal_memory.h"
-#include "eosal/backbone/memory/osal_sysmem.h"
-#include "eosal/backbone/string/osal_char.h"
-#include "eosal/backbone/string/osal_string.h"
-#include "eosal/backbone/defs/osal_status.h"
-#include "eosal/backbone/timer/osal_timer.h"
-#include "eosal/backbone/debug/osal_debug.h"
-#include "eosal/backbone/resmon/osal_resource_monitor.h"
-#include "eosal/backbone/console/osal_console.h"
-#include "eosal/backbone/console/osal_sysconsole.h"
-#include "eosal/backbone/defs/osal_global.h"
-#include "eosal/backbone/initialize/osal_initialize.h"
-#include "eosal/backbone/mutex/osal_mutex.h"
-#include "eosal/backbone/event/osal_event.h"
-#include "eosal/backbone/thread/osal_thread.h"
-#include "eosal/backbone/utf16/osal_utf16.h"
-#include "eosal/backbone/utf32/osal_utf32.h"
+#include "eosal/backbone/int64/common/osal_int64.h"
+#include "eosal/backbone/memory/common/osal_memory.h"
+#include "eosal/backbone/memory/common/osal_sysmem.h"
+#include "eosal/backbone/string/common/osal_char.h"
+#include "eosal/backbone/string/common/osal_string.h"
+#include "eosal/backbone/defs/common/osal_status.h"
+#include "eosal/backbone/timer/common/osal_timer.h"
+#include "eosal/backbone/debug/common/osal_debug.h"
+#include "eosal/backbone/resmon/common/osal_resource_monitor.h"
+#include "eosal/backbone/console/common/osal_console.h"
+#include "eosal/backbone/console/common/osal_sysconsole.h"
+#include "eosal/backbone/defs/common/osal_global.h"
+#include "eosal/backbone/initialize/common/osal_initialize.h"
+#include "eosal/backbone/mutex/common/osal_mutex.h"
+#include "eosal/backbone/event/common/osal_event.h"
+#include "eosal/backbone/thread/common/osal_thread.h"
+#include "eosal/backbone/utf16/common/osal_utf16.h"
+#include "eosal/backbone/utf32/common/osal_utf32.h"
 
 /* If C++ compilation, end the undecorated code.
  */

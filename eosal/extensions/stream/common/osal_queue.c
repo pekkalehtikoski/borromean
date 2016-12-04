@@ -15,7 +15,8 @@
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/defs/osal_backbone.h"
+#include "eosal/osalx.h"
+#if 0
 
 /** Number of bytes of queue buffer to reserve for control codes only.
  */
@@ -831,3 +832,4 @@ osalStreamInterface osal_queue_iface
 
 #endif
 
+#endif

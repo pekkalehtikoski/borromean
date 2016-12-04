@@ -16,7 +16,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/socket/osal_socket.h"
+#include "eosal/osalx.h"
 
 
 /* Forward referred static functions.

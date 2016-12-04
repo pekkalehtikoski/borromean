@@ -30,12 +30,14 @@ OSAL_C_HEADER_BEGINS
 
 /* Include extension headers.
  */
-#include "eosal/extensions/clock/osal_clock.h"
-#include "eosal/extensions/main/osal_main.h"
-#include "eosal/extensions/strcnv/osal_strcnv.h"
-#include "eosal/extensions/stream/osal_stream.h"
-#include "eosal/extensions/stringx/osal_stringx.h"
-#include "eosal/extensions/typeid/osal_typeid.h"
+#include "eosal/extensions/clock/common/osal_clock.h"
+#include "eosal/extensions/main/common/osal_main.h"
+#include "eosal/extensions/strcnv/common/osal_strcnv.h"
+#include "eosal/extensions/stream/common/osal_stream.h"
+#include "eosal/extensions/stringx/common/osal_stringx.h"
+#include "eosal/extensions/typeid/common/osal_typeid.h"
+#include "eosal/extensions/socket/common/osal_socket_worker.h"
+#include "eosal/extensions/socket/common/osal_socket.h"
 
 /* If C++ compilation, end the undecorated code.
  */

@@ -13,7 +13,7 @@ it fully.
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/defs/osal_backbone.h"
+#include "eosal/osalx.h"
 
 /* 
 First byte NNNSxxxx:
@@ -69,7 +69,7 @@ os_int osal_intser_writer(
 	n = p - buf;
 	*buf |= ((os_uchar)n << 5);
 
-	return n+1;
+	return (os_int)n+1;
 }
 
 
@@ -109,5 +109,5 @@ os_int osal_intser_reader(
 	if (c & 0x10) *x = -y;
 	else *x = y;
 
-	return p - buf + 1;
+	return (os_int)(p - buf + 1);
 }

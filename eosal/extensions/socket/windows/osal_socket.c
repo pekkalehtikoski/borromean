@@ -15,8 +15,8 @@
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/socket/osal_socket.h"
-
+#include "eosal/osalx.h"
+#if 0
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -1382,3 +1382,4 @@ osalStreamInterface osal_socket_iface
 
 #endif
 
+#endif
