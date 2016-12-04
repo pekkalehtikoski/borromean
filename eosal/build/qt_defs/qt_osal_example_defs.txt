@@ -1,0 +1,22 @@
+#***************************************************************************************************
+#
+# Qmake setup to compile an OSAL example (Nokia QT make)
+#
+#***************************************************************************************************
+
+!include( qt_defs.txt ) {
+   message( "No qt_defs.txt file found" )
+}
+
+QT -= core gui
+
+CONFIG += console warn_on
+CONFIG -= qt
+
+TEMPLATE = app
+
+# CONFIG -= windows
+
+LIBS += -L$${OPEN_EN_LIBPATH}
+
+# POST_TARGETDEPS += c:/open-en/lib/win32mingw/libosal_based.a

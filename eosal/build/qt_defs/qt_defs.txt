@@ -1,0 +1,28 @@
+#***************************************************************************************************
+#
+# OSAL generic defines got qmake (Nokia QT make)
+#
+#***************************************************************************************************
+
+win32 {
+  OPEN_EN_HOME = c:/open-en
+  OPEN_EN_OS = win32
+  OPEN_EN_COMPILER = mingw
+}
+else {
+  OPEN_EN_HOME = /open-en
+  OPEN_EN_OS = linux
+  OPEN_EN_COMPILER = gcc
+}
+
+debug {
+  OPEN_EN_DEBREL = debug
+} else {
+  OPEN_EN_DEBREL = release
+}
+
+OPEN_EN_LIBPATH = $${OPEN_EN_HOME}/lib/$${OPEN_EN_OS}/$${OPEN_EN_COMPILER}/$${OPEN_EN_DEBREL}
+
+INCLUDEPATH = $${OPEN_EN_HOME}
+DEPENDPATH = $${OPEN_EN_HOME}
+
