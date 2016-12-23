@@ -5,6 +5,9 @@ cmake_minimum_required(VERSION 2.8.9)
 set(E_PROJECT "eobjects")
 project(${E_PROJECT})
 
+# include build information common to all projects.
+include(../../../build/cmake/e-build-defs.txt)
+
 # Set path to where to keep libraries.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_LIB})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $ENV{E_LIB})
