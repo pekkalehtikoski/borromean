@@ -1,0 +1,48 @@
+# e-build-defs.txt - Set cmake build environment variables common to all projects.
+# 23.12.2016/pekka
+
+# Windows 
+if(WIN32)
+  # Generic operating system name like "windows" or "linux". Used as folder name for OS specific code. 
+  set(ENV{E_OS} "windows")
+
+  # Generic operating system version "win32", "win64", "ubuntu16064", "mint18", etc. 
+  # Used as name for banary folders and as part of installation package name. 
+  set(ENV{E_OSVER} "win32")
+
+  # Compiler name, used as part of library and temporary folder name. 
+  # For example "vs2015", "mingw", "gcc", "gccarm9"...
+  set(ENV{E_COMPILER} "vs2015")
+
+  # Root path for build.
+  set(ENV{E_ROOT} "c:/coderoot/borromean")
+
+# Linux
+else()
+  # Generic operating system name like "windows" or "linux". Used as folder name for OS specific code. 
+  set(ENV{E_OS} "linux")
+
+  # Generic operating system version "win32", "win64", "ubuntu16064", "mint18", etc. 
+  # Used as name for banary folders and as part of installation package name. 
+  set(ENV{E_OSVER} "mint18")
+
+  # Compiler name, used as part of library and temporary folder name. 
+  # For example "vs2015", "mingw", "gcc", "gccarm9"...
+  set(ENV{E_COMPILER} "gcc")
+
+  # Root path for build.
+  set(ENV{E_ROOT} "/coderoot/borromean")
+endif()
+
+
+# Include path.
+set(ENV{E_INCLUDE} "$ENV{E_ROOT}")
+
+# Library path.
+set(ENV{E_LIB} "$ENV{E_ROOT}/lib/$ENV{E_OSVER}_$ENV{E_COMPILER}")
+
+# Binary path.
+set(ENV{E_BIN} "$ENV{E_ROOT}/bin/$ENV{E_OSVER}")
+
+# Temporary file path.
+set(ENV{E_TMP} "$ENV{E_ROOT}/tmp/$ENV{E_OSVER}_$ENV{E_COMPILER}")

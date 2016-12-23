@@ -1,22 +1,27 @@
+# eobjects/examples/container/build/cmake/CmakeLists.txt - Cmake build for eobject container example.
 cmake_minimum_required(VERSION 2.8.9)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ../../../lib/win32)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ../../../lib/win32)
-project(containerexample)
+
+# Set project name (= project root folder name).
+set(E_PROJECT "container")
+project(${E_PROJECT})
+
+# Set path to where to keep libraries.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $ENV{E_BIN})
+
+# Set path to source files.
+set(E_SOURCE_PATH "$ENV{E_ROOT}/${E_PROJECT}/code")
+
+# Set include paths.
+include_directories($ENV{E_INCLUDE})
+
+# Add header files, the file(GLOB_RECURSE...) allows for wildcards and recurses subdirs.
+file(GLOB_RECURSE HEADERS "${E_SOURCE_PATH}/*.h")
+
+# Add source files.
+file(GLOB_RECURSE SOURCES "${E_SOURCE_PATH}/*.cpp")
  
-# Set include paths
-include_directories(../../../../..)
+# Build executable
+add_executable(${E_PROJECT} ${HEADERS} ${SOURCES})
 
-# Add source files, the file(GLOB...) allows for wildcards
-file(GLOB_RECURSE SOURCES "../code/*.cpp")
-
-# Add header files
-file(GLOB_RECURSE HEADERS "../code*.h")
- 
-# target_link_libraries (helloDemo LINK_PUBLIC Hello)
-
-add_executable(containerexample ../../code/eobjects_container_example.cpp)
-target_link_libraries(containerexample ../../../../../lib/win32/Debug/eobjects ../../../../../lib/win32/Debug/eosal)
-
-# Generate the static library
-
-# add_library(eobjects STATIC ${HEADERS} ${SOURCES})
+# Set link libraries to use.
+target_link_libraries(${E_PROJECT} $ENV{E_LIB}/Debug/eobjects $ENV{E_LIB}/Debug/eosal)
