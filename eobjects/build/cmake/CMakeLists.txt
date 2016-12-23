@@ -7,10 +7,14 @@ project(eobjects)
 include_directories(../../..)
 
 # Add source files, the file(GLOB...) allows for wildcards
-file(GLOB_RECURSE SOURCES "../../*.cpp")
+file(GLOB_RECURSE SOURCES "../../code/*.cpp")
 
 # Add header files
-file(GLOB_RECURSE HEADERS "../../*.h")
+file(GLOB_RECURSE HEADERS "../../code/*.h")
+
+# Add library main header.
+set(MAIN_HEADER "../../eobjects.h")
+
  
 # Generate the static library
-add_library(eobjects STATIC ${HEADERS} ${SOURCES})
+add_library(eobjects STATIC ${MAIN_HEADER} ${HEADERS} ${SOURCES})
