@@ -1,4 +1,4 @@
-# eosal/build/cmake/CmakeLists.txt - Cmake build for eobjects library.
+# eobjects/build/cmake/CmakeLists.txt - Cmake build for eobjects library.
 cmake_minimum_required(VERSION 2.8.9)
 
 # Set project name (= project root folder name).
@@ -25,4 +25,4 @@ file(GLOB_RECURSE HEADERS "${E_SOURCE_PATH}/*.h")
 file(GLOB_RECURSE SOURCES "${E_SOURCE_PATH}/*.cpp")
 
 # Generate the static library
-add_library(eobjects STATIC ${MAIN_HEADER} ${HEADERS} ${SOURCES})
+add_library(${E_PROJECT} STATIC ${MAIN_HEADER} ${HEADERS} ${SOURCES})
