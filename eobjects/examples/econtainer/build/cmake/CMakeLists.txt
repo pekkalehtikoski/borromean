@@ -23,6 +23,7 @@ file(GLOB_RECURSE HEADERS "${E_SOURCE_PATH}/*.h")
 # Add source files.
 file(GLOB_RECURSE SOURCES "${E_SOURCE_PATH}/*.cpp")
  
-# Build executable
+# Build executable. Set library folder and libraries to link with
 add_executable(${E_PROJECT} ${SOURCES})
-target_link_libraries(${E_PROJECT} $ENV{E_LIB}/Debug/eobjects $ENV{E_LIB}/Debug/eosal)
+link_directories($ENV{E_LIB})
+target_link_libraries(${E_PROJECT} $ENV{E_COMMON_CONSOLE_APP_LIBS})

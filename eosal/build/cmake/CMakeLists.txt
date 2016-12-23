@@ -36,5 +36,3 @@ file(GLOB EX_OS_HEADERS "${EXTENSIONS}/*/windows/*.h")
 
 # Generate the static library
 add_library(${E_PROJECT} STATIC ${MAIN_HEADERS} ${BB_CM_HEADERS} ${BB_OS_HEADERS} ${EX_CM_HEADERS} ${EX_OS_HEADERS} ${BB_CM_SOURCES} ${BB_OS_SOURCES} ${EX_CM_SOURCES} ${EX_OS_SOURCES})
-
-# message(${BACKBONE})

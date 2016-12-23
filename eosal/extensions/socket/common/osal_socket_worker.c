@@ -16,7 +16,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osalx.h"
+#include "eosal/eosalx.h"
 
 
 /* Forward referred static functions.

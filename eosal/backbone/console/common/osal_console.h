@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_console.h
+  @file    console/common/osal_console.h
   @brief   Application console IO.
   @author  Pekka Lehtikoski
   @version 1.0

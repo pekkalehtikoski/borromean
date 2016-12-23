@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_common_defs.h
+  @file    defs/common/osal_common_defs.h
   @brief   Micellenous defines common to all operating systems.
   @author  Pekka Lehtikoski
   @version 1.0

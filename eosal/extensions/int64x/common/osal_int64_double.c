@@ -18,7 +18,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 
 
 /* We need the code from this file only if compiler doesn't support 64 bit integers.

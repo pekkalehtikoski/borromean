@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osalx.h"
+#include "eosal/eosalx.h"
 
 #if OSAL_FUNCTION_POINTER_SUPPORT
 

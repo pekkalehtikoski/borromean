@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_debug.h
+  @file    debug/common/osal_debug.h
   @brief   Debug related code.
   @author  Pekka Lehtikoski
   @version 1.0

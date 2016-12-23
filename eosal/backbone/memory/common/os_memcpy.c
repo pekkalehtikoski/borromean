@@ -13,7 +13,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 
 #ifndef OSAL_MEMORY_OS_CLR_AND_CPY
 

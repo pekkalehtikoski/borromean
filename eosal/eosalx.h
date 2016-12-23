@@ -1,6 +1,6 @@
 /**
 
-  @file    osalx.h
+  @file    eosalx.h
   @brief   Main OSAL header file with extensions.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -21,7 +21,7 @@
 
 /* Include osal base.
  */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 
 /* If C++ compilation, all functions, etc. from this point on in this header file are
    plain C and must be left undecorated.

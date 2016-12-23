@@ -1,6 +1,6 @@
 /**
 
-  @file    osal.h
+  @file    eosal.h
   @brief   Main OSAL header file.
   @author  Pekka Lehtikoski
   @version 1.0

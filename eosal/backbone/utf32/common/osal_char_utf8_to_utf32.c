@@ -18,7 +18,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 
 /* If we need UTF8 support, we need to be ablt to convert between UTF8 and UTF32 characters.
  */

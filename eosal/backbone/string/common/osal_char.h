@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_char.h
+  @file    string/common/osal_char.h
   @brief   Character classification and conversion.
   @author  Pekka Lehtikoski
   @version 1.0

@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_clock.h
+  @file    clock/common/osal_clock.h
   @brief   Get and set system time.
   @author  Pekka Lehtikoski
   @version 1.0

@@ -24,7 +24,7 @@
 
 /* Make sure that base OSAL headers have been included.
  */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 
 /* If we need UTF16 support (windows), we need to be ablt to convert between UTF16 and UTF8 
    characters.

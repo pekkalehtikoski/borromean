@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osalx.h"
+#include "eosal/eosalx.h"
 #if 0
 
 /** Number of bytes of queue buffer to reserve for control codes only.

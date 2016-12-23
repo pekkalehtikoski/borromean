@@ -23,7 +23,7 @@
 
 /* Include extended eosal headers.
  */
-#include "eosal/osalx.h"
+#include "eosal/eosalx.h"
 
 /* Include eobject headers.
  */

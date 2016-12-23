@@ -16,7 +16,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 #include <windows.h>
 
 #if OSAL_MULTITHREAD_SUPPORT

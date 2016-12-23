@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 
 
 /** Value used to mark word just before memory block when debugging memory use.

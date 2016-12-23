@@ -33,7 +33,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 #define _WIN32_WINNT 0x0403
 #include <windows.h>
 

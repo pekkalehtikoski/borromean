@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osalx.h"
+#include "eosal/eosalx.h"
 #if 0
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN

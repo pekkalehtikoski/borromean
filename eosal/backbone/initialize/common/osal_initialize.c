@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 
 
 /** Static allocation for global structure. This static allocation must never be referred

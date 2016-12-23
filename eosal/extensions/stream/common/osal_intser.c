@@ -13,7 +13,7 @@ it fully.
 
 ****************************************************************************************************
 */
-#include "eosal/osalx.h"
+#include "eosal/eosalx.h"
 
 /* 
 First byte NNNSxxxx:

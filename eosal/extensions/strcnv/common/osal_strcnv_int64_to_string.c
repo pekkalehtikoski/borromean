@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osalx.h"
+#include "eosal/eosalx.h"
 
 /* This code is needed only if os_long is not 64 bits.
  */

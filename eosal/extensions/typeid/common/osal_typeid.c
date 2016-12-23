@@ -18,7 +18,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osalx.h"
+#include "eosal/eosalx.h"
 
 /** Structure to store information about data type.
  */

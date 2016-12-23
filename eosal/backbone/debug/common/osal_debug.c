@@ -19,7 +19,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/osal.h"
+#include "eosal/eosal.h"
 
 /* Include code from here only if debug code is to be compiled in.
  */
