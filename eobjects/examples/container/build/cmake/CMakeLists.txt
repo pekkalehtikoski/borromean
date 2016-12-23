@@ -6,7 +6,7 @@ set(E_PROJECT "container")
 project(${E_PROJECT})
 
 # Set path to where to keep libraries.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $ENV{E_BIN})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $ENV{E_BIN})
 
 # Set path to source files.
 set(E_SOURCE_PATH "$ENV{E_ROOT}/${E_PROJECT}/code")
