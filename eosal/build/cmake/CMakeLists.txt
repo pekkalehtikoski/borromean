@@ -4,6 +4,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ../../../lib/win32)
 
 project(eosal)
  
+include(../../../build/cmake/<file|module> [OPTIONAL] [RESULT_VARIABLE <VAR>]
+                      [NO_POLICY_SCOPE])
 # Set include paths.
 include_directories(../../..)
 
