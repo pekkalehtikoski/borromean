@@ -73,7 +73,7 @@
 	 */
 	void osal_debug_error_func(
 		const os_char *text,
-		os_char *file, 
+        const os_char *file,
 		os_int line);
 
 

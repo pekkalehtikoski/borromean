@@ -564,7 +564,7 @@ os_char *eVariable::gets(
         /* If empty or object.
          */
         case OS_UNDEFINED_TYPE:
-            str = "";
+            str = (os_char*)"";
             vsz = 1;
             goto getout;
         
@@ -619,7 +619,7 @@ os_char *eVariable::gets(
             break;
 
         default:
-            str = "";
+            str = (os_char*)"";
             vsz = 1;
             goto getout;
     }
