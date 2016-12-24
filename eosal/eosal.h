@@ -44,7 +44,7 @@ OSAL_C_HEADER_BEGINS
 #include "eosal/backbone/string/common/osal_string.h"
 #include "eosal/backbone/defs/common/osal_status.h"
 #include "eosal/backbone/timer/common/osal_timer.h"
-#include "eosal/backbone/debug/common/osal_debug.h"
+#include "eosal/backbone/debugcode/common/osal_debug.h"
 #include "eosal/backbone/resmon/common/osal_resource_monitor.h"
 #include "eosal/backbone/console/common/osal_console.h"
 #include "eosal/backbone/console/common/osal_sysconsole.h"
