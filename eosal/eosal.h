@@ -24,6 +24,9 @@
 #ifdef _WIN32
 #include "eosal/backbone/defs/windows/osal_defs.h"
 #include "eosal/backbone/defs/windows/osal_types.h"
+#else
+#include "eosal/backbone/defs/linux/osal_defs.h"
+#include "eosal/backbone/defs/linux/osal_types.h"
 #endif
 
 /* Include definitions common to all operating systems.
