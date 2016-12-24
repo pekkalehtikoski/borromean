@@ -47,13 +47,9 @@ public:
         /** Constructor.
 		 */
 		eContainer(
-			eObject *parent,
+			eObject *parent = OS_NULL,
 			e_oid oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
-
-		/** Public constructor.
-		 */
-//		inline eContainer() : eContainer(OS_NULL) {}
 
 		/* Virtual destructor.
 		 */

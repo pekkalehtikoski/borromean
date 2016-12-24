@@ -42,18 +42,13 @@ class eStream : public eObject
 	************************************************************************************************
 	*/
 	/*@{*/
-protected:
+public:
 		/** Constructor.
 		 */
 		eStream(
-			eObject *parent ,
+			eObject *parent = OS_NULL,
 			e_oid oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
-
-public:
-		/** Public constructor.
-		*/
-		inline eStream() : eStream(OS_NULL) {}
 
 		/* Virtual destructor.
 		 */

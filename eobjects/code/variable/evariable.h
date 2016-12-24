@@ -90,19 +90,13 @@ class eVariable : public eObject
 	************************************************************************************************
 	*/
 	/*@{*/
-//private:
 public:
-		/** Private constructor.
+		/** Constructor.
 		 */
 		eVariable(
-			eObject *parent,
+			eObject *parent = OS_NULL,
 			e_oid oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
-
-public:
-		/** Public constructor.
-		*/
-		inline eVariable() : eVariable(OS_NULL, EOID_PRIMITIVE) {}
 
 		/* Virtual destructor.
 		 */

@@ -41,18 +41,13 @@ class ePointer : public eObject
 	************************************************************************************************
 	*/
 	/*@{*/
-protected:
+public:
 		/** Constructor.
 		 */
 		ePointer(
 			eObject *parent = OS_NULL,
 			e_oid oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
-
-public:
-		/** Public constructor.
-		*/
-		inline ePointer() : ePointer(OS_NULL) {}
 
 		/* Virtual destructor.
 		 */

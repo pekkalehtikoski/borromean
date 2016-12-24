@@ -42,18 +42,12 @@ class eRoot : public eObject
 	*/
 	/*@{*/
 public:
-// protected:
 		/** Constructor.
 		 */
 		eRoot(
-			eObject *parent,
+			eObject *parent = OS_NULL,
 			e_oid oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
-
-public:
-		/** Public constructor.
-		 */
-		inline eRoot() : eRoot(OS_NULL) {}
 
 		/* Virtual destructor.
 		 */

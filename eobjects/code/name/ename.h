@@ -44,18 +44,13 @@ class eName : public eVariable
 	************************************************************************************************
 	*/
 	/*@{*/
-protected:
+public:
 		/** Constructor.
 		 */
 		eName(
-			eObject *parent,
+			eObject *parent = OS_NULL,
 			e_oid oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
-
-public:
-		/** Public constructor.
-		*/
-		inline eName() : eName(OS_NULL) {}
 
 		/* Virtual destructor.
 		 */

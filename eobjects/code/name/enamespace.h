@@ -44,18 +44,13 @@ class eNameSpace : public eObject
     ************************************************************************************************
     */
     /*@{*/
-protected:
+public:
         /* Construct new eObject.
          */
         eNameSpace(
-            eObject *parent,
+            eObject *parent = OS_NULL,
             e_oid oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
-
-public:
-		/** Public constructor.
-		 */
-		inline eNameSpace() : eNameSpace(OS_NULL) {}
 
         /* Delete eObject, virtual destructor.
          */
