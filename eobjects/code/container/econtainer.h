@@ -43,18 +43,17 @@ class eContainer : public eObject
 	************************************************************************************************
 	*/
 	/*@{*/
-protected:
-		/** Constructor.
+public:
+        /** Constructor.
 		 */
 		eContainer(
 			eObject *parent,
 			e_oid oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
 
-public:
 		/** Public constructor.
 		 */
-		inline eContainer() : eContainer(OS_NULL) {}
+//		inline eContainer() : eContainer(OS_NULL) {}
 
 		/* Virtual destructor.
 		 */
