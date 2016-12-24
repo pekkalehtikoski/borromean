@@ -1,7 +1,7 @@
 /**
 
-  @file    windows/osal_defs.h
-  @brief   Operating system specific defines for Windows.
+  @file    linux/osal_defs.h
+  @brief   Operating system specific defines for Linux.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    25.5.2016
@@ -23,7 +23,7 @@
     for example OEAL_WINDOWS, OSAL_LINUX, OSAL_VXWORKS, OSAL_NETOS... Compilation can be conditioned
 	by the define, for example "#ifdef OSAL_LINUX". 
  */
-#define OSAL_WINDOWS 1
+#define OSAL_LINUX 1
 
 /** Generic include debug code in compilation. The debug code checks for programming errors.
  */
@@ -96,7 +96,7 @@
 	for several of these. 
  */
 #ifndef OSAL_BIN_NAME
-#define OSAL_BIN_NAME "windows"
+#define OSAL_BIN_NAME "linux"
 #endif
 
 /** Default file system root. This is path to default root of the file system.

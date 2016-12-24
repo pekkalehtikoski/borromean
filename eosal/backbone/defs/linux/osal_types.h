@@ -1,7 +1,7 @@
 /**
 
-  @file    windows/osal_types.h
-  @brief   Definition of OS dependent primitive types for Windows.
+  @file    linux/osal_types.h
+  @brief   Definition of OS dependent primitive types for Linux.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
@@ -58,11 +58,7 @@ typedef unsigned int os_uint;
 	can be tested on Windows by setting the define to zero.
  */
 #if OSAL_LONG_IS_64_BITS
-//#ifdef __GNUC__
 typedef long long os_long;
-//#else
-//typedef __int64 os_long;
-//#endif
 #else
 typedef long os_long;
 #endif
