@@ -32,9 +32,6 @@ class eName;
 class eStream;
 
 
-
-
-
 /**
 ****************************************************************************************************
 
@@ -62,38 +59,38 @@ class eObject
     /*@{*/
 
 protected:
-		/* Private constructor for new eObject.
-         */
-        eObject(
-            eObject *parent = OS_NULL,
-            e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT);
+	/* Private constructor for new eObject.
+     */
+    eObject(
+        eObject *parent = OS_NULL,
+        e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT);
 
 private:
-		/* Disable C++ standard copy constructor and assignment operator. Assignment is implemnted
-		   class specifically, and copy as clone() function which also positions object in object
-		   tree.
-		 */
-		eObject(eObject const&);
-		eObject& operator=(eObject const&);
+	/* Disable C++ standard copy constructor and assignment operator. Assignment is implemnted
+		class specifically, and copy as clone() function which also positions object in object
+		tree.
+     */
+	eObject(eObject const&);
+	eObject& operator=(eObject const&);
 
 public:
 
-        /* Delete eObject, virtual destructor.
-         */
-        virtual ~eObject();
+    /* Delete eObject, virtual destructor.
+     */
+    virtual ~eObject();
 
 
-        /* Get class identifier
-         */
-        virtual os_int getclassid() {return ECLASSID_OBJECT;}
+    /* Get class identifier
+     */
+    virtual os_int getclassid() {return ECLASSID_OBJECT;}
        
-        /* Allocate new child object by class identifier.
-         */
-        eObject *newchild(
-            os_int classid,
-            e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT);
+    /* Allocate new child object by class identifier.
+     */
+    eObject *newchild(
+        os_int classid,
+        e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT);
 
     /*@}*/
 
@@ -111,15 +108,15 @@ public:
     */
     /*@{*/
 
-        /* Overloaded new operator calls osal_memory_allocate().
-         */
-        void* operator new(
-            size_t);
+    /* Overloaded new operator calls osal_memory_allocate().
+     */
+    void* operator new(
+        size_t);
 
-        /* Overloaded delete operator calls osal_memory_free().
-         */
-        void operator delete(
-            void *buf); 
+    /* Overloaded delete operator calls osal_memory_free().
+     */
+    void operator delete(
+        void *buf); 
 
     /*@}*/
 #endif
@@ -135,47 +132,46 @@ public:
     */
     /*@{*/
 
-        /** Get object flags.
-         */
-        inline os_int getflags()
-        {
-			if (mm_handle) return mm_handle->m_oflags;
-			return 0;
-        }
+    /** Get object flags.
+     */
+    inline os_int getflags()
+    {
+		if (mm_handle) return mm_handle->m_oflags;
+		return 0;
+    }
 
-        /** Set specified object flags.
-         */
-        inline void setflags(
-			os_int flags)
-        {
-			if (mm_handle) mm_handle->setflags(flags);
-        }
+    /** Set specified object flags.
+     */
+    inline void setflags(
+		os_int flags)
+    {
+		if (mm_handle) mm_handle->setflags(flags);
+    }
 
-        /** Clear specified object flags.
-         */
-        inline void clearflags(
-			os_int flags)
-        {
-			if (mm_handle) mm_handle->clearflags(flags);
-        }
+    /** Clear specified object flags.
+     */
+    inline void clearflags(
+		os_int flags)
+    {
+		if (mm_handle) mm_handle->clearflags(flags);
+    }
 
 
-        /** Check if object is an attachment. Returns nonzero if object is an attachment.
-         */
-        inline os_boolean isattachment()
-        {
-			if (mm_handle) return isattachment();
-			return 0;
-        }
+    /** Check if object is an attachment. Returns nonzero if object is an attachment.
+     */
+    inline os_boolean isattachment()
+    {
+		if (mm_handle) return isattachment();
+		return 0;
+    }
 
-        /** Check if object is a serializable attachment. 
-         */
-        inline os_boolean isserattachment()
-        {
-			if (mm_handle) return isserattachment();
-			return 0;
-        }
-
+    /** Check if object is a serializable attachment. 
+     */
+    inline os_boolean isserattachment()
+    {
+		if (mm_handle) return isserattachment();
+		return 0;
+    }
 
     /*@}*/
 
@@ -191,65 +187,66 @@ public:
     */
     /*@{*/
 
-        /** Get object identifier.
-         */
-        inline os_int getoid() 
-        {
-			if (mm_handle) return mm_handle->getoid();
-			return 0;
-        }
+    /** Get object identifier.
+     */
+    inline os_int getoid() 
+    {
+		if (mm_handle) return mm_handle->getoid();
+		return 0;
+    }
 
-        /* Get number of childern.
-         */
-		inline os_long childcount(
-			e_oid oid = EOID_CHILD)
-		{
-			if (mm_handle) return mm_handle->childcount(oid);
-			return 0;
-		}
+    /* Get number of childern.
+     */
+	inline os_long childcount(
+		e_oid oid = EOID_CHILD)
+	{
+		if (mm_handle) return mm_handle->childcount(oid);
+		return 0;
+	}
 
-        /** Move trough object hirarcy.
-         */
-        inline eObject *getparent() 
-		{
-			return mm_parent;
-		}
+    /** Move trough object hirarcy.
+     */
+    inline eObject *getparent() 
+	{
+		return mm_parent;
+	}
 
-		/* Get first child object identified by oid.
-		 */
-		eObject *getfirst(
-			e_oid oid = EOID_CHILD);
+	/* Get first child object identified by oid.
+     */
+	eObject *getfirst(
+		e_oid oid = EOID_CHILD);
 
-		/* Get last child object identified by oid.
-			*/
-		eObject *getlast(
-			e_oid oid = EOID_CHILD);
+	/* Get last child object identified by oid.
+     */
+	eObject *getlast(
+		e_oid oid = EOID_CHILD);
 
-		/* Get next object identified by oid.
-		 */
-		eObject *getnext(
-			e_oid oid = EOID_CHILD);
+	/* Get next object identified by oid.
+     */
+	eObject *getnext(
+		e_oid oid = EOID_CHILD);
 
-		/* Get previous object identified by oid.
-		 */
-		eObject *getprev(
-			e_oid oid = EOID_CHILD);
+	/* Get previous object identified by oid.
+     */
+	eObject *getprev(
+		e_oid oid = EOID_CHILD);
 
-        /** Adopting object as child of this object.
-         */
-        void adopt(
-            eObject *child, 
-            e_oid oid) {}
+    /** Adopting object as child of this object.
+     */
+    void adopt(
+        eObject *child, 
+        e_oid oid) {}
 
-        eObject *adoptat(
-            eObject *beforethis, 
-            e_oid oid);
+    eObject *adoptat(
+        eObject *beforethis, 
+        e_oid oid);
 
-        /** Cloning, adopting and copying.
-         */
-        virtual eObject *clone(
-            eObject *parent, 
-            e_oid oid) {return 0; }
+    /** Cloning, adopting and copying.
+     */
+    virtual eObject *clone(
+        eObject *parent, 
+        e_oid oid) {return 0; }
+
     /*@}*/
 
 
@@ -265,40 +262,40 @@ public:
     ************************************************************************************************
     */
     /*@{*/
-    public:
-        /* Write object to stream.
-         */
-        eStatus write(
-            eStream *stream, 
-            os_int flags);
 
-        /* Read object from stream as new child object.
-         */
-        eObject *read(
-            eStream *stream, 
-            os_int flags);
+    /* Write object to stream.
+     */
+    eStatus write(
+        eStream *stream, 
+        os_int flags);
 
-        /* Called by write() to write class specific object content.
-           The eObject base class provides just dummy place holder
-           function for classes which do not need serialization.
-         */
-        virtual eStatus writer(
-            eStream *stream, 
-            os_int flags) 
-        {
-            return ESTATUS_SUCCESS;
-        }
+    /* Read object from stream as new child object.
+     */
+    eObject *read(
+        eStream *stream, 
+        os_int flags);
 
-        /* Called by read() to read class specific object content.
-           The eObject base class provides just dummy place holder
-           function for classes which do not need serialization.
-         */
-        virtual eStatus reader(
-            eStream *stream, 
-            os_int flags) 
-        {
-            return ESTATUS_SUCCESS;
-        }
+    /* Called by write() to write class specific object content.
+        The eObject base class provides just dummy place holder
+        function for classes which do not need serialization.
+     */
+    virtual eStatus writer(
+        eStream *stream, 
+        os_int flags) 
+    {
+        return ESTATUS_SUCCESS;
+    }
+
+    /* Called by read() to read class specific object content.
+        The eObject base class provides just dummy place holder
+        function for classes which do not need serialization.
+     */
+    virtual eStatus reader(
+        eStream *stream, 
+        os_int flags) 
+    {
+        return ESTATUS_SUCCESS;
+    }
 
     /*@}*/
 
@@ -313,30 +310,32 @@ public:
     ************************************************************************************************
     */
     /*@{*/
-        /* Create name space for this object.
-         */
-		void createnamespace(
-			os_char *namespace_id = OS_NULL);
 
-		/* Delete this object's name space.
-		 */
-		void deletenamespace();
+    /* Create name space for this object.
+     */
+	void createnamespace(
+		os_char *namespace_id = OS_NULL);
 
-        /* Get pointer to name space.
-         */
-		eNameSpace *getnamespace(
-			os_char *namespace_id = OS_NULL);
+	/* Delete this object's name space.
+     */
+	void deletenamespace();
 
-		/* Give name to this object.
-		 */
-		eName *addname(
-			os_char *name,
-			os_char *namespace_id = OS_NULL,
-			os_int flags = 0);
+    /* Get pointer to name space.
+     */
+	eNameSpace *getnamespace(
+		os_char *namespace_id = OS_NULL);
 
-		/* Get first indexed variable containing the name. 
-		 */
-		/* eName *getfirstname(os_char *namestr); */
+	/* Give name to this object.
+     */
+	eName *addname(
+		os_char *name,
+		os_char *namespace_id = OS_NULL,
+		os_int flags = 0);
+
+	/* Get first indexed variable containing the name. 
+     */
+	/* eName *getfirstname(os_char *namestr); */
+
     /*@}*/
 
 
@@ -351,10 +350,11 @@ public:
     ************************************************************************************************
     */
     /*@{*/
-        /* Messages
-         */
-        eStatus message();
-        virtual eStatus onmessage() {return ESTATUS_SUCCESS;}
+
+    /* Messages
+     */
+    eStatus message();
+    virtual eStatus onmessage() {return ESTATUS_SUCCESS;}
 
     /*@}*/
 
@@ -371,23 +371,23 @@ public:
     */
     /*@{*/
 
-        /* Set property value.
-         */
-        eStatus setproperty(
-            os_char *propertyname, 
-            eVariable *variable, 
-            eObject *source, 
-            os_int flags);
+    /* Set property value.
+     */
+    eStatus setproperty(
+        os_char *propertyname, 
+        eVariable *variable, 
+        eObject *source, 
+        os_int flags);
 
-        eStatus getproperty(
-            os_char *propertyname, 
-            eVariable *variable, 
-            os_int flags);
+    eStatus getproperty(
+        os_char *propertyname, 
+        eVariable *variable, 
+        os_int flags);
 
-        virtual eStatus onpropertychange(
-            os_int propertynr, 
-            eVariable *variable, 
-            os_int flags) {return ESTATUS_SUCCESS;}
+    virtual eStatus onpropertychange(
+        os_int propertynr, 
+        eVariable *variable, 
+        os_int flags) {return ESTATUS_SUCCESS;}
 
     /*@}*/
 
@@ -403,10 +403,10 @@ public:
     */
     /*@{*/
     /* Binding
-         */
-        void bind();
-        virtual void onmessagefrombinding() {}
-        void messagetobinding();
+     */
+    void bind();
+    virtual void onmessagefrombinding() {}
+    void messagetobinding();
     /*@}*/
 
     /** 
@@ -420,47 +420,45 @@ public:
     ************************************************************************************************
     */
     /*@{*/
-        virtual eStatus oncallback() {return ESTATUS_SUCCESS;}
+    virtual eStatus oncallback() {return ESTATUS_SUCCESS;}
     /*@}*/
 
 
 protected:
 
-		/** Root of the object of the index tree.
-		 */
-		eRoot *mm_root; 
+	/** Root of the object of the index tree.
+     */
+	eRoot *mm_root; 
 
-		/* Pointer to object's handle.
-		 */
-		eHandle *mm_handle;
+	/* Pointer to object's handle.
+     */
+	eHandle *mm_handle;
 
-		/** Pointer to parent object of this object.
-		 */
-		eObject *mm_parent;
+	/** Pointer to parent object of this object.
+     */
+	eObject *mm_parent;
 
+	/* Delete all child objects.
+     */
+    void delete_children();
 
-		/* Delete all child objects.
-		 */
-        void delete_children();
+	/* Red/Black tree: Insert a node to red black tree.
+     */
+    inline void rbtree_insert(
+        eObject *inserted_node)
+	{
+		if (mm_handle && inserted_node) 
+			mm_handle->rbtree_insert(inserted_node->mm_handle);
+	}
 
-		/* Red/Black tree: Insert a node to red black tree.
-		 */
-        inline void rbtree_insert(
-            eObject *inserted_node)
-		{
-			if (mm_handle && inserted_node) 
-				mm_handle->rbtree_insert(inserted_node->mm_handle);
-		}
-
-		/* Red/Black tree: Remove node from red/black.
-		 */
-        inline void rbtree_remove(
-            eObject *n)
-		{
-			//if (mm_handle && n) 
-		//		mm_handle->rbtree_remove(n->mm_handle);
-		}
-
+	/* Red/Black tree: Remove node from red/black.
+     */
+    inline void rbtree_remove(
+        eObject *n)
+	{
+		if (mm_handle && n) 
+			mm_handle->rbtree_remove(n->mm_handle);
+	}
 };
 
 #endif

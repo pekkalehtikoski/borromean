@@ -578,7 +578,7 @@ void eHandle::delete_children()
 		p = n->m_up;
 
 		n->m_oflags |= EOBJ_FAST_DELETE;
-//		delete n->m_object;
+		delete n->m_object;
 
 		if (p) 
 		{

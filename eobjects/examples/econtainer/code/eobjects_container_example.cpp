@@ -62,11 +62,11 @@ os_int osal_main(
         *v = i; // rand();
 	}
 
-	/* for (i = 0; i<40; i++)
+	for (i = 0; i<40; i++)
 	{
 		o = c->getfirst(rand() % 20);
 		delete o;
-	} */
+	} 
 
 	// delete v;
 

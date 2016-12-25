@@ -45,38 +45,38 @@ class eNameSpace : public eObject
     */
     /*@{*/
 public:
-        /* Construct new eObject.
-         */
-        eNameSpace(
-            eObject *parent = OS_NULL,
-            e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT);
+    /* Construct new eObject.
+     */
+    eNameSpace(
+        eObject *parent = OS_NULL,
+        e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT);
 
-        /* Delete eObject, virtual destructor.
-         */
-        virtual ~eNameSpace();
+    /* Delete eObject, virtual destructor.
+     */
+    virtual ~eNameSpace();
 
-        /* Cast eObject pointer to eNameSpace pointer. 
-         */
-		inline static eNameSpace *cast(
-			eObject *o) 
-		{ 
-			return (eNameSpace*)o;
-		}
+    /* Cast eObject pointer to eNameSpace pointer. 
+     */
+	inline static eNameSpace *cast(
+		eObject *o) 
+	{ 
+		return (eNameSpace*)o;
+	}
 
-        /* Get class identifier.
-         */
-        virtual os_int getclassid() {return ECLASSID_NAMESPACE;}
+    /* Get class identifier.
+     */
+    virtual os_int getclassid() {return ECLASSID_NAMESPACE;}
 
-        /* Static constructor function for generating instance by class list.
-         */
-        static eNameSpace *newobj(
-            eObject *parent,
-            e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT)
-        {
-            return new eNameSpace(parent, oid, flags);
-        }
+    /* Static constructor function for generating instance by class list.
+     */
+    static eNameSpace *newobj(
+        eObject *parent,
+        e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT)
+    {
+        return new eNameSpace(parent, oid, flags);
+    }
 
     /*@}*/
 
@@ -92,165 +92,165 @@ public:
     */
     /*@{*/
 
-		/* Get first child object identified by oid.
-		 */
-        eName *ixgetfirst(
-            eVariable *x);
+	/* Get first child object identified by oid.
+     */
+    eName *ixgetfirst(
+        eVariable *x);
 
     /*@}*/
 
-    protected:
-		/** Pointer to root object of indexed variables.
-		 */
-        eName *m_ixroot;
+protected:
+	/** Pointer to root object of indexed variables.
+     */
+    eName *m_ixroot;
 
-		/** Check if object is "red". The function checks if the object n is tagged as "red"
-		    in red/black tree.
-		 */
-        inline os_int ixisred(
-            eName *n)
-        {
-            if (n == OS_NULL) return OS_FALSE;
-            return n->m_vflags & EVAR_IS_RED;
-        }
+	/** Check if object is "red". The function checks if the object n is tagged as "red"
+		in red/black tree.
+     */
+    inline os_int ixisred(
+        eName *n)
+    {
+        if (n == OS_NULL) return OS_FALSE;
+        return n->m_vflags & EVAR_IS_RED;
+    }
 
-		/** Check if object is "black". The function checks if the object n is tagged as 
-		    "black" in red/black tree.
-		 */
-        inline os_int ixisblack(
-            eName *n)
-        {
-            if (n == OS_NULL) return OS_TRUE;
-            return (n->m_vflags & EVAR_IS_RED) == 0;
-        }
+	/** Check if object is "black". The function checks if the object n is tagged as 
+		"black" in red/black tree.
+     */
+    inline os_int ixisblack(
+        eName *n)
+    {
+        if (n == OS_NULL) return OS_TRUE;
+        return (n->m_vflags & EVAR_IS_RED) == 0;
+    }
 
 
 #if EINDEX_DBTREE_DEBUG
-		/* Red/Black tree: Get grandparent.
-		 */
-        eName *ixgrandparent(
-            eName *n); 
+	/* Red/Black tree: Get grandparent.
+     */
+    eName *ixgrandparent(
+        eName *n); 
 
-		/* Red/Black tree: Get sibling.
-		 */
-        eName *ixsibling(
-            eName *n); 
+	/* Red/Black tree: Get sibling.
+     */
+    eName *ixsibling(
+        eName *n); 
 
-		/* Red/Black tree: Get uncle.
-		 */
-        eName *ixuncle(
-            eName *n); 
+	/* Red/Black tree: Get uncle.
+     */
+    eName *ixuncle(
+        eName *n); 
 
-		/* Red/Black tree: Verify tree integrity.
-		 */
-        void ixverify_properties(); 
+	/* Red/Black tree: Verify tree integrity.
+     */
+    void ixverify_properties(); 
 
-		/* Red/Black tree: Verify that root node is black.
-		 */
-        void ixverify_property_2(); 
+	/* Red/Black tree: Verify that root node is black.
+     */
+    void ixverify_property_2(); 
 
-		/* Red/Black tree: Verify that every red node has two black children.
-		 */
-        void ixverify_property_4(
-            eName *n); 
+	/* Red/Black tree: Verify that every red node has two black children.
+     */
+    void ixverify_property_4(
+        eName *n); 
 
-		/* Red/Black tree: Verify that number of black nodes on match.
-		 */
-        void ixverify_property_5(); 
+	/* Red/Black tree: Verify that number of black nodes on match.
+     */
+    void ixverify_property_5(); 
 
-		/* Red/Black tree: Helper function for verify_property_5().
-		 */
-        void ixverify_property_5_helper(
-            eName *n, 
-            int black_count, 
-            int *path_black_count); 
+	/* Red/Black tree: Helper function for verify_property_5().
+     */
+    void ixverify_property_5_helper(
+        eName *n, 
+        int black_count, 
+        int *path_black_count); 
 #else
-		/** Red/Black tree: Get grand parent.
-		 */
-        inline eName *ixgrandparent(
-            eName *n)
-        {
-            return n->m_iup->m_iup;
-        }
+	/** Red/Black tree: Get grand parent.
+     */
+    inline eName *ixgrandparent(
+        eName *n)
+    {
+        return n->m_iup->m_iup;
+    }
 
-		/** Red/Black tree: Get sibling.
-		 */
-        inline eName *ixsibling(
-            eName *n)
-        {
-            return (n == n->m_iup->m_ileft) 
-                ? n->m_iup->m_iright 
-                : n->m_iup->m_ileft;
-        }
+	/** Red/Black tree: Get sibling.
+     */
+    inline eName *ixsibling(
+        eName *n)
+    {
+        return (n == n->m_iup->m_ileft) 
+            ? n->m_iup->m_iright 
+            : n->m_iup->m_ileft;
+    }
 
-		/** Red/Black tree: Get uncle.
-		 */
-        inline eName *ixuncle(
-            eName *n)
-        {
-            return ixsibling(n->m_iup);
-        }
+	/** Red/Black tree: Get uncle.
+     */
+    inline eName *ixuncle(
+        eName *n)
+    {
+        return ixsibling(n->m_iup);
+    }
 
 #endif
-		/* Delete all child objects.
-		 */
-        void unmap_all();
+	/* Delete all child objects.
+     */
+    void unmap_all();
 
-		/* Red/Black tree: Rotate tree left.
-		 */
-        void ixrotate_left(
-            eName *n); 
+	/* Red/Black tree: Rotate tree left.
+     */
+    void ixrotate_left(
+        eName *n); 
 
-		/* Red/Black tree: Rotate tree right.
-		 */
-        void ixrotate_right(
-            eName *n); 
+	/* Red/Black tree: Rotate tree right.
+     */
+    void ixrotate_right(
+        eName *n); 
 
-		/* Red/Black tree: Replace a node by another node.
-		 */
-        void ixreplace_node(
-            eName *oldn, 
-            eName *newn); 
+	/* Red/Black tree: Replace a node by another node.
+     */
+    void ixreplace_node(
+        eName *oldn, 
+        eName *newn); 
 
-		/* Red/Black tree: Insert a node to red black tree.
-		 */
-        void ixrbtree_insert(
-            eName *inserted_node); 
+	/* Red/Black tree: Insert a node to red black tree.
+     */
+    void ixrbtree_insert(
+        eName *inserted_node); 
 
-		/* Red/Black tree: Balance red/black tree after inserting node.
-		 */
-        void ixinsert_case1(
-            eName *n); 
+	/* Red/Black tree: Balance red/black tree after inserting node.
+     */
+    void ixinsert_case1(
+        eName *n); 
 
-		/* Red/Black tree: Balance red/black tree after inserting node.
-		 */
-        void ixinsert_case4(
-            eName *n); 
+	/* Red/Black tree: Balance red/black tree after inserting node.
+     */
+    void ixinsert_case4(
+        eName *n); 
 
-		/* Red/Black tree: Remove node from red/black.
-		 */
-        void ixrbtree_remove(
-            eName *n);
+	/* Red/Black tree: Remove node from red/black.
+     */
+    void ixrbtree_remove(
+        eName *n);
 
-		/* Red/Black tree: Balance red/black tree after removing node.
-		 */
-        void ixdelete_case2(
-            eName *n); 
+	/* Red/Black tree: Balance red/black tree after removing node.
+     */
+    void ixdelete_case2(
+        eName *n); 
 
-		/* Red/Black tree: Balance red/black tree after removing node.
-		 */
-        void ixdelete_case4(
-            eName *n); 
+	/* Red/Black tree: Balance red/black tree after removing node.
+     */
+    void ixdelete_case4(
+        eName *n); 
 
-		/* Red/Black tree: Balance red/black tree after removing node.
-		 */
-        void ixdelete_case5(
-            eName *n); 
+	/* Red/Black tree: Balance red/black tree after removing node.
+     */
+    void ixdelete_case5(
+        eName *n); 
 
-		/* Red/Black tree: Balance red/black tree after removing node.
-		 */
-        void ixdelete_case6(
-            eName *n); 
+	/* Red/Black tree: Balance red/black tree after removing node.
+     */
+    void ixdelete_case6(
+        eName *n); 
 };
 
 #endif

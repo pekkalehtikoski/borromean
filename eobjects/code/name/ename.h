@@ -45,57 +45,57 @@ class eName : public eVariable
 	*/
 	/*@{*/
 public:
-		/** Constructor.
-		 */
-		eName(
-			eObject *parent = OS_NULL,
-			e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT);
+	/** Constructor.
+     */
+	eName(
+		eObject *parent = OS_NULL,
+		e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT);
 
-		/* Virtual destructor.
-		 */
-		virtual ~eName();
+	/* Virtual destructor.
+     */
+	virtual ~eName();
 
-        /* Cast eObject pointer to eName pointer. 
-         */
-		inline static eName *cast(
-			eObject *o) 
-		{ 
-			return (eName*)o;
-		}
+    /* Cast eObject pointer to eName pointer. 
+     */
+	inline static eName *cast(
+		eObject *o) 
+	{ 
+		return (eName*)o;
+	}
 
-        /* Get class identifier.
-         */
-        virtual os_int getclassid() {return ECLASSID_NAME;}
+    /* Get class identifier.
+     */
+    virtual os_int getclassid() {return ECLASSID_NAME;}
 
-        /* Static constructor function for generating instance by class list.
-         */
-        static eName *newobj(
-            eObject *parent,
-            e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT)
-        {
-            return new eName(parent, oid, flags);
-        }
+    /* Static constructor function for generating instance by class list.
+     */
+    static eName *newobj(
+        eObject *parent,
+        e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT)
+    {
+        return new eName(parent, oid, flags);
+    }
 
-		/* Get next object identified by oid.
-		 */
-		eName *ixgetnext(
-			os_boolean name_match = OS_TRUE);
+	/* Get next object identified by oid.
+     */
+	eName *ixgetnext(
+		os_boolean name_match = OS_TRUE);
 
-		/** Same as ixgetnext but used with names.
-		 */
-		inline eName *getnextname()
-		{
-			return ixgetnext();
-		}
+	/** Same as ixgetnext but used with names.
+     */
+	inline eName *getnextname()
+	{
+		return ixgetnext();
+	}
 
-        /** Get name space to which this name is mapped to.
-         */
-        inline eNameSpace *getnamespace() 
-		{
-			return m_index;
-		}
+    /** Get name space to which this name is mapped to.
+     */
+    inline eNameSpace *getnamespace() 
+	{
+		return m_index;
+	}
 
     /*@}*/
 
@@ -110,50 +110,49 @@ public:
 	************************************************************************************************
 	*/
 	/*@{*/
-        /* Write name to stream.
-         */
-        virtual eStatus writer(
-            eStream *stream, 
-            os_int flags);
+    /* Write name to stream.
+     */
+    virtual eStatus writer(
+        eStream *stream, 
+        os_int flags);
 
-        /* Read name from stream.
-         */
-        virtual eStatus reader(
-            eStream *stream, 
-            os_int flags);
+    /* Read name from stream.
+     */
+    virtual eStatus reader(
+        eStream *stream, 
+        os_int flags);
     /*@}*/
 
+protected:
+	/** Pointer to left child in index'es red/black tree.
+     */
+    eName *m_ileft;
 
-	protected:
-		/** Pointer to left child in index'es red/black tree.
-		 */
-        eName *m_ileft;
+	/** Pointer to right child in index'es red/black tree.
+     */
+    eName *m_iright;
 
-		/** Pointer to right child in index'es red/black tree.
-		 */
-        eName *m_iright;
+	/** Pointer to parent in index'es red/black tree.
+     */
+    eName *m_iup;
 
-		/** Pointer to parent in index'es red/black tree.
-		 */
-        eName *m_iup;
+	/** Pointer to index.
+     */
+    eNameSpace *m_index;
 
-		/** Pointer to index.
-		 */
-        eNameSpace *m_index;
+	/** Tag this object as "red".
+     */
+    inline void ixsetred()
+    {
+        m_vflags |= EVAR_IS_RED;
+    }
 
-		/** Tag this object as "red".
-		 */
-        inline void ixsetred()
-        {
-            m_vflags |= EVAR_IS_RED;
-        }
-
-		/** Tag this object as "black".
-		 */
-        inline void ixsetblack()
-        {
-            m_vflags &= ~EVAR_IS_RED;
-        }
+	/** Tag this object as "black".
+     */
+    inline void ixsetblack()
+    {
+        m_vflags &= ~EVAR_IS_RED;
+    }
 };
 
 #endif

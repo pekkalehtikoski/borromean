@@ -16,8 +16,6 @@
 #ifndef EROOT_INCLUDED
 #define EROOT_INCLUDED
 
-
-
 /**
 ****************************************************************************************************
 
@@ -42,38 +40,38 @@ class eRoot : public eObject
 	*/
 	/*@{*/
 public:
-		/** Constructor.
-		 */
-		eRoot(
-			eObject *parent = OS_NULL,
-			e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT);
+	/** Constructor.
+     */
+	eRoot(
+		eObject *parent = OS_NULL,
+		e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT);
 
-		/* Virtual destructor.
-		 */
-		virtual ~eRoot();
+	/* Virtual destructor.
+     */
+	virtual ~eRoot();
 
-        /* Casting eObject pointer to eRoot pointer.
-         */
-		inline static eRoot *cast(
-			eObject *o) 
-		{ 
-			return (eRoot*)o;
-		}
+    /* Casting eObject pointer to eRoot pointer.
+     */
+	inline static eRoot *cast(
+		eObject *o) 
+	{ 
+		return (eRoot*)o;
+	}
 
-        /* Get class identifier.
-         */
-        virtual os_int getclassid() {return ECLASSID_ROOT;}
+    /* Get class identifier.
+     */
+    virtual os_int getclassid() {return ECLASSID_ROOT;}
 
-        /* Static constructor function for generating instance by class list.
-         */
-        static eRoot *newobj(
-            eObject *parent,
-            e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT)
-        {
-            return new eRoot(parent, oid, flags);
-        }
+    /* Static constructor function for generating instance by class list.
+     */
+    static eRoot *newobj(
+        eObject *parent,
+        e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT)
+    {
+        return new eRoot(parent, oid, flags);
+    }
     /*@}*/
 
 
@@ -87,18 +85,18 @@ public:
 	************************************************************************************************
 	*/
 	/*@{*/
-        /* Reserve and initialize handle for object obj.
-         */
-        void newhandle(
-			eObject *obj,
-			eObject *parent,
-			e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT);
+    /* Reserve and initialize handle for object obj.
+     */
+    void newhandle(
+		eObject *obj,
+		eObject *parent,
+		e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT);
 
-        /* Close handle of object obj.
-         */
-        void closehandle(
-			eObject *obj);
+    /* Close handle of object obj.
+     */
+    void closehandle(
+		eObject *obj);
     /*@}*/
 
 protected:

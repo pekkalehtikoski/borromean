@@ -18,8 +18,6 @@
 #ifndef EPOINTER_INCLUDED
 #define EPOINTER_INCLUDED
 
-
-
 /**
 ****************************************************************************************************
 
@@ -42,38 +40,38 @@ class ePointer : public eObject
 	*/
 	/*@{*/
 public:
-		/** Constructor.
-		 */
-		ePointer(
-			eObject *parent = OS_NULL,
-			e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT);
-
-		/* Virtual destructor.
-		 */
-		virtual ~ePointer();
-
-        /* Casting eObject pointer to ePointer pointer.
-         */
-		inline static ePointer *cast(
-			eObject *o) 
-		{ 
-			return (ePointer*)o;
-		}
-
-		/* Get class identifier.
- 		 */
-		virtual os_int getclassid() { return ECLASSID_POINTER; }
-
-		/* Static constructor function.
+	/** Constructor.
 		*/
-		static ePointer *newobj(
-			eObject *parent,
-			e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT)
-		{
-			return new ePointer(parent, oid, flags);
-		}
+	ePointer(
+		eObject *parent = OS_NULL,
+		e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT);
+
+	/* Virtual destructor.
+		*/
+	virtual ~ePointer();
+
+    /* Casting eObject pointer to ePointer pointer.
+     */
+	inline static ePointer *cast(
+		eObject *o) 
+	{ 
+		return (ePointer*)o;
+	}
+
+	/* Get class identifier.
+ 		*/
+	virtual os_int getclassid() { return ECLASSID_POINTER; }
+
+	/* Static constructor function.
+	*/
+	static ePointer *newobj(
+		eObject *parent,
+		e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT)
+	{
+		return new ePointer(parent, oid, flags);
+	}
 
     /*@}*/
 
@@ -89,23 +87,22 @@ public:
 	*/
 	/*@{*/
 
-        /* Set automatic pointer.
-         */
-		void set(eObject *ptr);
+    /* Set automatic pointer.
+     */
+	void set(eObject *ptr);
 
-        /* Get object referred to by automatic pointer.
-         */
-        inline eObject *get()
-        {
-            if (m_my_pair) return m_my_pair->getparent();
-            return OS_NULL;
-        }
+    /* Get object referred to by automatic pointer.
+     */
+    inline eObject *get()
+    {
+        if (m_my_pair) return m_my_pair->getparent();
+        return OS_NULL;
+    }
    
     /*@}*/
 
-
 protected:
-        ePointer *m_my_pair;
+    ePointer *m_my_pair;
 };
 
 #endif

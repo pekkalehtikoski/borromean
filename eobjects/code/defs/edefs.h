@@ -28,13 +28,13 @@
 */
 /*@{*/
 
-	/** Object index.
-	 */
-	typedef os_uint e_oix;
+/** Object index.
+	*/
+typedef os_uint e_oix;
 
-	/** Object identifier.
-	 */
-	typedef os_int e_oid;
+/** Object identifier.
+	*/
+typedef os_int e_oid;
 
 /*@}*/
 

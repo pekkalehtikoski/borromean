@@ -18,8 +18,6 @@
 #ifndef ECONTAINER_INCLUDED
 #define ECONTAINER_INCLUDED
 
-
-
 /**
 ****************************************************************************************************
 
@@ -44,38 +42,38 @@ class eContainer : public eObject
 	*/
 	/*@{*/
 public:
-        /** Constructor.
-		 */
-		eContainer(
-			eObject *parent = OS_NULL,
-			e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT);
+    /** Constructor.
+	 */
+	eContainer(
+		eObject *parent = OS_NULL,
+		e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT);
 
-		/* Virtual destructor.
-		 */
-		virtual ~eContainer();
+	/* Virtual destructor.
+ 	 */
+	virtual ~eContainer();
 
-        /* Casting eObject pointer to eContainer pointer.
-         */
-		inline static eContainer *cast(
-			eObject *o) 
-		{ 
-			return (eContainer*)o;
-		}
+    /* Casting eObject pointer to eContainer pointer.
+        */
+	inline static eContainer *cast(
+		eObject *o) 
+	{ 
+		return (eContainer*)o;
+	}
 
-        /* Get class identifier.
-         */
-        virtual os_int getclassid() {return ECLASSID_CONTAINER;}
+    /* Get class identifier.
+     */
+    virtual os_int getclassid() {return ECLASSID_CONTAINER;}
 
-        /* Static constructor function for generating instance by class list.
-         */
-        static eContainer *newobj(
-            eObject *parent,
-            e_oid oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT)
-        {
-            return new eContainer(parent, oid, flags);
-        }
+    /* Static constructor function for generating instance by class list.
+     */
+    static eContainer *newobj(
+        eObject *parent,
+        e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT)
+    {
+        return new eContainer(parent, oid, flags);
+    }
 
     /*@}*/
 
@@ -89,17 +87,17 @@ public:
 	************************************************************************************************
 	*/
 	/*@{*/
-        /* Write container content to stream.
-         */
-        virtual eStatus writer(
-            eStream *stream, 
-            os_int flags);
+    /* Write container content to stream.
+     */
+    virtual eStatus writer(
+        eStream *stream, 
+        os_int flags);
 
-        /* Read container content from stream.
-         */
-        virtual eStatus reader(
-            eStream *stream, 
-            os_int flags);
+    /* Read container content from stream.
+     */
+    virtual eStatus reader(
+        eStream *stream, 
+        os_int flags);
 
     /*@}*/
 
