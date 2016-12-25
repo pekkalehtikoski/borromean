@@ -1,13 +1,10 @@
 /**
 
-  @file    clock/common/osal_clock.h
-  @brief   Get and set system time.
+  @file    common/osal_rand.h
+  @brief   Get random number.
   @author  Pekka Lehtikoski
   @version 1.0
-  @date    9.11.2011
-
-  This header file contains functions prototypes for getting and setting system time (GMT) as 
-  long integer.
+  @date    25.12.2016
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -16,30 +13,26 @@
 
 ****************************************************************************************************
 */
-#ifndef OSAL_CLOCK_INCLUDED
-#define OSAL_CLOCK_INCLUDED
+#ifndef OSAL_RAND_INCLUDED
+#define OSAL_RAND_INCLUDED
 
 /** 
 ****************************************************************************************************
 
-  @name Clock functions
+  @name Generate random numbers
 
-  The osal_clock_get() function gets the time stamp as 64 bit integer, microseconds since epoc 
-  1970 and the osal_clock_set() function sets the system clock. 
+  The osal_rand() function returns random number from min_value to max_value (inclusive).
+  All possible retuned values have same propability.
 
 ****************************************************************************************************
  */
 /*@{*/
 
-/* Get system time (GMT).
+/* Get a pseudo random number.
  */
-void osal_clock_get(
-    os_int64 *t);
-
-/* Set system time (GMT).
- */
-osalStatus osal_clock_set(
-    const os_int64 *t);
+os_long osal_rand(
+    os_long min_value,
+    os_long max_value);
 
 /*@}*/
 

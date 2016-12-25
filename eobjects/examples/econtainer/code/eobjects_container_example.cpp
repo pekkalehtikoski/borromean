@@ -16,7 +16,6 @@
 ****************************************************************************************************
 */
 #include "eobjects/eobjects.h"
-#include <stdlib.h>
 
 /**
 ****************************************************************************************************
@@ -48,6 +47,9 @@ os_int osal_main(
 	os_int
 		i; 
 
+    e_oid
+        oid;
+
     /* Initialize eobject library for use.
      */
     eobjects_initialize(OS_NULL);
@@ -56,15 +58,16 @@ os_int osal_main(
 
 	for (i = 0; i<40; i++)
 	{
-		// v = new eVariable(c, rand() % 2000);
-		// *v = i;
-		v = new eVariable(c, i+1);
-        *v = i; // rand();
+        oid = (e_oid)osal_rand(0,29);
+		v = new eVariable(c, oid);
+		*v = oid;
+		// v = new eVariable(c, i+1);
+        // *v = i; // rand();
 	}
 
 	for (i = 0; i<40; i++)
 	{
-		o = c->getfirst(rand() % 20);
+		o = c->getfirst((e_oid)osal_rand(0,19));
 		delete o;
 	} 
 
