@@ -1,0 +1,3 @@
+/coderoot/borromean/eobjects/build/cmake/CMakeFiles/edit_cache.dir
+/coderoot/borromean/eobjects/build/cmake/CMakeFiles/rebuild_cache.dir
+/coderoot/borromean/eobjects/build/cmake/CMakeFiles/eobjects.dir
