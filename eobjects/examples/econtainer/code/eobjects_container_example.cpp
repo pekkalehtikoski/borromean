@@ -17,12 +17,13 @@
 */
 #include "eobjects/eobjects.h"
 
+
 /**
 ****************************************************************************************************
 
-  @brief Process entry point.
+  @brief Application entry point.
 
-  The emain() function is OS independent entry point.
+  The emain() function is eobjects application enyty point.
 
   @param   argc Number of command line arguments.
   @param   argv Array of string pointers, one for each command line argument. UTF8 encoded.
@@ -31,12 +32,12 @@
 
 ****************************************************************************************************
 */
-os_int osal_main(
+os_int emain(
     os_int argc,
     os_char *argv[])
 {
-	eContainer
-		*c;
+	eContainer 
+        c;
 
 	eVariable
 		*v;
@@ -50,34 +51,27 @@ os_int osal_main(
     e_oid
         oid;
 
-    /* Initialize eobject library for use.
+    /* Create some variables in container in random order. Give object identifier also
+       as variable value.
      */
-    eobjects_initialize(OS_NULL);
-
-	c = new eContainer;
-
 	for (i = 0; i<40; i++)
 	{
         oid = (e_oid)osal_rand(0,29);
-		v = new eVariable(c, oid);
+		v = new eVariable(&c, oid);
 		*v = oid;
-		// v = new eVariable(c, i+1);
-        // *v = i; // rand();
 	}
 
+    /* Delete some variables at random.
+     */    
 	for (i = 0; i<40; i++)
 	{
-		o = c->getfirst((e_oid)osal_rand(0,19));
+		o = c.getfirst((e_oid)osal_rand(0,19));
 		delete o;
 	} 
 
-	// delete v;
-
-	v = new eVariable(c);
-	*v = "ukemi";
-
-	i = 0;
-	for (o = c->getfirst(); o; o = o->getnext())
+    /* Display which variables are left.
+     */
+	for (o = c.getfirst(); o; o = o->getnext())
 	{
 		v = (eVariable*)o;
 
@@ -85,11 +79,9 @@ os_int osal_main(
 		osal_console_write(", ");
 	} 
 
-	delete c;
-	
-/* Shut down eobjects library.
-*/
-    eobjects_shutdown();
+    /* Finished.
+     */
+    osal_console_write("\nall done\n");
     return 0;
 }
 

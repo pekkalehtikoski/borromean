@@ -31,6 +31,7 @@
 #include "eobjects/code/defs/edefs.h"
 #include "eobjects/code/defs/eoid.h"
 #include "eobjects/code/defs/eclassid.h"
+#include "eobjects/code/main/emain.h"
 #include "eobjects/code/object/ehandle.h"
 #include "eobjects/code/object/eobject.h"
 #include "eobjects/code/object/ehandletable.h"
