@@ -25,13 +25,21 @@
  */
 #include "eosal/eosalx.h"
 
+/* Initialize eobject library for use.
+ */
+void eobjects_initialize(
+    void *reserved);
+
+/* Shut down eobjects library.
+*/
+void eobjects_shutdown();
+
 /* Include eobject headers.
  */
 #include "eobjects/code/defs/estatus.h"
 #include "eobjects/code/defs/edefs.h"
 #include "eobjects/code/defs/eoid.h"
 #include "eobjects/code/defs/eclassid.h"
-#include "eobjects/code/main/emain.h"
 #include "eobjects/code/object/ehandle.h"
 #include "eobjects/code/object/eobject.h"
 #include "eobjects/code/object/ehandletable.h"
@@ -45,14 +53,6 @@
 #include "eobjects/code/name/ename.h"
 #include "eobjects/code/name/enamespace.h"
 #include "eobjects/code/stream/estream.h"
-
-/* Initialize eobject library for use.
- */
-void eobjects_initialize(
-    void *reserved);
-
-/* Shut down eobjects library.
-*/
-void eobjects_shutdown();
+#include "eobjects/code/main/emain.h"
 
 #endif

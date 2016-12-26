@@ -174,7 +174,7 @@ failed:
 
   @brief Get next child of same parent object.
 
-  The eName::getnext() function returns pointer to next name in namespace. 
+  The eName::next() function returns pointer to next name in namespace. 
   Next name is the next child of the same parent object as this object (it could be called 
   sibling). 
 

@@ -173,22 +173,22 @@ public:
 
 	/* Get first child object identified by oid.
      */
-    eHandle *getfirst(
+    eHandle *first(
         e_oid oid = EOID_CHILD);
 
 	/* Get last child object identified by oid.
      */
-    eHandle *getlast(
+    eHandle *last(
         e_oid oid = EOID_CHILD);
 
 	/* Get next object identified by oid.
      */
-    eHandle *getnext(
+    eHandle *next(
         e_oid oid = EOID_CHILD);
 
 	/* Get previous object identified by oid.
      */
-    eHandle *getprev(
+    eHandle *prev(
         e_oid oid = EOID_CHILD);
 
     /** Adopting object as child of this object.

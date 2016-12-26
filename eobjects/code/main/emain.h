@@ -34,4 +34,28 @@ os_int emain(
  */
 OSAL_C_HEADER_ENDS
 
+
+/**
+****************************************************************************************************
+
+  @brief Call eobjects application entry point.
+  @anchor osal_main
+
+  Macro implementation of osal_main() function is part of entry sequence to eobjects console 
+  application. It is not used when eobject is used as library nor propably with GUI applications.
+
+  @param   argc Number of command line arguments.
+  @param   argv Array of string pointers, one for each command line argument plus.
+
+  @return  Integer return value to caller.
+
+****************************************************************************************************
+*/
+#define EMAIN_CONSOLE_ENTRY os_int osal_main(os_int argc, os_char *argv[]) { \
+    os_int rval; \
+    eobjects_initialize(OS_NULL); \
+    rval = emain(argc, argv); \
+    eobjects_shutdown(); \
+    return rval; }
+
 #endif

@@ -186,7 +186,7 @@ eObject::~eObject()
 
     while (m_children)
     {
-        delete m_children; or delete getfirst();
+        delete m_children; or delete first();
     }
 	*/
 
@@ -305,44 +305,44 @@ void eObject::operator delete(
 
 /* Get first child object identified by oid.
 */
-eObject *eObject::getfirst(
+eObject *eObject::first(
 	e_oid oid)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->getfirst(oid);
+	eHandle *h = mm_handle->first(oid);
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
 
 /* Get last child object identified by oid.
 */
-eObject *eObject::getlast(
+eObject *eObject::last(
 	e_oid oid)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->getlast(oid);
+	eHandle *h = mm_handle->last(oid);
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
 
 /* Get next object identified by oid.
 */
-eObject *eObject::getnext(
+eObject *eObject::next(
 	e_oid oid)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->getnext(oid);
+	eHandle *h = mm_handle->next(oid);
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
 
 /* Get previous object identified by oid.
 */
-eObject *eObject::getprev(
+eObject *eObject::prev(
 	e_oid oid)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->getprev(oid);
+	eHandle *h = mm_handle->prev(oid);
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
@@ -369,7 +369,7 @@ void eObject::createnamespace(
 
 	/* If object has already name space.
 	 */
-	nspace = eNameSpace::cast(getfirst(EOID_NAMESPACE));
+	nspace = eNameSpace::cast(first(EOID_NAMESPACE));
 	if (nspace)
 	{
 		/* If namespace identifier matches, just return.
@@ -403,7 +403,7 @@ void eObject::createnamespace(
 */
 void eObject::deletenamespace()
 {
-	delete getfirst(EOID_NAMESPACE);
+	delete first(EOID_NAMESPACE);
 }
 
 
@@ -441,7 +441,7 @@ eNameSpace *eObject::getnamespace(
 	{
 		while (o->mm_parent) o = o->mm_parent;
 		// If o is not thread, return null --- if (!isinstanceof(o, thread)) return OS_NULL.
-		return eNameSpace::cast(o->getfirst(EOID_NAMESPACE));
+		return eNameSpace::cast(o->first(EOID_NAMESPACE));
 	}
 
 	/* Find name space by searching upwards.
@@ -450,7 +450,7 @@ eNameSpace *eObject::getnamespace(
 	{
 		if (flags() & EOBJ_HAS_NAMESPACE)
 		{
-			nspace = eNameSpace::cast(o->getfirst(EOID_NAMESPACE));
+			nspace = eNameSpace::cast(o->first(EOID_NAMESPACE));
 			if (nspace)
 			{
 				if (namespace_id == OS_NULL) return nspace;
@@ -1390,7 +1390,7 @@ eStatus eObject::write(
     /* Calculate and write number of attachments.
      */
     n_attachements = 0;
-    for (child = getfirst(EOID_ALL); child; child = child->getnext(EOID_ALL))
+    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
     {
         if (child->isserattachment()) n_attachements++;
     }
@@ -1402,7 +1402,7 @@ eStatus eObject::write(
 
     /* Write attachments.
      */
-    for (child = getfirst(EOID_ALL); child; child = child->getnext(EOID_ALL))
+    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
     {
         if (child->isserattachment()) 
         {

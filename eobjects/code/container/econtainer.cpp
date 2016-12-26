@@ -94,7 +94,7 @@ eStatus eContainer::writer(
 
     /* Write childern (no attachments).
      */
-    for (child = getfirst(); child; child = child->getnext())
+    for (child = first(); child; child = child->next())
     {
         child->write(stream, flags);
     }

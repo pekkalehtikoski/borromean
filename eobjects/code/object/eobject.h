@@ -213,39 +213,39 @@ public:
 
 	/* Get first child object identified by oid.
      */
-	eObject *getfirst(
+	eObject *first(
 		e_oid oid = EOID_CHILD);
 
 	/* Get last child object identified by oid.
      */
-	eObject *getlast(
+	eObject *last(
 		e_oid oid = EOID_CHILD);
 
 	/* Get next object identified by oid.
      */
-	eObject *getnext(
+	eObject *next(
 		e_oid oid = EOID_CHILD);
 
 	/* Get previous object identified by oid.
      */
-	eObject *getprev(
+	eObject *prev(
 		e_oid oid = EOID_CHILD);
 
     /** Adopting object as child of this object.
      */
     void adopt(
         eObject *child, 
-        e_oid oid) {}
+        e_oid oid = EOID_CHILD) {}
 
     eObject *adoptat(
         eObject *beforethis, 
-        e_oid oid);
+        e_oid oid = EOID_CHILD);
 
     /** Cloning, adopting and copying.
      */
     virtual eObject *clone(
         eObject *parent, 
-        e_oid oid) {return 0; }
+        e_oid oid = EOID_CHILD) {return 0; }
 
     /*@}*/
 

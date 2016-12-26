@@ -138,7 +138,7 @@ eHandle::~eHandle()
 
     while (m_children)
     {
-        delete m_children; or delete getfirst();
+        delete m_children; or delete first();
     }
 	*/
 
@@ -214,9 +214,9 @@ os_long eHandle::childcount(
 
     count = 0;
 
-    for (child = getfirst(oid);
+    for (child = first(oid);
          child;
-         child = child->getnext(oid))
+         child = child->next(oid))
     {
         count++;
     }
@@ -230,7 +230,7 @@ os_long eHandle::childcount(
 
   @brief Get first child object identified by oid.
 
-  The eHandle::getfirst() function returns pointer to the first child object selected by object 
+  The eHandle::first() function returns pointer to the first child object selected by object 
   identifier oid given as argument. 
 
   @param   oid Object idenfifier. Default value EOID_CHILD specifies to get a child object, 
@@ -243,7 +243,7 @@ os_long eHandle::childcount(
 
 ****************************************************************************************************
 */
-eHandle *eHandle::getfirst(
+eHandle *eHandle::first(
     e_oid oid)
 {
     eHandle 
@@ -273,10 +273,10 @@ eHandle *eHandle::getfirst(
         if (oid == EOID_ALL || !n->isattachment()) return n;
         
         /* Attachments not included and first object is attachment. 
-           Call getnext to get first child object which is not 
+           Call next to get first child object which is not 
            an attachment.
          */
-        return n->getnext(oid);
+        return n->next(oid);
     }
     
     /* Handle normal case where child object is searched by exactly
@@ -321,7 +321,7 @@ eHandle *eHandle::getfirst(
 
   @brief Get last child object identified by oid.
 
-  The eHandle::getlast() function returns pointer to the last child object selected by object 
+  The eHandle::last() function returns pointer to the last child object selected by object 
   identifier oid given as argument. 
 
   @param   oid Object idenfifier. Default value EOID_CHILD specifies to get a child object, 
@@ -334,7 +334,7 @@ eHandle *eHandle::getfirst(
 
 ****************************************************************************************************
 */
-eHandle *eHandle::getlast(
+eHandle *eHandle::last(
     e_oid oid)
 {
     eHandle 
@@ -364,10 +364,10 @@ eHandle *eHandle::getlast(
         if (oid == EOID_ALL || !n->isattachment()) return n;
 
         /* Attachments not included and the last object is an attachment. 
-           Call getprev() to get previous child object which is not 
+           Call prev() to get previous child object which is not 
            an attachment.
          */
-        return n->getprev(oid);
+        return n->prev(oid);
     }
 
     /* Handle normal case where child object is searched by exactly
@@ -412,7 +412,7 @@ eHandle *eHandle::getlast(
 
   @brief Get next child of same parent object.
 
-  The eHandle::getnext() function returns pointer to the next child of the same parent object
+  The eHandle::next() function returns pointer to the next child of the same parent object
   as this object (it could be called sibling). The object is selected by object identifier oid 
   given as argument.
 
@@ -426,7 +426,7 @@ eHandle *eHandle::getlast(
 
 ****************************************************************************************************
 */
-eHandle *eHandle::getnext(
+eHandle *eHandle::next(
     e_oid oid)
 {
     eHandle
@@ -478,7 +478,7 @@ try_again:
 
   @brief Get previous child of same parent object.
 
-  The eHandle::getprev() function returns pointer to the previous child of the same parent object
+  The eHandle::prev() function returns pointer to the previous child of the same parent object
   as this object (it could be called sibling). The object is selected by object identifier oid 
   given as argument.
 
@@ -492,7 +492,7 @@ try_again:
 
 ****************************************************************************************************
 */
-eHandle *eHandle::getprev(
+eHandle *eHandle::prev(
     e_oid oid)
 {
     eHandle
@@ -1471,7 +1471,7 @@ eStatus eHandle::write(
     /* Calculate and write number of attachments.
      */
     n_attachements = 0;
-    for (child = getfirst(EOID_ALL); child; child = child->getnext(EOID_ALL))
+    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
     {
         if (child->isserattachment()) n_attachements++;
     }
@@ -1483,7 +1483,7 @@ eStatus eHandle::write(
 
     /* Write attachments.
      */
-    for (child = getfirst(EOID_ALL); child; child = child->getnext(EOID_ALL))
+    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
     {
         if (child->isserattachment()) 
         {

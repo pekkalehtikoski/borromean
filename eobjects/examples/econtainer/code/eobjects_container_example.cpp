@@ -17,6 +17,10 @@
 */
 #include "eobjects/eobjects.h"
 
+/* Generate entry code for console application.
+ */
+EMAIN_CONSOLE_ENTRY
+
 
 /**
 ****************************************************************************************************
@@ -65,15 +69,15 @@ os_int emain(
      */    
 	for (i = 0; i<40; i++)
 	{
-		o = c.getfirst((e_oid)osal_rand(0,19));
+		o = c.first((e_oid)osal_rand(0,19));
 		delete o;
 	} 
 
     /* Display which variables are left.
      */
-	for (o = c.getfirst(); o; o = o->getnext())
+	for (o = c.first(); o; o = o->next())
 	{
-		v = (eVariable*)o;
+		v = eVariable::cast(o);
 
 		osal_console_write(v->gets());
 		osal_console_write(", ");

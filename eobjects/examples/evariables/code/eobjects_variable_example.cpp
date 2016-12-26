@@ -17,6 +17,9 @@
 */
 #include "eobjects/eobjects.h"
 
+/* Generate entry code for console application.
+ */
+EMAIN_CONSOLE_ENTRY
 
 /**
 ****************************************************************************************************
