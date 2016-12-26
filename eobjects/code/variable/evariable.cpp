@@ -72,7 +72,7 @@ eVariable::~eVariable()
 */
 void eVariable::clear()
 {
-    switch (gettype())
+    switch (type())
     {
         /* If this is string, check if long string has been allocated in separate
            buffer.
@@ -181,12 +181,15 @@ void eVariable::setd(
   The sets() function sets a string value to variable. 
 
   @param   x Value to set.
+  @param   max_chars Maximum number of characters to store excluding terminating NULL character.
+           -1 for unlimited.
   @return  None.
 
 ****************************************************************************************************
 */
 void eVariable::sets(
-	const os_char *x)
+	const os_char *x,
+    os_memsz max_chars)
 {
     os_memsz
         n,
@@ -198,7 +201,7 @@ void eVariable::sets(
     /* Save temporary buffer if any, in case it is used as argument.
      */
     tmpstr = OS_NULL;
-    if (gettype() != OS_STRING)
+    if (type() != OS_STRING)
     {
         tmpstr = m_value.valbuf.tmpstr;
         tmpstr_sz = m_value.valbuf.tmpstr_sz;
@@ -209,15 +212,21 @@ void eVariable::sets(
      */
     clear();
 
-    /* Get string length.
+    /* Get string length. Check if string length is limited.
      */
     n = os_strlen(x);
+    if (max_chars >= 0)
+    {
+        if (n > max_chars+1) n = max_chars+1;
+        else max_chars = -1;
+    }
 
     /* If string fits into small buffer, copy it and save used size.
      */
     if (n <= EVARIABLE_STRBUF_SZ)
     {
         os_memcpy(m_value.strbuf.buf, x, n);
+        if (max_chars >= 0) m_value.strbuf.buf[max_chars] = '\0';
         m_value.strbuf.used = (os_uchar)n;
     }
 
@@ -229,6 +238,7 @@ void eVariable::sets(
     {
         m_value.strptr.ptr = (os_char*)osal_memory_allocate(n, &m_value.strptr.allocated);
         os_memcpy(m_value.strptr.ptr, x, n);
+        if (max_chars >= 0) m_value.strptr.ptr[max_chars] = '\0';
         m_value.strptr.used = n;
         m_vflags |= EVAR_STRBUF_ALLOCATED;
     }
@@ -277,7 +287,7 @@ void eVariable::setv(
 
     if (x == OS_NULL) return;
 
-    srctype = x->gettype();
+    srctype = x->type();
     switch (srctype)
     {
         /* If already empty.
@@ -405,7 +415,7 @@ os_boolean eVariable::isempty()
 	os_char
 		c;
 
-	switch (gettype())
+	switch (type())
 	{
 		case OS_UNDEFINED_TYPE: 
 			return OS_TRUE;
@@ -446,7 +456,7 @@ os_long eVariable::getl()
 
     /* Convert value to long integer.
      */
-    switch (gettype())
+    switch (type())
     {
         case OS_LONG:
             x = m_value.valbuf.v.l;
@@ -500,7 +510,7 @@ os_double eVariable::getd()
 
     /* Convert value to double.
      */
-    switch (gettype())
+    switch (type())
     {
         case OS_LONG:
             x = (os_double)m_value.valbuf.v.l;
@@ -559,7 +569,7 @@ os_char *eVariable::gets(
     os_memsz
         vsz;
 
-    switch (gettype())
+    switch (type())
     {
         /* If empty or object.
          */
@@ -602,7 +612,7 @@ os_char *eVariable::gets(
 
     /* Convert to string.
      */
-    switch (gettype())
+    switch (type())
     {
         case OS_LONG:
             vsz = osal_int_to_string(buf, sizeof(buf), m_value.valbuf.v.l);
@@ -610,7 +620,7 @@ os_char *eVariable::gets(
 
         case OS_DOUBLE:
             vsz = osal_strcnv_float_to_string(buf, sizeof(buf), 
-				m_value.valbuf.v.d, getddigs(), OSAL_FLOAT_DEFAULT);
+				m_value.valbuf.v.d, digs(), OSAL_FLOAT_DEFAULT);
             break;
 
         case OS_OBJECT:
@@ -654,7 +664,7 @@ getout:
 */
 void eVariable::gets_free()
 {
-    if (gettype() != OS_STRING && m_value.valbuf.tmpstr)
+    if (type() != OS_STRING && m_value.valbuf.tmpstr)
     {
         osal_memory_free(m_value.valbuf.tmpstr, 
             m_value.valbuf.tmpstr_sz);
@@ -678,7 +688,7 @@ void eVariable::gets_free()
 */
 eObject *eVariable::geto() 
 {
-	if (gettype() == OS_OBJECT)
+	if (type() == OS_OBJECT)
 	{
 		return m_value.valbuf.v.o;
 	}
@@ -788,7 +798,7 @@ os_boolean eVariable::autotype(
 
     /* If this variable isn't a string, do nothing.
      */
-    if (gettype() != OS_STRING) return OS_FALSE;
+    if (type() != OS_STRING) return OS_FALSE;
 
     /* Pointer to string content.
      */
@@ -888,7 +898,7 @@ os_char *eVariable::tostring()
 {
     /* If this variable isn't a string, convert to one.
      */
-    if (gettype() != OS_STRING)
+    if (type() != OS_STRING)
     {
         sets(gets());
     }
@@ -936,7 +946,7 @@ eStatus eVariable::writer(
 
     /* Write the value, if any.
      */
-    switch (gettype())
+    switch (type())
     {
         case OS_LONG:
             if (*stream << m_value.valbuf.v.l) goto failed;
@@ -1133,7 +1143,7 @@ void eVariable::appends_internal(
 
     /* If this variable isn't a string, convert to one.
      */
-    if (gettype() != OS_STRING)
+    if (type() != OS_STRING)
     {
         sets(gets());
     }

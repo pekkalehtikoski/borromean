@@ -94,8 +94,8 @@ public:
 
 	/* Get first child object identified by oid.
      */
-    eName *ixgetfirst(
-        eVariable *x);
+    eName *findname(
+        eVariable *x = OS_NULL);
 
     /*@}*/
 

@@ -140,14 +140,14 @@ public:
 
     /** Get value data type. 
      */
-	inline osalTypeId gettype() const
+	inline osalTypeId type() const
     {
         return (osalTypeId)(m_vflags & EVAR_TYPE_MASK);
     }
 
     /** Get number of digits after decimal point. 
      */
-	inline os_int getddigs() const
+	inline os_int digs() const
     {
         return (m_vflags & EVAR_DDIGS_MASK) >> EVAR_DDIGS_SHIFT;
     }
@@ -193,7 +193,8 @@ public:
     /* Set string value to variable.
      */
     void sets(
-	    const os_char *x);
+	    const os_char *x,
+        os_memsz max_chars = -1);
 
 	/* Copy or move variable value from another variable.
      */
@@ -392,7 +393,7 @@ protected:
      */
     inline os_boolean tmpstrallocated()
     {
-        return (gettype() != OS_STRING && m_value.valbuf.tmpstr) 
+        return (type() != OS_STRING && m_value.valbuf.tmpstr) 
             ? OS_TRUE : OS_FALSE;
     }
 

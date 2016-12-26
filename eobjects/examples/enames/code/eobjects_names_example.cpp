@@ -40,47 +40,51 @@ os_int emain(
     os_char *argv[])
 {
 	eContainer
-		cont;
+		c;
 
 	eVariable 
-		*var,
-        dar;
+		*v;
 
-    os_long 
-        u = 22;
+    eName
+        *n;
+
+    eObject 
+        *o;
+
 
 	/* Enable name space for container.
 	 */
-	cont.createnamespace();
+	c.ns_create();
 
 	/* Create variable as child of container and give it a value.
 	 */
-	var = new eVariable(&cont);
-	var->sets("myvalue");
+	v = new eVariable(&c);
+	v->sets("myvalue");
+	v->addname("myname");
 
-	/* Set name.
+	/* Create variable as child of container and give it a value.
 	 */
-	var->addname("myname");
+	v = new eVariable(&c);
+	v->sets("yourvalue");
+	v->addname("yourname");
 
+    /* List all names in conteiner's namespace.
+     */
+    for (n = c.ns_first(); n; n = n->ns_next())
+    {
+	    osal_console_write(n->gets());
+        v = eVariable::cast(n->parent());
+	    osal_console_write(v->gets());
+    }
 
-/*     dar = var = "abba ";
-    dar = 10;
-    dar = u;
-
-    var += dar;
-    var += " ja nasse";
-    var += " ja pulla";
-
-	econsole_write(var.gets(), OSAL_DEBUG_CONSOLE_NR);
-	econsole_write("\n", OSAL_DEBUG_CONSOLE_NR);
-
-
-    dar = 1110.018;
-	dar.setddigs(5);
-	econsole_write(dar.gets(), OSAL_DEBUG_CONSOLE_NR);
-	econsole_write("\n", OSAL_DEBUG_CONSOLE_NR);
-*/
-
+    /* Print your value.
+     */
+    o = c.ns_get("yourname");
+    v = eVariable::cast(o);
+    if (v)
+    {
+	    osal_console_write(v->gets());
+    }
 
     return 0;
 }

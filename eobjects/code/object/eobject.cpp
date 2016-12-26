@@ -353,7 +353,7 @@ eObject *eObject::prev(
 
   @brief Create name space for this object.
 
-  The eObject::createnamespace() function creates a name space for object. If object already
+  The eObject::ns_create() function creates a name space for object. If object already
   has name space...
   
   @param   namespace_id Identifier for the name space.
@@ -361,7 +361,7 @@ eObject *eObject::prev(
 
 ****************************************************************************************************
 */
-void eObject::createnamespace(
+void eObject::ns_create(
 	os_char *namespace_id)
 {
 	eNameSpace
@@ -395,13 +395,13 @@ void eObject::createnamespace(
 
   @brief Delete name space of this object.
 
-  The eObject::deletenamespace() function deletes name space of this object.
+  The eObject::ns_delete() function deletes name space of this object.
   
   @return  None.
 
 ****************************************************************************************************
 */
-void eObject::deletenamespace()
+void eObject::ns_delete()
 {
 	delete first(EOID_NAMESPACE);
 }
@@ -410,9 +410,148 @@ void eObject::deletenamespace()
 /**
 ****************************************************************************************************
 
+  @brief Find eName by name value and namespace identifier.
+
+  The eObject::ns_first() function finds the first eName object matching to name. If name
+  is OS_NULL, the function returns the first name in namespace (if any).
+  Name may contain name space identifier, for example "myid/myname" in which case the name 
+  space identifier given as argumenr is ignored.
+  
+  @param   name Pointer to eVariable or eName, holding name to search for. Name can be prefixed
+           by name space identifier. If OS_NULL, then pointer to first name in name space
+           is returned.
+  @param   Name space identifier string. OS_NULL to specify name space of this object.
+  @return  Pointer to name. OS_NULL if none found.
+
+****************************************************************************************************
+*/
+eName *eObject::ns_first(
+    os_char *name,
+    os_char *namespace_id)
+{
+    if (name == OS_NULL)
+    {
+        return ns_firstv(OS_NULL, namespace_id);
+    }
+    else
+    {
+        eVariable n;
+        n = name;
+        return ns_firstv(&n, namespace_id);
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Find eName by name and name space.
+
+  The eObject::ns_first() function finds the first eName object matching to name. If name
+  is OS_NULL, the function returns the first name in namespace (if any).
+  Name may contain name space identifier, for example "myid/myname" in which case the name 
+  space identifier given as argumenr is ignored.
+  
+  @param   name String name to search for. Name can be prefixed by name space identifier. 
+           If OS_NULL, then pointer to first name in name space is returned.
+  @param   Name space identifier string. OS_NULL to specify name space of this object.
+  @return  Pointer to name. OS_NULL if none found.
+
+****************************************************************************************************
+*/
+eName *eObject::ns_firstv(
+    eVariable *name,
+    os_char *namespace_id)
+{
+    eNameSpace 
+        *ns;
+
+    eName 
+        *n;
+
+    os_char 
+        *p, 
+        *q;
+
+    eVariable 
+        *tmp_name = OS_NULL,
+        *tmp_id = OS_NULL;
+
+    /* String type may contain name space prefix, check for it.
+     */
+    if (name->type() == OS_STRING) 
+    {
+        p = name->gets();
+        q = os_strchr(p, '/');
+        if (q)
+        {
+            tmp_id = new eVariable;
+            tmp_id->sets(p, q-p);
+            namespace_id = tmp_id->gets();
+
+            tmp_name = new eVariable;
+            tmp_name->sets(q+1);
+            name = tmp_name;
+        }
+    }
+
+    /* Find name space.
+     */    
+    ns = findnamespace(namespace_id);
+    if (ns == OS_NULL) return OS_NULL;
+
+    /* Find name in name space.
+     */
+    n = ns->findname(name);
+
+    /* Cleanup and return.
+     */
+    if (tmp_name) 
+    {
+        delete tmp_name;
+        delete tmp_id;
+    }
+    return n;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Find object by name.
+
+  The eObject::ns_get() function finds the first named object matching to name in speficied 
+  namespace. If name is OS_NULL, the function returns the first name in namespace
+  (if any).  Name may contain name space identifier, for example "myid/myname" in which case 
+  the name space identifier given as argumenr is ignored.
+  
+  @param   name Pointer to eVariable or eName, holding name to search for. Name can be prefixed
+           by name space identifier. If OS_NULL, then pointer to first name in name space
+           is returned.
+  @param   Name space identifier string. OS_NULL to specify name space of this object.
+  @return  Pointer to name. OS_NULL if none found.
+
+****************************************************************************************************
+*/
+eObject *eObject::ns_get(
+    os_char *name,
+    os_char *namespace_id)
+{
+    eName 
+        *o;
+
+    o  = ns_first(name, namespace_id);
+    if (o) return o->parent();
+    return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Find name space by naespace identifier.
 
-  The eObject::getnamespace() function adds name to this object and maps it to name space.
+  The eObject::findnamespace() function adds name to this object and maps it to name space.
   
   @param   namespace_id Identifier for the name space. OS_NULL refers to first parent name space,
            regardless of name space identifier.
@@ -421,7 +560,7 @@ void eObject::deletenamespace()
 
 ****************************************************************************************************
 */
-eNameSpace *eObject::getnamespace(
+eNameSpace *eObject::findnamespace(
 	os_char *namespace_id)
 {
 	eObject

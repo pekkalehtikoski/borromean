@@ -80,12 +80,12 @@ public:
 
 	/* Get next name in namespace.
      */
-	eName *nextname(
+	eName *ns_next(
 		os_boolean name_match = OS_TRUE);
 
     /** Get name space to which this name is mapped to.
      */
-    inline eNameSpace *getnamespace() 
+    inline eNameSpace *nspace() 
 	{
 		return m_index;
 	}

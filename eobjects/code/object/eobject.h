@@ -313,16 +313,34 @@ public:
 
     /* Create name space for this object.
      */
-	void createnamespace(
+	void ns_create(
 		os_char *namespace_id = OS_NULL);
 
 	/* Delete this object's name space.
      */
-	void deletenamespace();
+	void ns_delete();
 
-    /* Get pointer to name space.
+	/* Find eName by name and name space.
      */
-	eNameSpace *getnamespace(
+	eName *ns_first(
+        os_char *name = OS_NULL,
+        os_char *namespace_id = OS_NULL); 
+
+    /* Find eName by name and name space.
+     */
+    eName *ns_firstv(
+        eVariable *name = OS_NULL,
+        os_char *namespace_id = OS_NULL);
+
+    /* Find object by name.
+     */
+    eObject *ns_get(
+        os_char *name,
+        os_char *namespace_id = OS_NULL);
+
+    /* Find name space by name space ID. 
+     */
+	eNameSpace *findnamespace(
 		os_char *namespace_id = OS_NULL);
 
 	/* Give name to this object.
@@ -331,10 +349,6 @@ public:
 		os_char *name,
 		os_char *namespace_id = OS_NULL,
 		os_int flags = 0);
-
-	/* Get first indexed variable containing the name. 
-     */
-	/* eName *getfirstname(os_char *namestr); */
 
     /*@}*/
 

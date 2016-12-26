@@ -202,7 +202,7 @@ void eNameSpace::unmap_all()
 
 ****************************************************************************************************
 */
-eName *eNameSpace::ixgetfirst(
+eName *eNameSpace::findname(
     eVariable *x)
 {
     eName

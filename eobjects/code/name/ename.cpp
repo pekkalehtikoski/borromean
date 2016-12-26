@@ -172,9 +172,9 @@ failed:
 /**
 ****************************************************************************************************
 
-  @brief Get next child of same parent object.
+  @brief Get the next next name in same namespace.
 
-  The eName::next() function returns pointer to next name in namespace. 
+  The eName::ms_next() function returns pointer to next name in namespace. 
   Next name is the next child of the same parent object as this object (it could be called 
   sibling). 
 
@@ -185,7 +185,7 @@ failed:
 
 ****************************************************************************************************
 */
-eName *eName::nextname(
+eName *eName::ns_next(
 	os_boolean name_match)
 {
     eName 
