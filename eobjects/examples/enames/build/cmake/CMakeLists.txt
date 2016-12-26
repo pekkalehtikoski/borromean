@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
 # Set project name (= project root folder name).
-set(E_PROJECT "econtainer")
+set(E_PROJECT "enames")
 project(${E_PROJECT})
 
 # include build information common to all projects.

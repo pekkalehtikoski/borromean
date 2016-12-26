@@ -1,8 +1,8 @@
-# eobjects/examples/container/build/cmake/CmakeLists.txt - Cmake build for eobject container example.
+# eobjects/examples/evariables/build/cmake/CmakeLists.txt - Cmake build for eobjects variable example.
 cmake_minimum_required(VERSION 2.8.9)
 
 # Set project name (= project root folder name).
-set(E_PROJECT "econtainer")
+set(E_PROJECT "evariables")
 project(${E_PROJECT})
 
 # include build information common to all projects.
@@ -13,6 +13,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $ENV{E_BIN})
 
 # Set path to source files.
 set(E_SOURCE_PATH "$ENV{E_ROOT}/eobjects/examples/${E_PROJECT}/code")
+
+message(${E_SOURCE_PATH})
+message(${E_PROJECT})
 
 # Set include paths.
 include_directories($ENV{E_INCLUDE})
