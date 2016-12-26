@@ -1,6 +1,6 @@
 /**
 
-  @file    examples/simple/variables/eobjects_variable_example.cpp
+  @file    eobjects_variable_example.cpp
   @brief   Example code about using eobjects variable class.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -21,9 +21,9 @@
 /**
 ****************************************************************************************************
 
-  @brief Process entry point.
+  @brief Application entry point.
 
-  The emain() function is OS independent entry point.
+  The emain() function is eobjects application's entry point.
 
   @param   argc Number of command line arguments.
   @param   argv Array of string pointers, one for each command line argument. UTF8 encoded.
@@ -46,20 +46,21 @@ os_int emain(
     dar = var = "abba ";
     dar = 10;
     dar = u;
+	osal_console_write(dar.gets());
+	osal_console_write("\n");
 
     var += dar;
     var += " ja nasse";
     var += " ja pulla";
 
-	econsole_write(var.gets(), OSAL_DEBUG_CONSOLE_NR);
-	econsole_write("\n", OSAL_DEBUG_CONSOLE_NR);
-
+	osal_console_write(var.gets());
+	osal_console_write("\n");
 
     dar = 1110.018;
 	dar.setddigs(5);
-	econsole_write(dar.gets(), OSAL_DEBUG_CONSOLE_NR);
-	econsole_write("\n", OSAL_DEBUG_CONSOLE_NR);
-
+    dar += var;
+	osal_console_write(dar.gets());
+	osal_console_write("\n");
 
     return 0;
 }
