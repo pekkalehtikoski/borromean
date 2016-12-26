@@ -82,7 +82,7 @@ void ePointer::set(
         /* If this is pointer target side, this cannot no longer be
            referenced. 
          */
-        if (getoid() == EOID_PPTR_TARGET)
+        if (oid() == EOID_PPTR_TARGET)
         {
             m_my_pair->m_my_pair = OS_NULL;
         }
@@ -93,7 +93,7 @@ void ePointer::set(
         {
             /* If right pair is already there, do nothing.
              */
-            if (m_my_pair->getparent() == ptr) return;
+            if (m_my_pair->parent() == ptr) return;
             
             /* Delete ePointer object at target.
              */
@@ -109,7 +109,7 @@ void ePointer::set(
        Also set() function can be used on target end only to detach
        pointer pair.
      */
-    if (ptr == OS_NULL || getoid() == EOID_PPTR_TARGET) return;
+    if (ptr == OS_NULL || oid() == EOID_PPTR_TARGET) return;
 
     /* Create ePointer object to target side and make pair.
      */

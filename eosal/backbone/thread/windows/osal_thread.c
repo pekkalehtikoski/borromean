@@ -55,7 +55,7 @@ typedef struct
 }
 osalWindowsThreadPrms;
 
-/** Boost specific thread handle.
+/** Operating system specific thread handle.
 */
 typedef struct
 {

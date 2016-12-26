@@ -174,19 +174,18 @@ failed:
 
   @brief Get next child of same parent object.
 
-  The eName::getnext() function returns pointer to the next child of the same parent object
-  as this object (it could be called sibling). The object is selected by object identifier oid 
-  given as argument.
+  The eName::getnext() function returns pointer to next name in namespace. 
+  Next name is the next child of the same parent object as this object (it could be called 
+  sibling). 
 
-  @param   name_match OS_TRUE (default) to get next indexed variable with same value as
-		   this variable. OS_FALSE to get any following indexed variable, regardless 
-		   of the value.
+  @param   name_match OS_TRUE (default) to get next name inly if it is same name as this object.
+           OS_FALSE to get next name in name space, regardless of the value.
 
-  @return  Pointer to next indexed variable, or OS_NULL if no matching object was found. 
+  @return  Pointer to next name, or OS_NULL if no matching object was found. 
 
 ****************************************************************************************************
 */
-eName *eName::ixgetnext(
+eName *eName::nextname(
 	os_boolean name_match)
 {
     eName 

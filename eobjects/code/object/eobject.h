@@ -83,12 +83,12 @@ public:
 
     /* Get class identifier
      */
-    virtual os_int getclassid() {return ECLASSID_OBJECT;}
+    virtual os_int classid() {return ECLASSID_OBJECT;}
        
     /* Allocate new child object by class identifier.
      */
     eObject *newchild(
-        os_int classid,
+        os_int cid,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
@@ -134,7 +134,7 @@ public:
 
     /** Get object flags.
      */
-    inline os_int getflags()
+    inline os_int flags()
     {
 		if (mm_handle) return mm_handle->m_oflags;
 		return 0;
@@ -189,9 +189,9 @@ public:
 
     /** Get object identifier.
      */
-    inline os_int getoid() 
+    inline os_int oid() 
     {
-		if (mm_handle) return mm_handle->getoid();
+		if (mm_handle) return mm_handle->oid();
 		return 0;
     }
 
@@ -206,7 +206,7 @@ public:
 
     /** Move trough object hirarcy.
      */
-    inline eObject *getparent() 
+    inline eObject *parent() 
 	{
 		return mm_parent;
 	}
@@ -281,7 +281,7 @@ public:
      */
     virtual eStatus writer(
         eStream *stream, 
-        os_int flags) 
+        os_int sflags) 
     {
         return ESTATUS_SUCCESS;
     }
@@ -292,7 +292,7 @@ public:
      */
     virtual eStatus reader(
         eStream *stream, 
-        os_int flags) 
+        os_int sflags) 
     {
         return ESTATUS_SUCCESS;
     }

@@ -35,14 +35,14 @@ eClassList *eclasslist = &eclasslist_buf;
 ****************************************************************************************************
 */
 void eclasslist_add(
-    os_int classid, 
+    os_int cid, 
     eNewObjFunc func)
 {
 //    eclasslist->func[0] = eVariable::newobj;
 
-    if (classid > 0 && classid <= ECLASSID_MAX)
+    if (cid > 0 && cid <= ECLASSID_MAX)
     {
-        eclasslist->func[classid] = func;
+        eclasslist->func[cid] = func;
     }
 }
 
@@ -77,19 +77,19 @@ void eclasslist_add_eobjects()
 
   The eclasslist_get_func function...
 
-  @param   classid Class ifentifier to look for.
+  @param   cid Class ifentifier to look for.
   @return  Pointer to static constructor function, or OS_NULL if none found.
 
 ****************************************************************************************************
 */
 eNewObjFunc eclasslist_get_func(
-    os_int classid)
+    os_int cid)
 {
     if (eclasslist == OS_NULL) 
         eclasslist_add_eobjects();
 
-    if (classid > 0 && classid <= ECLASSID_MAX) 
-        return eclasslist->func[classid];
+    if (cid > 0 && cid <= ECLASSID_MAX) 
+        return eclasslist->func[cid];
 
     return OS_NULL;
 }

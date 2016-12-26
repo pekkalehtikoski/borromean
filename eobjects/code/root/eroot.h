@@ -61,7 +61,7 @@ public:
 
     /* Get class identifier.
      */
-    virtual os_int getclassid() {return ECLASSID_ROOT;}
+    virtual os_int classid() {return ECLASSID_ROOT;}
 
     /* Static constructor function for generating instance by class list.
      */

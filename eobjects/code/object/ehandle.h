@@ -104,7 +104,7 @@ public:
 
     /** Get object flags.
      */
-    inline os_int getflags()
+    inline os_int flags()
     {
         return m_oflags;
     }
@@ -157,7 +157,7 @@ public:
 
     /** Get object identifier.
      */
-    inline os_int getoid() 
+    inline os_int oid() 
     {
         return m_oid;
     }
@@ -169,7 +169,7 @@ public:
 
     /** Move trough object hirarcy.
      */
-    // inline e_oix getparent() {return m_parent;}
+    // inline e_oix parent() {return m_parent;}
 
 	/* Get first child object identified by oid.
      */

@@ -190,7 +190,7 @@ eObject::~eObject()
     }
 	*/
 
-    if (mm_parent && (getflags() & EOBJ_FAST_DELETE) == 0)
+    if (mm_parent && (flags() & EOBJ_FAST_DELETE) == 0)
     {
         mm_parent->rbtree_remove(this);
     }
@@ -206,14 +206,14 @@ eObject::~eObject()
   constructor member function corresponding to classid given as argument is found, then an
   object of that class is created as child object if this object.
 
-  @param   classid Class identifier, specifies what kind of object to create.
+  @param   cid Class identifier, specifies what kind of object to create.
   @param   oid Object identifier for the new object.
   @return  Pointer to newly created child object, or OS_NULL if none was found.
 
 ****************************************************************************************************
 */
 eObject *eObject::newchild(
-    os_int classid,
+    os_int cid,
     e_oid oid,
 	os_int flags) 
 {
@@ -222,7 +222,7 @@ eObject *eObject::newchild(
 
     /* Look for static constructor by class identifier. If not found, return OS_NULL.
      */
-    func = eclasslist_get_func(classid);
+    func = eclasslist_get_func(cid);
     if (func == OS_NULL) return OS_NULL;
 
     /* Create new object of the class.
@@ -448,7 +448,7 @@ eNameSpace *eObject::getnamespace(
 	 */
 	do
 	{
-		if (getflags() & EOBJ_HAS_NAMESPACE)
+		if (flags() & EOBJ_HAS_NAMESPACE)
 		{
 			nspace = eNameSpace::cast(o->getfirst(EOID_NAMESPACE));
 			if (nspace)
@@ -1363,7 +1363,7 @@ void eObject::delete_case6(
   the stream.
   
   @param  stream The stream to write to.
-  @param  flags Serialization flags.
+  @param  sflags Serialization flags.
 
   @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
           fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
@@ -1373,7 +1373,7 @@ void eObject::delete_case6(
 */
 eStatus eObject::write(
     eStream *stream, 
-    os_int flags) 
+    os_int sflags) 
 {
     eObject 
         *child;
@@ -1383,9 +1383,9 @@ eStatus eObject::write(
 
     /* Write class identifier, object identifier and persistant object flags.
      */
-    if (*stream << getclassid()) goto failed;
-    if (*stream << getoid()) goto failed;
-    if (*stream << getflags() & (EOBJ_SERIALIZATION_MASK)) goto failed;
+    if (*stream << classid()) goto failed;
+    if (*stream << oid()) goto failed;
+    if (*stream << flags() & (EOBJ_SERIALIZATION_MASK)) goto failed;
 
     /* Calculate and write number of attachments.
      */
@@ -1398,7 +1398,7 @@ eStatus eObject::write(
     
     /* Write the object content.
      */
-    if (writer(stream, flags)) goto failed;
+    if (writer(stream, sflags)) goto failed;
 
     /* Write attachments.
      */
@@ -1406,7 +1406,7 @@ eStatus eObject::write(
     {
         if (child->isserattachment()) 
         {
-            if (child->write(stream, flags)) goto failed;
+            if (child->write(stream, sflags)) goto failed;
         }
     }
     
@@ -1430,7 +1430,7 @@ failed:
   child object and reads child object content and attachments.
   
   @param  stream The stream to write to.
-  @param  flags Serialization flags.
+  @param  sflags Serialization flags.
 
   @return If successfull the function returns pointer to te new child object. 
           If reading object from stream fails, value OS_NULL is returned. 
@@ -1439,10 +1439,10 @@ failed:
 */
 eObject *eObject::read(
     eStream *stream, 
-    os_int flags)
+    os_int sflags)
 {
     os_int
-        classid,
+        cid,
         oid,
         oflags;
 
@@ -1456,14 +1456,14 @@ eObject *eObject::read(
     /* Read class identifier, object identifier, persistant object flags
        and number of attachments.
      */
-    if (*stream >> classid) goto failed;
+    if (*stream >> cid) goto failed;
     if (*stream >> oid) goto failed;
     if (*stream >> oflags) goto failed;
     if (*stream >> n_attachements) goto failed;
 
     /* Generate new object.
      */
-    child = newchild(classid, oid);
+    child = newchild(cid, oid);
     if (child == OS_NULL) goto failed;
 
     /* Set flags.
@@ -1472,13 +1472,13 @@ eObject *eObject::read(
     
     /* Read the object content.
      */
-    if (child->reader(stream, flags)) goto failed;
+    if (child->reader(stream, sflags)) goto failed;
 
     /* Read attachments.
      */
     for (i = 0; i<n_attachements; i++)
     {
-        if (read(stream, flags) == OS_NULL) goto failed;
+        if (read(stream, sflags) == OS_NULL) goto failed;
     }
 
     /* Object succesfully read, return pointer to it.

@@ -63,7 +63,7 @@ public:
 
 	/* Get class identifier.
 	*/
-	virtual os_int getclassid() { return ECLASSID_STREAM; }
+	virtual os_int classid() { return ECLASSID_STREAM; }
 
 	/* Static constructor function.
 	*/

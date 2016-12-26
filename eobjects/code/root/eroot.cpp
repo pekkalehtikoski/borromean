@@ -116,7 +116,7 @@ void eRoot::newhandle(
 void eRoot::closehandle(
     eObject *obj)
 {
-	if (mm_parent && (getflags() & EOBJ_FAST_DELETE) == 0)
+	if (mm_parent && (flags() & EOBJ_FAST_DELETE) == 0)
 	{
 //		m_parent->rbtree_remove(this);
 	}

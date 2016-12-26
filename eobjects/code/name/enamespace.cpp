@@ -115,7 +115,7 @@ eNameSpace::eNameSpace(
 eNameSpace::~eNameSpace()
 {
 	eObject
-		*parent;
+		*p;
 
     /* Unmap indexed variables.
      */
@@ -123,13 +123,13 @@ eNameSpace::~eNameSpace()
 
 	/* If this is name space.
 	 */
-	if (getoid() == EOID_NAMESPACE)
+	if (oid() == EOID_NAMESPACE)
 	{
-		parent = getparent();
+		p = parent();
 
 		/* If we have parent object, flag parent that it has name space.
 		 */
-		if (parent) parent->clearflags(EOBJ_HAS_NAMESPACE);
+		if (p) p->clearflags(EOBJ_HAS_NAMESPACE);
 	}
 }
 

@@ -66,7 +66,7 @@ public:
 
     /* Get class identifier.
      */
-    virtual os_int getclassid() {return ECLASSID_NAME;}
+    virtual os_int classid() {return ECLASSID_NAME;}
 
     /* Static constructor function for generating instance by class list.
      */
@@ -78,17 +78,10 @@ public:
         return new eName(parent, oid, flags);
     }
 
-	/* Get next object identified by oid.
+	/* Get next name in namespace.
      */
-	eName *ixgetnext(
+	eName *nextname(
 		os_boolean name_match = OS_TRUE);
-
-	/** Same as ixgetnext but used with names.
-     */
-	inline eName *getnextname()
-	{
-		return ixgetnext();
-	}
 
     /** Get name space to which this name is mapped to.
      */

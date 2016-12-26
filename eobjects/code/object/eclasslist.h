@@ -42,7 +42,7 @@ eClassList;
 /* Add class to class list.
  */
 void eclasslist_add(
-    os_int classid, 
+    os_int cid, 
     eNewObjFunc func);
 
 /* Add a eobjects base classes to class list.
@@ -52,6 +52,6 @@ void eclasslist_add_eobjects();
 /* Get static constuctor function pointer by class ID.
  */
 eNewObjFunc eclasslist_get_func(
-    os_int classid);
+    os_int cid);
 
 #endif

@@ -61,7 +61,7 @@ public:
 
 	/* Get class identifier.
  		*/
-	virtual os_int getclassid() { return ECLASSID_POINTER; }
+	virtual os_int classid() { return ECLASSID_POINTER; }
 
 	/* Static constructor function.
 	*/
@@ -95,7 +95,7 @@ public:
      */
     inline eObject *get()
     {
-        if (m_my_pair) return m_my_pair->getparent();
+        if (m_my_pair) return m_my_pair->parent();
         return OS_NULL;
     }
    

@@ -156,10 +156,10 @@ eHandle::~eHandle()
   @brief Allocate new child object of any listed class.
 
   The eHandle::newchild function looks from global class list by class identifier. If static 
-  constructor member function corresponding to classid given as argument is found, then an
+  constructor member function corresponding to cid given as argument is found, then an
   object of that class is created as child object if this object.
 
-  @param   classid Class identifier, specifies what kind of object to create.
+  @param   cid Class identifier, specifies what kind of object to create.
   @param   oid Object identifier for the new object.
   @return  Pointer to newly created child object, or OS_NULL if none was found.
 
@@ -167,7 +167,7 @@ eHandle::~eHandle()
 */
 #if 0
 eHandle *eHandle::newchild(
-    e_oid classid,
+    e_oid cid,
     e_oid oid,
 	os_int flags) 
 {
@@ -176,7 +176,7 @@ eHandle *eHandle::newchild(
 
     /* Look for static constructor by class identifier. If not found, return OS_NULL.
      */
-    func = eclasslist_get_func(classid);
+    func = eclasslist_get_func(cid);
     if (func == OS_NULL) return OS_NULL;
 
     /* Create new object of the class.
@@ -1464,9 +1464,9 @@ eStatus eHandle::write(
 
     /* Write class identifier, object identifier and persistant object flags.
      */
-    if (*stream << getclassid()) goto failed;
-    if (*stream << getoid()) goto failed;
-    if (*stream << getflags() & (EOBJ_SERIALIZATION_MASK)) goto failed;
+    if (*stream << classid()) goto failed;
+    if (*stream << oid()) goto failed;
+    if (*stream << flags() & (EOBJ_SERIALIZATION_MASK)) goto failed;
 
     /* Calculate and write number of attachments.
      */
@@ -1524,7 +1524,7 @@ eHandle *eHandle::read(
     os_int flags)
 {
     os_int
-        classid,
+        cid,
         oid,
         oflags;
 
@@ -1538,14 +1538,14 @@ eHandle *eHandle::read(
     /* Read class identifier, object identifier, persistant object flags
        and number of attachments.
      */
-    if (*stream >> classid) goto failed;
+    if (*stream >> cid) goto failed;
     if (*stream >> oid) goto failed;
     if (*stream >> oflags) goto failed;
     if (*stream >> n_attachements) goto failed;
 
     /* Generate new object.
      */
-    child = newchild(classid, oid);
+    child = newchild(cid, oid);
     if (child == OS_NULL) goto failed;
 
     /* Set flags.
