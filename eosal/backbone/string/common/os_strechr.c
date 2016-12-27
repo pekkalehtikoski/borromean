@@ -22,24 +22,26 @@
   @brief Find last matching character within string.
   @anchor os_strechr
 
-  The os_strchr() function finds the first occurrence of c in string, or it 
+  The os_sterchr() function finds the last occurrence of c in string, or it 
   returns OS_NULL if c is not found. The terminating null character is included in the 
   search.
 
   @param   str Pointer to string from which to search. If the str is OS_NULL the function
 		   will return OS_NULL.
-  @param   c32 UTF32 character to search for. 
+  @param   c32 UTF32 character to search for. Current implementation works only for 
+           ASCII characters from 0 ... 0x7F.
 
-  @return  Pointer to the first occurrence of c in string, or OS_NULL if c is not found.
+  @return  Pointer to the last occurrence of c in string, or OS_NULL if c is not found.
 
 ****************************************************************************************************
 */
-os_char *os_strchr(
+os_char *os_strechr(
     os_char *str,
 	os_uint c32)
 {
 	os_char
-		c;
+		c,
+        *p;
 
 #if OSAL_UTF8
 	os_char
@@ -53,8 +55,11 @@ os_char *os_strchr(
 	 */
 	if (str == OS_NULL) return OS_NULL;
 
-#if OSAL_UTF8
+    /* No match found yet
+     */
+    p = OS_NULL;
 
+#if OSAL_UTF8
 	/* Characters above 127 will do require more than one UTF8 byte, convert UTF32 character
 	   to UTF8 string, and search with string.
 	 */
@@ -74,9 +79,14 @@ os_char *os_strchr(
 
 		/* Use find substring function.
 		 */
-		return osal_string_find_string(str, substr, OSAL_STRING_DEFAULT);
+        while (OS_TRUE)
+        {
+		    str = os_strstr(str, substr, OSAL_STRING_DEFAULT);
+            if (str == OS_NULL) return p;
+            p = str;
+            str += n;
+        }
 	}
-
 #endif
 
 	/* Find ASCII character.
@@ -84,11 +94,11 @@ os_char *os_strchr(
 	c = (os_char)c32;
 	do 
 	{
-		if (*str == c) return str;
+		if (*str == c) p = str;
 	} 
 	while (*(str++));
 
-	/* Character not found, return OS_NULL.
+	/* Return pointer to last match, or OS_NULL is none.
 	 */
-	return OS_NULL;
+	return p;
 }

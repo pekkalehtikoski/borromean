@@ -34,12 +34,12 @@
  */
 #define OSAL_STRING_DEFAULT 0
 
-/** Search for item name only. If specified the osal_string_find_string() function will 
+/** Search for item name only. If specified the os_strchr() function will 
     search only for item name, whole word, not value.
  */
 #define OSAL_STRING_SEARCH_ITEM_NAME 1 
 
-/** Search first line only. If specified the osal_string_find_string(), 
+/** Search first line only. If specified the os_strchr(), 
     osal_string_get_item_value(), osal_string_get_item_int()...  functions will search only
 	first line of the sting.
  */
@@ -91,32 +91,17 @@ os_char *os_strchr(
     os_char *str,
 	os_uint c32);
 
+/* Find last matching character within string.
+ */
+os_char *os_strechr(
+    os_char *str,
+	os_uint c32);
+
 /* Find a substring within a string. Used also to find named items from list.
  */
-os_char *osal_string_find_string(
+os_char *os_strstr(
     os_char *str,
 	const os_char *substr,
-	os_short flags);
-
-/* Find a value of specified list item.
- */
-os_char *osal_string_get_item_value(
-    os_char *list_str,
-	const os_char *item_name,
-	os_memsz *n_chars,
-	os_short flags);
-
-/* Find beginning of next line in list string.
- */
-os_char *osal_string_get_next_line(
-    os_char *list_str);
-
-/* Get integer value of an item in list string.
- */
-os_long osal_string_get_item_int(
-    os_char *list_str,
-	const os_char *item_name,
-	os_long default_value,
 	os_short flags);
 
 /* Convert integer to string.
@@ -125,12 +110,6 @@ os_memsz osal_int_to_string(
     os_char *buf,
 	os_memsz buf_sz,
 	os_long x);
-
-/* Convert string to integer.
- */
-os_long osal_string_to_int(
-    os_char *str,
-	os_memsz *count);
 
 /*@}*/
 

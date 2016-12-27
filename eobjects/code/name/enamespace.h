@@ -18,6 +18,14 @@
 #ifndef ENAMESPACE_INCLUDED
 #define ENAMESPACE_INCLUDED
 
+/* Name space identifiers. These are followed by '/', thus for example path to thread looks like 
+   "/myobject..." or process "//myobject".
+ */
+#define E_PROCESS_NS "/"
+#define E_THREAD_NS ""
+#define E_PARENT_NS ".."
+#define E_THIS_NS "."
+
 /**
 ****************************************************************************************************
 

@@ -1,6 +1,6 @@
 /**
 
-  @file    string/osal_string_find_string.c
+  @file    string/os_strchr.c
   @brief   Find a substring within a string.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -20,9 +20,9 @@
 ****************************************************************************************************
 
   @brief Find a substring within a string.
-  @anchor osal_string_find_string
+  @anchor os_strstr
 
-  The osal_string_find_string() function finds the first occurrence of substr within string, 
+  The os_strstr() function finds the first occurrence of substr within string, 
   or it returns OS_NULL if the substring is not found. 
 
   @param   str Pointer to string from which to search. If the str is OS_NULL the function
@@ -41,7 +41,7 @@
 
 ****************************************************************************************************
 */
-os_char *osal_string_find_string(
+os_char *os_strstr(
     os_char *str,
 	const os_char *substr,
 	os_short flags)

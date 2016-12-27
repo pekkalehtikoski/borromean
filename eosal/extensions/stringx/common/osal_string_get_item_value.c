@@ -65,7 +65,7 @@ os_char *osal_string_get_item_value(
 
 	/* Find item by name.
 	 */
-	p = osal_string_find_string(list_str, item_name, 
+	p = os_strstr(list_str, item_name, 
 		(os_short)(flags|OSAL_STRING_SEARCH_ITEM_NAME));
 
 	/* If not found, just return OS_NULL.

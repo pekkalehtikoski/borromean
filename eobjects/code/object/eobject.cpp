@@ -482,7 +482,7 @@ eName *eObject::ns_firstv(
     if (name->type() == OS_STRING) 
     {
         p = name->gets();
-        q = os_strchr(p, '/');
+        q = os_strechr(p, '/');
         if (q)
         {
             tmp_id = new eVariable;

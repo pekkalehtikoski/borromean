@@ -264,7 +264,7 @@ eosal/osalx.h
 eosal/osal.h
 /coderoot/borromean/eosal/extensions/stringx/common/eosal/osal.h
 
-/coderoot/borromean/eosal/extensions/stringx/common/osal_string_find_string.c
+/coderoot/borromean/eosal/extensions/stringx/common/os_strchr.c
 eosal/osalx.h
 /coderoot/borromean/eosal/extensions/stringx/common/eosal/osalx.h
 

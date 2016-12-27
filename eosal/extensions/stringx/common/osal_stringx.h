@@ -15,88 +15,21 @@
 
 ****************************************************************************************************
 */
-#ifndef OSAL_STRING_INCLUDED
-#define OSAL_STRING_INCLUDED
+#ifndef OSAL_STRINGX_INCLUDED
+#define OSAL_STRINGX_INCLUDED
+
 
 
 /** 
 ****************************************************************************************************
 
-  @name Flags For String Functions
+  @name Extended string manipulation and conversions functions
 
   The ...
 
 ****************************************************************************************************
  */
 /*@{*/
-
-/** Default flag. Use the OSAL_STRING_DEFAULT (0) to specify that there are no specifal flags.
- */
-#define OSAL_STRING_DEFAULT 0
-
-/** Search for item name only. If specified the osal_string_find_string() function will 
-    search only for item name, whole word, not value.
- */
-#define OSAL_STRING_SEARCH_ITEM_NAME 1 
-
-/** Search first line only. If specified the osal_string_find_string(), 
-    osal_string_get_item_value(), osal_string_get_item_int()...  functions will search only
-	first line of the sting.
- */
-#define OSAL_STRING_SEARCH_LINE_ONLY 2
-
-/* #define OSAL_STRING_SEARCH_ITEM_ONLY 4 */
-
-/*@}*/
-
-/** 
-****************************************************************************************************
-
-  @name String Manipulation Functions
-
-  The ...
-
-****************************************************************************************************
- */
-/*@{*/
-
-/* Copy string.
- */
-void os_strncpy(
-    os_char *dst,
-    const os_char *src,
-    os_memsz dst_size);
-
-/* Append a string to another string.
- */
-void os_strncat(
-    os_char *dst,
-    const os_char *src,
-    os_memsz dst_size);
-
-/* Compare two strings, case sensitive.
- */
-os_int os_strcmp(
-    const os_char *str1,
-    const os_char *str2);
-
-/* Get string size in bytes.
- */
-os_memsz os_strlen(
-    const os_char *str);
-
-/* Find a character within string.
- */
-os_char *os_strchr(
-    os_char *str,
-	os_uint c32);
-
-/* Find a substring within a string. Used also to find named items from list.
- */
-os_char *osal_string_find_string(
-    os_char *str,
-	const os_char *substr,
-	os_short flags);
 
 /* Find a value of specified list item.
  */
@@ -118,13 +51,6 @@ os_long osal_string_get_item_int(
 	const os_char *item_name,
 	os_long default_value,
 	os_short flags);
-
-/* Convert integer to string.
- */
-os_memsz osal_int_to_string(
-    os_char *buf,
-	os_memsz buf_sz,
-	os_long x);
 
 /* Convert string to integer.
  */

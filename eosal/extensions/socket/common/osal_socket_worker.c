@@ -132,7 +132,8 @@ void osal_socket_join_to_worker(
 	 */
 	if (new_sockworker)
 	{
-		osal_thread_create(osal_socket_worker_thread, sockworker, OSAL_THREAD_DETACHED, 0, "sockwork");
+		osal_thread_create(osal_socket_worker_thread, sockworker, 
+            OSAL_THREAD_DETACHED, 0, "sockwork");
 	}
 }
 

@@ -74,7 +74,7 @@ os_char *os_strchr(
 
 		/* Use find substring function.
 		 */
-		return osal_string_find_string(str, substr, OSAL_STRING_DEFAULT);
+		return os_strstr(str, substr, OSAL_STRING_DEFAULT);
 	}
 
 #endif
