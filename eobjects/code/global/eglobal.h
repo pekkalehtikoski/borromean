@@ -37,6 +37,10 @@ typedef struct eGlobal
     os_boolean initialized;
 
     eHandleRoot hroot;
+
+    /* Process name space
+     */
+    eNameSpace *process_ns;
 }
 eGlobal;
 

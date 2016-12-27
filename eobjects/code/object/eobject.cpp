@@ -447,7 +447,7 @@ eName *eObject::ns_first(
 
   @brief Find eName by name and name space.
 
-  The eObject::ns_first() function finds the first eName object matching to name. If name
+  The eObject::ns_firstv() function finds the first eName object matching to name. If name
   is OS_NULL, the function returns the first name in namespace (if any).
   Name may contain name space identifier, for example "myid/myname" in which case the name 
   space identifier given as argumenr is ignored.
@@ -555,22 +555,71 @@ eObject *eObject::ns_get(
   
   @param   namespace_id Identifier for the name space. OS_NULL refers to first parent name space,
            regardless of name space identifier.
-  @param   flags 
+  @param   is_process_ns
   @return  Pointer to name space, eNameSpace class. OS_NULL if none found.
 
 ****************************************************************************************************
 */
 eNameSpace *eObject::findnamespace(
-	os_char *namespace_id)
+	os_char *namespace_id,
+    os_boolean *is_process_ns)
 {
 	eObject
 		*o;
 	
 	eNameSpace
-		*nspace;
+		*ns;
 
-	/* If name space id refers to process name space, just return pointer to it.
+    eHandle
+        *h,
+        *ns_h;
+
+
+
+	/* If name space id NULL, it is same as parent name space ??????????????
 	 */
+    if (namespace_id == OS_NULL)
+    {
+        namespace_id = E_PARENT_NS;
+    }
+
+    switch (*namespace_id)
+    {
+	    /* If name space id refers to process name space, just return pointer to it.
+	     */
+        case '/':
+            if (is_process_ns) *is_process_ns = OS_TRUE;
+            return eglobal->process_ns;
+
+	    /* If thread name space, just return pointer to the name space.
+	     */
+        case '\0':
+            if (is_process_ns) *is_process_ns = OS_FALSE;
+            if (mm_root == OS_NULL) return OS_NULL;
+            return eNameSpace::cast(mm_root->first(EOID_NAMESPACE));
+
+        default:
+            if (is_process_ns) *is_process_ns = OS_FALSE;
+            break;
+    }
+
+    /* Look upwards for parent or matching name space.
+     */
+/*    h = mm_handle;
+    while (h)
+    {
+        if (h->flags() & EOBJ_HAS_NAMESPACE)
+        {
+            ns_h = h->first(EOID_NAMESPACE);
+            ns = eNameSpace::cast(ns_h->m_object));
+
+        }
+        h = h->parent();        
+    }
+*/
+        
+#if 0
+    if (!os_strcmp)
 
 	o = this;
 
@@ -600,6 +649,7 @@ eNameSpace *eObject::findnamespace(
 		o = o->mm_parent;
 	}
 	while (o);
+#endif
 
 	return OS_NULL;
 }

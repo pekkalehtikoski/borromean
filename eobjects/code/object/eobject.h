@@ -341,7 +341,8 @@ public:
     /* Find name space by name space ID. 
      */
 	eNameSpace *findnamespace(
-		os_char *namespace_id = OS_NULL);
+		os_char *namespace_id = OS_NULL,
+        os_boolean *is_process_ns = OS_NULL);
 
 	/* Give name to this object.
      */
