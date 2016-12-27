@@ -169,7 +169,7 @@ public:
 
     /** Move trough object hirarcy.
      */
-    // inline e_oix parent() {return m_parent;}
+    eHandle *parent() {return m_parent;}
 
 	/* Get first child object identified by oid.
      */
@@ -241,6 +241,10 @@ protected:
      */
     os_int m_oflags;
 
+	/** Pointer to parent object of this object.
+     */
+	eHandle *m_parent;
+
 	/** Left child in red/black tree.
      */
     eHandle *m_left;
@@ -298,7 +302,7 @@ protected:
 #if EOBJECT_DBTREE_DEBUG
 	/* Red/Black tree: Get grandparent.
      */
-    eHandle *grandparent(
+    eHandle *rb_grandparent(
         eHandle *n); 
 
 	/* Red/Black tree: Get sibling.
@@ -337,7 +341,7 @@ protected:
 #else
 	/** Red/Black tree: Get grand parent.
      */
-    inline static eHandle *grandparent(
+    inline static eHandle *rb_grandparent(
         eHandle *n)
     {
         return n->m_up->m_up;

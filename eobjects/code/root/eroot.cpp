@@ -100,6 +100,7 @@ void eRoot::newhandle(
 	 */
 	handle->clear(obj, oid, flags);
 	obj->mm_handle = handle;
+    if (parent) handle->m_parent = parent->mm_handle;
 
 	/* Save parent object pointer. If parent object is given, join the new object
 	to red black tree of parent's children.
@@ -116,8 +117,8 @@ void eRoot::newhandle(
 void eRoot::closehandle(
     eObject *obj)
 {
-	if (mm_parent && (flags() & EOBJ_FAST_DELETE) == 0)
+/* 	if (mm_parent && (flags() & EOBJ_FAST_DELETE) == 0)
 	{
-//		m_parent->rbtree_remove(this);
-	}
+		m_parent->rbtree_remove(this);
+	} */
 }

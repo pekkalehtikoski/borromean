@@ -208,7 +208,13 @@ public:
      */
     inline eObject *parent() 
 	{
-		return mm_parent;
+		if (mm_handle) 
+        {
+            eHandle *h;
+            h = mm_handle->parent();
+            if (h) return h->m_object;
+        }
+		return OS_NULL;
 	}
 
 	/* Get first child object identified by oid.
@@ -448,10 +454,6 @@ protected:
 	/* Pointer to object's handle.
      */
 	eHandle *mm_handle;
-
-	/** Pointer to parent object of this object.
-     */
-	eObject *mm_parent;
 
 	/* Delete all child objects.
      */

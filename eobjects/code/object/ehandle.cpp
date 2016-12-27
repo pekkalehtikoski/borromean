@@ -601,7 +601,7 @@ void eHandle::delete_children()
 
   @brief Red/Black tree: Get grandparent.
 
-  The eHandle::grandparent() function returns pointer to object's grandparent in red/black tree.
+  The eHandle::rb_grandparent() function returns pointer to object's grandparent in red/black tree.
   The grandparent of a node, its parent's parent. We use assertions to make sure that 
   we don't attempt to access the grandparent of a node that doesn't have one, such 
   as the root node or its children: 
@@ -611,7 +611,7 @@ void eHandle::delete_children()
 
 ****************************************************************************************************
 */
-eHandle *eHandle::grandparent(
+eHandle *eHandle::rb_grandparent(
     eHandle *n) 
 {
     edebug_assert(n != OS_NULL);
@@ -1063,8 +1063,8 @@ void eHandle::insert_case1(
 		{
 			n->m_up->setblack();
 			uncle(n)->setblack();
-			grandparent(n)->setred();
-			insert_case1(grandparent(n));
+			rb_grandparent(n)->setred();
+			insert_case1(rb_grandparent(n));
 		} 
 		else 
 		{
@@ -1108,30 +1108,30 @@ void eHandle::insert_case1(
 void eHandle::insert_case4(
     eHandle *n) 
 {
-    if (n == n->m_up->m_right && n->m_up == grandparent(n)->m_left) 
+    if (n == n->m_up->m_right && n->m_up == rb_grandparent(n)->m_left) 
     {
         rotate_left(n->m_up);
         n = n->m_left;
     } 
-    else if (n == n->m_up->m_left && n->m_up == grandparent(n)->m_right) 
+    else if (n == n->m_up->m_left && n->m_up == rb_grandparent(n)->m_right) 
     {
         rotate_right(n->m_up);
         n = n->m_right;
     }
 
     n->m_up->setblack();
-    grandparent(n)->setred();
-    if (n == n->m_up->m_left && n->m_up == grandparent(n)->m_left) 
+    rb_grandparent(n)->setred();
+    if (n == n->m_up->m_left && n->m_up == rb_grandparent(n)->m_left) 
     {
-        rotate_right(grandparent(n));
+        rotate_right(rb_grandparent(n));
     } 
     else 
     {
 #if EOBJECT_DBTREE_DEBUG
         edebug_assert (n == n->m_up->m_right &&
-            n->m_up == grandparent(n)->m_right);
+            n->m_up == rb_grandparent(n)->m_right);
 #endif
-		rotate_left(grandparent(n));
+		rotate_left(rb_grandparent(n));
     }
 }
 
