@@ -120,9 +120,19 @@ eNameSpace::~eNameSpace()
 	eObject
 		*p;
 
+    eName
+        *n;
+
     /* Unmap indexed variables.
      */
 	// if (m_root) delete_children();
+
+    /* Detach all names from name space.
+     */
+    while ((n = findname()))
+    {
+        if (n->nspace()) n->detach();
+    }
 
 	/* If this is name space.
 	 */

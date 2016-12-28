@@ -43,9 +43,13 @@ typedef enum
 	 */
     ESTATUS_READING_OBJ_FAILED = 101,
 
-	/** Names, mapping name to name space failed..
+	/** Names, mapping name to name space failed.
 	 */
     ESTATUS_NAME_MAPPING_FAILED = 200,
+
+	/** Names, name already mapped, skipping remapping.
+	 */
+    ESTATUS_NAME_ALREADY_MAPPED = 201
 } 
 eStatus;
 

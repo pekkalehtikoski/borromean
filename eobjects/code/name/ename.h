@@ -113,7 +113,7 @@ public:
      */
     inline eNameSpace *nspace() 
 	{
-		return m_index;
+		return m_namespace;
 	}
 
     /*@}*/
@@ -163,14 +163,21 @@ public:
         os_char *namespace_id);
 
     /* Map the name to a name space.
-    */
-    eStatus eName::map();
+     */
+    eStatus map();
 
+    /* Detach name from name space.
+     */
+    void detach();
 
 protected:
-    /* Name space type.
+    /** Namespace type.
      */
     eNameSpaceTypeEnum m_ns_type;
+
+    /** True if te name is mapped to process name space.
+     */
+    os_boolean m_is_process_ns;
 
     /* Name space identifier string when m_ns_type is E_SPECIFIED_NS_TYPE.
      */
@@ -190,7 +197,9 @@ protected:
 
 	/** Pointer to index.
      */
-    eNameSpace *m_index;
+    eNameSpace *m_namespace;
+
+    void clear_members();
 
 	/** Tag this object as "red".
      */

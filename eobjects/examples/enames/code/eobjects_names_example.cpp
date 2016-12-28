@@ -48,9 +48,6 @@ os_int emain(
     eName
         *n;
 
-    eObject 
-        *o;
-
 
 	/* Enable name space for container.
 	 */
@@ -68,6 +65,12 @@ os_int emain(
 	v->sets("yourvalue");
 	v->addname("yourname");
 
+	/* Create variable as child of container and give it a value.
+	 */
+	v = new eVariable(&c);
+	v->sets("hervalue");
+	v->addname("hername");
+
     /* List all names in conteiner's namespace.
      */
     for (n = c.ns_first(); n; n = n->ns_next(OS_FALSE))
@@ -81,11 +84,11 @@ os_int emain(
 
     /* Print your value.
      */
-    o = c.ns_get("yourname");
-    v = eVariable::cast(o);
+    v = c.ns_getv("yourname"); 
     if (v)
     {
 	    osal_console_write(v->gets());
+	    osal_console_write("\n");
     }
 
     return 0;

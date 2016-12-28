@@ -358,6 +358,15 @@ public:
      */
     eObject *ns_get(
         os_char *name,
+        os_char *namespace_id = OS_NULL,
+        os_int classid = ECLASSID_OBJECT);
+
+    eVariable *ns_getv(
+        os_char *name,
+        os_char *namespace_id = OS_NULL);
+
+    eContainer *ns_getc(
+        os_char *name,
         os_char *namespace_id = OS_NULL);
 
     /* Find name space by name space ID. 

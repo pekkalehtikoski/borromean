@@ -687,16 +687,39 @@ eName *eObject::ns_firstv(
 */
 eObject *eObject::ns_get(
     os_char *name,
-    os_char *namespace_id)
+    os_char *namespace_id,
+    os_int classid)
 {
     eName 
-        *o;
+        *n;
 
-    o  = ns_first(name, namespace_id);
-    if (o) return o->parent();
+    eObject
+        *p;
+
+    n  = ns_first(name, namespace_id);
+    while (n)
+    {
+        p = n->parent();
+        if (classid == ECLASSID_OBJECT || p->classid() == classid) return p;
+        n = n->ns_next();
+    }
+
     return OS_NULL;
 }
 
+eVariable *eObject::ns_getv(
+    os_char *name,
+    os_char *namespace_id)
+{
+    return eVariable::cast(ns_get(name, namespace_id, ECLASSID_VARIABLE));
+}
+
+eContainer *eObject::ns_getc(
+    os_char *name,
+    os_char *namespace_id)
+{
+    return eContainer::cast(ns_get(name, namespace_id, ECLASSID_CONTAINER));
+}
 
 /**
 ****************************************************************************************************
@@ -820,9 +843,6 @@ eName *eObject::addname(
 	os_char *namespace_id,
 	os_int flags)
 {
-    eNameSpace 
-        *ms;
-
 	eName
 		*n;
 

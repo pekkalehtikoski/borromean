@@ -36,10 +36,9 @@ eName::eName(
 	os_int flags)
 	: eVariable(parent, oid, flags)
 {
-	m_ileft = m_iright = m_iup = OS_NULL;
-	m_index = OS_NULL;
-    m_ns_type = E_PARENT_NS_TYPE;
-    m_namespace_id = OS_NULL;
+    /* Clear member variables to initial state.
+     */
+    clear_members();
 
 	/* If this is name space.
 	 */
@@ -69,6 +68,30 @@ eName::eName(
 */
 eName::~eName()
 {
+    /* Detach name from name space.
+     */
+    detach();
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Clear member variables to initial state.
+
+  X...
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eName::clear_members()
+{
+	m_ileft = m_iright = m_iup = OS_NULL;
+	m_namespace = OS_NULL;
+    m_ns_type = E_PARENT_NS_TYPE;
+    m_namespace_id = OS_NULL;
+    m_is_process_ns = OS_FALSE;
 }
 
 
@@ -373,6 +396,10 @@ eStatus eName::map()
     os_boolean 
         is_process_ns;
 
+    /* If this name is mapped already, do nothing.
+     */
+    if (m_namespace) return ESTATUS_NAME_ALREADY_MAPPED;
+
     /* If name has no parent, we cannot map
      */
     if (parent() == OS_NULL) return ESTATUS_NAME_MAPPING_FAILED;
@@ -381,6 +408,11 @@ eStatus eName::map()
      */
     ns = parent()->findnamespace(namespaceid(), &is_process_ns);
     if (ns == OS_NULL) return ESTATUS_NAME_MAPPING_FAILED;
+
+    /* Save pointer to name space.
+     */
+    m_namespace = ns;
+    m_is_process_ns = is_process_ns;
 
     /* If process name space, synchronize.
      */
@@ -394,4 +426,39 @@ eStatus eName::map()
      */
     if (is_process_ns) osal_mutex_system_unlock();
     return ESTATUS_SUCCESS;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Detach name from name space.
+
+  The eName::detach() function...
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eName::detach()
+{
+    /* If this name is not mapped, do nothing.
+     */
+    if (m_namespace == OS_NULL) return;
+
+    /* If process name space, synchronize.
+     */
+    if (m_is_process_ns) osal_mutex_system_lock();
+
+    /* Insert name to name space's red black tree.
+     */
+    m_namespace->ixrbtree_remove(this); 
+
+    /* Finish with syncronization. 
+     */
+    if (m_is_process_ns) osal_mutex_system_unlock();
+
+    /* Clear member variables to initial state.
+     */
+    clear_members();
 }
