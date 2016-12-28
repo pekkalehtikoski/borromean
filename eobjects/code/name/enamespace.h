@@ -26,17 +26,6 @@
 #define E_PARENT_NS ".."
 #define E_THIS_NS "."
 
-/* Enumeration of name spaces.
- */
-typedef enum
-{
-   E_PROCESS_NS_VAL,
-   E_THREAD_NS_VAL,
-   E_PARENT_NS_VAL,
-   E_THIS_NS_VAL,
-   E_SPECIFIED_NS_VAL
-} 
-eNameSpaceTypeEnum;
 
 /**
 ****************************************************************************************************

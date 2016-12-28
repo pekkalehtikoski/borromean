@@ -19,6 +19,27 @@
 #ifndef ENAME_INCLUDED
 #define ENAME_INCLUDED
 
+/* Flags for addname()
+ */
+#define ENAME_PERSISTENT 0
+#define ENAME_TEMPORARY 1
+#define ENAME_PROCESS_NS 2
+#define ENAME_THREAD_NS 4
+#define ENAME_PARENT_NS 0
+#define ENAME_THIS_NS 8
+#define ENAME_NO_MAP 16
+
+/* Enumeration of name space types.
+ */
+typedef enum
+{
+   E_PARENT_NS_TYPE = 0,
+   E_PROCESS_NS_TYPE,
+   E_THREAD_NS_TYPE,
+   E_THIS_NS_TYPE,
+   E_SPECIFIED_NS_TYPE
+} 
+eNameSpaceTypeEnum; 
 
 
 /**
@@ -121,7 +142,40 @@ public:
         os_int flags);
     /*@}*/
 
+
+	/** 
+	************************************************************************************************
+
+	  @name map names and identify name space
+
+	  X... 
+
+	************************************************************************************************
+	*/
+    
+    /* Get name space identifier, if any, for the name.
+     */
+    os_char *eName::namespaceid();
+
+    /* Set name space identifier, if any, for the name.
+     */
+    void setnamespaceid(
+        os_char *namespace_id);
+
+    /* Map the name to a name space.
+    */
+    eStatus eName::map();
+
+
 protected:
+    /* Name space type.
+     */
+    eNameSpaceTypeEnum m_ns_type;
+
+    /* Name space identifier string when m_ns_type is E_SPECIFIED_NS_TYPE.
+     */
+    eVariable *m_namespace_id;
+
 	/** Pointer to left child in index'es red/black tree.
      */
     eName *m_ileft;

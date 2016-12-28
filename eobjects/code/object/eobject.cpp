@@ -716,15 +716,15 @@ eNameSpace *eObject::findnamespace(
 	os_char *namespace_id,
     os_boolean *is_process_ns)
 {
-//	eNameSpace
-//		*ns;
+	eNameSpace
+		*ns;
 
     eHandle
         *h,
         *ns_h;
 
-    eNameSpaceTypeEnum
-        ns_type;
+    os_boolean
+        getparent;
 
 	/* If name space id NULL, it is same as parent name space ??????????????
 	 */
@@ -755,13 +755,9 @@ eNameSpace *eObject::findnamespace(
                 if ((flags() & EOBJ_HAS_NAMESPACE) == 0) return OS_NULL;
                 return eNameSpace::cast(first(EOID_NAMESPACE));
             }
-            else if (!os_strcmp(namespace_id, ".."))
-            {
-                ns_type = E_PARENT_NS_VAL;
-            }
             else 
             {
-                ns_type = E_SPECIFIED_NS_VAL;
+                getparent = (os_boolean)!os_strcmp(namespace_id, "..");
             }
             break;
     }
@@ -773,15 +769,28 @@ eNameSpace *eObject::findnamespace(
     {
         if (h->flags() & EOBJ_HAS_NAMESPACE)
         {
+            /* Support multiple name spaces per object.
+             */
             ns_h = h->first(EOID_NAMESPACE);
-            if (ns_h)
+            while (ns_h)
             {
-                if (ns_type == E_PARENT_NS_VAL)
-                    return eNameSpace::cast(ns_h->m_object);
+                if (getparent)
+                    return eNameSpace::cast(ns_h->object());
 
+                /* If name space has identifier, and it matches?
+                 */
+                if (namespace_id)
+                {
+                    ns = eNameSpace::cast(ns_h->object());
+                    if (ns) if (ns->m_namespace_id)
+                    {
+                        if (os_strcmp(namespace_id, ns->m_namespace_id->gets()))
+                            return ns;
+                    }
+                }
+                ns_h = ns_h->next(EOID_NAMESPACE);
             }
         }
-        if (ns_type == E_THIS_NS_VAL) break;
 
         h = h->parent();        
     }
@@ -802,7 +811,7 @@ eNameSpace *eObject::findnamespace(
 		   argument will be ignored.
   @param   namespace_id Identifier for the name space. OS_NULL is first parent's name space.
   @param   flags 
-  @return  Pointer to newly created name, eName class.
+  @return  Pointer to newly created name, eName class. 
 
 ****************************************************************************************************
 */
@@ -811,24 +820,55 @@ eName *eObject::addname(
 	os_char *namespace_id,
 	os_int flags)
 {
+    eNameSpace 
+        *ms;
+
 	eName
 		*n;
 
 	/* Create name object.
 	 */
-	n = eName::newobj(this, EOID_NAME);
+	n = new eName(this, EOID_NAME);
 
-	/* If name is persistant, set flags.
+	/* Set name string, if any.
 	 */
-	// if (flags & PERSI) n->setflags
+	if (name) n->sets(name);
 
-	/* Set name string.
-	 */
-	n->sets(name);
+    /* Set flags for name, like persistancy.
+     */
+    if (flags & ENAME_TEMPORARY)
+    {
+        n->setflags(EOBJ_NOT_CLONABLE|EOBJ_NOT_SERIALIZABLE);
+    }
+  
+    /* If name space is not given as argument, decide by flags.
+     */
+    if (namespace_id == OS_NULL)
+    {
+        if (flags & ENAME_PROCESS_NS)
+        {
+            namespace_id = E_PROCESS_NS;
+        }
+        else if (flags & ENAME_THREAD_NS)
+        {
+            namespace_id = E_THREAD_NS;
+        }
+        else if (flags & ENAME_THIS_NS)
+        {
+            namespace_id = E_THIS_NS;
+        }
+    }
 
-	/* Map name to namespace.
+    /* Set name space identifier.
+     */
+    n->setnamespaceid(namespace_id);
+	
+	/* Map name to namespace, unless disabled for now.
 	 */
-	// n->map();
+	if ((flags & ENAME_NO_MAP) == 0) 
+    {
+        n->map();
+    }
 
 	/* Return pointer to name.
 	 */

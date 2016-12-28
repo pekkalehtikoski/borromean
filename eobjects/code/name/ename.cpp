@@ -38,6 +38,8 @@ eName::eName(
 {
 	m_ileft = m_iright = m_iup = OS_NULL;
 	m_index = OS_NULL;
+    m_ns_type = E_PARENT_NS_TYPE;
+    m_namespace_id = OS_NULL;
 
 	/* If this is name space.
 	 */
@@ -252,4 +254,144 @@ eName *eName::ns_next(
 
 		return compare(m) ? OS_NULL : m;
     }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get name space identifier, if any, for the name.
+
+  The eName::namespaceid function returns name space identifier as string. The name space 
+  identifier tells to which name space the name belongs to.
+
+  @return  Name space identifier string. 
+
+****************************************************************************************************
+*/
+os_char *eName::namespaceid()
+{
+    os_char
+        *namespace_id;
+
+    switch (m_ns_type)
+    {
+        default:
+        case E_PARENT_NS_TYPE:  
+            namespace_id = E_PARENT_NS;  
+            break;
+
+        case E_PROCESS_NS_TYPE: 
+            namespace_id = E_PROCESS_NS; 
+            break;
+
+        case E_THREAD_NS_TYPE:  
+            namespace_id = E_THREAD_NS;  
+            break;
+
+        case E_THIS_NS_TYPE:    
+            namespace_id = E_THIS_NS;  
+            break;
+
+        case E_SPECIFIED_NS_TYPE:
+            namespace_id = m_namespace_id->gets();
+            break;
+    }
+
+    return namespace_id;
+}
+
+/**
+****************************************************************************************************
+
+  @brief Set name space identifier, if any, for the name.
+
+  The eName::map() function maps name to name space.
+
+
+  @return  ESTATUS_SUCCESS if successfull, other values indicate an error. 
+
+****************************************************************************************************
+*/
+void eName::setnamespaceid(
+    os_char *namespace_id)
+{
+    /* Clear old stuff if any
+     */
+    m_ns_type = E_PARENT_NS_TYPE;
+    if (m_namespace_id)
+    {
+        delete m_namespace_id;
+        m_namespace_id = OS_NULL;
+    }
+
+    if (namespace_id)
+    {
+        if (!os_strcmp(namespace_id, E_PROCESS_NS))
+        {
+            m_ns_type = E_PARENT_NS_TYPE;
+        }
+        else if (!os_strcmp(namespace_id, E_THREAD_NS))
+        {
+            m_ns_type = E_PARENT_NS_TYPE;
+        }
+        else if (!os_strcmp(namespace_id, E_PARENT_NS))
+        {
+            m_ns_type = E_PARENT_NS_TYPE;
+        }
+        else if (!os_strcmp(namespace_id, E_THIS_NS))
+        {
+            m_ns_type = E_PARENT_NS_TYPE;
+        }
+        else 
+        {
+            m_ns_type = E_SPECIFIED_NS_TYPE;
+            m_namespace_id = new eVariable(this, EOID_CHILD, EOBJ_IS_ATTACHMENT);
+            m_namespace_id->sets(namespace_id);
+        }
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Map the name to a name space.
+
+  The eName::map() function maps name to name space.
+
+
+  @return  ESTATUS_SUCCESS if successfull, other values indicate an error. 
+
+****************************************************************************************************
+*/
+eStatus eName::map()
+{
+    eNameSpace 
+        *ns;
+
+    os_boolean 
+        is_process_ns;
+
+    /* If name has no parent, we cannot map
+     */
+    if (parent() == OS_NULL) return ESTATUS_NAME_MAPPING_FAILED;
+
+    /* Find name space to map to. If none, return error.
+     */
+    ns = parent()->findnamespace(namespaceid(), &is_process_ns);
+    if (ns == OS_NULL) return ESTATUS_NAME_MAPPING_FAILED;
+
+    /* If process name space, synchronize.
+     */
+    if (is_process_ns) osal_mutex_system_lock();
+
+    /* Insert name to name space's red black tree.
+     */
+    ns->ixrbtree_insert(this); 
+
+    /* Finish with syncronization and return. 
+     */
+    if (is_process_ns) osal_mutex_system_unlock();
+    return ESTATUS_SUCCESS;
 }
