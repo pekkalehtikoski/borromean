@@ -73,8 +73,10 @@ os_int emain(
     for (n = c.ns_first(); n; n = n->ns_next())
     {
 	    osal_console_write(n->gets());
+	    osal_console_write(" ");
         v = eVariable::cast(n->parent());
 	    osal_console_write(v->gets());
+	    osal_console_write("\n");
     }
 
     /* Print your value.

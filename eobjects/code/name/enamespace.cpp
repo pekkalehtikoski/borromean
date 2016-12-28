@@ -99,6 +99,7 @@ eNameSpace::eNameSpace(
 	}
 
     m_namespace_id = OS_NULL;
+    m_ixroot = OS_NULL;
 }
 
 
