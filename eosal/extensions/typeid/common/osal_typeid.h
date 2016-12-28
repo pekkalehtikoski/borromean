@@ -27,7 +27,7 @@
 OSAL_C_HEADER_BEGINS
 
 /** Enumeration of type identifiers. Type identifiers are used to save and transfer data 
-    type information.
+    type information. 
  */
 typedef enum
 {

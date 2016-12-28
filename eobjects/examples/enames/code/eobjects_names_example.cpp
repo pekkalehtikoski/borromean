@@ -70,7 +70,7 @@ os_int emain(
 
     /* List all names in conteiner's namespace.
      */
-    for (n = c.ns_first(); n; n = n->ns_next())
+    for (n = c.ns_first(); n; n = n->ns_next(OS_FALSE))
     {
 	    osal_console_write(n->gets());
 	    osal_console_write(" ");

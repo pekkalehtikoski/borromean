@@ -302,7 +302,7 @@ public:
      */
     os_int compare(
 		eVariable *x,
-		os_int flags = 0) {return 1;}
+		os_int flags = 0);
 
 	/* Remove white space from beginning and end of string values.
      */

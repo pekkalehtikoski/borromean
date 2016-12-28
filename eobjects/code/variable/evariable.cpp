@@ -795,6 +795,170 @@ void eVariable::appendv(
 /**
 ****************************************************************************************************
 
+  @brief Compare value of this variable to another variable.
+
+  If eVariable::compare function...
+
+  @param   x Variable to compare to.
+
+  @return  -1:thiso < x, 0:thiso==x,1:thiso>x.
+
+****************************************************************************************************
+*/
+os_int eVariable::compare(
+	eVariable *x,
+	os_int flags)
+{
+    eVariable
+        *y,
+        *tmp;
+
+    os_int
+        rval = 0,
+        reverse;
+
+    os_long
+        lx,
+        ly;
+
+    os_double
+        dx,
+        dy;
+
+    os_char
+        nbuf[32];
+    
+    /* Arrange by type id enum, so that type number of x is smaller than y's.
+     */
+    y = this;
+    reverse = -1;
+    if (x->type() > y->type())
+    {
+        tmp = x;
+        x = y;
+        y = tmp;
+        reverse = 1;
+    }
+
+    switch (x->type())
+    {
+        case OS_LONG:
+            switch (y->type())
+            {
+                case OS_LONG:
+                    lx = x->m_value.valbuf.v.l;
+                    ly = y->m_value.valbuf.v.l;
+                    if (ly > lx) rval = 1;
+                    if (ly < lx) rval = -1;
+                    break;
+
+                case OS_DOUBLE:
+                    dx = (os_double)x->m_value.valbuf.v.l;
+                    dy = y->m_value.valbuf.v.d;
+                    if (dy > dx) rval = 1;
+                    if (dy < dx) rval = -1;
+                    break;
+
+                case OS_STRING:
+                    /* If string can be converted to number, compare as numbers.
+                     */
+                    if (y->autotype(OS_FALSE))
+                    {
+                        tmp = new eVariable(this);
+                        tmp->setv(y);
+                        tmp->autotype(OS_TRUE);
+                        dx = (os_double)x->m_value.valbuf.v.l;
+                        dy = tmp->getd();
+                        if (dy > dx) rval = 1;
+                        if (dy < dx) rval = -1;
+                        delete(tmp);
+                    }
+                    else
+                    {
+                        osal_int_to_string(nbuf, sizeof(nbuf), x->m_value.valbuf.v.l);
+                        rval = os_strcmp(nbuf, y->gets());
+                    }
+                    break;
+
+                case OS_OBJECT:
+                    rval = -1;
+                    break;
+
+                default:
+                    osal_debug_error("eVariable::compare error 1");
+                    break;
+            }
+            break;
+
+        case OS_DOUBLE:
+            switch (y->type())
+            {
+                case OS_DOUBLE:
+                    dx = x->m_value.valbuf.v.d;
+                    dy = y->m_value.valbuf.v.d;
+                    if (dy > dx) rval = 1;
+                    if (dy < dx) rval = -1;
+                    break;
+
+                case OS_STRING:
+                    /* If string can be converted to number, compare as numbers.
+                     */
+                    if (y->autotype(OS_FALSE))
+                    {
+                        tmp = new eVariable(this);
+                        tmp->setv(y);
+                        tmp->autotype(OS_TRUE);
+                        dx = x->m_value.valbuf.v.d;
+                        dy = tmp->getd();
+                        if (dy > dx) rval = 1;
+                        if (dy < dx) rval = -1;
+                        delete(tmp);
+                    }
+                    else
+                    {
+osal_int_to_string(nbuf, sizeof(nbuf), x->m_value.valbuf.v.d); // ???????????????????????????????
+                        rval = os_strcmp(nbuf, y->gets());
+                    }
+                    break;
+
+                case OS_OBJECT:
+                    rval = -1;
+                    break;
+
+                default:
+                    osal_debug_error("eVariable::compare error 2");
+                    break;
+            }
+            break;
+
+        case OS_STRING:
+            switch (y->type())
+            {
+                case OS_STRING:
+                    rval = os_strcmp(x->gets(), y->gets());
+                    break;
+    
+                case OS_OBJECT:
+                    rval = -1;
+                    break;
+
+                default:
+                    osal_debug_error("eVariable::compare error 3");
+                    break;
+            }
+            break;
+
+        case OS_OBJECT:
+            rval = 0;
+            break;
+    }
+    return reverse * rval;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Automatically type variable value.
 
   If variable contains a string, the eVariable::tostring() function checks if string is well
