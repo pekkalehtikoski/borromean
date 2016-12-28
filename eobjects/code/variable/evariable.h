@@ -82,7 +82,7 @@ class eVariable : public eObject
 	/** 
 	************************************************************************************************
 
-	  @name Constructors and destructor
+	  @name Constructor, destructor and other.
 
 	  X...
 
@@ -122,6 +122,11 @@ public:
     {
         return new eVariable(parent, oid, flags);
     }
+
+	/* Get next object identified by oid.
+     */
+	eVariable *nextv(
+		e_oid oid = EOID_CHILD);
 
     /*@}*/
 

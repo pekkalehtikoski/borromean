@@ -305,8 +305,29 @@ void eObject::operator delete(
 
 ****************************************************************************************************
 */
+	/* os_long childcount(
+		e_oid oid = EOID_CHILD)
+	{
+		if (mm_handle) return mm_handle->childcount(oid);
+		return 0;
+	} */
 
-/* Get first child object identified by oid.
+/**
+****************************************************************************************************
+
+  @brief Get first child object identified by oid.
+
+  The eObject::first() function returns pointer to the first child object of this object.
+
+  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
+           child objects, regardless wether these are attachment or not. Other values
+		   specify object identifier, only children with that specified object identifier 
+           are searched for.
+
+  @return  Pointer to the first child object, or OS_NULL if none found.
+
+****************************************************************************************************
 */
 eObject *eObject::first(
 	e_oid oid)
@@ -316,6 +337,106 @@ eObject *eObject::first(
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Get the first child variable identified by oid.
+
+  The eObject::firstv() function returns pointer to the first child variable of this object.
+
+  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
+           child objects, regardless wether these are attachment or not. Other values
+		   specify object identifier, only children with that specified object identifier 
+           are searched for.
+
+  @return  Pointer to the first child variable. Or OS_NULL if none found.
+
+****************************************************************************************************
+*/
+eVariable *eObject::firstv(
+	e_oid oid)
+{
+	if (mm_handle == OS_NULL) return OS_NULL;
+	eHandle *h = mm_handle->first(oid);
+    while (h)
+    {
+        if (h->m_object->classid() == ECLASSID_VARIABLE) 
+            return eVariable::cast(h->m_object);
+
+        h = h->next(oid);
+    }
+    return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get the first child container identified by oid.
+
+  The eObject::firstc() function returns pointer to the first child container of this object.
+
+  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
+           child objects, regardless wether these are attachment or not. Other values
+		   specify object identifier, only children with that specified object identifier 
+           are searched for.
+
+  @return  Pointer to the first child container. Or OS_NULL if none found.
+
+****************************************************************************************************
+*/
+eContainer *eObject::firstc(
+	e_oid oid)
+{
+	if (mm_handle == OS_NULL) return OS_NULL;
+	eHandle *h = mm_handle->first(oid);
+    while (h)
+    {
+        if (h->object()->classid() == ECLASSID_CONTAINER) 
+            return eContainer::cast(h->m_object);
+
+        h = h->next(oid);
+    }
+    return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get the first child name identified by oid.
+
+  The eObject::firstn() function returns pointer to the first child name of this object.
+
+  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
+           child objects, regardless wether these are attachment or not. Other values
+		   specify object identifier, only children with that specified object identifier 
+           are searched for.
+
+  @return  Pointer to the first child name. Or OS_NULL if none found.
+
+****************************************************************************************************
+*/
+eName *eObject::firstn(
+	e_oid oid)
+{
+	if (mm_handle == OS_NULL) return OS_NULL;
+	eHandle *h = mm_handle->first(oid);
+    while (h)
+    {
+        if (h->object()->classid() == ECLASSID_NAME) 
+            return eName::cast(h->m_object);
+
+        h = h->next(oid);
+    }
+    return OS_NULL;
+}
+
 
 /* Get last child object identified by oid.
 */
@@ -328,7 +449,23 @@ eObject *eObject::last(
 	return h->m_object;
 }
 
-/* Get next object identified by oid.
+
+/**
+****************************************************************************************************
+
+  @brief Get next child object identified by oid.
+
+  The eObject::next() function returns pointer to the next child object of this object.
+
+  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
+           child objects, regardless wether these are attachment or not. Other values
+		   specify object identifier, only children with that specified object identifier 
+           are searched for.
+
+  @return  Pointer to the first child object, or OS_NULL if none found.
+
+****************************************************************************************************
 */
 eObject *eObject::next(
 	e_oid oid)
@@ -338,6 +475,7 @@ eObject *eObject::next(
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
+
 
 /* Get previous object identified by oid.
 */
@@ -368,24 +506,35 @@ void eObject::ns_create(
 	os_char *namespace_id)
 {
 	eNameSpace
-		*nspace;
+		*ns;
 
 	/* If object has already name space.
 	 */
-	nspace = eNameSpace::cast(first(EOID_NAMESPACE));
-	if (nspace)
+	ns = eNameSpace::cast(first(EOID_NAMESPACE));
+	if (ns)
 	{
 		/* If namespace identifier matches, just return.
 		 */
+        if (ns->m_namespace_id)
+        {
+            if (!os_strcmp(namespace_id, ns->m_namespace_id->gets()))
+                return;
+        }
 
 		/* Delete old name space.
+           We should keep ot if we want to have multiple name spaces???
 		 */
-		delete nspace;
+		delete ns;
 	}
 
 	/* Create name space.
 	 */
-	nspace = eNameSpace::newobj(this, EOID_NAMESPACE);
+	ns = eNameSpace::newobj(this, EOID_NAMESPACE);
+    if (namespace_id)
+    {
+        ns->m_namespace_id = new eVariable(ns);
+        ns->m_namespace_id->sets(namespace_id);
+    }
 
 	/* Remap names in child objects ??? Do we need this. In practise name space is created 
 	   before placing children in?
@@ -482,7 +631,7 @@ eName *eObject::ns_firstv(
 
     /* String type may contain name space prefix, check for it.
      */
-    if (name->type() == OS_STRING) 
+    if (name) if (name->type() == OS_STRING) 
     {
         p = name->gets();
         q = os_strechr(p, '/');

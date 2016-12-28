@@ -57,6 +57,39 @@ eContainer::~eContainer()
 /**
 ****************************************************************************************************
 
+  @brief Get next child container identified by oid.
+
+  The eVariable::nextc() function returns pointer to the next child container of this object.
+
+  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
+           child objects, regardless wether these are attachment or not. Other values
+		   specify object identifier, only children with that specified object identifier 
+           are searched for. 
+
+  @return  Pointer to the first child container, or OS_NULL if none found.
+
+****************************************************************************************************
+*/
+eContainer *eContainer::nextc(
+	e_oid oid)
+{
+	if (mm_handle == OS_NULL) return OS_NULL;
+	eHandle *h = mm_handle->next(oid);
+    while (h)
+    {
+        if (h->object()->classid() == ECLASSID_CONTAINER) 
+            return eContainer::cast(h->object());
+
+        h = h->next(oid);
+    }
+    return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Write container content to stream.
 
   The eContainer::writer() function serialized the container to stream. This writes only the 

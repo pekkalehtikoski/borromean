@@ -75,6 +75,11 @@ public:
         return new eContainer(parent, oid, flags);
     }
 
+    /* Get next child container identified by oid.
+     */
+    eContainer *nextc(
+	    e_oid oid);
+
     /*@}*/
 
 	/** 

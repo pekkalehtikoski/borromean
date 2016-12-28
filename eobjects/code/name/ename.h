@@ -78,6 +78,11 @@ public:
         return new eName(parent, oid, flags);
     }
 
+    /* Get next child name identified by oid.
+     */
+    eName *nextn(
+	    e_oid oid);
+
 	/* Get next name in namespace.
      */
 	eName *ns_next(

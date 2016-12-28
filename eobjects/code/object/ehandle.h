@@ -162,6 +162,13 @@ public:
         return m_oid;
     }
 
+    /** Get object pointer.
+     */
+    inline eObject *object() 
+    {
+        return m_object;
+    }
+
     /* Get number of childern.
      */
     os_long childcount(
@@ -220,7 +227,7 @@ public:
 	{
 		m_oid = oid;
 		m_oflags = EOBJ_IS_RED | flags;
-		m_left = m_right = m_up = m_children = OS_NULL;
+		m_parent = m_left = m_right = m_up = m_children = OS_NULL;
 		m_object = obj;
 	}
 

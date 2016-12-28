@@ -27,6 +27,7 @@
 class eHandle;
 class eRoot;
 class eVariable;
+class eContainer;
 class eNameSpace;
 class eName;
 class eStream;
@@ -217,10 +218,25 @@ public:
 		return OS_NULL;
 	}
 
-	/* Get first child object identified by oid.
+	/* Get the first child object identified by oid.
      */
 	eObject *first(
 		e_oid oid = EOID_CHILD);
+
+	/* Get the first child variable identified by oid.
+     */
+    eVariable *firstv(
+	    e_oid oid = EOID_CHILD);
+
+	/* Get the first child container identified by oid.
+     */
+    eContainer *firstc(
+	    e_oid oid = EOID_CHILD);
+
+	/* Get the first child name identified by oid.
+     */
+    eName *firstn(
+	    e_oid oid = EOID_CHILD);
 
 	/* Get last child object identified by oid.
      */

@@ -62,6 +62,39 @@ eVariable::~eVariable()
 /**
 ****************************************************************************************************
 
+  @brief Get next child variable identified by oid.
+
+  The eVariable::nextv() function returns pointer to the next child object of this object.
+
+  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
+           child objects, regardless wether these are attachment or not. Other values
+		   specify object identifier, only children with that specified object identifier 
+           are searched for. 
+
+  @return  Pointer to the first child variable, or OS_NULL if none found.
+
+****************************************************************************************************
+*/
+eVariable *eVariable::nextv(
+	e_oid oid)
+{
+	if (mm_handle == OS_NULL) return OS_NULL;
+	eHandle *h = mm_handle->next(oid);
+    while (h)
+    {
+        if (h->object()->classid() == ECLASSID_VARIABLE) 
+            return eVariable::cast(h->object());
+
+        h = h->next(oid);
+    }
+    return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Empty the variable value.
 
   The clear() function clears variable value and frees ay memory allocated for the variable.

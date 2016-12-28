@@ -73,6 +73,39 @@ eName::~eName()
 /**
 ****************************************************************************************************
 
+  @brief Get next child name identified by oid.
+
+  The eVariable::nextn() function returns pointer to the next child name of this object.
+
+  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
+           child objects, regardless wether these are attachment or not. Other values
+		   specify object identifier, only children with that specified object identifier 
+           are searched for. 
+
+  @return  Pointer to the first child name, or OS_NULL if none found.
+
+****************************************************************************************************
+*/
+eName *eName::nextn(
+	e_oid oid)
+{
+	if (mm_handle == OS_NULL) return OS_NULL;
+	eHandle *h = mm_handle->next(oid);
+    while (h)
+    {
+        if (h->object()->classid() == ECLASSID_NAME) 
+            return eName::cast(h->object());
+
+        h = h->next(oid);
+    }
+    return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Write name to stream.
 
   The eName::writer() function serialized name to stream. This writes only content, 

@@ -91,12 +91,14 @@ eNameSpace::eNameSpace(
 	{
 		/* Flag this as attachment.
 		 */
-		setflags(EOBJ_IS_ATTACHMENT);
+		setflags(EOBJ_IS_ATTACHMENT /* |EOBJ_NOT_SERIALIZABLE ?? */);
 
 		/* If we have parent object, flag parent that it has name space.
 		 */
 		if (parent) parent->setflags(EOBJ_HAS_NAMESPACE);
 	}
+
+    m_namespace_id = OS_NULL;
 }
 
 

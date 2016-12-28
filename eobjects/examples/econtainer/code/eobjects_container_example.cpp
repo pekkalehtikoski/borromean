@@ -75,10 +75,8 @@ os_int emain(
 
     /* Display which variables are left.
      */
-	for (o = c.first(); o; o = o->next())
+	for (v = c.firstv(); v; v = v->nextv())
 	{
-		v = eVariable::cast(o);
-
 		osal_console_write(v->gets());
 		osal_console_write(", ");
 	} 

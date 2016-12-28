@@ -117,6 +117,8 @@ public:
     eName *findname(
         eVariable *x = OS_NULL);
 
+    eVariable *m_namespace_id;
+
     /*@}*/
 
 protected:
