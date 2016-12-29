@@ -17,6 +17,30 @@
 */
 #include "eobjects/eobjects.h"
 
+/** Parameter structure for creating thread.
+ */
+typedef struct
+{
+    /* Pointer to the thread object
+     */
+    eThread *thread;
+
+	/** Parameters for new thread.
+	 */
+    eContainer *params;
+	// os_int some_parameter;
+}
+eThreadParameters;
+
+
+/* Forward referred static functions.
+ */
+static void ethread_func(
+    void *prm,
+	volatile os_boolean *exit_requested,
+	osalEvent done);
+
+
 
 /**
 ****************************************************************************************************
@@ -51,4 +75,110 @@ eThread::eThread(
 */
 eThread::~eThread()
 {
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Start thread.
+
+  After calling this funcion, eThread pointer thiso cannot be used from calling thread.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eThread::start(
+    eThreadHandle *thandle,
+    eContainer *params)
+{
+    eThreadParameters 
+		prmstruct;
+
+	osalThreadHandle
+		*handle;
+
+    os_memclear(&prmstruct, sizeof(prmstruct));
+    prmstruct.thread = this;
+    prmstruct.params = params; // CHECK WHICH THREAD OWNS && MAKE COPY??????????????????????????????????????????????????????????????????????
+
+    handle = osal_thread_create(ethread_func, &prmstruct, OSAL_THREAD_ATTACHED, 0, "threadnamehere");
+    thandle->set_osal_handle(handle);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Thread 1 entry point function.
+
+  The my_thread_1_func() function is called to start the thread.
+
+  @param   prm Pointer to parameters for new thread. This pointer must can be used only
+           before "done" event is set. This can be OS_NULL if no parameters are needed.
+  @param   done Event to set when parameters have been copied to entry point 
+           functions own memory.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+static void ethread_func(
+    void *prm,
+	volatile os_boolean *exit_requested,
+	osalEvent done)
+{
+    eThreadParameters
+        prmstruct;
+
+    /* Copy parameters to local stack
+     */
+    os_memcpy(&prmstruct, prm, sizeof(eThreadParameters));
+
+    /* Initialize the thread.
+     */
+    prmstruct.thread->initialize(prmstruct.params);
+
+    /* Let thread which created this one proceed.
+     */
+    osal_event_set(done);
+
+    /* Run the thread.
+     */
+    prmstruct.thread->run();
+}
+
+
+/* void eThread::initialize(
+    eContainer *params)
+{
+}
+*/
+
+void eThread::run()
+{
+    while (!exitnow())
+    {
+        osal_thread_sleep(1000);
+    }
+} 
+
+
+
+/**
+****************************************************************************************************
+
+  @brief Check if thread exit is requested.
+
+  Check if thread termination is requested.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+os_boolean eThread::exitnow()
+{
+//	while (!osal_thread_exit_requested(exit_requested))
+return OS_FALSE;
 }

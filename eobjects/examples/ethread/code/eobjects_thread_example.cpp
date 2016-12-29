@@ -21,12 +21,31 @@
  */
 EMAIN_CONSOLE_ENTRY
 
+
+/**
+****************************************************************************************************
+
+  @brief Example thread class.
+
+  X...
+
+****************************************************************************************************
+*/
 class eMyThread : public eThread
 {
-    void initialize(
-        eObject *parameters);
+    virtual void initialize(eContainer *params = OS_NULL)
+    {
+        osal_console_write("initializing worker\n");
+    }
 
-//    run();
+    virtual void run()
+    {
+        for (os_int i = 0; i<10 && !exitnow(); i++)
+        {
+            osal_console_write("worker running\n");
+            osal_thread_sleep(1000);
+        }
+    }
 };
 
 
@@ -51,29 +70,26 @@ os_int emain(
 	eContainer
 		threadparams;
 
-	eVariable 
-		*v;
-
-    eName
-        *n;
-
     eThread
         *t;
 
     eThreadHandle 
-        *thandle;
+        thandle;
 
-	/* Enable name space for container.
-	 */
-	// ecreate_thread(?);
 
-//	    osal_console_write("\n");
+    t = new eMyThread();
+//    t->setpriority();
+    t->start(&thandle, &threadparams); /* After this t pointer is useless */
 
-    t = new eMyThread("name", &threadparams, );
-    t->setpriority();
-    eThreadHandle = t->start(); /* After this t pointer is useless */
+    for (os_int i = 0; i<3; i++)
+    {
+        osal_console_write("master running\n");
+        osal_thread_sleep(2000);
+    }
 
-    
+    /* Wait for thread to terminate
+     */
+    thandle.join();
 
     return 0;
 }

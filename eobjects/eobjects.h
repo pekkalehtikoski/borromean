@@ -53,6 +53,7 @@ void eobjects_shutdown();
 #include "eobjects/code/name/ename.h"
 #include "eobjects/code/name/enamespace.h"
 #include "eobjects/code/envelope/eenvelope.h"
+#include "eobjects/code/thread/ethreadhandle.h"
 #include "eobjects/code/thread/ethread.h"
 #include "eobjects/code/stream/estream.h"
 #include "eobjects/code/main/emain.h"

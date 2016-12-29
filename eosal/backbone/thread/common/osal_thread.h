@@ -230,12 +230,10 @@ osalThreadHandle;
     os_boolean osal_thread_exit_requested(
 	    volatile os_boolean *exit_requested);
 
-
     /* Suspend thread execution for a specific time.
      */
     void osal_thread_sleep(
         os_int time_ms);
-
 
 /*@}*/
 

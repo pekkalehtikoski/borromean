@@ -88,14 +88,29 @@ public:
 	*/
 	/*@{*/
 
+    /* Create operating system thread and start running 
+     */
+    void start(
+        eThreadHandle *thandle = OS_NULL,
+        eContainer *params = OS_NULL);
+
+    virtual void initialize(
+        eContainer *params = OS_NULL) {};
+
+    virtual void run();
+
+    /* Check if thread exit is requested.
+     */
+    os_boolean exitnow();
+
+
+
     /* Get next message to thread to process.
      */
-    eEnvelope *getmessage();
+    // eEnvelope *getmessage();
 
 
     /*@}*/
-
-    void ethread_create();
 
 };
 

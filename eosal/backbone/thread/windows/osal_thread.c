@@ -386,7 +386,7 @@ void osal_thread_exit(
   to exit or whole process has been requested to exit.
 
   @param   osal_thread_exit_requested Pointer to exit rquested function as received by
-  thread entry pointt.
+  thread entry point.
 
   @return  OS_TRUE if thread or process exit has been requested.
 

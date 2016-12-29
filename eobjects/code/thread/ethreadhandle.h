@@ -1,12 +1,12 @@
 /**
 
-  @file    ethread.h
-  @brief   Thread class.
+  @file    ethreadhandle.h
+  @brief   Thread handle class.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    28.12.2016
 
-  The thread object is the root of thread's object tree.
+  Thread handle is used for controlling threads from another thread.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -15,8 +15,8 @@
 
 ****************************************************************************************************
 */
-#ifndef ETHREAD_INCLUDED
-#define ETHREAD_INCLUDED
+#ifndef ETHREAD_HANDLE_INCLUDED
+#define ETHREAD_HANDLE_INCLUDED
 
 /**
 ****************************************************************************************************
@@ -29,8 +29,10 @@
 
 ****************************************************************************************************
 */
-class eThread : public eObject
+class eThreadHandle : public eObject
 {
+    friend class eThread;
+
 	/** 
 	************************************************************************************************
 
@@ -44,35 +46,35 @@ class eThread : public eObject
 public:
     /** Constructor.
 	 */
-	eThread(
+	eThreadHandle(
 		eObject *parent = OS_NULL,
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
  	 */
-	virtual ~eThread();
+	virtual ~eThreadHandle();
 
-    /* Casting eObject pointer to eThread pointer.
-        */
-	inline static eThread *cast(
+    /* Casting eObject pointer to eThreadHandle pointer.
+     */
+	inline static eThreadHandle *cast(
 		eObject *o) 
 	{ 
-		return (eThread*)o;
+		return (eThreadHandle*)o;
 	}
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_THREAD;}
+    virtual os_int classid() {return ECLASSID_THREAD_HANDLE;}
 
     /* Static constructor function for generating instance by class list.
      */
-    static eThread *newobj(
+    static eThreadHandle *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eThread(parent, oid, flags);
+        return new eThreadHandle(parent, oid, flags);
     }
 
     /*@}*/
@@ -80,7 +82,7 @@ public:
 	/** 
 	************************************************************************************************
 
-	  @name Thread message buffer
+	  @name X...
 
 	  X... 
 
@@ -88,14 +90,20 @@ public:
 	*/
 	/*@{*/
 
-    /* Get next message to thread to process.
+    /* Request to terminate a thread.
      */
-    eEnvelope *getmessage();
+    void terminate();
 
+    /* Wait until thread has terminated.
+     */
+    void join();
 
     /*@}*/
 
-    void ethread_create();
+private:
+    void set_osal_handle(osalThreadHandle *h) {m_osal_handle = h;}
+
+	osalThreadHandle *m_osal_handle;
 
 };
 
