@@ -1,13 +1,12 @@
 /**
 
-  @file    eenvelope.h
-  @brief   Envelope class.
+  @file    ethread.h
+  @brief   Thread class.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    28.12.2016
 
-  Messages are sent as envelope objects. The eEnvelope contains recipient and senders's addresses,
-  command, message content and other data.
+  The thread object is the root of thread's object tree.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -16,8 +15,8 @@
 
 ****************************************************************************************************
 */
-#ifndef EENVELOPE_INCLUDED
-#define EENVELOPE_INCLUDED
+#ifndef ETHREAD_INCLUDED
+#define ETHREAD_INCLUDED
 
 /**
 ****************************************************************************************************
@@ -30,7 +29,7 @@
 
 ****************************************************************************************************
 */
-class eEnvelope : public eObject
+class eThread : public eObject
 {
 	/** 
 	************************************************************************************************
@@ -45,35 +44,35 @@ class eEnvelope : public eObject
 public:
     /** Constructor.
 	 */
-	eEnvelope(
+	eThread(
 		eObject *parent = OS_NULL,
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
  	 */
-	virtual ~eEnvelope();
+	virtual ~eThread();
 
-    /* Casting eObject pointer to eEnvelope pointer.
+    /* Casting eObject pointer to eThread pointer.
         */
-	inline static eEnvelope *cast(
+	inline static eThread *cast(
 		eObject *o) 
 	{ 
-		return (eEnvelope*)o;
+		return (eThread*)o;
 	}
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_ENVELOPE;}
+    virtual os_int classid() {return ECLASSID_THREAD;}
 
     /* Static constructor function for generating instance by class list.
      */
-    static eEnvelope *newobj(
+    static eThread *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eEnvelope(parent, oid, flags);
+        return new eThread(parent, oid, flags);
     }
 
     /*@}*/
@@ -81,7 +80,7 @@ public:
 	/** 
 	************************************************************************************************
 
-	  @name Envelope message buffer
+	  @name Thread message buffer
 
 	  X... 
 
@@ -89,20 +88,15 @@ public:
 	*/
 	/*@{*/
 
-    /* Get next message to envelope to process.
+    /* Get next message to thread to process.
      */
-    void settarget();
+    eEnvelope *getmessage();
+
 
     /*@}*/
 
-private:
-    /** Command.
-     */
-    os_int command;
+    void ethread_create();
 
-    /* Target path.
-     */
-    os_char *target;
 };
 
 #endif

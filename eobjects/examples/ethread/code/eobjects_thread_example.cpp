@@ -21,6 +21,15 @@
  */
 EMAIN_CONSOLE_ENTRY
 
+class eMyThread : public eThread
+{
+    void initialize(
+        eObject *parameters);
+
+//    run();
+};
+
+
 /**
 ****************************************************************************************************
 
@@ -40,7 +49,7 @@ os_int emain(
     os_char *argv[])
 {
 	eContainer
-		c;
+		threadparams;
 
 	eVariable 
 		*v;
@@ -48,11 +57,23 @@ os_int emain(
     eName
         *n;
 
+    eThread
+        *t;
+
+    eThreadHandle 
+        *thandle;
+
 	/* Enable name space for container.
 	 */
 	// ecreate_thread(?);
 
 //	    osal_console_write("\n");
+
+    t = new eMyThread("name", &threadparams, );
+    t->setpriority();
+    eThreadHandle = t->start(); /* After this t pointer is useless */
+
+    
 
     return 0;
 }
