@@ -104,14 +104,22 @@ public:
     os_boolean exitnow();
 
 
-
     /* Get next message to thread to process.
      */
-    // eEnvelope *getmessage();
+    void process_messages(
+        os_int timeout_ms = OSAL_EVENT_INFINITE);
 
 
     /*@}*/
 
+private:
+    /* Thread triggger. 
+     */
+    osalEvent m_trigger;
+
+    /* Message queue for incoming messages.
+     */
+    eContainer *m_message_queue;
 };
 
 #endif

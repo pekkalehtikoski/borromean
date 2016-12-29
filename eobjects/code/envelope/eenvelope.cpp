@@ -36,6 +36,13 @@ eEnvelope::eEnvelope(
 	os_int flags)
     : eObject(parent, oid, flags)
 {
+    /** Clear member variables.
+     */
+    m_command = 0;
+    m_flags = m_target_pos = m_source_end = m_source_alloc = 0;
+
+    m_target = m_source = OS_NULL;
+    m_content = m_context = OS_NULL;
 }
 
 
@@ -53,3 +60,70 @@ eEnvelope::eEnvelope(
 eEnvelope::~eEnvelope()
 {
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Set destination for the envelope.
+
+  The eEnvelope::settarget() function. 
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eEnvelope::settarget(
+    os_char *target)
+{
+    os_memsz
+        sz,
+        len;
+
+    if (m_target)
+    {
+        osal_memory_free(m_target, m_target_alloc);
+    }
+    
+    len = os_strlen(target);
+	m_target = (os_char*)osal_memory_allocate(len, &sz);
+    m_target_alloc = (os_short)sz;
+    m_target_pos = 0;
+    os_memcpy(m_target, target, len);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Set destination for the envelope.
+
+  The eEnvelope::settarget() function. 
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eEnvelope::settarget(
+    eVariable *target)
+{
+    os_char
+        *p;
+
+    os_memsz
+        sz,
+        len;
+
+    if (m_target)
+    {
+        osal_memory_free(m_target, m_target_alloc);
+    }
+    
+    p = target->gets(&len);
+	m_target = (os_char*)osal_memory_allocate(len, &sz);
+    m_target_alloc = (os_short)sz;
+    m_target_pos = 0;
+    os_memcpy(m_target, p, len);
+}
+
+

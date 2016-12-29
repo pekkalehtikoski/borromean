@@ -840,8 +840,8 @@ eNameSpace *eObject::findnamespace(
 */
 eName *eObject::addname(
 	os_char *name,
-	os_char *namespace_id,
-	os_int flags)
+    os_int flags,
+	os_char *namespace_id)
 {
 	eName
 		*n;
@@ -894,6 +894,44 @@ eName *eObject::addname(
 	 */
 	return n;
 }
+
+
+/* Send message.
+ */
+void eObject::message(
+    os_int command, 
+    os_char *target,
+    os_char *source,
+    eObject *content,
+    os_int flags,
+    eObject *context)
+{
+    eEnvelope
+        *envelope;
+
+    envelope = new eEnvelope(this, EOBJ_IS_ATTACHMENT); // ?????????????????????????????????????????????????????????????????????????????????
+
+//    envelope->setcommand(command);
+    envelope->settarget(target);
+//    envelope->setsource(source);
+//    if (flags & EMSG_DEL_CONTENT) envelope->setcontent(content);
+    
+    // envelope->setcontext(content);
+    message(envelope);
+}
+
+
+void eObject::message(eEnvelope *envelope)
+{
+    delete envelope;
+}
+
+eStatus eObject::onmessage(
+    eEnvelope *envelope)
+{
+    return ESTATUS_SUCCESS;
+}
+
 
 
 /**

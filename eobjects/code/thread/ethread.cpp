@@ -59,6 +59,14 @@ eThread::eThread(
 	os_int flags)
     : eObject(parent, oid, flags)
 {
+    /* Create thread triggger. 
+     */
+    m_trigger = osal_event_create();
+
+    /* Create message queue for incoming messages.
+     */
+    m_message_queue = new eContainer(this,  EOID_INTERNAL, 
+        EOBJ_IS_ATTACHMENT|EOBJ_NOT_CLONABLE|EOBJ_NOT_SERIALIZABLE);
 }
 
 
@@ -75,6 +83,10 @@ eThread::eThread(
 */
 eThread::~eThread()
 {
+
+    /* Release thread triggger. 
+     */
+    osal_event_delete(m_trigger);
 }
 
 
@@ -160,10 +172,9 @@ void eThread::run()
 {
     while (!exitnow())
     {
-        osal_thread_sleep(1000);
+        process_messages();
     }
 } 
-
 
 
 /**
@@ -182,3 +193,45 @@ os_boolean eThread::exitnow()
 //	while (!osal_thread_exit_requested(exit_requested))
 return OS_FALSE;
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Process messages.
+
+  The process_messages function processed messages incoming to thread. It takes a message
+  item at a time and and forwards those.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eThread::process_messages(
+    os_int timeout_ms)
+{
+    eEnvelope
+        *envelope;
+
+    /* Wait for thread to be trigged.
+     */
+    osal_event_wait(m_trigger, OSAL_EVENT_INFINITE);
+
+    while (OS_TRUE)
+    {
+        /* Synchronize and get message from queue.
+         */
+	    osal_mutex_system_lock();
+        envelope = eEnvelope::cast(m_message_queue->first());
+        if (envelope) adopt(envelope);
+	    osal_mutex_system_unlock();
+
+        /* If no message, do nothing more.
+         */
+        if (envelope == OS_NULL) return;
+
+        /* Call message processing.
+         */
+        onmessage(envelope);
+    }           
+} 

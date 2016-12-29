@@ -31,7 +31,14 @@ class eContainer;
 class eNameSpace;
 class eName;
 class eStream;
+class eEnvelope;
 
+
+/* Flags for message()
+ */
+#define EMSG_KEEP_CONTENT 0
+#define EMSG_DEL_CONTENT 1
+#define EMGS_NO_REPLIES 2
 
 /**
 ****************************************************************************************************
@@ -378,9 +385,9 @@ public:
 	/* Give name to this object.
      */
 	eName *addname(
-		os_char *name,
-		os_char *namespace_id = OS_NULL,
-		os_int flags = 0);
+	    os_char *name,
+        os_int flags = 0,
+	    os_char *namespace_id = OS_NULL);
 
     /*@}*/
 
@@ -397,10 +404,22 @@ public:
     */
     /*@{*/
 
-    /* Messages
+    /* Send message.
      */
-    eStatus message();
-    virtual eStatus onmessage() {return ESTATUS_SUCCESS;}
+    void message(eEnvelope *envelope);
+
+    /* Send message.
+     */
+    void message(
+        os_int command, 
+        os_char *target,
+        os_char *source = OS_NULL,
+        eObject *content = OS_NULL,
+        os_int flags = EMSG_DEL_CONTENT,
+        eObject *context = OS_NULL);
+
+    virtual eStatus onmessage(
+        eEnvelope *envelope);
 
     /*@}*/
 

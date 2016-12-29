@@ -46,6 +46,24 @@ class eMyThread : public eThread
             osal_thread_sleep(1000);
         }
     }
+
+    virtual eStatus onmessage(
+        eEnvelope *envelope) 
+    {
+        /* If at final destination for the message.
+         */
+        if (*envelope->target()=='\0')
+        {
+            eVariable *v = eVariable::cast(envelope->content());
+            osal_console_write(v->gets());
+            osal_console_write("\n");
+            return ESTATUS_SUCCESS;
+        }
+
+        eThread::onmessage(envelope);
+
+        return ESTATUS_SUCCESS;
+    }
 };
 
 
@@ -70,14 +88,19 @@ os_int emain(
 	eContainer
 		threadparams;
 
+    eVariable
+        *txt;
+
     eThread
         *t;
 
     eThreadHandle 
         thandle;
 
-
+    /* Create and start thread named "worker".
+     */
     t = new eMyThread();
+	t->addname("worker", ENAME_PROCESS_NS);
 //    t->setpriority();
     t->start(&thandle, &threadparams); /* After this t pointer is useless */
 
@@ -85,6 +108,10 @@ os_int emain(
     {
         osal_console_write("master running\n");
         osal_thread_sleep(2000);
+
+        txt = new eVariable(t);
+        txt->sets("message content");
+        txt->message (10, "//worker", OS_NULL, txt, EMSG_DEL_CONTENT|EMGS_NO_REPLIES);
     }
 
     /* Wait for thread to terminate

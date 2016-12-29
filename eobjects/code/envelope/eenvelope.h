@@ -81,7 +81,7 @@ public:
 	/** 
 	************************************************************************************************
 
-	  @name Envelope message buffer
+	  @name Envelope functions
 
 	  X... 
 
@@ -89,20 +89,59 @@ public:
 	*/
 	/*@{*/
 
-    /* Get next message to envelope to process.
+    void settarget(
+        os_char *target);
+
+    void settarget(
+        eVariable *target);
+
+    /** The eEnvelope::gettarget() function returns remaining path to destination. The target path
+        gets shorter when the envelope passess throug messaging (and source path longer).
+        If this is final destination, the function returns OS_NULL.
      */
-    void settarget();
+    inline os_char *target()
+    {
+        if (m_target == OS_NULL) return "";
+        return m_target + m_target_pos;
+    }
+
+    os_boolean nexttargetis(char *name);
+
+    void nexttarget(eVariable *x);
+
+    inline eObject *content() {return m_content;}
 
     /*@}*/
 
 private:
     /** Command.
      */
-    os_int command;
+    os_int m_command;
+
+    os_short m_flags;
+
+    os_short m_target_pos;
+    os_short m_source_end;
+    os_short m_source_alloc;
 
     /* Target path.
      */
-    os_char *target;
+    os_char *m_target;
+
+    os_int m_target_alloc;
+
+    /* Source path.
+     */
+    os_char *m_source;
+
+
+    /* Message content.
+     */
+    eObject *m_content;
+
+    /* Context to be returned with reply as is.
+     */
+    eObject *m_context;
 };
 
 #endif

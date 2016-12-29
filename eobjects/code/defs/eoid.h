@@ -71,6 +71,11 @@
  */
 #define EOID_PRIMITIVE -1002
 
+/** Object identifier EOID_INTERNAL is used for attachments, which are to be ignored
+    in loops trough object's children.
+ */
+#define EOID_INTERNAL -1003
+
 /*@}*/
 
 #endif
