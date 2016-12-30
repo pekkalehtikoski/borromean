@@ -39,7 +39,7 @@ eEnvelope::eEnvelope(
     /** Clear member variables.
      */
     m_command = 0;
-    m_flags = m_target_pos = m_source_end = m_source_alloc = 0;
+    m_mflags = m_target_pos = m_source_end = m_source_alloc = 0;
 
     m_target = m_source = OS_NULL;
     m_content = m_context = OS_NULL;
@@ -156,7 +156,7 @@ void eEnvelope::setsource(
         len = os_strlen(source);
 	    m_source = (os_char*)osal_memory_allocate(len+32, &sz);
         m_source_alloc = (os_short)sz;
-        m_source_end = len-1;
+        m_source_end = (os_short)(len-1);
         os_memcpy(m_source, source, len);
     }
 }

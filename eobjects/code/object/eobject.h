@@ -37,6 +37,7 @@ class eEnvelope;
  */
 #define EMGS_NO_REPLIES 1
 #define EMSG_KEEP_CONTENT 0
+#define EMSG_RESOLVE 2
 #define EMSG_DEL_CONTENT 128
 #define EMSG_DEL_CONTEXT 256
 
@@ -82,13 +83,17 @@ private:
      */
 	eObject(eObject const&);
 	eObject& operator=(eObject const&);
-
 public:
 
     /* Delete eObject, virtual destructor.
      */
     virtual ~eObject();
 
+    /** Cloning, adopting and copying.
+     */
+    virtual eObject *clone(
+        eObject *parent, 
+        e_oid oid = EOID_CHILD);
 
     /* Get class identifier
      */
@@ -146,7 +151,7 @@ public:
     inline os_int flags()
     {
 		if (mm_handle) return mm_handle->m_oflags;
-		return 0;
+		return EOBJ_DEFAULT;
     }
 
     /** Set specified object flags.
@@ -165,22 +170,29 @@ public:
 		if (mm_handle) mm_handle->clearflags(flags);
     }
 
+    /** If object can be cloned?
+     */
+    inline os_boolean isclonable()
+    {
+		if (mm_handle) return mm_handle->isclonable();
+		return OS_TRUE;
+    }
 
     /** Check if object is an attachment. Returns nonzero if object is an attachment.
      */
     inline os_boolean isattachment()
     {
-		if (mm_handle) return isattachment();
-		return 0;
+		if (mm_handle) return mm_handle->isattachment();
+		return OS_FALSE;
     }
 
     /** Check if object is a serializable attachment. 
      */
     inline os_boolean isserattachment()
     {
-		if (mm_handle) return isserattachment();
-		return 0;
-    }
+		if (mm_handle) return mm_handle->isserattachment();
+		return OS_FALSE;
+    } 
 
     /*@}*/
 
@@ -270,12 +282,6 @@ public:
 
     void adoptat(
         eObject *beforethis, 
-        e_oid oid = EOID_CHILD);
-
-    /** Cloning, adopting and copying.
-     */
-    virtual eObject *clone(
-        eObject *parent, 
         e_oid oid = EOID_CHILD);
 
     /*@}*/
@@ -417,7 +423,7 @@ public:
         os_char *target,
         os_char *source = OS_NULL,
         eObject *content = OS_NULL,
-        os_int flags = EMSG_DEL_CONTENT,
+        os_int mflags = EMSG_DEL_CONTENT,
         eObject *context = OS_NULL);
 
     virtual eStatus onmessage(

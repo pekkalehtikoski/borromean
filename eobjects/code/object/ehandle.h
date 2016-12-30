@@ -125,6 +125,13 @@ public:
         m_oflags &= ~flags;
     }
 
+    /** If object can be cloned?
+     */
+    inline os_boolean isclonable()
+    {
+        return (m_oflags & EOBJ_NOT_CLONABLE) == 0;
+    }
+
     /** Check if object is an attachment. Returns nonzero if object is an attachment.
      */
     inline os_boolean isattachment()
@@ -134,11 +141,11 @@ public:
 
     /** Check if object is a serializable attachment. 
      */
-/*         inline os_boolean isserattachment()
+    inline os_boolean isserattachment()
     {
-        return (m_oflags & (EOBJ_IS_ATTACHMENT|EOBJ_SERIALIZABLE)) 
-                == (EOBJ_IS_ATTACHMENT|EOBJ_SERIALIZABLE);
-    } */
+        return (m_oflags & (EOBJ_IS_ATTACHMENT|EOBJ_NOT_SERIALIZABLE)) 
+                == EOBJ_IS_ATTACHMENT;
+    } 
 
 
     /*@}*/
@@ -197,23 +204,6 @@ public:
      */
     eHandle *prev(
         e_oid oid = EOID_CHILD);
-
-    /** Adopting object as child of this object.
-     */
-/*     void adopt(
-        e_oix child_oix, 
-        e_oid oid) {}
-
-    void adoptat(
-        e_oix before_oix, 
-        e_oid oid); */
-
-    /** Cloning, adopting and copying.
-     */
-/*  virtual eHandle *clone(
-        eHandle *parent, 
-        e_oid oid) {return 0; } */
-    /*@}*/
 
 	/* Right pointer is used to manage linked lists of reserved but unused handles.
      */

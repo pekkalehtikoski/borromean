@@ -184,6 +184,24 @@ eObject::~eObject()
 /**
 ****************************************************************************************************
 
+  @brief Clone object
+
+  The eObject::clone function is base class only. Cloning eObject is not supported.
+
+****************************************************************************************************
+*/
+eObject *eObject::clone(
+    eObject *parent, 
+    e_oid oid)
+{
+	osal_debug_error("clone() not supported for the class");
+    return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Allocate new child object of any listed class.
 
   The eObject::newchild function looks from global class list by class identifier. If static 
@@ -529,16 +547,6 @@ void eObject::adopt(
 
         if (sync) osal_mutex_system_unlock();
     }
-}
-
-
-/** Cloning, adopting and copying.
-    */
-eObject *eObject::clone(
-    eObject *parent, 
-    e_oid oid)
-{
-	return OS_NULL;
 }
 
 
@@ -949,14 +957,30 @@ eName *eObject::addname(
 }
 
 
-/* Send message.
- */
+/**
+****************************************************************************************************
+
+  @brief Send message.
+
+  The eObject::message() function sends message. The message will be recieved as onmessage call 
+  by another object.
+  
+  @param   command
+  @param   target
+  @param   source
+  @param   content
+  @param   mflags 
+  @param   context
+  @return  None. 
+
+****************************************************************************************************
+*/
 void eObject::message(
     os_int command, 
     os_char *target,
     os_char *source,
     eObject *content,
-    os_int flags,
+    os_int mflags,
     eObject *context)
 {
     eEnvelope
@@ -965,19 +989,82 @@ void eObject::message(
     envelope = new eEnvelope(this, EOBJ_IS_ATTACHMENT); // ?????????????????????????????????????????????????????????????????????????????????
 
     envelope->setcommand(command);
-    envelope->setflags(flags & ~(EMSG_DEL_CONTENT|EMSG_DEL_CONTEXT));
+    envelope->setmflags(mflags & ~(EMSG_DEL_CONTENT|EMSG_DEL_CONTEXT));
     envelope->settarget(target);
     envelope->setsource(source);
-    envelope->setcontent(content, flags);
-    
-    envelope->setcontext(context, flags);
+    envelope->setcontent(content, mflags);
+    envelope->setcontext(context, mflags);
     message(envelope);
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Send message.
+
+  The eObject::message() function sends message. The message will be recieved as onmessage call 
+  by another object.
+  
+  @param   envelope
+  @return  None. 
+
+****************************************************************************************************
+*/
 void eObject::message(eEnvelope *envelope)
 {
-    delete envelope;
+    os_char
+        *target;
+
+    /* Resolve path.
+     */
+    if (envelope->mflags() & EMSG_RESOLVE) 
+    {
+        envelope->clearmflags(EMSG_RESOLVE);
+    }
+
+    target = envelope->target();
+
+    switch (*target)
+    {
+      /* Process or thread name space.
+       */
+      case '/':
+        /* If process name space.
+         */
+        if (target[1] == '/') 
+        {
+        } 
+
+        /* Otherwise thread name space.
+         */
+        else 
+        {
+        }
+        return;
+            
+      /* Parent or this object's name space
+       */
+      case '.':  
+        /* If this object's name space.
+         */
+        if (target[1] == '/' || target[1] == '\0') 
+        {
+            return;
+        } 
+
+        /* Otherwise thread name space.
+         */
+        else if (target[1] == '.') 
+             if (target[2] == '/' || target[2] == '\0')
+        {
+            return;
+        }
+        break;
+    }
+
+    /* Name or user specified name space.
+     */
 }
 
 eStatus eObject::onmessage(
@@ -985,7 +1072,6 @@ eStatus eObject::onmessage(
 {
     return ESTATUS_SUCCESS;
 }
-
 
 
 /**

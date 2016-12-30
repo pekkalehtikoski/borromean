@@ -57,6 +57,42 @@ eContainer::~eContainer()
 /**
 ****************************************************************************************************
 
+  @brief Clone object
+
+  The eContainer::clone function clones and object including object's children. 
+  Names will be left detached in clone.
+
+  @param  parent Parent for the clone.
+  @param  oid Object identifier for the clone.
+  @return Pointer to the clone.
+
+****************************************************************************************************
+*/
+eObject *eContainer::clone(
+    eObject *parent, 
+    e_oid oid)
+{
+    eObject
+        *clonedobj,
+        *child;
+
+    clonedobj = new eContainer(parent, oid, flags());
+
+    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
+    {
+        if (child->isclonable())
+        {
+            child->clone(clonedobj, child->oid());
+        }
+    }
+
+    return clonedobj;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Get next child container identified by oid.
 
   The eVariable::nextc() function returns pointer to the next child container of this object.

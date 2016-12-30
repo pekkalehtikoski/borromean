@@ -91,6 +91,16 @@ public:
 
     inline void setcommand(os_int command) {m_command = command;}
 
+    inline void setmflags(os_int mflags) {m_mflags = mflags;}
+
+    /** Clear specified message flags.
+     */
+    inline void clearmflags(
+		os_int mflags)
+    {
+        m_mflags &= ~mflags;
+    }
+
     void settarget(
         os_char *target);
 
@@ -102,11 +112,15 @@ public:
 
     void setcontent(
         eObject *content,
-        os_int flags);
+        os_int mflags);
 
     void setcontext(
         eObject *context,
-        os_int flags);
+        os_int mflags);
+
+    inline os_int command() {return m_command;}
+
+    inline os_int mflags() {return m_mflags;}
 
     /** The eEnvelope::gettarget() function returns remaining path to destination. The target path
         gets shorter when the envelope passess throug messaging (and source path longer).
@@ -131,7 +145,7 @@ private:
      */
     os_int m_command;
 
-    os_short m_flags;
+    os_short m_mflags;
 
     os_short m_target_pos;
     os_short m_source_end;

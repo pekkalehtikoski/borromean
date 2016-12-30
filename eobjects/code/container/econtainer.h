@@ -53,6 +53,12 @@ public:
  	 */
 	virtual ~eContainer();
 
+    /* Clone an obejct.
+     */
+    virtual eObject *clone(
+        eObject *parent, 
+        e_oid oid);
+
     /* Casting eObject pointer to eContainer pointer.
         */
 	inline static eContainer *cast(
