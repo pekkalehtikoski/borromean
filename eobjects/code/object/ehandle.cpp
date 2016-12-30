@@ -49,6 +49,8 @@
 ****************************************************************************************************
 */
 
+#define EOBJECT_DBTREE_DEBUG 1
+
 /** 
 ****************************************************************************************************
 
@@ -492,15 +494,15 @@ void eHandle::delete_children()
 eHandle *eHandle::rb_grandparent(
     eHandle *n) 
 {
-    edebug_assert(n != OS_NULL);
+    osal_debug_assert(n != OS_NULL);
 
 	/* Not the root node.
 	 */
-    edebug_assert(n->m_up != OS_NULL); 
+    osal_debug_assert(n->m_up != OS_NULL); 
 
 	/* Not child of root.
 	 */
-    edebug_assert(n->m_up->m_up != OS_NULL); 
+    osal_debug_assert(n->m_up->m_up != OS_NULL); 
     return n->m_up->m_up;
 }
 
@@ -522,11 +524,11 @@ eHandle *eHandle::rb_grandparent(
 eHandle *eHandle::sibling(
     eHandle *n) 
 {
-    edebug_assert(n != OS_NULL);
+    osal_debug_assert(n != OS_NULL);
 
 	/* Root node has no sibling.
 	 */
-    edebug_assert(n->m_up != OS_NULL); 
+    osal_debug_assert(n->m_up != OS_NULL); 
 
     if (n == n->m_up->m_left)
         return n->m_up->m_right;
@@ -552,15 +554,15 @@ eHandle *eHandle::sibling(
 eHandle *eHandle::uncle(
     eHandle *n) 
 {
-    edebug_assert(n != OS_NULL);
+    osal_debug_assert(n != OS_NULL);
 
 	/* Root node has no uncle.
 	 */
-    edebug_assert(n->m_up != OS_NULL); 
+    osal_debug_assert(n->m_up != OS_NULL); 
 
 	/* Children of root have no uncle.
 	 */
-    edebug_assert(n->m_up->m_up != OS_NULL); 
+    osal_debug_assert(n->m_up->m_up != OS_NULL); 
 
     return sibling(n->m_up);
 }
@@ -572,7 +574,7 @@ eHandle *eHandle::uncle(
   @brief Red/Black tree: Verify tree integrity.
 
   The eHandle::verify_properties() function is for red/black tree implementation debugging only.
-  The function checks integrity of the tree and calls edebug_assert() if an error is detected.
+  The function checks integrity of the tree and calls osal_debug_assert() if an error is detected.
 
   We will at all times enforce the following five properties, which provide a theoretical 
   guarantee that the tree remains balanced. We will have a helper function verify_properties() 
@@ -612,7 +614,7 @@ void eHandle::verify_properties()
 */
 void eHandle::verify_property_2() 
 {
-    edebug_assert(isblack(m_children));
+    osal_debug_assert(isblack(m_children));
 }
 
 
@@ -634,9 +636,9 @@ void eHandle::verify_property_4(
 {
     if (isred(n)) 
     {
-        edebug_assert(isblack(n->m_left));
-        edebug_assert(isblack(n->m_right));
-        edebug_assert(isblack(n->m_up));
+        osal_debug_assert(isblack(n->m_left));
+        osal_debug_assert(isblack(n->m_right));
+        osal_debug_assert(isblack(n->m_up));
     }
     if (n == OS_NULL) return;
     verify_property_4(n->m_left);
@@ -699,7 +701,7 @@ void eHandle::verify_property_5_helper(
         } 
         else 
         {
-            edebug_assert (black_count == *path_black_count);
+            osal_debug_assert (black_count == *path_black_count);
         }
         return;
     }
@@ -1006,7 +1008,7 @@ void eHandle::insert_case4(
     else 
     {
 #if EOBJECT_DBTREE_DEBUG
-        edebug_assert (n == n->m_up->m_right &&
+        osal_debug_assert (n == n->m_up->m_right &&
             n->m_up == rb_grandparent(n)->m_right);
 #endif
 		rotate_left(rb_grandparent(n));
@@ -1036,84 +1038,83 @@ void eHandle::insert_case4(
 
 ****************************************************************************************************
 */
-void eHandle::rbtree_remove(
-	eHandle *n)
+void eHandle::rbtree_remove()
 {
     eHandle 
         *child,
         *pred;
 
-	if (n->m_left != OS_NULL && n->m_right != OS_NULL)
+	if (m_left != OS_NULL && m_right != OS_NULL)
 	{
-		/* Swap pred and n.
+		/* Swap pred and this.
 		*/
-		pred = n->m_left;
+		pred = m_left;
 		while (pred->m_right != OS_NULL)
 		{
 			pred = pred->m_right;
 		}
 
-		if (n->m_up)
+		if (m_up)
 		{
-			if (n->m_up->m_left == n) n->m_up->m_left = pred;
-			else n->m_up->m_right = pred;
+			if (m_up->m_left == this) m_up->m_left = pred;
+			else m_up->m_right = pred;
 		}
 		else
 		{
-			m_children = pred;
+			m_parent->m_children = pred;
 		}
 
-		if (pred == n->m_left)
+		if (pred == m_left)
 		{
-			n->m_left = pred->m_left;
-			pred->m_up = n->m_up;
-			n->m_up = pred;
-			pred->m_left = n;
+			m_left = pred->m_left;
+			pred->m_up = m_up;
+			m_up = pred;
+			pred->m_left = this;
 		}
 		else
 		{
-			if (pred->m_up->m_left == pred) pred->m_up->m_left = n;
-			else pred->m_up->m_right = n;
+			if (pred->m_up->m_left == pred) pred->m_up->m_left = this;
+			else pred->m_up->m_right = this;
 
-			child = n->m_up; n->m_up = pred->m_up; pred->m_up = child;
-			child = n->m_left; n->m_left = pred->m_left; pred->m_left = child;
+			child = m_up; m_up = pred->m_up; pred->m_up = child;
+			child = m_left; m_left = pred->m_left; pred->m_left = child;
 			pred->m_left->m_up = pred;
 		}
 
-		pred->m_right = n->m_right;
-		n->m_right = OS_NULL;
+		pred->m_right = m_right;
+		m_right = OS_NULL;
 
-		if (n->m_left) n->m_left->m_up = n;
+		if (m_left) m_left->m_up = this;
 		if (pred->m_right) pred->m_right->m_up = pred;
 
 		/* If red flags are different, swap flags.
 		*/
-		if ((n->m_oflags ^ pred->m_oflags) & EOBJ_IS_RED)
+		if ((m_oflags ^ pred->m_oflags) & EOBJ_IS_RED)
 		{
-			n->m_oflags ^= EOBJ_IS_RED;
+			m_oflags ^= EOBJ_IS_RED;
 			pred->m_oflags ^= EOBJ_IS_RED;
 		}
 	}
 
 #if EOBJECT_DBTREE_DEBUG
-	edebug_assert(n->m_left == OS_NULL || n->m_right == OS_NULL);
+	osal_debug_assert(m_left == OS_NULL || m_right == OS_NULL);
 #endif
 
-	child = (n->m_right == OS_NULL) ? n->m_left : n->m_right;
-	if (isblack(n))
+	child = (m_right == OS_NULL) ? m_left : m_right;
+	if (isblack(this))
 	{
-		if (isblack(child)) n->setblack();
-		else n->setred();
+		if (isblack(child)) setblack();
+		else setred();
 
-		if (n->m_up) delete_case2(n);
+		if (m_up) delete_case2(this);
 	}
-	replace_node(n, child);
+	replace_node(this, child);
 
-	if (n->m_up == OS_NULL && child != OS_NULL)
+	if (m_up == OS_NULL && child != OS_NULL)
 		child->setblack();
 
 #if EOBJECT_DBTREE_DEBUG
-	verify_properties();
+	m_parent->verify_properties();
 #endif
 }
 
@@ -1296,7 +1297,7 @@ void eHandle::delete_case6(
 	if (n == n->m_up->m_left)
 	{
 #if EOBJECT_DBTREE_DEBUG
-		edebug_assert(isred(sibling(n)->m_right));
+		osal_debug_assert(isred(sibling(n)->m_right));
 #endif
 		sibling(n)->m_right->setblack();
 		rotate_left(n->m_up);
@@ -1304,7 +1305,7 @@ void eHandle::delete_case6(
 	else
 	{
 #if EOBJECT_DBTREE_DEBUG
-		edebug_assert(isred(sibling(n)->m_left));
+		osal_debug_assert(isred(sibling(n)->m_left));
 #endif
 		sibling(n)->m_left->setblack();
 		rotate_right(n->m_up);

@@ -263,9 +263,10 @@ public:
 
     /** Adopting object as child of this object.
      */
-    void adopt(
-        eObject *child, 
-        e_oid oid = EOID_CHILD);
+	void adopt(
+		eObject *child,
+		e_oid oid = EOID_CHILD,
+		os_int aflags = 0);
 
     void adoptat(
         eObject *beforethis, 
@@ -518,8 +519,8 @@ protected:
     inline void rbtree_remove(
         eObject *n)
 	{
-		if (mm_handle && n) 
-			mm_handle->rbtree_remove(n->mm_handle);
+		if (mm_handle) if (mm_handle->m_parent)
+			mm_handle->rbtree_remove();
 	}
 };
 

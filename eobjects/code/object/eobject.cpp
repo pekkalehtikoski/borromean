@@ -9,8 +9,7 @@
   The eObject is base class for all objects. 
   
   - Functions to manage object hierarchy and idenfify objects.
-
-
+  
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
   or distribute this file you indicate that you have read the license and understand and accept 
@@ -176,7 +175,7 @@ eObject::~eObject()
     {
 		if (mm_handle) if (mm_handle->m_parent) 
         {
-			mm_handle->m_parent->rbtree_remove(mm_handle);
+			mm_handle->rbtree_remove();
         }
     }
 }
@@ -486,7 +485,7 @@ eObject *eObject::prev(
 */
 void eObject::adopt(
     eObject *child, 
-    e_oid oid = EOID_CHILD,
+    e_oid oid,
     os_int aflags)
 {
     os_boolean
@@ -520,13 +519,9 @@ void eObject::adopt(
 
         if (sync) osal_mutex_system_lock();
 
-         rbtree_remove(child->mm_handle);
+		child->mm_handle->rbtree_remove();
 
-        rbtree_insert(
-        eHandle *inserted_node); 
-
-		eHandle *n);
-       mm_handle->adopt(child->mm_handle_pid);
+		mm_handle->rbtree_insert(child->mm_handle);
 
         child->mm_root = mm_root;
 
@@ -539,10 +534,11 @@ void eObject::adopt(
 
 /** Cloning, adopting and copying.
     */
-virtual eObject::eObject *clone(
+eObject *eObject::clone(
     eObject *parent, 
-    e_oid oid = EOID_CHILD)
+    e_oid oid)
 {
+	return OS_NULL;
 }
 
 

@@ -232,45 +232,7 @@ public:
 	}
 
 protected:
-	/** Object index. 
-     */
-	e_oix m_oix;
-	
-	/** Reuse counter. 
-     */
-	e_oix m_ucnt;
 
-	/** Object identifier.
-     */
-    e_oid m_oid;
-
-    /** Object flags.
-     */
-    os_int m_oflags;
-
-	/** Pointer to parent object of this object.
-     */
-	eHandle *m_parent;
-
-	/** Left child in red/black tree.
-     */
-    eHandle *m_left;
-
-	/** Right child in red/black tree.
-     */
-    eHandle *m_right;
-
-	/** Parent in red/black tree.
-     */
-    eHandle *m_up;
-
-    /* Pointer to contained object.
-     */
-    eObject *m_object; 
-
-	/** Root child object handle in red/black tree.
-     */
-    eHandle *m_children;
 
 	/** Check if object is "red". The function checks if the object n is tagged as "red"
 		in red/black tree.
@@ -410,8 +372,7 @@ protected:
 
 	/* Red/Black tree: Remove node from red/black.
      */
-    void rbtree_remove(
-		eHandle *n);
+    void rbtree_remove();
 
 	/* Red/Black tree: Balance red/black tree after removing node.
      */
@@ -432,6 +393,46 @@ protected:
      */
     void delete_case6(
 		eHandle *n);
+
+	/** Object index. 
+     */
+	e_oix m_oix;
+	
+	/** Reuse counter. 
+     */
+	e_oix m_ucnt;
+
+	/** Object identifier.
+     */
+    e_oid m_oid;
+
+    /** Object flags.
+     */
+    os_int m_oflags;
+
+	/** Pointer to parent object of this object.
+     */
+	eHandle *m_parent;
+
+	/** Left child in red/black tree.
+     */
+    eHandle *m_left;
+
+	/** Right child in red/black tree.
+     */
+    eHandle *m_right;
+
+	/** Parent in red/black tree.
+     */
+    eHandle *m_up;
+
+    /* Pointer to contained object.
+     */
+    eObject *m_object; 
+
+	/** Root child object handle in red/black tree.
+     */
+    eHandle *m_children;
 };
 
 #endif
