@@ -200,13 +200,13 @@ public:
 
     /** Adopting object as child of this object.
      */
-    void adopt(
+/*     void adopt(
         e_oix child_oix, 
         e_oid oid) {}
 
-    eHandle *adoptat(
+    void adoptat(
         e_oix before_oix, 
-        e_oid oid);
+        e_oid oid); */
 
     /** Cloning, adopting and copying.
      */

@@ -89,11 +89,24 @@ public:
 	*/
 	/*@{*/
 
+    inline void setcommand(os_int command) {m_command = command;}
+
     void settarget(
         os_char *target);
 
     void settarget(
         eVariable *target);
+
+    void setsource(
+        os_char *source);
+
+    void setcontent(
+        eObject *content,
+        os_int flags);
+
+    void setcontext(
+        eObject *context,
+        os_int flags);
 
     /** The eEnvelope::gettarget() function returns remaining path to destination. The target path
         gets shorter when the envelope passess throug messaging (and source path longer).

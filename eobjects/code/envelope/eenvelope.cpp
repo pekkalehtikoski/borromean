@@ -127,3 +127,114 @@ void eEnvelope::settarget(
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Set destination for the envelope.
+
+  The eEnvelope::settarget() function. 
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eEnvelope::setsource(
+    os_char *source)
+{
+    os_memsz
+        sz,
+        len;
+
+    if (m_source)
+    {
+        osal_memory_free(m_source, m_source_alloc);
+        m_source = OS_NULL;
+    }
+    
+    if (source)
+    {
+        len = os_strlen(source);
+	    m_source = (os_char*)osal_memory_allocate(len+32, &sz);
+        m_source_alloc = (os_short)sz;
+        m_source_end = len-1;
+        os_memcpy(m_source, source, len);
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Set content object.
+
+  The eEnvelope::setcontent() function. 
+
+  @param dlags Bit EMSG_DEL_CONTENT to adopt content, ptherwise it is copied.
+  @return  None.
+
+****************************************************************************************************
+*/
+void eEnvelope::setcontent(
+    eObject *content,
+    os_int flags)
+{
+    /* Delete old content, if any.
+     */
+    if (m_content)
+    {
+        delete(m_content);
+        m_content = OS_NULL;
+    }
+     
+    if (content)
+    {
+        if (flags & EMSG_DEL_CONTENT)
+        {
+            adopt(content);
+            m_content = content;
+        }
+        else
+        {
+            m_content = content->clone(this);
+        }
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Set context object.
+
+  The eEnvelope::setcontext() function. 
+
+  @param dlags Bit EMSG_DEL_CONTEXT to adopt content, ptherwise it is copied.
+  @return  None.
+
+****************************************************************************************************
+*/
+void eEnvelope::setcontext(
+    eObject *context,
+    os_int flags)
+{
+    /* Delete old content, if any.
+     */
+    if (m_context)
+    {
+        delete(m_context);
+        m_context = OS_NULL;
+    }
+     
+    if (context)
+    {
+        if (flags & EMSG_DEL_CONTEXT)
+        {
+            adopt(context);
+            m_context = context;
+        }
+        else
+        {
+            m_context = context->clone(this);
+        }
+    }
+}

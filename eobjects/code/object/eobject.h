@@ -33,12 +33,13 @@ class eName;
 class eStream;
 class eEnvelope;
 
-
 /* Flags for message()
  */
+#define EMGS_NO_REPLIES 1
 #define EMSG_KEEP_CONTENT 0
-#define EMSG_DEL_CONTENT 1
-#define EMGS_NO_REPLIES 2
+#define EMSG_DEL_CONTENT 128
+#define EMSG_DEL_CONTEXT 256
+
 
 /**
 ****************************************************************************************************
@@ -264,9 +265,9 @@ public:
      */
     void adopt(
         eObject *child, 
-        e_oid oid = EOID_CHILD) {}
+        e_oid oid = EOID_CHILD);
 
-    eObject *adoptat(
+    void adoptat(
         eObject *beforethis, 
         e_oid oid = EOID_CHILD);
 
@@ -274,7 +275,7 @@ public:
      */
     virtual eObject *clone(
         eObject *parent, 
-        e_oid oid = EOID_CHILD) {return 0; }
+        e_oid oid = EOID_CHILD);
 
     /*@}*/
 

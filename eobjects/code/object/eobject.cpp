@@ -90,10 +90,6 @@ eObject::eObject(
     e_oid oid,
 	os_int flags)
 {
-	/* Save parent object pointer.
-	 */
-// 	mm_parent = parent;
-
 	/* If this if not primitive object? 
 	 */
 	if (oid != EOID_PRIMITIVE)
@@ -132,20 +128,6 @@ eObject::eObject(
 			mm_root = parent->mm_root;
 			mm_root->newhandle(this, parent, oid, flags);
 		}
-
-		/* If we just allocated root object, join it to child tree.
-		 */
-//		if (parent == OS_NULL)
-//		{
-//			rbtree_insert(mm_root);
-//		}
-
-		/* Otherwise join this object to child tree of parent object.
-		 */
-//		else
-//		{
-//			parent->rbtree_insert(this);
-//		}
 	}
 
 	/* This is primitive object (typically eVariable).
@@ -486,6 +468,81 @@ eObject *eObject::prev(
 	eHandle *h = mm_handle->prev(oid);
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Adopt obeject as child.
+
+  The eObject::adopt() function moves on object from it's position in tree structure to
+  an another. 
+  
+  @param   aflags EOBJ_BEFORE_THIS Adopt before this object. EOBJ_NO_MAP not to map names.
+  @return  None.
+
+****************************************************************************************************
+*/
+void eObject::adopt(
+    eObject *child, 
+    e_oid oid = EOID_CHILD,
+    os_int aflags)
+{
+    os_boolean
+        sync;
+
+    /* Make sure that parent object is already part of tree structure.
+     */
+	if (mm_handle == OS_NULL) 
+    {
+        osal_debug_error("adopt(): parent object is not part of tree.");
+		return;
+    }
+    
+    if (child->mm_handle == OS_NULL)
+    {
+        sync = OS_FALSE; // || m_root->is_process ???????????????????????????????????????????????????????????????????????
+        if (sync) osal_mutex_system_lock();
+
+        mm_root->newhandle(child, this, oid, 0);
+
+        child->mm_root = mm_root;
+
+        if (sync) osal_mutex_system_unlock();
+    }
+
+    else
+    {
+        // Detach names
+
+        sync = (mm_root != child->mm_root); // || m_root->is_process || child->mm_root->is_process; ???????????????????????????????????????????????????????????????????????
+
+        if (sync) osal_mutex_system_lock();
+
+         rbtree_remove(child->mm_handle);
+
+        rbtree_insert(
+        eHandle *inserted_node); 
+
+		eHandle *n);
+       mm_handle->adopt(child->mm_handle_pid);
+
+        child->mm_root = mm_root;
+
+        // Map names back, if flagged
+
+        if (sync) osal_mutex_system_unlock();
+    }
+}
+
+
+/** Cloning, adopting and copying.
+    */
+virtual eObject::eObject *clone(
+    eObject *parent, 
+    e_oid oid = EOID_CHILD)
+{
 }
 
 
@@ -911,12 +968,13 @@ void eObject::message(
 
     envelope = new eEnvelope(this, EOBJ_IS_ATTACHMENT); // ?????????????????????????????????????????????????????????????????????????????????
 
-//    envelope->setcommand(command);
+    envelope->setcommand(command);
+    envelope->setflags(flags & ~(EMSG_DEL_CONTENT|EMSG_DEL_CONTEXT));
     envelope->settarget(target);
-//    envelope->setsource(source);
-//    if (flags & EMSG_DEL_CONTENT) envelope->setcontent(content);
+    envelope->setsource(source);
+    envelope->setcontent(content, flags);
     
-    // envelope->setcontext(content);
+    envelope->setcontext(context, flags);
     message(envelope);
 }
 
