@@ -132,6 +132,8 @@ public:
         return m_target + m_target_pos;
     }
 
+    inline void move_target_pos(os_short nchars) {m_target_pos += nchars;}
+
     os_boolean nexttargetis(char *name);
 
     void nexttarget(eVariable *x);
@@ -160,7 +162,6 @@ private:
     /* Source path.
      */
     os_char *m_source;
-
 
     /* Message content.
      */

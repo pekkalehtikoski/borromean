@@ -311,6 +311,29 @@ void eObject::operator delete(
 		return 0;
 	} */
 
+
+/**
+****************************************************************************************************
+
+  @brief Get thread object.
+
+  The eObject::thread() function returns pointer to eThread object to which this object belongs
+  to. If this object doesn'is not part of thread's tree structure, the function returns OS_NULL.
+
+  @return  Pointer to eThread, or OS_NULL if none.
+
+****************************************************************************************************
+*/
+eThread *eObject::thread() 
+{
+	if (mm_root) 
+    {
+        eObject *o = mm_root->parent();
+        if (o->classid() == ECLASSID_THREAD) return eThread::cast(o);
+    }
+	return OS_NULL;
+}
+
 /**
 ****************************************************************************************************
 
@@ -1011,7 +1034,8 @@ void eObject::message(
 
 ****************************************************************************************************
 */
-void eObject::message(eEnvelope *envelope)
+void eObject::message(
+    eEnvelope *envelope)
 {
     os_char
         *target;
@@ -1034,12 +1058,15 @@ void eObject::message(eEnvelope *envelope)
          */
         if (target[1] == '/') 
         {
+            envelope->move_target_pos(2);
+            process_ns_message(envelope);
         } 
 
         /* Otherwise thread name space.
          */
         else 
         {
+            envelope->move_target_pos(1);
         }
         return;
             
@@ -1066,6 +1093,71 @@ void eObject::message(eEnvelope *envelope)
     /* Name or user specified name space.
      */
 }
+
+void eObject::process_ns_message(
+    eEnvelope *envelope)
+{
+    eVariable
+        *pathname;
+
+    eNameSpace
+        *process_ns;
+
+    eName
+        *name;
+
+    eThread 
+        *thread;
+
+    process_ns = eglobal_process_ns();
+    if (process_ns == OS_NULL) 
+    {
+        osal_debug_error("No process name space");
+        delete envelope;
+        return;
+    }
+
+    /* If this is message to process ?
+     */
+    if (*envelope->target() == '\0')
+    {
+//        thread = processobj;
+        delete envelope;
+        return;
+    }
+
+    /* Otherwise message to named object.
+     */
+    else
+    {
+        /* Get next name in target path.
+         */
+        pathname = new eVariable(this);
+        envelope->nexttarget(pathname);
+
+        /* Synchronize
+         */
+        osal_mutex_system_lock();
+
+        /* Find the name in process name space.
+         */
+        name = process_ns->findname(pathname);
+        delete pathname;
+
+        /* Get thread to which the named object belongs to.
+         */
+        thread = name->thread();
+
+        /* Move the envelope to thread's message queue
+         */
+        thread->queue(envelope);
+
+        /* End synchronization
+         */
+        osal_mutex_system_unlock();
+    }
+}
+
 
 eStatus eObject::onmessage(
     eEnvelope *envelope)

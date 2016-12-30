@@ -48,4 +48,6 @@ eGlobal;
  */
 extern eGlobal *eglobal;
 
+inline eNameSpace *eglobal_process_ns() {return eglobal->process_ns;}
+
 #endif

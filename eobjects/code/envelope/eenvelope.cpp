@@ -238,3 +238,30 @@ void eEnvelope::setcontext(
         }
     }
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Get next name from target string.
+
+  The eEnvelope::nexttarget() function...
+  envelope is not modified.
+
+  @param  x Pointer to variable where to store the name.
+  @return None.
+
+****************************************************************************************************
+*/
+void eEnvelope::nexttarget(
+    eVariable *x)
+{
+    os_char
+        *p,
+        *e;
+
+    p = e = target();
+
+    while (*e != '/' && *e != '\0') e++;
+    x->sets(p, e-p);
+}

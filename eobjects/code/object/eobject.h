@@ -32,6 +32,7 @@ class eNameSpace;
 class eName;
 class eStream;
 class eEnvelope;
+class eThread;
 
 /* Flags for message()
  */
@@ -237,6 +238,10 @@ public:
         }
 		return OS_NULL;
 	}
+
+    /** Get thread object.
+     */
+    eThread *thread();
 
 	/* Get the first child object identified by oid.
      */
@@ -496,6 +501,9 @@ public:
     virtual eStatus oncallback() {return ESTATUS_SUCCESS;}
     /*@}*/
 
+private:
+    void process_ns_message(
+        eEnvelope *envelope);
 
 protected:
 

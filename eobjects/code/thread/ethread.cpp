@@ -198,12 +198,33 @@ return OS_FALSE;
 /**
 ****************************************************************************************************
 
+  @brief Place an envelope to thread's message queue
+
+  The eThread::queue function...
+
+  Process mutex must be locked when calling this function!!!
+
+  @param  envelope Pointer to envelope. Envelope will be adopted by this function.
+  @return None.
+
+****************************************************************************************************
+*/
+void eThread::queue(
+    eEnvelope *envelope)
+{
+    m_message_queue->adopt(envelope);
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Process messages.
 
   The process_messages function processed messages incoming to thread. It takes a message
   item at a time and and forwards those.
 
-  @return  None.
+  @return None.
 
 ****************************************************************************************************
 */

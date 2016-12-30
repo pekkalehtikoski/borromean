@@ -1,12 +1,12 @@
 /**
 
-  @file    ethread.h
-  @brief   Thread class.
+  @file    econtainer.h
+  @brief   Simple object container.
   @author  Pekka Lehtikoski
   @version 1.0
-  @date    28.12.2016
+  @date    9.11.2011
 
-  The thread object is the root of thread's object tree.
+  The container object is like a box holding a set of child objects.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -15,8 +15,8 @@
 
 ****************************************************************************************************
 */
-#ifndef ETHREAD_INCLUDED
-#define ETHREAD_INCLUDED
+#ifndef ECONTAINER_INCLUDED
+#define ECONTAINER_INCLUDED
 
 /**
 ****************************************************************************************************
@@ -29,12 +29,12 @@
 
 ****************************************************************************************************
 */
-class eThread : public eObject
+class eContainer : public eObject
 {
 	/** 
 	************************************************************************************************
 
-	  @name Constructor, destructor, etc.
+	  @name Constructors and destructor
 
 	  X...
 
@@ -44,86 +44,74 @@ class eThread : public eObject
 public:
     /** Constructor.
 	 */
-	eThread(
+	eContainer(
 		eObject *parent = OS_NULL,
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
  	 */
-	virtual ~eThread();
+	virtual ~eContainer();
 
-    /* Casting eObject pointer to eThread pointer.
+    /* Clone an obejct.
+     */
+    virtual eObject *clone(
+        eObject *parent, 
+        e_oid oid);
+
+    /* Casting eObject pointer to eContainer pointer.
         */
-	inline static eThread *cast(
+	inline static eContainer *cast(
 		eObject *o) 
 	{ 
-		return (eThread*)o;
+		return (eContainer*)o;
 	}
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_THREAD;}
+    virtual os_int classid() {return ECLASSID_CONTAINER;}
 
     /* Static constructor function for generating instance by class list.
      */
-    static eThread *newobj(
+    static eContainer *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eThread(parent, oid, flags);
+        return new eContainer(parent, oid, flags);
     }
+
+    /* Get next child container identified by oid.
+     */
+    eContainer *nextc(
+	    e_oid oid);
 
     /*@}*/
 
 	/** 
 	************************************************************************************************
 
-	  @name Thread message buffer
+	  @name eObject virtual function implementations
 
 	  X... 
 
 	************************************************************************************************
 	*/
 	/*@{*/
-
-    /* Create operating system thread and start running 
+    /* Write container content to stream.
      */
-    void start(
-        eThreadHandle *thandle = OS_NULL,
-        eContainer *params = OS_NULL);
+    virtual eStatus writer(
+        eStream *stream, 
+        os_int flags);
 
-    virtual void initialize(
-        eContainer *params = OS_NULL) {};
-
-    virtual void run();
-
-    /* Check if thread exit is requested.
+    /* Read container content from stream.
      */
-    os_boolean exitnow();
-
-    /* Get next message to thread to process.
-     */
-    void queue(
-        eEnvelope *envelope);
-
-    /* Get next message to thread to process.
-     */
-    void process_messages(
-        os_int timeout_ms = OSAL_EVENT_INFINITE);
-
+    virtual eStatus reader(
+        eStream *stream, 
+        os_int flags);
 
     /*@}*/
 
-private:
-    /* Thread triggger. 
-     */
-    osalEvent m_trigger;
-
-    /* Message queue for incoming messages.
-     */
-    eContainer *m_message_queue;
 };
 
 #endif
