@@ -1,12 +1,12 @@
 /**
 
-  @file    econtainer.h
-  @brief   Simple object container.
+  @file    eprocess.h
+  @brief   Simple object process.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  The container object is like a box holding a set of child objects.
+  The process object is like a box holding a set of child objects.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -15,8 +15,8 @@
 
 ****************************************************************************************************
 */
-#ifndef ECONTAINER_INCLUDED
-#define ECONTAINER_INCLUDED
+#ifndef EPROCESS_INCLUDED
+#define EPROCESS_INCLUDED
 
 /**
 ****************************************************************************************************
@@ -29,7 +29,7 @@
 
 ****************************************************************************************************
 */
-class eContainer : public eObject
+class eProcess : public eThread
 {
 	/** 
 	************************************************************************************************
@@ -44,74 +44,59 @@ class eContainer : public eObject
 public:
     /** Constructor.
 	 */
-	eContainer(
+	eProcess(
 		eObject *parent = OS_NULL,
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
  	 */
-	virtual ~eContainer();
+	virtual ~eProcess();
 
-    /* Clone an obejct.
+    /* Casting eObject pointer to eProcess pointer.
      */
-    virtual eObject *clone(
-        eObject *parent, 
-        e_oid oid);
-
-    /* Casting eObject pointer to eContainer pointer.
-        */
-	inline static eContainer *cast(
+	inline static eProcess *cast(
 		eObject *o) 
 	{ 
-		return (eContainer*)o;
+		return (eProcess*)o;
 	}
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_CONTAINER;}
-
-    /* Static constructor function for generating instance by class list.
-     */
-    static eContainer *newobj(
-        eObject *parent,
-        e_oid oid = EOID_ITEM,
-		os_int flags = EOBJ_DEFAULT)
-    {
-        return new eContainer(parent, oid, flags);
-    }
-
-    /* Get next child container identified by oid.
-     */
-    eContainer *nextc(
-	    e_oid oid);
+    virtual os_int classid() {return ECLASSID_PROCESS;}
 
     /*@}*/
 
 	/** 
 	************************************************************************************************
 
-	  @name eObject virtual function implementations
+	  @name Thread functionality
 
 	  X... 
 
 	************************************************************************************************
 	*/
 	/*@{*/
-    /* Write container content to stream.
-     */
-    virtual eStatus writer(
-        eStream *stream, 
-        os_int flags);
 
-    /* Read container content from stream.
-     */
-    virtual eStatus reader(
-        eStream *stream, 
-        os_int flags);
+    virtual void initialize(
+        eContainer *params = OS_NULL);
+
+    virtual void run();
+
+    virtual eStatus onmessage(
+        eEnvelope *envelope);
 
     /*@}*/
 
 };
+
+
+/* Create eProcess object and start a thread to run it.
+ */;
+void eprocess_create();
+
+/* Terminate eProcess thread and clean up.
+ */
+void eprocess_close();
 
 #endif

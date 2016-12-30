@@ -19,6 +19,9 @@
 #ifndef EGLOBAL_INCLUDED
 #define EGLOBAL_INCLUDED
 
+class eThreadHandle;
+class eThreadHandle;
+
 
 /**
 ****************************************************************************************************
@@ -32,11 +35,22 @@
 */
 typedef struct eGlobal
 {
-    /* Flags indicating that eobjects library has been initialized.
+    /** Flags indicating that eobjects library has been initialized.
      */
     os_boolean initialized;
 
     eHandleRoot hroot;
+
+    /** Pointer to process handle
+     */
+    eThreadHandle *processhandle;
+
+    /** Pointer to process object.
+     */
+    eProcess *process;
+
+
+
 
     /* Process name space
      */

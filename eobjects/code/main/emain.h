@@ -54,7 +54,9 @@ OSAL_C_HEADER_ENDS
 #define EMAIN_CONSOLE_ENTRY os_int osal_main(os_int argc, os_char *argv[]) { \
     os_int rval; \
     eobjects_initialize(OS_NULL); \
+    eprocess_create(); \
     rval = emain(argc, argv); \
+    eprocess_close(); \
     eobjects_shutdown(); \
     return rval; }
 

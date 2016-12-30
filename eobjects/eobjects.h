@@ -45,7 +45,6 @@ void eobjects_shutdown();
 #include "eobjects/code/object/ehandletable.h"
 #include "eobjects/code/object/ehandleroot.h"
 #include "eobjects/code/object/eclasslist.h"
-#include "eobjects/code/global/eglobal.h"
 #include "eobjects/code/root/eroot.h"
 #include "eobjects/code/variable/evariable.h"
 #include "eobjects/code/container/econtainer.h"
@@ -55,6 +54,8 @@ void eobjects_shutdown();
 #include "eobjects/code/envelope/eenvelope.h"
 #include "eobjects/code/thread/ethreadhandle.h"
 #include "eobjects/code/thread/ethread.h"
+#include "eobjects/code/global/eprocess.h"
+#include "eobjects/code/global/eglobal.h"
 #include "eobjects/code/stream/estream.h"
 #include "eobjects/code/main/emain.h"
 

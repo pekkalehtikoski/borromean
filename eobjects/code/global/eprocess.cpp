@@ -1,12 +1,12 @@
 /**
 
-  @file    econtainer.cpp
-  @brief   Simple object container.
+  @file    eprocess.cpp
+  @brief   Simple object process.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  The container object is like a box holding a set of child objects.
+  The process object is like a box holding a set of child objects.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -29,12 +29,13 @@
 
 ****************************************************************************************************
 */
-eContainer::eContainer(
+eProcess::eProcess(
 	eObject *parent,
 	e_oid oid,
 	os_int flags)
-    : eObject(parent, oid, flags)
+    : eThread(parent, oid, flags)
 {
+    eglobal->process_ns = new eNameSpace(this, EOID_NAMESPACE);
 }
 
 
@@ -49,196 +50,86 @@ eContainer::eContainer(
 
 ****************************************************************************************************
 */
-eContainer::~eContainer()
+eProcess::~eProcess()
 {
 }
 
-
-/**
-****************************************************************************************************
-
-  @brief Clone object
-
-  The eContainer::clone function clones and object including object's children. 
-  Names will be left detached in clone.
-
-  @param  parent Parent for the clone.
-  @param  oid Object identifier for the clone.
-  @return Pointer to the clone.
-
-****************************************************************************************************
-*/
-eObject *eContainer::clone(
-    eObject *parent, 
-    e_oid oid)
+void eProcess::initialize(eContainer *params)
 {
-    eObject
-        *clonedobj,
-        *child;
-
-    clonedobj = new eContainer(parent, oid, flags());
-
-    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
-    {
-        if (child->isclonable())
-        {
-            child->clone(clonedobj, child->oid());
-        }
-    }
-
-    return clonedobj;
+    osal_console_write("initializing worker\n");
 }
 
-
-/**
-****************************************************************************************************
-
-  @brief Get next child container identified by oid.
-
-  The eVariable::nextc() function returns pointer to the next child container of this object.
-
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
-		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
-           child objects, regardless wether these are attachment or not. Other values
-		   specify object identifier, only children with that specified object identifier 
-           are searched for. 
-
-  @return  Pointer to the first child container, or OS_NULL if none found.
-
-****************************************************************************************************
-*/
-eContainer *eContainer::nextc(
-	e_oid oid)
+void eProcess::run()
 {
-	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->next(oid);
-    while (h)
+    for (os_int i = 0; i<10 && !exitnow(); i++)
     {
-        if (h->object()->classid() == ECLASSID_CONTAINER) 
-            return eContainer::cast(h->object());
-
-        h = h->next(oid);
+        osal_console_write("worker running\n");
+        osal_thread_sleep(1000);
     }
-    return OS_NULL;
 }
 
-
-/**
-****************************************************************************************************
-
-  @brief Write container content to stream.
-
-  The eContainer::writer() function serialized the container to stream. This writes only the 
-  content, use eObject::write() to save also class information, attachements, etc.
-  
-  @param  stream The stream to write to.
-  @param  flags Serialization flags.
-
-  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
-          fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
-          indicate an error.
-
-****************************************************************************************************
-*/
-eStatus eContainer::writer(
-    eStream *stream, 
-    os_int flags) 
+eStatus eProcess::onmessage(
+    eEnvelope *envelope) 
 {
-    /* Version number. Increment if new serialized items are added to the object,
-       and check for new version's items in read() function.
-     */
-    const os_int 
-        version = 1;
-
-    eObject
-        *child;
-
-	/* Begin the object and write version number.
-     */
-    if (stream->write_begin_block(version)) goto failed;
-
-    /* Write child count to stream (no attachments).
-     */
-    if (*stream << childcount())  goto failed;
-
-    /* Write childern (no attachments).
-     */
-    for (child = first(); child; child = child->next())
-    {
-        child->write(stream, flags);
-    }
-
-	/* End the object.
-     */
-    if (stream->write_end_block()) goto failed;
-
-    /* Object succesfully written.
-     */
+    eThread::onmessage(envelope);
     return ESTATUS_SUCCESS;
-
-    /* Writing object failed.
-     */
-failed:
-    return ESTATUS_WRITING_OBJ_FAILED;
 }
 
 
 /**
 ****************************************************************************************************
 
-  @brief Read conatiner content from stream.
+  @brief Create eProcess object and start  thread to run it.
 
-  The eContainer::reader() function reads serialized container from stream. This function 
-  reads only the object content. To read whole object including attachments, names, etc, 
-  use eObject::read().
-  
-  @param  stream The stream to read from.
-  @param  flags Serialization flags.
+  The eprocess_create() function...
 
-  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
-          fails, value ESTATUS_READING_OBJ_FAILED is returned. Assume that all nonzero values
-          indicate an error.
+
+  @return  None.
 
 ****************************************************************************************************
 */
-eStatus eContainer::reader(
-    eStream *stream, 
-    os_int flags) 
+void eprocess_create()
 {
-    /* Version number. Used to check which versions item's are in serialized data.
-     */
-    os_int 
-        version;
+    eProcess 
+        *process;
 
-    os_long
-        count;
-
-	/* Begin the object and write version number.
-     */
-    if (stream->read_begin_block(version)) goto failed;
-
-    /* Write child count to stream (no attachments).
-     */
-    if (*stream >> count)  goto failed;
-
-    /* Read children
-     */
-    while (count-- > 0)
+    osal_mutex_system_lock();
+    if (eglobal->processhandle == OS_NULL)
     {
-        read(stream, flags);
+        /* Create process object and start thread to run it.
+         */
+        process = new eProcess();
+        eglobal->process = process;
+    //	t->addname("_process", ENAME_PROCESS_NS);
+    //    t->setpriority();
+        eglobal->processhandle = new eThreadHandle();
+        process->start(eglobal->processhandle);         /* After this t pointer is useless */
     }
-
-	/* End the object.
-     */
-    if (stream->read_end_block()) goto failed;
-
-    /* Object succesfully read.
-     */
-    return ESTATUS_SUCCESS;
-
-    /* Reading object failed.
-     */
-failed:
-    return ESTATUS_READING_OBJ_FAILED;
+    osal_mutex_system_unlock();
 }
 
+/**
+****************************************************************************************************
+
+  @brief Terminate eProcess thread and clean up.
+
+  The eprocess_close() function...
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eprocess_close()
+{
+    osal_mutex_system_lock();
+    if (eglobal->processhandle)
+    {
+       /* Request to process to exit and wait for thread to terminate.
+         */
+        eglobal->processhandle->terminate();
+        eglobal->processhandle->join();
+
+        eglobal->processhandle = OS_NULL;
+    }
+    osal_mutex_system_unlock();
+}
