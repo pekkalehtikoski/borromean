@@ -64,7 +64,7 @@ eThread::eThread(
 
     /* Create message queue for incoming messages.
      */
-    m_message_queue = new eContainer(this,  EOID_INTERNAL, 
+    m_message_queue = new eContainer(this, EOID_INTERNAL, 
         EOBJ_IS_ATTACHMENT|EOBJ_NOT_CLONABLE|EOBJ_NOT_SERIALIZABLE);
 }
 

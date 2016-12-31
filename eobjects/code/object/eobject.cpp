@@ -117,6 +117,7 @@ eObject::eObject(
 		else if (oid == EOID_ROOT)
 		{
 			mm_root = eRoot::cast(this);
+    		mm_handle = OS_NULL;
 		}
 
 		/* Otherwise normal child object.  Copy parent's root object pointer
@@ -126,6 +127,8 @@ eObject::eObject(
 		{
 			mm_root = parent->mm_root;
 			mm_root->newhandle(this, parent, oid, flags);
+
+verify_whole_tree();
 		}
 	}
 
@@ -1193,7 +1196,6 @@ void eObject::process_ns_message(
 getout:
     delete envelope;
 }
-
 
 eStatus eObject::onmessage(
     eEnvelope *envelope)

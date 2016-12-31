@@ -725,7 +725,7 @@ void eHandle::verify_property_5_helper(
 void eHandle::verify_whole_tree()
 {
     eHandle 
-        *top;
+        *topmost;
 
     eRoot
         *root;
@@ -736,21 +736,21 @@ void eHandle::verify_whole_tree()
 
     /* Move to top of tree
      */
-    top = this;
+    topmost = this;
     while (OS_TRUE)
     {
-        top->verify_node(root);
-        if (top->m_parent == OS_NULL) break;
-        top = top->m_parent;
+        topmost->verify_node(root);
+        if (topmost->m_parent == OS_NULL) break;
+        topmost = topmost->m_parent;
     }
 
     /* Verify that root object is child of top object.
      */
-    osal_debug_assert(root->mm_handle->m_parent == top);
+    osal_debug_assert(root->mm_handle->m_parent == topmost);
 
     /* Verify all child objects
      */
-    top->verify_children(root);
+    topmost->verify_children(root);
 }
 
 /**
@@ -794,41 +794,45 @@ void eHandle::verify_children(
 		*n,
 		*p;
 
+    enum direc
+    {
+        EH_FROM_UP,
+        EH_FROM_LEFT,
+        EH_FROM_RIGHT
+    } 
+    direc = EH_FROM_UP; 
+
 	n = m_children;
 	if (n == OS_NULL) return;
 
 	while (OS_TRUE)
 	{
-		while (OS_TRUE)
-		{
-			p = n->m_left;
-			if (p == OS_NULL) 
+        p = OS_NULL;
+        if (direc == EH_FROM_UP) 
+        {
+            n->verify_node(root);
+            n->verify_children(root);
+    		p = n->m_left;
+        }
+        if (direc != EH_FROM_RIGHT)
+        {
+        	if (p == OS_NULL) 
 			{
 				p = n->m_right;
-				if (p == OS_NULL) break;
+                direc = EH_FROM_UP;
 			}
-			n = p;
-		}
-
-		p = n->m_up;
-
-        osal_debug_assert(n->m_parent == this);
-        n->verify_node(root);
-        n->verify_children(root);
-
-		if (p) 
-		{
-			if (p->m_left == n) p->m_left = OS_NULL;
-			else p->m_right = OS_NULL;
-		}
-		else
-		{
-			break;
-		}
-
+        }
+        if (direc != EH_FROM_UP)
+        {
+        	if (p == OS_NULL) 
+			{
+				p = n->m_up;
+                direc = (p->m_left == n) ? EH_FROM_LEFT : EH_FROM_RIGHT;
+			}
+        }
+        if (p == OS_NULL) return;
 		n = p;
 	}
-
 }
 
 

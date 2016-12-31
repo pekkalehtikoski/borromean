@@ -36,6 +36,7 @@ class eMyThread : public eThread
     virtual void initialize(eContainer *params = OS_NULL)
     {
         osal_console_write("initializing worker\n");
+mm_handle->verify_whole_tree();
     }
 
     virtual void run()
@@ -44,12 +45,14 @@ class eMyThread : public eThread
         {
             osal_console_write("worker running\n");
             osal_thread_sleep(1000);
+mm_handle->verify_whole_tree();
         }
     }
 
     virtual eStatus onmessage(
         eEnvelope *envelope) 
     {
+mm_handle->verify_whole_tree();
         /* If at final destination for the message.
          */
         if (*envelope->target()=='\0')
@@ -86,7 +89,7 @@ os_int emain(
     os_char *argv[])
 {
 	eContainer
-		threadparams;
+		root;
 
     eVariable
         *txt;
@@ -97,25 +100,30 @@ os_int emain(
     eThreadHandle 
         thandle;
 
+root.verify_whole_tree();
+
     /* Create and start thread named "worker".
      */
     t = new eMyThread();
 	t->addname("worker", ENAME_PROCESS_NS);
 //    t->setpriority();
-    t->start(&thandle, &threadparams); /* After this t pointer is useless */
+    t->start(&thandle); /* After this t pointer is useless */
+
 
     for (os_int i = 0; i<3; i++)
     {
         osal_console_write("master running\n");
         osal_thread_sleep(2000);
 
-        txt = new eVariable(t);
+        txt = new eVariable(&root);
         txt->sets("message content");
-        txt->message (10, "//worker", OS_NULL, txt, EMSG_DEL_CONTENT|EMGS_NO_REPLIES);
+txt->verify_whole_tree();
+        root.message (10, "//worker", OS_NULL, txt, EMSG_DEL_CONTENT|EMGS_NO_REPLIES);
     }
 
     /* Wait for thread to terminate
      */
+    thandle.terminate();
     thandle.join();
 
     return 0;

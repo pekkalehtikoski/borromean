@@ -225,6 +225,12 @@ public:
 		m_object = obj;
 	}
 
+    /* Verify whole object tree.
+     */
+#if EOBJECT_DBTREE_DEBUG
+    void verify_whole_tree();
+#endif
+
 protected:
 
 
@@ -301,10 +307,6 @@ protected:
         eHandle *n, 
         int black_count, 
         int *path_black_count); 
-
-    /* Verify whole object tree.
-     */
-    void verify_whole_tree();
 
     /* Verify one node of object tree.
      */

@@ -103,11 +103,11 @@ void eRoot::newhandle(
     if (parent) handle->m_parent = parent->mm_handle;
 
 	/* Save parent object pointer. If parent object is given, join the new object
-	to red black tree of parent's children.
+	   to red black tree of parent's children.
 	*/
 	if (parent) 
 	{
-		parent->mm_handle->rbtree_insert(handle);
+        parent->mm_handle->rbtree_insert(handle);
 	}
 }
 

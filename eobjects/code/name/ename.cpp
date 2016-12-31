@@ -352,11 +352,11 @@ void eName::setnamespaceid(
     {
         if (!os_strcmp(namespace_id, E_PROCESS_NS))
         {
-            m_ns_type = E_PARENT_NS_TYPE;
+            m_ns_type = E_PROCESS_NS_TYPE;
         }
         else if (!os_strcmp(namespace_id, E_THREAD_NS))
         {
-            m_ns_type = E_PARENT_NS_TYPE;
+            m_ns_type = E_THREAD_NS_TYPE;
         }
         else if (!os_strcmp(namespace_id, E_PARENT_NS))
         {
@@ -364,7 +364,7 @@ void eName::setnamespaceid(
         }
         else if (!os_strcmp(namespace_id, E_THIS_NS))
         {
-            m_ns_type = E_PARENT_NS_TYPE;
+            m_ns_type = E_THIS_NS_TYPE;
         }
         else 
         {

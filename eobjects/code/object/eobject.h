@@ -289,6 +289,13 @@ public:
         eObject *beforethis, 
         e_oid oid = EOID_CHILD);
 
+    /* Verify whole object tree.
+     */
+#if EOBJECT_DBTREE_DEBUG
+    inline void verify_whole_tree() {if (mm_handle) mm_handle->verify_whole_tree();}
+#endif
+
+
     /*@}*/
 
 
