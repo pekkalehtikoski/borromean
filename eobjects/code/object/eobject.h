@@ -507,13 +507,6 @@ private:
 
 protected:
 
-	/** Root of the object of the index tree.
-     */
-	eRoot *mm_root; 
-
-	/* Pointer to object's handle.
-     */
-	eHandle *mm_handle;
 
 	/* Delete all child objects.
      */
@@ -521,12 +514,12 @@ protected:
 
 	/* Red/Black tree: Insert a node to red black tree.
      */
-    inline void rbtree_insert(
+    /* inline void rbtree_insert(
         eObject *inserted_node)
 	{
 		if (mm_handle && inserted_node) 
 			mm_handle->rbtree_insert(inserted_node->mm_handle);
-	}
+	} */
 
 	/* Red/Black tree: Remove node from red/black.
      */
@@ -534,8 +527,16 @@ protected:
         eObject *n)
 	{
 		if (mm_handle) if (mm_handle->m_parent)
-			mm_handle->rbtree_remove();
+			mm_handle->m_parent->rbtree_remove(mm_handle);
 	}
+
+	/** Root of the object of the index tree.
+     */
+	eRoot *mm_root; 
+
+	/* Pointer to object's handle.
+     */
+	eHandle *mm_handle;
 };
 
 #endif

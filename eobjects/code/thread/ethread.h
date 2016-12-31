@@ -46,7 +46,7 @@ public:
 	 */
 	eThread(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+		e_oid oid = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -74,6 +74,8 @@ public:
     {
         return new eThread(parent, oid, flags);
     }
+
+    inline osalEvent trigger() {return m_trigger;}
 
     /*@}*/
 
@@ -103,6 +105,14 @@ public:
      */
     os_boolean exitnow();
 
+    /* Save OSAL thread exit request byte pointer.
+     */
+    inline void setexitreq(
+        volatile os_boolean *exit_requested) 
+    {
+        m_exit_requested = exit_requested;
+    }
+
     /* Get next message to thread to process.
      */
     void queue(
@@ -110,7 +120,7 @@ public:
 
     /* Get next message to thread to process.
      */
-    void process_messages(
+    void alive(
         os_int timeout_ms = OSAL_EVENT_INFINITE);
 
 
@@ -124,6 +134,10 @@ private:
     /* Message queue for incoming messages.
      */
     eContainer *m_message_queue;
+
+    /* OSAL exit requested pointer
+     */
+    volatile os_boolean *m_exit_requested;
 };
 
 #endif

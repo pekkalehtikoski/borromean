@@ -33,12 +33,21 @@
 /*@{*/
 
 /** This is default object identifier, which specifies object simply as list item.
+    If used without parent object, indicates primitive object, typically eVariable, which 
+    is not part of tree hierarchy. This makes object use less memory 
+	and to be faster to allocate and free, but it cannot be root or child object.
+	This flag is argument for costructore
  */
 #define EOID_ITEM -1
 
+/** This is default object identifier for containers, threads and also specifies object as 
+    list item. But if used without parent object, indicates top of new object tree.
+ */
+#define EOID_RITEM -2
+
 /** This object is root of object tree.
  */
-#define EOID_ROOT -2
+#define EOID_ROOT -3
 
 /** Attachment: This object is name.
  */
@@ -64,12 +73,6 @@
  */
 #define EOID_ALL -1001
 
-/** Specifal object identifier EOID_PRIMITIVE indicates primitive object, typically 
-	eVariable, which is not part of tree hierarchy. This makes object use less memory 
-	and to be faster to allocate and free, but it cannot be root or child object.
-	This flag is argument for costructore
- */
-#define EOID_PRIMITIVE -1002
 
 /** Object identifier EOID_INTERNAL is used for attachments, which are to be ignored
     in loops trough object's children.

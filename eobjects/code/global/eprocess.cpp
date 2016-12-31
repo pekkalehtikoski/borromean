@@ -61,10 +61,20 @@ void eProcess::initialize(eContainer *params)
 
 void eProcess::run()
 {
-    for (os_int i = 0; i<10 && !exitnow(); i++)
+    while (!exitnow())
     {
+        /* Process messages
+         */
+        osal_mutex_system_lock();
+        alive(0);
+        osal_mutex_system_unlock();
+
         osal_console_write("worker running\n");
-        osal_thread_sleep(1000);
+
+        /* Wait for thread to be trigged.
+         */
+        osal_event_wait(trigger(), 1000); // OSAL_EVENT_INFINITE); // SHOULD BE OSAL_EVENT_INFINITE, NOT YET READY
+
     }
 }
 
@@ -93,19 +103,24 @@ void eprocess_create()
     eProcess 
         *process;
 
-    osal_mutex_system_lock();
+    eThreadHandle
+        *processhandle;
+
     if (eglobal->processhandle == OS_NULL)
     {
         /* Create process object and start thread to run it.
          */
         process = new eProcess();
+        processhandle = new eThreadHandle();
+        process->start(processhandle);         /* After this t pointer is useless */
+
+        /* Add as global process only when process has been created.
+         */
+        osal_mutex_system_lock();
         eglobal->process = process;
-    //	t->addname("_process", ENAME_PROCESS_NS);
-    //    t->setpriority();
-        eglobal->processhandle = new eThreadHandle();
-        process->start(eglobal->processhandle);         /* After this t pointer is useless */
+        eglobal->processhandle = processhandle;
+        osal_mutex_system_unlock();
     }
-    osal_mutex_system_unlock();
 }
 
 /**
@@ -121,7 +136,6 @@ void eprocess_create()
 */
 void eprocess_close()
 {
-    osal_mutex_system_lock();
     if (eglobal->processhandle)
     {
        /* Request to process to exit and wait for thread to terminate.
@@ -131,5 +145,4 @@ void eprocess_close()
 
         eglobal->processhandle = OS_NULL;
     }
-    osal_mutex_system_unlock();
 }

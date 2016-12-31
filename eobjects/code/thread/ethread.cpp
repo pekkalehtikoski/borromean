@@ -28,7 +28,6 @@ typedef struct
 	/** Parameters for new thread.
 	 */
     eContainer *params;
-	// os_int some_parameter;
 }
 eThreadParameters;
 
@@ -148,6 +147,10 @@ static void ethread_func(
      */
     os_memcpy(&prmstruct, prm, sizeof(eThreadParameters));
 
+    /* Save OSAL exit request flag pointer.
+     */
+    prmstruct.thread->setexitreq(exit_requested);
+
     /* Initialize the thread.
      */
     prmstruct.thread->initialize(prmstruct.params);
@@ -172,7 +175,7 @@ void eThread::run()
 {
     while (!exitnow())
     {
-        process_messages();
+        alive();
     }
 } 
 
@@ -190,8 +193,7 @@ void eThread::run()
 */
 os_boolean eThread::exitnow()
 {
-//	while (!osal_thread_exit_requested(exit_requested))
-return OS_FALSE;
+    return osal_thread_exit_requested(m_exit_requested);
 }
 
 
@@ -221,14 +223,14 @@ void eThread::queue(
 
   @brief Process messages.
 
-  The process_messages function processed messages incoming to thread. It takes a message
+  The alive function processed messages incoming to thread. It takes a message
   item at a time and and forwards those.
 
   @return None.
 
 ****************************************************************************************************
 */
-void eThread::process_messages(
+void eThread::alive(
     os_int timeout_ms)
 {
     eEnvelope
@@ -236,7 +238,7 @@ void eThread::process_messages(
 
     /* Wait for thread to be trigged.
      */
-    osal_event_wait(m_trigger, OSAL_EVENT_INFINITE);
+    if (timeout_ms) osal_event_wait(m_trigger, OSAL_EVENT_INFINITE);
 
     while (OS_TRUE)
     {

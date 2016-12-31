@@ -49,7 +49,6 @@
 ****************************************************************************************************
 */
 
-
 /** 
 ****************************************************************************************************
 
@@ -493,15 +492,15 @@ void eHandle::delete_children()
 eHandle *eHandle::rb_grandparent(
     eHandle *n) 
 {
-    osal_debug_assert(n != OS_NULL);
+    edebug_assert(n != OS_NULL);
 
 	/* Not the root node.
 	 */
-    osal_debug_assert(n->m_up != OS_NULL); 
+    edebug_assert(n->m_up != OS_NULL); 
 
 	/* Not child of root.
 	 */
-    osal_debug_assert(n->m_up->m_up != OS_NULL); 
+    edebug_assert(n->m_up->m_up != OS_NULL); 
     return n->m_up->m_up;
 }
 
@@ -523,11 +522,11 @@ eHandle *eHandle::rb_grandparent(
 eHandle *eHandle::sibling(
     eHandle *n) 
 {
-    osal_debug_assert(n != OS_NULL);
+    edebug_assert(n != OS_NULL);
 
 	/* Root node has no sibling.
 	 */
-    osal_debug_assert(n->m_up != OS_NULL); 
+    edebug_assert(n->m_up != OS_NULL); 
 
     if (n == n->m_up->m_left)
         return n->m_up->m_right;
@@ -553,15 +552,15 @@ eHandle *eHandle::sibling(
 eHandle *eHandle::uncle(
     eHandle *n) 
 {
-    osal_debug_assert(n != OS_NULL);
+    edebug_assert(n != OS_NULL);
 
 	/* Root node has no uncle.
 	 */
-    osal_debug_assert(n->m_up != OS_NULL); 
+    edebug_assert(n->m_up != OS_NULL); 
 
 	/* Children of root have no uncle.
 	 */
-    osal_debug_assert(n->m_up->m_up != OS_NULL); 
+    edebug_assert(n->m_up->m_up != OS_NULL); 
 
     return sibling(n->m_up);
 }
@@ -573,7 +572,7 @@ eHandle *eHandle::uncle(
   @brief Red/Black tree: Verify tree integrity.
 
   The eHandle::verify_properties() function is for red/black tree implementation debugging only.
-  The function checks integrity of the tree and calls osal_debug_assert() if an error is detected.
+  The function checks integrity of the tree and calls edebug_assert() if an error is detected.
 
   We will at all times enforce the following five properties, which provide a theoretical 
   guarantee that the tree remains balanced. We will have a helper function verify_properties() 
@@ -613,7 +612,7 @@ void eHandle::verify_properties()
 */
 void eHandle::verify_property_2() 
 {
-    osal_debug_assert(isblack(m_children));
+    edebug_assert(isblack(m_children));
 }
 
 
@@ -635,9 +634,9 @@ void eHandle::verify_property_4(
 {
     if (isred(n)) 
     {
-        osal_debug_assert(isblack(n->m_left));
-        osal_debug_assert(isblack(n->m_right));
-        osal_debug_assert(isblack(n->m_up));
+        edebug_assert(isblack(n->m_left));
+        edebug_assert(isblack(n->m_right));
+        edebug_assert(isblack(n->m_up));
     }
     if (n == OS_NULL) return;
     verify_property_4(n->m_left);
@@ -700,7 +699,7 @@ void eHandle::verify_property_5_helper(
         } 
         else 
         {
-            osal_debug_assert (black_count == *path_black_count);
+            edebug_assert (black_count == *path_black_count);
         }
         return;
     }
@@ -708,129 +707,6 @@ void eHandle::verify_property_5_helper(
     verify_property_5_helper(n->m_right, black_count, path_black_count);
 }
 #endif
-
-
-/**
-****************************************************************************************************
-
-  @brief Verify whole object tree.
-
-  The eHandle::verify_whole_tree() function verifies whole object tree starting from any 
-  handle.
-
-  @return  None.
-
-****************************************************************************************************
-*/
-void eHandle::verify_whole_tree()
-{
-    eHandle 
-        *top;
-
-    eRoot
-        *root;
-
-    root = m_object->mm_root;
-    osal_debug_assert(root->classid() == ECLASSID_ROOT);
-    verify_node(root);
-
-    /* Move to top of tree
-     */
-    top = this;
-    while (OS_TRUE)
-    {
-        top->verify_node(root);
-        if (top->m_parent == OS_NULL) break;
-        top = top->m_parent;
-    }
-
-    /* Verify that root object is child of top object.
-     */
-    osal_debug_assert(root->mm_handle->m_parent == top);
-
-    /* Verify all child objects
-     */
-    top->verify_children(root);
-}
-
-/**
-****************************************************************************************************
-
-  @brief Verify one node of object tree.
-
-  The eHandle::verify_node() function verifies...
-
-  @return  None.
-
-****************************************************************************************************
-*/
-void eHandle::verify_node(
-    eRoot *root)
-{
-    if (m_left) osal_debug_assert(m_left->m_up == this);
-    if (m_right) osal_debug_assert(m_right->m_up == this);
-    if (m_up) osal_debug_assert(m_up->m_left == this || m_up->m_right == this);
-    if (m_children) osal_debug_assert(m_children->m_parent == this);
-    osal_debug_assert(m_object->mm_handle == this);
-    osal_debug_assert(m_object->mm_root == root);
-}        
-
-
-/**
-****************************************************************************************************
-
-  @brief Verify all child objects.
-
-  The eHandle::verify_children() function verifies all children.
-
-  @return  None.
-
-****************************************************************************************************
-*/
-void eHandle::verify_children(
-    eRoot *root)
-{
-	eHandle
-		*n,
-		*p;
-
-	n = m_children;
-	if (n == OS_NULL) return;
-
-	while (OS_TRUE)
-	{
-		while (OS_TRUE)
-		{
-			p = n->m_left;
-			if (p == OS_NULL) 
-			{
-				p = n->m_right;
-				if (p == OS_NULL) break;
-			}
-			n = p;
-		}
-
-		p = n->m_up;
-
-        osal_debug_assert(n->m_parent == this);
-        n->verify_node(root);
-        n->verify_children(root);
-
-		if (p) 
-		{
-			if (p->m_left == n) p->m_left = OS_NULL;
-			else p->m_right = OS_NULL;
-		}
-		else
-		{
-			break;
-		}
-
-		n = p;
-	}
-
-}
-
 
 
 /**
@@ -1130,7 +1006,7 @@ void eHandle::insert_case4(
     else 
     {
 #if EOBJECT_DBTREE_DEBUG
-        osal_debug_assert (n == n->m_up->m_right &&
+        edebug_assert (n == n->m_up->m_right &&
             n->m_up == rb_grandparent(n)->m_right);
 #endif
 		rotate_left(rb_grandparent(n));
@@ -1220,7 +1096,7 @@ void eHandle::rbtree_remove(
 	}
 
 #if EOBJECT_DBTREE_DEBUG
-	osal_debug_assert(n->m_left == OS_NULL || n->m_right == OS_NULL);
+	edebug_assert(n->m_left == OS_NULL || n->m_right == OS_NULL);
 #endif
 
 	child = (n->m_right == OS_NULL) ? n->m_left : n->m_right;
@@ -1420,7 +1296,7 @@ void eHandle::delete_case6(
 	if (n == n->m_up->m_left)
 	{
 #if EOBJECT_DBTREE_DEBUG
-		osal_debug_assert(isred(sibling(n)->m_right));
+		edebug_assert(isred(sibling(n)->m_right));
 #endif
 		sibling(n)->m_right->setblack();
 		rotate_left(n->m_up);
@@ -1428,7 +1304,7 @@ void eHandle::delete_case6(
 	else
 	{
 #if EOBJECT_DBTREE_DEBUG
-		osal_debug_assert(isred(sibling(n)->m_left));
+		edebug_assert(isred(sibling(n)->m_left));
 #endif
 		sibling(n)->m_left->setblack();
 		rotate_right(n->m_up);

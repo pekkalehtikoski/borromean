@@ -91,7 +91,7 @@ eObject::eObject(
 {
 	/* If this if not primitive object? 
 	 */
-	if (oid != EOID_PRIMITIVE)
+	if (oid != EOID_ITEM || parent != OS_NULL)
 	{
 		/* No parent, allocate root object?
 		 */
@@ -160,7 +160,10 @@ eObject::~eObject()
 
     /* Delete child objects.
      */
-	if (mm_handle) mm_handle->delete_children();
+	if (mm_handle) if (mm_handle->m_parent) 
+    {
+        mm_handle->delete_children();
+    }
 
 	/* This would be more straight forward code to delete children instead of delete_children(),
 	   but quite a bit slower.
@@ -175,7 +178,7 @@ eObject::~eObject()
     {
 		if (mm_handle) if (mm_handle->m_parent) 
         {
-			mm_handle->rbtree_remove();
+			mm_handle->m_parent->rbtree_remove(mm_handle);
         }
     }
 }
@@ -532,6 +535,11 @@ void eObject::adopt(
     os_boolean
         sync;
 
+    eHandle
+        *childh;
+
+
+
     /* Make sure that parent object is already part of tree structure.
      */
 	if (mm_handle == OS_NULL) 
@@ -554,17 +562,32 @@ void eObject::adopt(
 
     else
     {
+child->mm_handle->verify_whole_tree();
+mm_handle->verify_whole_tree();
+
         // Detach names
 
         sync = (mm_root != child->mm_root); // || m_root->is_process || child->mm_root->is_process; ???????????????????????????????????????????????????????????????????????
 
+        childh = child->mm_handle;
+
         if (sync) osal_mutex_system_lock();
 
-		child->mm_handle->rbtree_remove();
+        if (childh->m_parent)
+        {
+		    childh->m_parent->rbtree_remove(childh);
+childh->m_parent->verify_whole_tree();
+        }
 
-		mm_handle->rbtree_insert(child->mm_handle);
+		childh->m_oflags |= EOBJ_IS_RED;
+		childh->m_left = childh->m_right = childh->m_up = OS_NULL;
+		mm_handle->rbtree_insert(childh);
+        childh->m_parent = mm_handle;
 
         child->mm_root = mm_root;
+
+// ??????????????????????????????????????????????????????????????? mmm_root should be set for all grandchildren?
+mm_root->mm_handle->verify_whole_tree();
 
         // Map names back, if flagged
 
@@ -1113,8 +1136,7 @@ void eObject::process_ns_message(
     if (process_ns == OS_NULL) 
     {
         osal_debug_error("No process name space");
-        delete envelope;
-        return;
+        goto getout;
     }
 
     /* If this is message to process ?
@@ -1122,8 +1144,7 @@ void eObject::process_ns_message(
     if (*envelope->target() == '\0')
     {
 //        thread = processobj;
-        delete envelope;
-        return;
+        goto getout;
     }
 
     /* Otherwise message to named object.
@@ -1144,6 +1165,16 @@ void eObject::process_ns_message(
         name = process_ns->findname(pathname);
         delete pathname;
 
+        /* If not found
+         */
+        if (name == OS_NULL)
+        {
+            /* Post notarget message !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
+            goto getout;
+        }
+        
+
         /* Get thread to which the named object belongs to.
          */
         thread = name->thread();
@@ -1156,6 +1187,11 @@ void eObject::process_ns_message(
          */
         osal_mutex_system_unlock();
     }
+
+    return;
+
+getout:
+    delete envelope;
 }
 
 

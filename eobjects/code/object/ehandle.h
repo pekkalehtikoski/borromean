@@ -24,6 +24,10 @@
 #ifndef EHANDLE_INCLUDED
 #define EHANDLE_INCLUDED
 
+/* Do we want to debug object tree
+ */
+#define EOBJECT_DBTREE_DEBUG 1
+
 class eObject;
 class eHandleTable;
 class eStream;
@@ -297,6 +301,21 @@ protected:
         eHandle *n, 
         int black_count, 
         int *path_black_count); 
+
+    /* Verify whole object tree.
+     */
+    void verify_whole_tree();
+
+    /* Verify one node of object tree.
+     */
+    void verify_node(
+        eRoot *root);
+
+    /* Verify all child objects.
+     */
+    void verify_children(
+        eRoot *root);
+
 #else
 	/** Red/Black tree: Get grand parent.
      */
@@ -362,7 +381,8 @@ protected:
 
 	/* Red/Black tree: Remove node from red/black.
      */
-    void rbtree_remove();
+    void rbtree_remove(
+    	eHandle *n);
 
 	/* Red/Black tree: Balance red/black tree after removing node.
      */
