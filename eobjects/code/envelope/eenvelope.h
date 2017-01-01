@@ -133,7 +133,18 @@ public:
         return m_target + m_target_pos;
     }
 
-    inline void move_target_pos(os_short nchars) {m_target_pos += nchars;}
+    inline void move_target_pos(
+        os_short nchars) 
+    {
+        m_target_pos += nchars;
+    }
+
+    inline void move_target_over_objname(
+        os_short objname_nchars) 
+    {
+        m_target_pos += objname_nchars; 
+        if (m_target[m_target_pos] == '/') m_target_pos++;
+    }
 
     os_boolean nexttargetis(char *name);
 

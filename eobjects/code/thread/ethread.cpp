@@ -215,6 +215,7 @@ void eThread::queue(
     eEnvelope *envelope)
 {
     m_message_queue->adopt(envelope);
+    osal_event_set(m_trigger);
 }
 
 

@@ -116,7 +116,9 @@ eObject::eObject(
 		 */
 		else if (oid == EOID_ROOT)
 		{
-			mm_root = eRoot::cast(this);
+            /* Here we cannot use type checked cast, because object is not fully initialized.
+             */
+			mm_root = (eRoot*)this;
     		mm_handle = OS_NULL;
 		}
 
@@ -598,10 +600,6 @@ childh->m_parent->verify_whole_tree();
 		mm_handle->rbtree_insert(childh);
         childh->m_parent = mm_handle;
 
-
-// ??????????????????????????????????????????????????????????????? mmm_root should be set for all grandchildren?
-mm_root->mm_handle->verify_whole_tree();
-
         /* Map names back: If not disabled by user flag EOBJ_NO_MAP, then attach all names of 
            child object (this) and it's childen to name spaces. If a name is already mapped, 
            it is not remapped.
@@ -619,6 +617,9 @@ mm_root->mm_handle->verify_whole_tree();
             child->mm_root = mm_root;
             child->map(E_ATTACH_NAMES|E_SET_ROOT_POINTER);
         }
+
+mm_root->mm_handle->verify_whole_tree();
+
     
         if (sync) osal_mutex_system_unlock();
     }
@@ -1110,7 +1111,7 @@ void eObject::map2(
         if (childh->oid() == EOID_NAME && 
            (mflags & (E_ATTACH_NAMES|E_DETACH_FROM_NAMESPACES_ABOVE)))
         {
-            mapone(handle, mflags);
+            mapone(childh, mflags);
         }
 
         /* If this has children, process those.
@@ -1284,13 +1285,16 @@ void eObject::process_ns_message(
     eEnvelope *envelope)
 {
     eVariable
-        *pathname;
+        *objname;
 
     eNameSpace
         *process_ns;
 
     eName
         *name;
+
+    os_memsz 
+        sz;
 
     eThread 
         *thread;
@@ -1314,10 +1318,12 @@ void eObject::process_ns_message(
      */
     else
     {
-        /* Get next name in target path.
+        /* Get next object name in target path. 
+           Remember length of object name.
          */
-        pathname = new eVariable(this);
-        envelope->nexttarget(pathname);
+        objname = new eVariable(this);
+        envelope->nexttarget(objname);
+        objname->gets(&sz);
 
         /* Synchronize
          */
@@ -1325,8 +1331,7 @@ void eObject::process_ns_message(
 
         /* Find the name in process name space.
          */
-        name = process_ns->findname(pathname);
-        delete pathname;
+        name = process_ns->findname(objname);
 
         /* If not found
          */
@@ -1336,14 +1341,15 @@ void eObject::process_ns_message(
 
             goto getout;
         }
-        
 
         /* Get thread to which the named object belongs to.
          */
         thread = name->thread();
 
-        /* Move the envelope to thread's message queue
+        /* Remove object name from envelope's target path and 
+           move the envelope to thread's message queue.
          */
+        envelope->move_target_over_objname((os_short)sz - 1);
         thread->queue(envelope);
 
         /* End synchronization

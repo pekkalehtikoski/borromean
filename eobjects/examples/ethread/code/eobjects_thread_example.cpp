@@ -41,10 +41,12 @@ mm_handle->verify_whole_tree();
 
     virtual void run()
     {
-        for (os_int i = 0; i<10 && !exitnow(); i++)
+        while (!exitnow())
         {
+            alive();
+            // alive(1000);
+
             osal_console_write("worker running\n");
-            osal_thread_sleep(1000);
 mm_handle->verify_whole_tree();
         }
     }
@@ -110,7 +112,7 @@ root.verify_whole_tree();
     t->start(&thandle); /* After this t pointer is useless */
 
 
-    for (os_int i = 0; i<3; i++)
+    for (os_int i = 0; i<10; i++)
     {
         osal_console_write("master running\n");
         osal_thread_sleep(2000);
