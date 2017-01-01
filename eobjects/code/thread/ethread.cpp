@@ -214,7 +214,7 @@ os_boolean eThread::exitnow()
 void eThread::queue(
     eEnvelope *envelope)
 {
-    m_message_queue->adopt(envelope);
+    m_message_queue->adopt(envelope, EOID_CHILD, EOBJ_NO_MAP);
     osal_event_set(m_trigger);
 }
 
@@ -247,7 +247,7 @@ void eThread::alive(
          */
 	    osal_mutex_system_lock();
         envelope = eEnvelope::cast(m_message_queue->first());
-        if (envelope) adopt(envelope);
+        if (envelope) adopt(envelope, EOID_CHILD, EOBJ_NO_MAP);
 	    osal_mutex_system_unlock();
 
         /* If no message, do nothing more.

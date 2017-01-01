@@ -587,7 +587,7 @@ mm_handle->verify_whole_tree();
         /* Detach names of child object and it's childen from name spaces 
            above this object in tree structure.
          */
-        map(E_DETACH_FROM_NAMESPACES_ABOVE);
+        child->map(E_DETACH_FROM_NAMESPACES_ABOVE);
 
         if (childh->m_parent)
         {
