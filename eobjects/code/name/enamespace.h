@@ -70,6 +70,7 @@ public:
 	inline static eNameSpace *cast(
 		eObject *o) 
 	{ 
+        e_assert_type(o, ECLASSID_NAMESPACE)
 		return (eNameSpace*)o;
 	}
 

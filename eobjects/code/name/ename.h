@@ -82,6 +82,7 @@ public:
 	inline static eName *cast(
 		eObject *o) 
 	{ 
+        e_assert_type(o, ECLASSID_NAME)
 		return (eName*)o;
 	}
 
@@ -164,13 +165,36 @@ public:
 
     /* Map the name to a name space.
      */
-    eStatus map();
+    eStatus mapname();
+
+    /* Map the name to a name space given as argument.
+     */
+    eStatus mapname2(
+        eNameSpace *ns,
+        os_int info);
 
     /* Detach name from name space.
      */
     void detach();
 
 protected:
+    void clear_members();
+
+	/** Tag this object as "red".
+     */
+    inline void ixsetred()
+    {
+        m_vflags |= EVAR_IS_RED;
+    }
+
+	/** Tag this object as "black".
+     */
+    inline void ixsetblack()
+    {
+        m_vflags &= ~EVAR_IS_RED;
+    }
+
+
     /** Namespace type.
      */
     eNameSpaceTypeEnum m_ns_type;
@@ -198,22 +222,6 @@ protected:
 	/** Pointer to index.
      */
     eNameSpace *m_namespace;
-
-    void clear_members();
-
-	/** Tag this object as "red".
-     */
-    inline void ixsetred()
-    {
-        m_vflags |= EVAR_IS_RED;
-    }
-
-	/** Tag this object as "black".
-     */
-    inline void ixsetblack()
-    {
-        m_vflags &= ~EVAR_IS_RED;
-    }
 };
 
 #endif

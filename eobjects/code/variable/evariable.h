@@ -106,6 +106,7 @@ public:
 	inline static eVariable *cast(
 		eObject *o) 
 	{ 
+        e_assert_type(o, ECLASSID_VARIABLE)
 		return (eVariable*)o;
 	}
 

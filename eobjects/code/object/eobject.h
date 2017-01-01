@@ -42,6 +42,14 @@ class eThread;
 #define EMSG_DEL_CONTENT 128
 #define EMSG_DEL_CONTEXT 256
 
+/* Macro to debug object type casts.
+ */
+#if OSAL_DEBUG == 0
+  #define e_assert_type(o,id)
+#else
+  #define e_assert_type(o,id) if (o) osal_debug_assert((o)->classid()==(id));
+#endif 
+
 
 /**
 ****************************************************************************************************
@@ -278,6 +286,11 @@ public:
 	eObject *prev(
 		e_oid oid = EOID_CHILD);
 
+    /* Flags for adopt function.
+     */
+    #define EOBJ_BEFORE_THIS 1
+    #define EOBJ_NO_MAP 2
+
     /** Adopting object as child of this object.
      */
 	void adopt(
@@ -396,11 +409,17 @@ public:
         os_char *name,
         os_char *namespace_id = OS_NULL);
 
+    /* Info bits for findnamespace().
+     */
+    #define E_INFO_PROCES_NS 1
+    #define E_INFO_ABOVE_CHECKPOINT 2
+
     /* Find name space by name space ID. 
      */
 	eNameSpace *findnamespace(
 		os_char *namespace_id = OS_NULL,
-        os_boolean *is_process_ns = OS_NULL);
+        os_int *info = OS_NULL,
+        eObject *checkpoint = OS_NULL);
 
 	/* Give name to this object.
      */
@@ -408,6 +427,25 @@ public:
 	    os_char *name,
         os_int flags = 0,
 	    os_char *namespace_id = OS_NULL);
+
+    /* Flags for map() function: Attach all names of child object (this) and it's childen to 
+       name spaces. If a name is already mapped, it is not remapped.
+    */
+    #define E_ATTACH_NAMES 1
+
+    /* Flags for map() function: Copy m_root pointer (pointer to eRoot of a tree structure)
+       from child object (this) to all child objects of it.
+    */
+    #define E_SET_ROOT_POINTER 8
+
+    /* Flags for map() function: Detach names of child object (this) and it's childen from name 
+       spaces above this object in tree structure.
+      */
+    #define E_DETACH_FROM_NAMESPACES_ABOVE 16
+
+    /* Attach/detach names in tree sturcture to name spaces. Set eRoot pointers.
+     */
+    void map(os_int mflags);
 
     /*@}*/
 
@@ -440,6 +478,7 @@ public:
 
     virtual eStatus onmessage(
         eEnvelope *envelope);
+
 
     /*@}*/
 
@@ -513,8 +552,6 @@ private:
         eEnvelope *envelope);
 
 protected:
-
-
 	/* Delete all child objects.
      */
     void delete_children();
@@ -536,6 +573,14 @@ protected:
 		if (mm_handle) if (mm_handle->m_parent)
 			mm_handle->m_parent->rbtree_remove(mm_handle);
 	}
+
+    void map2(
+        eHandle *handle,
+        os_int mflags);
+
+    void mapone(
+        eHandle *handle, 
+        os_int mflags);
 
 	/** Root of the object of the index tree.
      */

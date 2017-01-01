@@ -60,6 +60,7 @@ public:
 	inline static eThreadHandle *cast(
 		eObject *o) 
 	{ 
+        e_assert_type(o, ECLASSID_THREAD_HANDLE)
 		return (eThreadHandle*)o;
 	}
 

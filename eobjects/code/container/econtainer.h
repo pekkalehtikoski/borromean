@@ -64,6 +64,7 @@ public:
 	inline static eContainer *cast(
 		eObject *o) 
 	{ 
+        e_assert_type(o, ECLASSID_CONTAINER)
 		return (eContainer*)o;
 	}
 

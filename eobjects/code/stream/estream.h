@@ -58,6 +58,7 @@ public:
 	inline static eStream *cast(
 		eObject *o) 
 	{ 
+        e_assert_type(o, ECLASSID_STREAM)
 		return (eStream*)o;
 	}
 

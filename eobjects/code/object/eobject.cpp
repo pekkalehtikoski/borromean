@@ -541,7 +541,8 @@ void eObject::adopt(
     eHandle
         *childh;
 
-
+    os_int
+        mapflags;
 
     /* Make sure that parent object is already part of tree structure.
      */
@@ -570,11 +571,21 @@ mm_handle->verify_whole_tree();
 
         // Detach names
 
-        sync = (mm_root != child->mm_root); // || m_root->is_process || child->mm_root->is_process; ???????????????????????????????????????????????????????????????????????
+        /* Synchronize if adopting from three structure to another.
+         */
+        sync = (mm_root != child->mm_root);
 
         childh = child->mm_handle;
 
-        if (sync) osal_mutex_system_lock();
+        if (sync) 
+        {
+            osal_mutex_system_lock();
+        }
+
+        /* Detach names of child object and it's childen from name spaces 
+           above this object in tree structure.
+         */
+        map(E_DETACH_FROM_NAMESPACES_ABOVE);
 
         if (childh->m_parent)
         {
@@ -587,13 +598,28 @@ childh->m_parent->verify_whole_tree();
 		mm_handle->rbtree_insert(childh);
         childh->m_parent = mm_handle;
 
-        child->mm_root = mm_root;
 
 // ??????????????????????????????????????????????????????????????? mmm_root should be set for all grandchildren?
 mm_root->mm_handle->verify_whole_tree();
 
-        // Map names back, if flagged
+        /* Map names back: If not disabled by user flag EOBJ_NO_MAP, then attach all names of 
+           child object (this) and it's childen to name spaces. If a name is already mapped, 
+           it is not remapped.
+           If we are adoprion from a=one tree structure to another (sync is on), we need to set 
+           m_root pointer (pointer to eRoot of a tree structure)to all child objects.
+         */
+        mapflags = sync ? E_SET_ROOT_POINTER : 0;
+        if ((aflags & EOBJ_NO_MAP) == 0) 
+        {
+            mapflags |= E_ATTACH_NAMES;
+        }
 
+        if (mapflags)
+        {        
+            child->mm_root = mm_root;
+            child->map(E_ATTACH_NAMES|E_SET_ROOT_POINTER);
+        }
+    
         if (sync) osal_mutex_system_unlock();
     }
 }
@@ -817,12 +843,14 @@ eObject *eObject::ns_get(
     return OS_NULL;
 }
 
+
 eVariable *eObject::ns_getv(
     os_char *name,
     os_char *namespace_id)
 {
     return eVariable::cast(ns_get(name, namespace_id, ECLASSID_VARIABLE));
 }
+
 
 eContainer *eObject::ns_getc(
     os_char *name,
@@ -831,23 +859,32 @@ eContainer *eObject::ns_getc(
     return eContainer::cast(ns_get(name, namespace_id, ECLASSID_CONTAINER));
 }
 
+
 /**
 ****************************************************************************************************
 
   @brief Find name space by naespace identifier.
 
   The eObject::findnamespace() function adds name to this object and maps it to name space.
+
+  Notice: ".." Refers to name space of this object or closest parent.
   
-  @param   namespace_id Identifier for the name space. OS_NULL refers to first parent name space,
-           regardless of name space identifier.
-  @param   is_process_ns
-  @return  Pointer to name space, eNameSpace class. OS_NULL if none found.
+  @param  namespace_id Identifier for the name space. OS_NULL refers to first parent name space,
+          regardless of name space identifier.
+  @param  info Pointer where to set information bits. OS_NULL if not needed. 
+          E_INFO_PROCES_NS bit indicates that the name space is process namespace. 
+          E_INFO_ABOVE_CHECKPOINT bit indicates that name space is above check point in tree 
+          structure.
+  @param  checkpoint Pointer to object in tree structure to check if name space is above this one.
+          OS_NULL if not needed.
+  @return Pointer to name space, eNameSpace class. OS_NULL if none found.
 
 ****************************************************************************************************
 */
 eNameSpace *eObject::findnamespace(
 	os_char *namespace_id,
-    os_boolean *is_process_ns)
+    os_int *info,
+    eObject *checkpoint)
 {
 	eNameSpace
 		*ns;
@@ -859,7 +896,11 @@ eNameSpace *eObject::findnamespace(
     os_boolean
         getparent;
 
-	/* If name space id NULL, it is same as parent name space ??????????????
+    /* No information yet.
+     */
+    if (info) *info = 0;
+
+	/* If name space id NULL, it is same as parent name space.
 	 */
     if (namespace_id == OS_NULL)
     {
@@ -871,18 +912,17 @@ eNameSpace *eObject::findnamespace(
 	    /* If name space id refers to process name space, just return pointer to it.
 	     */
         case '/':
-            if (is_process_ns) *is_process_ns = OS_TRUE;
+            if (info) *info = E_INFO_PROCES_NS|E_INFO_ABOVE_CHECKPOINT;
             return eglobal->process_ns;
 
 	    /* If thread name space, just return pointer to the name space.
 	     */
         case '\0':
-            if (is_process_ns) *is_process_ns = OS_FALSE;
             if (mm_root == OS_NULL) return OS_NULL;
+            if (info) *info = E_INFO_ABOVE_CHECKPOINT;
             return eNameSpace::cast(mm_root->first(EOID_NAMESPACE));
 
         default:
-            if (is_process_ns) *is_process_ns = OS_FALSE;
             if (!os_strcmp(namespace_id, "."))
             {
                 if ((flags() & EOBJ_HAS_NAMESPACE) == 0) return OS_NULL;
@@ -925,6 +965,7 @@ eNameSpace *eObject::findnamespace(
             }
         }
 
+        if (info) if (h->m_object == checkpoint) *info |= E_INFO_ABOVE_CHECKPOINT;
         h = h->parent();        
     }
 
@@ -997,12 +1038,131 @@ eName *eObject::addname(
 	 */
 	if ((flags & ENAME_NO_MAP) == 0) 
     {
-        n->map();
+        n->mapname();
     }
 
 	/* Return pointer to name.
 	 */
 	return n;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Attach/detach names in tree sturcture to name spaces. Set eRoot pointers.
+
+  The eObject::map() function is attaches/detaches names from name spaces, and sets used
+  eRoot object pointer for child objects. The functionality is controlled by flags.
+  This is function is mostly used to remap names when an object (tree structure) is adopted 
+  from one thread to another. And when queuing messages for threads and outgoing connections.
+  
+  @param   flags
+           - E_ATTACH_NAMES: Attach all names of child object (this) and it's childen to 
+             name spaces. If a name is already mapped, it is not remapped.
+
+           - E_SET_ROOT_POINTER: Copy m_root pointer (pointer to eRoot of a tree structure)
+             from child object (this) to all child objects of it.
+
+           - E_DETACH_FROM_NAMESPACES_ABOVE: Detach names of child object (this) and it's 
+             childen from name spaces above this object in tree structure.
+
+  @return  None 
+
+****************************************************************************************************
+*/
+void eObject::map(
+    os_int mflags)
+{
+    osal_debug_assert(mm_handle != OS_NULL);
+
+    /* Handle special case when this is name
+     */
+    if (mm_handle->oid() == EOID_NAME && 
+       (mflags & (E_ATTACH_NAMES|E_DETACH_FROM_NAMESPACES_ABOVE)))
+    {
+        mapone(mm_handle, mflags);
+    }
+
+    /* Map all child objects.
+     */
+    map2(mm_handle, mflags);
+}
+
+void eObject::map2(
+    eHandle *handle,
+    os_int mflags)
+{
+    eHandle
+        *childh;
+
+    for (childh = handle->first(EOID_ALL);
+         childh;
+         childh = childh->next(EOID_ALL))
+    {
+        if (mflags & E_SET_ROOT_POINTER)
+        {
+            childh->m_object->mm_root = mm_root;
+        }
+
+        /* If this is name which needs to be attaached or detached, do it.
+         */
+        if (childh->oid() == EOID_NAME && 
+           (mflags & (E_ATTACH_NAMES|E_DETACH_FROM_NAMESPACES_ABOVE)))
+        {
+            mapone(handle, mflags);
+        }
+
+        /* If this has children, process those.
+         */
+        if (childh->m_children) 
+        {
+            map2(childh, mflags);
+        }
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Attach or detach a name to a name space.
+
+  The eObject::mapone() function attaches or detaches a name to/from name space.
+
+  @return  None. 
+
+****************************************************************************************************
+*/
+void eObject::mapone(
+    eHandle *handle, 
+    os_int mflags)
+{
+    eName
+        *name;
+
+    eNameSpace 
+        *ns;
+
+    os_int
+        info;
+
+    name = eName::cast(handle->m_object);
+
+    ns = handle->m_object->findnamespace(name->namespaceid(), &info, this);
+
+    if (mflags & E_ATTACH_NAMES)
+    {
+        name->mapname2(ns, info);
+    }
+
+    if (mflags & E_DETACH_FROM_NAMESPACES_ABOVE)
+    {
+        if (info & E_INFO_ABOVE_CHECKPOINT)
+        {
+            name->detach();
+        }
+    }
 }
 
 

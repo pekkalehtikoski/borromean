@@ -56,6 +56,7 @@ public:
 	inline static ePointer *cast(
 		eObject *o) 
 	{ 
+        e_assert_type(o, ECLASSID_POINTER)
 		return (ePointer*)o;
 	}
 

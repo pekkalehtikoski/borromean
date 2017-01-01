@@ -59,6 +59,7 @@ public:
 	inline static eEnvelope *cast(
 		eObject *o) 
 	{ 
+        e_assert_type(o, ECLASSID_ENVELOPE)
 		return (eEnvelope*)o;
 	}
 

@@ -329,10 +329,9 @@ os_char *eName::namespaceid()
 
   @brief Set name space identifier, if any, for the name.
 
-  The eName::map() function maps name to name space.
+  The eName::setnamespaceid() function...
 
-
-  @return  ESTATUS_SUCCESS if successfull, other values indicate an error. 
+  @return None.
 
 ****************************************************************************************************
 */
@@ -381,20 +380,19 @@ void eName::setnamespaceid(
 
   @brief Map the name to a name space.
 
-  The eName::map() function maps name to name space.
-
+  The eName::mapname() function maps name to name space.
 
   @return  ESTATUS_SUCCESS if successfull, other values indicate an error. 
 
 ****************************************************************************************************
 */
-eStatus eName::map()
+eStatus eName::mapname()
 {
     eNameSpace 
         *ns;
 
-    os_boolean 
-        is_process_ns;
+    os_int
+        info;
 
     /* If this name is mapped already, do nothing.
      */
@@ -406,17 +404,40 @@ eStatus eName::map()
 
     /* Find name space to map to. If none, return error.
      */
-    ns = parent()->findnamespace(namespaceid(), &is_process_ns);
+    ns = parent()->findnamespace(namespaceid(), &info);
     if (ns == OS_NULL) return ESTATUS_NAME_MAPPING_FAILED;
 
-    /* Save pointer to name space.
+    return mapname2(ns, info);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Map the name to a name space.
+
+  The eName::mapname2() function maps name to name space given as argument.
+
+  @return  ESTATUS_SUCCESS if successfull, other values indicate an error. 
+
+****************************************************************************************************
+*/
+eStatus eName::mapname2(
+    eNameSpace *ns,
+    os_int info)
+{
+    /* If this name is mapped already, do nothing.
+     */
+    if (m_namespace) return ESTATUS_NAME_ALREADY_MAPPED;
+
+     /* Save pointer to name space.
      */
     m_namespace = ns;
-    m_is_process_ns = is_process_ns;
+    m_is_process_ns = (info & E_INFO_PROCES_NS) ? OS_TRUE : OS_FALSE;
 
     /* If process name space, synchronize.
      */
-    if (is_process_ns) osal_mutex_system_lock();
+    if (m_is_process_ns) osal_mutex_system_lock();
 
     /* Insert name to name space's red black tree.
      */
@@ -424,7 +445,7 @@ eStatus eName::map()
 
     /* Finish with syncronization and return. 
      */
-    if (is_process_ns) osal_mutex_system_unlock();
+    if (m_is_process_ns) osal_mutex_system_unlock();
     return ESTATUS_SUCCESS;
 }
 
