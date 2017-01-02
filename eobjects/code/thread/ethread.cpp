@@ -257,5 +257,9 @@ void eThread::alive(
         /* Call message processing.
          */
         onmessage(envelope);
+
+        /* Finished with envelope.
+         */
+        delete envelope;
     }           
 } 

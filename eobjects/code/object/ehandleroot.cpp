@@ -161,14 +161,17 @@ eHandle *ehandleroot_releasehandles(
 	while (nro_handles-- != 0 && first_to_keep)
 	{
 		last_to_join = first_to_keep;
+        last_to_join->ucnt_mark_unused();
 		first_to_keep = first_to_keep->right();
 	}
 
 	/* Synchronize while handling global free handles
 	*/
 	osal_mutex_system_lock();
-	if (last_to_join) last_to_join->setright(eglobal->hroot.m_first_free);
-	eglobal->hroot.m_first_free = h;
+	if (last_to_join) 
+    {   last_to_join->setright(eglobal->hroot.m_first_free);
+	    eglobal->hroot.m_first_free = h;
+    }
 	osal_mutex_system_unlock();
 
 	/* Return pointer to first ehanle to keep allocated for the thread
@@ -177,7 +180,7 @@ eHandle *ehandleroot_releasehandles(
 }
 
 
-/* THIS MUST BE AS HAST FUNCTION AS POSSIBLE
+/* THIS MUST BE AS FAST FUNCTION AS POSSIBLE
  */
 inline eHandle *eget_handle(
     e_oix oix)

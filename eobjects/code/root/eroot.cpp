@@ -37,8 +37,8 @@ eRoot::eRoot(
 	   This means that empty default is used.
 	 */
 	m_first_free_handle = OS_NULL;
-	// m_reserved_handle_count = 0;
-	m_reserve_at_once = 0;
+	m_free_handle_count = 0;
+	m_reserve_at_once = 1;
 }
 
 
@@ -55,6 +55,7 @@ eRoot::eRoot(
 */
 eRoot::~eRoot()
 {
+    ehandleroot_releasehandles(m_first_free_handle, m_reserve_at_once);
 }
 
 
@@ -82,18 +83,19 @@ void eRoot::newhandle(
 		{
 			m_reserve_at_once = 16;
 		}
-		else if (m_reserve_at_once <= 256)
+		else if (m_reserve_at_once <= 64)
 		{
 			m_reserve_at_once *= 2;
 		}
 		m_first_free_handle = ehandleroot_reservehandles(m_reserve_at_once);
-		// m_reserved_handle_count += m_reserve_at_once;
+		m_free_handle_count += m_reserve_at_once;
 	}
 
 	/* Remove handle to use from chain of free handles.
 	 */
 	handle = m_first_free_handle;
 	m_first_free_handle = handle->right();
+    m_free_handle_count--;
 
 	/* Save object identifier, clear flags, mark new node as red,
 	   join to tree hierarchy, no children yet.
@@ -114,11 +116,18 @@ void eRoot::newhandle(
 
 /* Close handle of object obj.
  */
-void eRoot::closehandle(
-    eObject *obj)
+void eRoot::freehandle(
+    eHandle *handle)
 {
-/* 	if (mm_parent && (flags() & EOBJ_FAST_DELETE) == 0)
-	{
-		m_parent->rbtree_remove(this);
-	} */
+    /* Join to chain of free handles.
+     */
+    handle->m_right = m_first_free_handle;
+    m_first_free_handle = handle;
+    m_free_handle_count++;
+
+    if (m_free_handle_count > 2*m_reserve_at_once)
+    {
+		m_first_free_handle = ehandleroot_releasehandles(m_first_free_handle, m_reserve_at_once);
+        m_free_handle_count -= m_reserve_at_once;
+    }
 }

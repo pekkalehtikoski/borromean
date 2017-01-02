@@ -90,9 +90,34 @@ public:
 	*/
 	/*@{*/
 
-    inline void setcommand(os_int command) {m_command = command;}
+/* COMMAND AND FLAGS ***************************************************************************** */
 
-    inline void setmflags(os_int mflags) {m_mflags = mflags;}
+    inline void setcommand(
+        os_int command) 
+    {
+        m_command = command;
+    }
+
+    inline os_int command()
+    {
+        return m_command;
+    }
+
+    /** Set message flags.
+     */
+    inline void setmflags(
+        os_int mflags) 
+    {
+        m_mflags = mflags;
+    }
+
+    /** Set specified message flags.
+     */
+    inline void addmflags(
+		os_int mflags)
+    {
+        m_mflags |= mflags;
+    }
 
     /** Clear specified message flags.
      */
@@ -102,26 +127,21 @@ public:
         m_mflags &= ~mflags;
     }
 
+    /** Get message flags.
+     */
+    inline os_int mflags() 
+    {
+        return m_mflags;
+    }
+
+
+/* TARGET **************************************************************************************** */
+
     void settarget(
         os_char *target);
 
     void settarget(
         eVariable *target);
-
-    void setsource(
-        os_char *source);
-
-    void setcontent(
-        eObject *content,
-        os_int mflags);
-
-    void setcontext(
-        eObject *context,
-        os_int mflags);
-
-    inline os_int command() {return m_command;}
-
-    inline os_int mflags() {return m_mflags;}
 
     /** The eEnvelope::gettarget() function returns remaining path to destination. The target path
         gets shorter when the envelope passess throug messaging (and source path longer).
@@ -132,6 +152,10 @@ public:
         if (m_target == OS_NULL) return "";
         return m_target + m_target_pos;
     }
+
+    /* Get next name from target string.
+     */
+    void nexttarget(eVariable *x);
 
     inline void move_target_pos(
         os_short nchars) 
@@ -146,11 +170,43 @@ public:
         if (m_target[m_target_pos] == '/') m_target_pos++;
     }
 
-    os_boolean nexttargetis(char *name);
+//    os_boolean nexttargetis(char *name);
 
-    void nexttarget(eVariable *x);
 
-    inline eObject *content() {return m_content;}
+/* SOURCE **************************************************************************************** */
+
+    void appendsource(
+        os_char *source);
+
+    void appendsourceoix(
+        eObject *o);
+
+    inline os_char *source()
+    {
+        if (m_source == OS_NULL) return "";
+        return m_source;
+    }
+
+ 
+/* CONTENT AND CONTEXT ************************************************************************** */
+
+    void setcontent(
+        eObject *content,
+        os_int mflags);
+
+    void setcontext(
+        eObject *context,
+        os_int mflags);
+
+    inline eObject *content() 
+    {
+        return m_content;
+    }
+
+    inline eObject *context() 
+    {
+        return m_context;
+    }
 
     /*@}*/
 

@@ -130,7 +130,7 @@ eObject::eObject(
 			mm_root = parent->mm_root;
 			mm_root->newhandle(this, parent, oid, flags);
 
-verify_whole_tree();
+// verify_whole_tree();
 		}
 	}
 
@@ -181,9 +181,18 @@ eObject::~eObject()
 
     if ((flags() & EOBJ_FAST_DELETE) == 0)
     {
-		if (mm_handle) if (mm_handle->m_parent) 
+		if (mm_handle) 
         {
-			mm_handle->m_parent->rbtree_remove(mm_handle);
+            /* If handle has parent, remove from parent's children.
+             */
+            if (mm_handle->m_parent) 
+            {
+			    mm_handle->m_parent->rbtree_remove(mm_handle);
+            }
+            
+            /* Handle no longer needed.
+             */
+            mm_root->freehandle(mm_handle);
         }
     }
 }
@@ -568,8 +577,8 @@ void eObject::adopt(
 
     else
     {
-child->mm_handle->verify_whole_tree();
-mm_handle->verify_whole_tree();
+// child->mm_handle->verify_whole_tree();
+// mm_handle->verify_whole_tree();
 
         // Detach names
 
@@ -592,7 +601,7 @@ mm_handle->verify_whole_tree();
         if (childh->m_parent)
         {
 		    childh->m_parent->rbtree_remove(childh);
-childh->m_parent->verify_whole_tree();
+// childh->m_parent->verify_whole_tree();
         }
 
 		childh->m_oflags |= EOBJ_IS_RED;
@@ -618,7 +627,7 @@ childh->m_parent->verify_whole_tree();
             child->map(E_ATTACH_NAMES|E_SET_ROOT_POINTER);
         }
 
-mm_root->mm_handle->verify_whole_tree();
+// mm_root->mm_handle->verify_whole_tree();
 
     
         if (sync) osal_mutex_system_unlock();
@@ -1201,7 +1210,7 @@ void eObject::message(
     envelope->setcommand(command);
     envelope->setmflags(mflags & ~(EMSG_DEL_CONTENT|EMSG_DEL_CONTEXT));
     envelope->settarget(target);
-    envelope->setsource(source);
+    envelope->appendsource(source);
     envelope->setcontent(content, mflags);
     envelope->setcontext(context, mflags);
     message(envelope);
@@ -1229,9 +1238,17 @@ void eObject::message(
 
     /* Resolve path.
      */
-    if (envelope->mflags() & EMSG_RESOLVE) 
+    if ((envelope->mflags() & EMSG_NO_RESOLVE) == 0)
     {
-        envelope->clearmflags(EMSG_RESOLVE);
+        envelope->addmflags(EMSG_NO_RESOLVE);
+    }
+
+    /* Add oix to source path when needed.
+     */
+    if ((envelope->mflags() & (EMGS_NO_REPLIES|EMSG_NO_NEW_SOURCE_OIX)) == 0)
+    {
+        envelope->appendsourceoix(this);
+        envelope->addmflags(EMSG_NO_NEW_SOURCE_OIX);
     }
 
     target = envelope->target();
@@ -1325,11 +1342,11 @@ void eObject::process_ns_message(
         envelope->nexttarget(objname);
         objname->gets(&sz);
 
-        /* Synchronize
+        /* Synchronize.
          */
         osal_mutex_system_lock();
 
-        /* Find the name in process name space.
+        /* Find the name in process name space. Done with objname.
          */
         name = process_ns->findname(objname);
 
@@ -1339,6 +1356,10 @@ void eObject::process_ns_message(
         {
             /* Post notarget message !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
+            /* End synchronization
+             */
+            osal_mutex_system_unlock();
+            delete objname;
             goto getout;
         }
 
@@ -1355,6 +1376,8 @@ void eObject::process_ns_message(
         /* End synchronization
          */
         osal_mutex_system_unlock();
+
+        delete objname;
     }
 
     return;

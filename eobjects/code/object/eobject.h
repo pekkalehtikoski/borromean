@@ -38,7 +38,8 @@ class eThread;
  */
 #define EMGS_NO_REPLIES 1
 #define EMSG_KEEP_CONTENT 0
-#define EMSG_RESOLVE 2
+#define EMSG_NO_RESOLVE 2
+#define EMSG_NO_NEW_SOURCE_OIX 4
 #define EMSG_DEL_CONTENT 128
 #define EMSG_DEL_CONTEXT 256
 
@@ -567,12 +568,12 @@ protected:
 
 	/* Red/Black tree: Remove node from red/black.
      */
-    inline void rbtree_remove(
+    /* inline void rbtree_remove(
         eObject *n)
 	{
 		if (mm_handle) if (mm_handle->m_parent)
 			mm_handle->m_parent->rbtree_remove(mm_handle);
-	}
+	} */
 
     void map2(
         eHandle *handle,

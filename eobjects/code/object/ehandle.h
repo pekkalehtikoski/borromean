@@ -173,6 +173,29 @@ public:
         return m_oid;
     }
 
+	/** Get object index. 
+     */
+    inline os_int oix() 
+    {
+        return m_oix;
+    }
+	
+	/** Get reuse counter. If reuse counter is unused (negative), mark used and icrement.
+     */
+    inline os_int ucnt() 
+    {
+        if (m_ucnt<=0) m_ucnt = -m_ucnt + 1; 
+        return m_ucnt;
+    }
+
+	/** Sets reuse counter to negative. This marks that reuse counter needs to be incremented
+        next time it is used.
+     */
+    inline void ucnt_mark_unused() 
+    {
+        if (m_ucnt>0) m_ucnt = -m_ucnt; 
+    }
+
     /** Get object pointer.
      */
     inline eObject *object() 
@@ -412,7 +435,7 @@ protected:
 	
 	/** Reuse counter. 
      */
-	e_oix m_ucnt;
+	os_int m_ucnt;
 
 	/** Object identifier.
      */

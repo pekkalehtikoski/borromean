@@ -94,10 +94,10 @@ public:
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
-    /* Close handle of object obj.
+    /* Free handle of object obj.
      */
-    void closehandle(
-		eObject *obj);
+    void freehandle(
+        eHandle *handle);
     /*@}*/
 
 protected:
@@ -110,9 +110,9 @@ protected:
 	 */
 	os_int m_reserve_at_once;
 
-	/** Number of allocated handles.
+	/** Number of free handles.
 	 */
-	// os_int m_reserved_handle_count;
+	os_int m_free_handle_count;
 
 };
 

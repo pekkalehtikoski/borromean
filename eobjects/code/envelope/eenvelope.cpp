@@ -59,6 +59,14 @@ eEnvelope::eEnvelope(
 */
 eEnvelope::~eEnvelope()
 {
+    if (m_target)
+    {
+        osal_memory_free(m_target, m_target_alloc);
+    }
+    if (m_source)
+    {
+        osal_memory_free(m_source, m_source_alloc);
+    }
 }
 
 
@@ -130,34 +138,57 @@ void eEnvelope::settarget(
 /**
 ****************************************************************************************************
 
-  @brief Set destination for the envelope.
+  @brief Append to destination path.
 
-  The eEnvelope::settarget() function. 
+  The eEnvelope::appendsource() function....
 
   @return  None.
 
 ****************************************************************************************************
 */
-void eEnvelope::setsource(
+void eEnvelope::appendsource(
     os_char *source)
 {
     os_memsz
         sz,
         len;
 
-    if (m_source)
-    {
-        osal_memory_free(m_source, m_source_alloc);
-        m_source = OS_NULL;
-    }
-    
+    os_char
+        *new_source,
+        *p;
+
     if (source)
     {
         len = os_strlen(source);
-	    m_source = (os_char*)osal_memory_allocate(len+32, &sz);
-        m_source_alloc = (os_short)sz;
-        m_source_end = (os_short)(len-1);
-        os_memcpy(m_source, source, len);
+
+        /* If this does not fit in currect buffer allocation
+         */
+        if (m_source_end + len >= m_source_alloc)
+        {
+	        new_source = p = (os_char*)osal_memory_allocate(m_source_end + len + 10, &sz);
+            if (m_source)
+            {            
+                os_memcpy(p, m_source, m_source_end);
+                p += m_source_end;
+                *(p++) = '/';
+            }
+
+            os_memcpy(p, source, len);
+            p += len-1;
+
+            m_source_end = (os_short)(p-new_source);
+            if (m_source)
+            {
+                osal_memory_free(m_source, m_source_alloc);
+            }
+            m_source_alloc = (os_short)sz;
+            m_source = new_source;
+        }
+        else
+        {
+           os_memcpy(m_source + m_source_end, source, len);
+           m_source_end += (os_short)len-1;
+        }
     }
 }
 
@@ -246,7 +277,6 @@ void eEnvelope::setcontext(
   @brief Get next name from target string.
 
   The eEnvelope::nexttarget() function...
-  envelope is not modified.
 
   @param  x Pointer to variable where to store the name.
   @return None.
@@ -264,4 +294,49 @@ void eEnvelope::nexttarget(
 
     while (*e != '/' && *e != '\0') e++;
     x->sets(p, e-p);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Append object index and use counter.
+
+  The eEnvelope::appendsourceoix function...
+
+  Example appended string:
+  - "@17_@3" oix=15, ucnt = 3
+  - "@15" oix=15, ucnt = 0
+
+  @param  o Pointer to object whose use oix and ucnt are to be appended.
+  @return None.
+
+****************************************************************************************************
+*/
+void eEnvelope::appendsourceoix(
+    eObject *o)
+{
+    os_char 
+        buf[2 * OSAL_NBUF_SZ+2];
+
+    os_int 
+        pos,
+        ucnt;
+
+    osal_debug_assert(mm_handle);
+
+    pos = 0;
+    buf[pos++] = '@';
+    pos += (os_int)osal_int_to_string(buf+pos, sizeof(buf)-pos, mm_handle->oix()) - 1;
+    if (pos < sizeof(buf)-1) 
+    {
+        ucnt = mm_handle->ucnt();
+        if (ucnt)
+        {
+            buf[pos++] = '_';
+            pos += (os_int)osal_int_to_string(buf+pos, sizeof(buf)-pos, mm_handle->ucnt()) - 1;
+        }
+    }
+
+    appendsource(buf);
 }
