@@ -320,18 +320,22 @@ void eEnvelope::appendsourceoix(
         pos,
         ucnt;
 
-    osal_debug_assert(mm_handle);
+    eHandle
+        *handle;
+
+    handle = o->handle();
+    osal_debug_assert(handle);
 
     pos = 0;
     buf[pos++] = '@';
-    pos += (os_int)osal_int_to_string(buf+pos, sizeof(buf)-pos, mm_handle->oix()) - 1;
+    pos += (os_int)osal_int_to_string(buf+pos, sizeof(buf)-pos, handle->oix()) - 1;
     if (pos < sizeof(buf)-1) 
     {
         ucnt = mm_handle->ucnt();
         if (ucnt)
         {
             buf[pos++] = '_';
-            pos += (os_int)osal_int_to_string(buf+pos, sizeof(buf)-pos, mm_handle->ucnt()) - 1;
+            pos += (os_int)osal_int_to_string(buf+pos, sizeof(buf)-pos, handle->ucnt()) - 1;
         }
     }
 

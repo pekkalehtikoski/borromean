@@ -761,6 +761,7 @@ void eHandle::verify_property_5_helper(
 #endif
 
 
+#if EOBJECT_DBTREE_DEBUG
 /**
 ****************************************************************************************************
 
@@ -803,7 +804,9 @@ void eHandle::verify_whole_tree()
      */
     topmost->verify_children(root);
 }
+#endif
 
+#if EOBJECT_DBTREE_DEBUG
 /**
 ****************************************************************************************************
 
@@ -825,8 +828,9 @@ void eHandle::verify_node(
     osal_debug_assert(m_object->mm_handle == this);
     osal_debug_assert(m_object->mm_root == root);
 }        
+#endif 
 
-
+#if EOBJECT_DBTREE_DEBUG
 /**
 ****************************************************************************************************
 
@@ -882,7 +886,7 @@ void eHandle::verify_children(
 		n = p;
 	}
 }
-
+#endif
 
 
 /**

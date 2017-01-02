@@ -108,13 +108,18 @@ public:
     /* Get class identifier
      */
     virtual os_int classid() {return ECLASSID_OBJECT;}
-       
+
     /* Allocate new child object by class identifier.
      */
     eObject *newchild(
         os_int cid,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
+
+    inline eHandle *handle()
+    {
+        return mm_handle;
+    }
 
     /*@}*/
 
