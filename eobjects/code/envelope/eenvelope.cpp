@@ -224,7 +224,7 @@ void eEnvelope::setcontent(
         }
         else
         {
-            o->clone(this, EOID_CONTENT);
+            o->clone(this, EOID_CONTENT, EOBJ_NO_MAP);
         }
     }
 }
@@ -262,7 +262,7 @@ void eEnvelope::setcontext(
         }
         else
         {
-            o->clone(this, EOID_CONTEXT);
+            o->clone(this, EOID_CONTEXT, EOBJ_NO_MAP);
         }
     }
 }
@@ -314,6 +314,15 @@ void eEnvelope::appendsourceoix(
     eObject *o)
 {
     os_char 
+        buf[E_OEXSTR_BUF_SZ];
+
+    /** Get oix and ucnt as string.
+     */
+    o->oixstr(buf, sizeof(buf));
+    appendsource(buf);
+
+#if 0
+    os_char 
         buf[2 * OSAL_NBUF_SZ+2];
 
     os_int 
@@ -340,4 +349,5 @@ void eEnvelope::appendsourceoix(
     }
 
     appendsource(buf);
+#endif
 }

@@ -70,7 +70,8 @@ eContainer::~eContainer()
 */
 eObject *eContainer::clone(
     eObject *parent, 
-    e_oid oid)
+    e_oid oid,
+    os_int aflags)
 {
     eObject
         *clonedobj,
@@ -82,7 +83,7 @@ eObject *eContainer::clone(
     {
         if (child->isclonable())
         {
-            child->clone(clonedobj, child->oid());
+            child->clone(clonedobj, child->oid(), aflags);
         }
     }
 

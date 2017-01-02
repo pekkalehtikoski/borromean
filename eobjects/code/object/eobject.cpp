@@ -203,13 +203,14 @@ eObject::~eObject()
 
   @brief Clone object
 
-  The eObject::clone function is base class only. Cloning eObject is not supported.
+  The eObject::clone function is base class only. Cloning eObject base class is not supported.
 
 ****************************************************************************************************
 */
 eObject *eObject::clone(
     eObject *parent, 
-    e_oid oid)
+    e_oid oid,
+    os_int aflags)
 {
 	osal_debug_error("clone() not supported for the class");
     return OS_NULL;
@@ -327,6 +328,47 @@ void eObject::operator delete(
 		if (mm_handle) return mm_handle->childcount(oid);
 		return 0;
 	} */
+
+
+/**
+****************************************************************************************************
+
+  @brief Append object index and use counter.
+
+  The eEnvelope::appendsourceoix function...
+
+  Example appended string:
+  - "@17_@3" oix=15, ucnt = 3
+  - "@15" oix=15, ucnt = 0
+
+  @param  o Pointer to object whose use oix and ucnt are to be appended.
+  @return None.
+
+****************************************************************************************************
+*/
+void eObject::oixstr(
+    os_char *buf, 
+    os_memsz bufsz)
+{
+    os_int 
+        pos,
+        ucnt;
+
+    osal_debug_assert(mm_handle);
+
+    pos = 0;
+    buf[pos++] = '@';
+    pos += (os_int)osal_int_to_string(buf+pos, bufsz-pos, mm_handle->oix()) - 1;
+    if (pos < sizeof(buf)-1) 
+    {
+        ucnt = mm_handle->ucnt();
+        if (ucnt)
+        {
+            buf[pos++] = '_';
+            pos += (os_int)osal_int_to_string(buf+pos, bufsz-pos, mm_handle->ucnt()) - 1;
+        }
+    }
+}
 
 
 /**
@@ -1310,13 +1352,26 @@ void eObject::process_ns_message(
         *process_ns;
 
     eName
-        *name;
+        *name,
+        *nextname;
+
+    eContainer
+        *targetlist;
+
+    eThread 
+        *thread;
+
+    ePointer 
+        *ptr;
 
     os_memsz 
         sz;
 
-    eThread 
-        *thread;
+    os_char 
+        buf[E_OEXSTR_BUF_SZ];
+
+    os_boolean
+        multiplethreads;
 
     process_ns = eglobal_process_ns();
     if (process_ns == OS_NULL) 
@@ -1369,11 +1424,67 @@ void eObject::process_ns_message(
          */
         thread = name->thread();
 
-        /* Remove object name from envelope's target path and 
-           move the envelope to thread's message queue.
+        /* Check if targeted to multiple threads.
          */
+        multiplethreads = OS_FALSE;
+        for (nextname = name->ns_next(); nextname; nextname = nextname->ns_next())
+        {
+            if (nextname->thread() != thread) 
+            {
+                multiplethreads = OS_TRUE;
+                break;
+            }
+        }
+
+        /* Remove object name from envelope's target path.
+            */
         envelope->move_target_over_objname((os_short)sz - 1);
-        thread->queue(envelope);
+
+        /* Single thread target (common case).
+         */
+        if (!multiplethreads)
+        {
+            /* Move the envelope to thread's message queue.
+             */
+            thread->queue(envelope);
+        }
+
+        /* Multiple threads.
+         */
+        else
+        {
+            /* Generate list of targets threads.
+             */
+            targetlist = new eContainer(this);
+	        targetlist->ns_create();
+
+            for (nextname = name; nextname; nextname = nextname->ns_next())
+            {
+                /* Get thread object pointer and thread object index string.
+                 */
+                thread = name->thread();
+                thread->oixstr(buf, sizeof(buf));
+
+                /* If target thread is already listed
+                 */
+                if (targetlist->ns_first(buf)) continue;
+
+                /* Add thread to target list.
+                 */
+                ptr = new ePointer(targetlist);
+                ptr->set_undef(thread);
+                ptr->addname(buf);
+            }
+
+            for (ptr = ePointer::cast(targetlist->first()); ptr; ptr = ePointer::cast(ptr->next()))
+            {
+                thread = (eThread*)ptr->get_undef();
+                thread->queue(envelope);
+            } 
+            while (name);
+
+            delete(targetlist);
+        }
 
         /* End synchronization
          */

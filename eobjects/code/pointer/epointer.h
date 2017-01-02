@@ -99,11 +99,29 @@ public:
         if (m_my_pair) return m_my_pair->parent();
         return OS_NULL;
     }
+
+    /* Set plain pointer.
+     */
+	inline void set_undef(
+        void *ptr) 
+    {
+        m_undef = ptr;
+    }
+
+    /* Get plain pointer.
+     */
+	inline void *get_undef()
+    {
+        return m_undef;
+    }
    
     /*@}*/
 
 protected:
     ePointer *m_my_pair;
+
+    void *m_undef;
+
 };
 
 #endif

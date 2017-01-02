@@ -212,9 +212,17 @@ os_boolean eThread::exitnow()
 ****************************************************************************************************
 */
 void eThread::queue(
-    eEnvelope *envelope)
+    eEnvelope *envelope,
+    os_boolean delete_envelope)
 {
-    m_message_queue->adopt(envelope, EOID_CHILD, EOBJ_NO_MAP);
+    if (delete_envelope)
+    {
+        m_message_queue->adopt(envelope, EOID_CHILD, EOBJ_NO_MAP);
+    }
+    else
+    {
+        envelope->clone(m_message_queue, EOID_CHILD, EOBJ_NO_MAP);
+    }
     osal_event_set(m_trigger);
 }
 

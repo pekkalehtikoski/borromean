@@ -103,7 +103,8 @@ public:
      */
     virtual eObject *clone(
         eObject *parent, 
-        e_oid oid = EOID_CHILD);
+        e_oid oid = EOID_CHILD,
+		os_int aflags = 0);
 
     /* Get class identifier
      */
@@ -231,6 +232,16 @@ public:
 		return 0;
     }
 
+    /* Recommended size for oixstr() buffer.
+     */
+    #define E_OEXSTR_BUF_SZ (2 * OSAL_NBUF_SZ+2)
+
+    /** Get oix and ucnt as string.
+     */
+    void oixstr(
+        os_char *buf, 
+        os_memsz bufsz);
+
     /* Get number of childern.
      */
 	inline os_long childcount(
@@ -292,7 +303,7 @@ public:
 	eObject *prev(
 		e_oid oid = EOID_CHILD);
 
-    /* Flags for adopt function.
+    /* Flags for adopt() and clone() functions.
      */
     #define EOBJ_BEFORE_THIS 1
     #define EOBJ_NO_MAP 2

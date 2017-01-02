@@ -117,7 +117,8 @@ public:
     /* Get next message to thread to process.
      */
     void queue(
-        eEnvelope *envelope);
+        eEnvelope *envelope,
+        os_boolean delete_envelope = OS_TRUE);
 
     /* Get next message to thread to process.
      */

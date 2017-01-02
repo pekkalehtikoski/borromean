@@ -102,7 +102,7 @@ public:
     */
     /*@{*/
 
-	/* Get first child object identified by oid.
+	/* Get first child object with specific name.
      */
     eName *findname(
         eVariable *x = OS_NULL);
