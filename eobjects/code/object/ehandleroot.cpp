@@ -6,8 +6,8 @@
   @version 1.0
   @date    9.11.2011
 
-  The handle manager is keeps track of handle tables and globally free handles in them. Handles
-  can be reserved by thread or an another roobot object. Handle manager state is stored in 
+  The handle root keeps track of handle tables and global free handles in them. Handles
+  can be reserved by thread or an another root object. Handle root state is stored in 
   eHandleRoot structure within eglobals.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
@@ -77,11 +77,12 @@ void ehandleroot_shutdown()
 
   @brief Reserve handles for thread or another root object.
 
-  The ehandleroot_reservehandles reserves handles for use by thread. It is recommendable to
-  reserve set of handles rather than one at a time to make threads's handle's closer to each
-  others in memory to take better rdvantage of processor cache.
+  The ehandleroot_reservehandles reserves handles from common handle tables of free handles for 
+  use by specific root object. TIt is recommendable to reserve set of handles rather than one at 
+  a time to make threads's handle's closer to each others in memory to take better advantage of 
+  processor cache.
 
-  @param   nro_handles Number of handles to reserve, >+ 1.
+  @param   nro_handles Number of handles to reserve, >= 1.
   @return  Pointer to first handle in linked list of allocated handles to be returned.
 
 ****************************************************************************************************
@@ -146,7 +147,21 @@ eHandle *ehandleroot_reservehandles(
 }
 
 
-// nro_handles = 0, release all
+/**
+****************************************************************************************************
+
+  @brief Release handles from thread or another root object.
+
+  The ehandleroot_releasehandles releases handles reserved by thread to common list of free handles
+  in handle tables.
+
+  @param   h Pointer to first handle in linked list of handles to release.
+  @param   nro_handles Maximum number of handles to release, >= 1. 0 to release all handles  in 
+           linked list.
+  @return  Pointer to the first handle to keep allocated for thread. OS_NULL if none.
+
+****************************************************************************************************
+*/
 eHandle *ehandleroot_releasehandles(
 	eHandle *h,
 	e_oix nro_handles)
@@ -155,6 +170,9 @@ eHandle *ehandleroot_releasehandles(
 		*first_to_keep,
 		*last_to_join;
 
+    /* Find out last handle to join to globally free handles and first handle to keep
+       reserved for a root object. 
+     */
 	first_to_keep = h;
 	last_to_join = OS_NULL;
 	if (nro_handles == 0) nro_handles = ~(e_oix)0;
@@ -165,7 +183,7 @@ eHandle *ehandleroot_releasehandles(
 		first_to_keep = first_to_keep->right();
 	}
 
-	/* Synchronize while handling global free handles
+	/* Synchronize while handling global free handles.
 	*/
 	osal_mutex_system_lock();
 	if (last_to_join) 
@@ -174,30 +192,7 @@ eHandle *ehandleroot_releasehandles(
     }
 	osal_mutex_system_unlock();
 
-	/* Return pointer to first ehanle to keep allocated for the thread
+	/* Return pointer to first eHandle to keep allocated for the thread.
  	 */
 	return first_to_keep;
 }
-
-
-/* THIS MUST BE AS FAST FUNCTION AS POSSIBLE
- */
-inline eHandle *eget_handle(
-    e_oix oix)
-{
-	oix++;
-    return eglobal->hroot.m_table[oix >> EHANDLE_HANDLE_BITS]->m_handle + (oix & EHANDLE_TABLE_MAX);
-}
-
-inline eObject *eget_object(
-    e_oix oix)
-{
-/* 
-    handletable oix >> EHANDLE_HANDLE_BITS;
-    if (handletable >= m_nrotables) return OS_NULL;
-    return eglobal->handleroot.m_table[oix >> EHANDLE_HANDLE_BITS]->m_handle[oix & EHANDLE_TABLE_MAX].m_object;
-*/
-return 0;
-}
-
-

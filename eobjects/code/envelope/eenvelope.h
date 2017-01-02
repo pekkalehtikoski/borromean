@@ -191,21 +191,21 @@ public:
 /* CONTENT AND CONTEXT ************************************************************************** */
 
     void setcontent(
-        eObject *content,
+        eObject *o,
         os_int mflags);
 
     void setcontext(
-        eObject *context,
+        eObject *o,
         os_int mflags);
 
     inline eObject *content() 
     {
-        return m_content;
+        return first(EOID_CONTENT);
     }
 
     inline eObject *context() 
     {
-        return m_context;
+        return first(EOID_CONTEXT);
     }
 
     /*@}*/
@@ -230,14 +230,6 @@ private:
     /* Source path.
      */
     os_char *m_source;
-
-    /* Message content.
-     */
-    eObject *m_content;
-
-    /* Context to be returned with reply as is.
-     */
-    eObject *m_context;
 };
 
 #endif

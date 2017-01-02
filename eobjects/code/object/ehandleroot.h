@@ -6,8 +6,8 @@
   @version 1.0
   @date    9.11.2011
 
-  The handle manager is keeps track of handle tables and globally free handles in them. Handles
-  can be reserved by thread or an another roobot object. Handle manager state is stored in 
+  The handle root keeps track of handle tables and global free handles in them. Handles
+  can be reserved by thread or an another root object. Handle root state is stored in 
   eHandleRoot structure within eglobals.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
@@ -20,49 +20,51 @@
 #ifndef EHANDLEROOT_INCLUDED
 #define EHANDLEROOT_INCLUDED
 
-class eStream;
-class eVariable;
-class eNameSpace;
-class eName;
 class eHandleTable;
 
-/**
-****************************************************************************************************
-
-  @name Handle tree parmateres.
-
-  Specifies organization of object tree. Optimal values depend on system resources and
-  memory use of the application. Anyhow this is not precise, when we have these in right
-  ballpark, we are fine.
-
-****************************************************************************************************
-*/
-/*@{*/
 /** Maximum index for eHandleRoot's m_table array.
  */
 #define EHANDLE_TABLE_MAX 0x1FFF
 
-
 /**
 ****************************************************************************************************
 
-  @brief Handle class.
+  @brief Handle root class.
 
-  The eHandle is class for indexing the thread's object tree.
-  networked objects.
+  The handle eHandleRoot object manages holds pointers to allocated handle tables and maintains
+  list of free handles, which are not reserved for any root object. There is one handle root
+  object per process.
 
 ****************************************************************************************************
 */
 typedef struct eHandleRoot
 {
+    /** Array of handle table pointers. Index is from 0 to EHANDLE_TABLE_MAX.
+     */
     eHandleTable *m_table[EHANDLE_TABLE_MAX+1];
 
+    /** Number of allocated handle tables.
+     */
     os_int m_nrotables;
 
+    /* First free common handle (not reserved for any root object) in handle tables.
+     */
     eHandle *m_first_free;
-//    eHandle *m_last_free;
 }
 eHandleRoot;
+
+
+/**
+****************************************************************************************************
+
+  @name Handle root functions.
+
+  Function of the handle root is to allocate and manage handle tables, and allow (thread) root 
+  objects to reserve/release handles for use.
+
+****************************************************************************************************
+*/
+/*@{*/
 
 /* Initialize handle tables.
  */
@@ -72,20 +74,28 @@ void ehandleroot_initialize();
  */
 void ehandleroot_shutdown();
 
+/* Reserve handles for thread or another root object.
+ */
 eHandle *ehandleroot_reservehandles(
     e_oix nro_handles);
 
+/* Release handles from thread or another root object.
+ */
 eHandle *ehandleroot_releasehandles(
 	eHandle *h,
 	e_oix nro_handles);
 
-/* THIS MUST BE AS FAST FUNCTION AS POSSIBLE
+/* THIS MUST BE AS FAST FUNCTION AS POSSIBLE                NOT USED YET
  */
-inline eHandle *ehandle_find(
-    e_oix oix);
+/* inline eHandle *eget_handle(
+    e_oix oix)
+{
+	oix++;
+    return eglobal->hroot.m_table[oix >> EHANDLE_HANDLE_BITS]->m_handle + (oix & EHANDLE_TABLE_MAX);
+}
+*/
 
-inline eObject *ehandle_find_object(
-    e_oix oix);
+/*@}*/
 
 #endif
 

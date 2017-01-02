@@ -58,7 +58,7 @@ class eMyThread : public eThread
             osal_console_write(envelope->source());
             osal_console_write(": ");
             eVariable *v = eVariable::cast(envelope->content());
-            osal_console_write(v->gets());
+            osal_console_write(v ? v->gets() : "NULL");
 
             osal_console_write("\n");
             return ESTATUS_SUCCESS;

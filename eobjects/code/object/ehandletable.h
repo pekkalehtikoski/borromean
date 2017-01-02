@@ -20,11 +20,11 @@
 #define EHANDLETABLE_INCLUDED
 
 
-/** Number of bits in object index specifying handle index.
+/** Number of bits in object index specifying handle index. This and EHANDLE_HANDLE_MAX must match.
  */
 #define EHANDLE_HANDLE_BITS 14
 
-/** Maximum index for eHandle's m_handle array.
+/** Maximum index for eHandle's m_handle array. s
  */
 #define EHANDLE_HANDLE_MAX 0x3FFF
 

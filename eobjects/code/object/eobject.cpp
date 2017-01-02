@@ -99,7 +99,7 @@ eObject::eObject(
 		{
 			/* Allocate root helper object. 
 			 */
-			mm_root = new eRoot(this, EOID_ROOT,
+			mm_root = new eRoot(this, EOID_ROOT_HELPER,
 				EOBJ_IS_ATTACHMENT | EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE);
 
 			/* Allocate handle for this object
@@ -108,13 +108,13 @@ eObject::eObject(
 
 			/* Allocate handle for the root helper object.
 			*/
-			mm_root->newhandle(mm_root, this, EOID_ROOT, 
+			mm_root->newhandle(mm_root, this, EOID_ROOT_HELPER, 
 				EOBJ_IS_ATTACHMENT | EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE);
 		}
 
 		/* Otherwise if root object constructor?
 		 */
-		else if (oid == EOID_ROOT)
+		else if (oid == EOID_ROOT_HELPER)
 		{
             /* Here we cannot use type checked cast, because object is not fully initialized.
              */
@@ -537,6 +537,7 @@ eObject *eObject::prev(
   an another. 
   
   @param   aflags EOBJ_BEFORE_THIS Adopt before this object. EOBJ_NO_MAP not to map names.
+  @param   oid EOID_CHILD object identifier unchanged.
   @return  None.
 
 ****************************************************************************************************
@@ -604,6 +605,7 @@ void eObject::adopt(
 // childh->m_parent->verify_whole_tree();
         }
 
+        if (oid != EOID_CHILD) childh->m_oid = oid;
 		childh->m_oflags |= EOBJ_IS_RED;
 		childh->m_left = childh->m_right = childh->m_up = OS_NULL;
 		mm_handle->rbtree_insert(childh);

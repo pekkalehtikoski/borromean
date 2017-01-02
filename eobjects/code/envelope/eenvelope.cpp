@@ -42,7 +42,6 @@ eEnvelope::eEnvelope(
     m_mflags = m_target_pos = m_source_end = m_source_alloc = 0;
 
     m_target = m_source = OS_NULL;
-    m_content = m_context = OS_NULL;
 }
 
 
@@ -206,27 +205,26 @@ void eEnvelope::appendsource(
 ****************************************************************************************************
 */
 void eEnvelope::setcontent(
-    eObject *content,
+    eObject *o,
     os_int flags)
 {
+    eObject
+        *c;
+
     /* Delete old content, if any.
      */
-    if (m_content)
-    {
-        delete(m_content);
-        m_content = OS_NULL;
-    }
-     
-    if (content)
+    c = content();
+    if (c) delete c;
+
+    if (o)
     {
         if (flags & EMSG_DEL_CONTENT)
         {
-            adopt(content);
-            m_content = content;
+            adopt(o, EOID_CONTENT, EOBJ_NO_MAP);
         }
         else
         {
-            m_content = content->clone(this);
+            o->clone(this, EOID_CONTENT);
         }
     }
 }
@@ -245,27 +243,26 @@ void eEnvelope::setcontent(
 ****************************************************************************************************
 */
 void eEnvelope::setcontext(
-    eObject *context,
+    eObject *o,
     os_int flags)
 {
-    /* Delete old content, if any.
+    eObject
+        *c;
+
+    /* Delete old context, if any.
      */
-    if (m_context)
-    {
-        delete(m_context);
-        m_context = OS_NULL;
-    }
-     
-    if (context)
+    c = context();
+    if (c) delete c;
+
+    if (o)
     {
         if (flags & EMSG_DEL_CONTEXT)
         {
-            adopt(context);
-            m_context = context;
+            adopt(o, EOID_CONTEXT, EOBJ_NO_MAP);
         }
         else
         {
-            m_context = context->clone(this);
+            o->clone(this, EOID_CONTEXT);
         }
     }
 }

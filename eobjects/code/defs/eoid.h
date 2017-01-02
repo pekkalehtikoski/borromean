@@ -45,9 +45,9 @@
  */
 #define EOID_RITEM -2
 
-/** This object is root of object tree.
+/** This object is root helper of object tree.
  */
-#define EOID_ROOT -3
+#define EOID_ROOT_HELPER -3
 
 /** Attachment: This object is name.
  */
@@ -60,6 +60,14 @@
 /** Attachment: This object pointer target link (ePointer use only).
  */
 #define EOID_PPTR_TARGET -12
+
+/** Content, used for envelopes, etc.
+ */
+#define EOID_CONTENT -30
+
+/** Content, used for envelopes, etc.
+ */
+#define EOID_CONTEXT -31
 
 /** This is special object identifier that can be given as argument to object hierarchy 
 	functions, like getfirstchild(). The EOID_CHILD specifies to get a child object, 

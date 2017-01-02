@@ -438,6 +438,55 @@ void eHandle::delete_children()
 		*n,
 		*p;
 
+    eRoot
+        *root;
+
+    enum direc
+    {
+        EH_FROM_UP,
+        EH_FROM_LEFT,
+        EH_FROM_RIGHT
+    } 
+    direc = EH_FROM_UP; 
+
+	n = m_children;
+	if (n == OS_NULL) return;
+
+    root = m_object->mm_root;
+	while (OS_TRUE)
+	{
+        p = OS_NULL;
+        if (direc == EH_FROM_UP) 
+        {
+    		p = n->m_left;
+        }
+        if (direc != EH_FROM_RIGHT)
+        {
+        	if (p == OS_NULL) 
+			{
+				p = n->m_right;
+                direc = EH_FROM_UP;
+			}
+        }
+        if (p == OS_NULL) 
+		{
+			p = n->m_up;
+
+		    n->m_oflags |= EOBJ_FAST_DELETE;
+		    delete n->m_object;
+            root->freehandle(n);
+
+            if (p == OS_NULL) return;
+            direc = (p->m_left == n) ? EH_FROM_LEFT : EH_FROM_RIGHT;
+		}
+		n = p;
+	}
+
+#if 0
+	eHandle
+		*n,
+		*p;
+
 	n = m_children;
 	if (n == OS_NULL) return;
 
@@ -471,6 +520,8 @@ void eHandle::delete_children()
 
 		n = p;
 	}
+#endif
+
 }
 
 
@@ -822,15 +873,12 @@ void eHandle::verify_children(
                 direc = EH_FROM_UP;
 			}
         }
-        if (direc != EH_FROM_UP)
-        {
-        	if (p == OS_NULL) 
-			{
-				p = n->m_up;
-                direc = (p->m_left == n) ? EH_FROM_LEFT : EH_FROM_RIGHT;
-			}
-        }
-        if (p == OS_NULL) return;
+        if (p == OS_NULL) 
+		{
+			p = n->m_up;
+            if (p == OS_NULL) return;
+            direc = (p->m_left == n) ? EH_FROM_LEFT : EH_FROM_RIGHT;
+		}
 		n = p;
 	}
 }
