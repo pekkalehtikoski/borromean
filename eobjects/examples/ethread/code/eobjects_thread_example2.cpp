@@ -16,11 +16,11 @@
 ****************************************************************************************************
 */
 #include "eobjects/eobjects.h"
+#include "eobjects_thread_example.h"
 
-/* Generate entry code for console application.
- */
-EMAIN_CONSOLE_ENTRY
-
+#define MYCMD_WAKE_UP 10
+#define MYCMD_HI_COMRADE 11
+#define MYCMD_HI_OTHER_COMRADE 12
 
 /**
 ****************************************************************************************************
@@ -31,34 +31,40 @@ EMAIN_CONSOLE_ENTRY
 
 ****************************************************************************************************
 */
-class eMyThread : public eThread
+class eMyThread1 : public eThread
 {
-    virtual void initialize(eContainer *params = OS_NULL)
-    {
-        osal_console_write("initializing worker\n");
-    }
-
-    virtual void run()
-    {
-        while (!exitnow())
-        {
-            alive();
-
-            osal_console_write("worker running\n");
-        }
-    }
-
     virtual eStatus onmessage(
         eEnvelope *envelope) 
     {
+        eVariable
+            *txt;
+
         /* If at final destination for the message.
          */
         if (*envelope->target()=='\0')
         {
             osal_console_write(envelope->source());
-            osal_console_write(": ");
+            osal_console_write(": ->thread1: ");
             eVariable *v = eVariable::cast(envelope->content());
             osal_console_write(v ? v->gets() : "NULL");
+
+            switch (envelope->command())
+            {
+                case MYCMD_WAKE_UP:
+                    osal_console_write("*** WAKE UP");
+
+                    txt = new eVariable(this);
+                    txt->sets("hi, anyone there?");
+                    message (MYCMD_HI_COMRADE, "//thread2", OS_NULL, txt, EMSG_DEL_CONTENT);
+                    break;
+
+                case MYCMD_HI_OTHER_COMRADE:
+                    osal_console_write("*** HI OTHER COMRADE");
+                    break;
+
+                default:
+                    break;
+            }
 
             osal_console_write("\n");
             return ESTATUS_SUCCESS;
@@ -74,20 +80,68 @@ class eMyThread : public eThread
 /**
 ****************************************************************************************************
 
-  @brief Application entry point.
+  @brief Example thread class.
 
-  The emain() function is eobjects application's entry point.
+  X...
 
-  @param   argc Number of command line arguments.
-  @param   argv Array of string pointers, one for each command line argument. UTF8 encoded.
+****************************************************************************************************
+*/
+class eMyThread2 : public eThread
+{
+    virtual eStatus onmessage(
+        eEnvelope *envelope) 
+    {
+        eVariable
+            *txt;
+
+        /* If at final destination for the message.
+         */
+        if (*envelope->target()=='\0')
+        {
+            osal_console_write(envelope->source());
+            osal_console_write(": ");
+            eVariable *v = eVariable::cast(envelope->content());
+            osal_console_write(v ? v->gets() : "NULL");
+
+            switch (envelope->command())
+            {
+                case MYCMD_HI_COMRADE:
+                    osal_console_write("*** HI_COMRADE");
+
+                    txt = new eVariable(this);
+                    txt->sets("hi, I am here?");
+                    message (MYCMD_HI_OTHER_COMRADE, "//thread1", OS_NULL, txt, EMSG_DEL_CONTENT);
+
+                    break;
+
+                default:
+                    break;
+            }
+            
+
+            osal_console_write("\n");
+            return ESTATUS_SUCCESS;
+        }
+
+        eThread::onmessage(envelope);
+
+        return ESTATUS_SUCCESS;
+    }
+};
+
+
+/**
+****************************************************************************************************
+
+  @brief Thread example 1.
+
+  The thread_example_2() function...
 
   @return  None.
 
 ****************************************************************************************************
 */
-os_int emain(
-    os_int argc,
-    os_char *argv[])
+void thread_example_2()
 {
 	eContainer
 		root;
@@ -99,29 +153,38 @@ os_int emain(
         *t;
 
     eThreadHandle 
-        thandle;
+        thandle1,
+        thandle2;
 
-    /* Create and start thread named "worker".
+    /* Create and start thread 1 named "thread1".
      */
-    t = new eMyThread();
-	t->addname("worker", ENAME_PROCESS_NS);
+    t = new eMyThread1();
+	t->addname("thread1", ENAME_PROCESS_NS);
 //    t->setpriority();
-    t->start(&thandle); /* After this t pointer is useless */
+    t->start(&thandle1); /* After this t pointer is useless */
 
-    for (os_int i = 0; i<1000; i++)
+    /* Create and start thread 2 named "thread2".
+     */
+    t = new eMyThread2();
+	t->addname("thread2", ENAME_PROCESS_NS);
+//    t->setpriority();
+    t->start(&thandle2); /* After this t pointer is useless */
+
+    for (os_int i = 0; i<20; i++)
     {
         osal_console_write("master running\n");
-        osal_thread_sleep(20);
 
         txt = new eVariable(&root);
         txt->sets("message content");
-        root.message (10, "//worker", OS_NULL, txt, EMSG_DEL_CONTENT /* |EMGS_NO_REPLIES */);
+        root.message (MYCMD_WAKE_UP, "//thread1", OS_NULL, txt, EMSG_DEL_CONTENT|EMGS_NO_REPLIES);
+
+        osal_thread_sleep(2000);
     }
 
     /* Wait for thread to terminate
      */
-    thandle.terminate();
-    thandle.join();
-
-    return 0;
+    thandle1.terminate();
+    thandle2.terminate();
+    thandle1.join();
+    thandle2.join();
 }

@@ -320,34 +320,4 @@ void eEnvelope::appendsourceoix(
      */
     o->oixstr(buf, sizeof(buf));
     appendsource(buf);
-
-#if 0
-    os_char 
-        buf[2 * OSAL_NBUF_SZ+2];
-
-    os_int 
-        pos,
-        ucnt;
-
-    eHandle
-        *handle;
-
-    handle = o->handle();
-    osal_debug_assert(handle);
-
-    pos = 0;
-    buf[pos++] = '@';
-    pos += (os_int)osal_int_to_string(buf+pos, sizeof(buf)-pos, handle->oix()) - 1;
-    if (pos < sizeof(buf)-1) 
-    {
-        ucnt = mm_handle->ucnt();
-        if (ucnt)
-        {
-            buf[pos++] = '_';
-            pos += (os_int)osal_int_to_string(buf+pos, sizeof(buf)-pos, handle->ucnt()) - 1;
-        }
-    }
-
-    appendsource(buf);
-#endif
 }

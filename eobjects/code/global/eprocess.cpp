@@ -74,7 +74,6 @@ void eProcess::run()
         /* Wait for thread to be trigged.
          */
         osal_event_wait(trigger(), 1000); // OSAL_EVENT_INFINITE); // SHOULD BE OSAL_EVENT_INFINITE, NOT YET READY
-
     }
 }
 
