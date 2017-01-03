@@ -39,6 +39,11 @@ class eMyThread1 : public eThread
         eVariable
             *txt;
 
+os_char *p = envelope->target();
+osal_console_write("------------------");
+osal_console_write(p);
+osal_console_write("------------------");
+
         /* If at final destination for the message.
          */
         if (*envelope->target()=='\0')

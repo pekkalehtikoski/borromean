@@ -404,6 +404,7 @@ os_short eObject::oixparse(
 
     *oix = (e_oix)osal_string_to_int(p, &count);
     if (count == 0) goto failed;
+    p += count;
     if (*p != '_') 
     {
         *ucnt = 0;
@@ -1493,7 +1494,7 @@ void eObject::message_process_ns(
         }
 
         /* Remove object name from envelope's target path.
-            */
+         */
         envelope->move_target_over_objname((os_short)sz - 1);
 
         /* Single thread target (common case).
@@ -1521,7 +1522,7 @@ void eObject::message_process_ns(
                 thread = name->thread();
                 thread->oixstr(buf, sizeof(buf));
 
-                /* If target thread is already listed
+                /* If target thread is already listed.
                  */
                 if (targetlist->ns_first(buf)) continue;
 
@@ -1590,14 +1591,14 @@ void eObject::message_oix(
         return;
     }
 
-    /* Advance in target path.
-     */
-    envelope->move_target_over_objname(count);
-
     /* If object is in same root tree (same thread), end syncronization and call function.
      */
     if (mm_handle->m_root == handle->m_root)
     {
+        /* Advance in target path.
+         */
+        envelope->move_target_over_objname(count);
+
         osal_mutex_system_unlock();
         handle->m_object->onmessage(envelope);
         return;
@@ -1606,6 +1607,8 @@ void eObject::message_oix(
     /* Otherwise different threads
      */
     thread = eThread::cast(handle->m_root->parent());
+    if (thread == handle->m_object) envelope->move_target_over_objname(count);
+   
     thread->queue(envelope);
 
     /* Finish with synchronization.
