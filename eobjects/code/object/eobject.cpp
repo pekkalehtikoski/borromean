@@ -1320,7 +1320,8 @@ void eObject::message(
   The eObject::message() function sends message. The message will be recieved as onmessage call 
   by another object.
   
-  @param   envelope
+  @param   envelope Message envelope to send. Contains command, target and source paths and
+           message content, etc.
   @return  None. 
 
 ****************************************************************************************************
@@ -1399,6 +1400,22 @@ void eObject::message(
      */
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Send message.
+
+  The eObject::message_process_ns is helper function for eObject::message() to send message
+  trough process name space. It finds to which thread's object tree the message target belongs
+  to and places message to that thread's message queue.
+  
+  @param   envelope Message envelope to send. Contains command, target and source paths and
+           message content, etc.
+  @return  None. 
+
+****************************************************************************************************
+*/
 void eObject::message_process_ns(
     eEnvelope *envelope)
 {
@@ -1556,12 +1573,24 @@ getout:
     delete envelope;
 }
 
-eStatus eObject::onmessage(
-    eEnvelope *envelope)
-{
-    return ESTATUS_SUCCESS;
-}
 
+/**
+****************************************************************************************************
+
+  @brief Send message.
+
+  The eObject::message_oix is helper function for eObject::message() to send message
+  using object index string, like "@11_1". It finds to which thread's object tree the message 
+  target belongs to. If this is in same object tree as the sender of the message message,
+  then object's onmessage function is called directly. If target belongs to different object
+  three from sender, the function places message to target thread's message queue.
+  
+  @param   envelope Message envelope to send. Contains command, target and source paths and
+           message content, etc.
+  @return  None. 
+
+****************************************************************************************************
+*/
 void eObject::message_oix(
     eEnvelope *envelope)
 {
@@ -1614,6 +1643,47 @@ void eObject::message_oix(
     /* Finish with synchronization.
      */
     osal_mutex_system_unlock();
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Function to process incoming messages. 
+
+  The eObject::onmessage function handles messages received by object.
+  
+  @param   envelope Message envelope. Contains command, target and source paths and
+           message content, etc.
+  @return  None. 
+
+****************************************************************************************************
+*/
+void eObject::onmessage(
+    eEnvelope *envelope)
+{
+    os_char
+        *target;
+
+    target = envelope->target();
+
+    switch (*target)
+    {
+        /* Message to child object using object idenfifier.
+         */
+        case '@':
+            break;
+
+        /* Message to this object.
+         */
+        case '\0':
+            break;
+
+        /* Messages to named child objects
+         */
+        default:
+            break;
+    }
 }
 
 

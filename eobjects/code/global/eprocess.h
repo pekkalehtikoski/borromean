@@ -84,7 +84,7 @@ public:
 
     virtual void run();
 
-    virtual eStatus onmessage(
+    virtual void onmessage(
         eEnvelope *envelope);
 
     /*@}*/

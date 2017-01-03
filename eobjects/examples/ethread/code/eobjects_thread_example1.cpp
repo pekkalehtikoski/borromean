@@ -46,7 +46,7 @@ class eMyThread : public eThread
         }
     }
 
-    virtual eStatus onmessage(
+    virtual void onmessage(
         eEnvelope *envelope) 
     {
         /* If at final destination for the message.
@@ -55,14 +55,12 @@ class eMyThread : public eThread
         {
             osal_console_write(envelope->source());
             osal_console_write("\n");
-            return ESTATUS_SUCCESS;
+            return;
         }
 
         /* Default thread message processing.
          */
         eThread::onmessage(envelope);
-
-        return ESTATUS_SUCCESS;
     }
 };
 

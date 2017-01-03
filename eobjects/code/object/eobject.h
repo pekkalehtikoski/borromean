@@ -500,9 +500,8 @@ public:
         os_int mflags = EMSG_DEL_CONTENT,
         eObject *context = OS_NULL);
 
-    virtual eStatus onmessage(
+    virtual void onmessage(
         eEnvelope *envelope);
-
 
     /*@}*/
 
@@ -583,24 +582,6 @@ protected:
      */
     void delete_children();
 
-	/* Red/Black tree: Insert a node to red black tree.
-     */
-    /* inline void rbtree_insert(
-        eObject *inserted_node)
-	{
-		if (mm_handle && inserted_node) 
-			mm_handle->rbtree_insert(inserted_node->mm_handle);
-	} */
-
-	/* Red/Black tree: Remove node from red/black.
-     */
-    /* inline void rbtree_remove(
-        eObject *n)
-	{
-		if (mm_handle) if (mm_handle->m_parent)
-			mm_handle->m_parent->rbtree_remove(mm_handle);
-	} */
-
     void map2(
         eHandle *handle,
         os_int mflags);
@@ -608,10 +589,6 @@ protected:
     void mapone(
         eHandle *handle, 
         os_int mflags);
-
-	/** Root of the object of the index tree.
-     */
-//	eRoot *mm_root; 
 
 	/* Pointer to object's handle.
      */

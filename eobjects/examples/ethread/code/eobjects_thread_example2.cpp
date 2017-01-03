@@ -33,7 +33,7 @@
 */
 class eMyThread1 : public eThread
 {
-    virtual eStatus onmessage(
+    virtual void onmessage(
         eEnvelope *envelope) 
     {
         eVariable
@@ -73,12 +73,10 @@ osal_console_write("------------------");
             }
 
             osal_console_write("\n");
-            return ESTATUS_SUCCESS;
+            return;
         }
 
         eThread::onmessage(envelope);
-
-        return ESTATUS_SUCCESS;
     }
 };
 
@@ -94,7 +92,7 @@ osal_console_write("------------------");
 */
 class eMyThread2 : public eThread
 {
-    virtual eStatus onmessage(
+    virtual void onmessage(
         eEnvelope *envelope) 
     {
         eVariable
@@ -126,12 +124,10 @@ class eMyThread2 : public eThread
             }
             
             osal_console_write("\n");
-            return ESTATUS_SUCCESS;
+            return;
         }
 
         eThread::onmessage(envelope);
-
-        return ESTATUS_SUCCESS;
     }
 };
 

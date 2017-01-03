@@ -381,7 +381,7 @@ public:
         eStream *stream, 
         os_int flags);
 
-	virtual eStatus onmessage();
+	virtual void onmessage();
 
     /*@}*/
 

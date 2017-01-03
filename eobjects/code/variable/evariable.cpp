@@ -1302,9 +1302,8 @@ failed:
 }
 
 
-eStatus eVariable::onmessage()
+void eVariable::onmessage()
 {
-	return ESTATUS_SUCCESS;
 }
 
 

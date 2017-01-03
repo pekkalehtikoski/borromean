@@ -77,11 +77,10 @@ void eProcess::run()
     }
 }
 
-eStatus eProcess::onmessage(
+void eProcess::onmessage(
     eEnvelope *envelope) 
 {
     eThread::onmessage(envelope);
-    return ESTATUS_SUCCESS;
 }
 
 
