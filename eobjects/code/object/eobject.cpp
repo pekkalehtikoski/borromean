@@ -1243,14 +1243,9 @@ void eObject::mapone(
     eHandle *handle, 
     os_int mflags)
 {
-    eName
-        *name;
-
-    eNameSpace 
-        *ns;
-
-    os_int
-        info;
+    eName *name;
+    eNameSpace *ns;
+    os_int info;
 
     name = eName::cast(handle->m_object);
 
@@ -1297,11 +1292,9 @@ void eObject::message(
     os_int mflags,
     eObject *context)
 {
-    eEnvelope
-        *envelope;
+    eEnvelope *envelope;
 
     envelope = new eEnvelope(this, EOBJ_IS_ATTACHMENT); // ?????????????????????????????????????????????????????????????????????????????????
-
     envelope->setcommand(command);
     envelope->setmflags(mflags & ~(EMSG_DEL_CONTENT|EMSG_DEL_CONTEXT));
     envelope->settarget(target);
@@ -1329,8 +1322,7 @@ void eObject::message(
 void eObject::message(
     eEnvelope *envelope)
 {
-    os_char
-        *target;
+    os_char *target;
 
     /* Resolve path.
      */
@@ -1419,40 +1411,17 @@ void eObject::message(
 void eObject::message_process_ns(
     eEnvelope *envelope)
 {
-    eVariable
-        *objname;
+    eVariable *objname, *savedtarget, *mytarget;
+    eNameSpace *process_ns;
+    eName *name, *nextname;
+    eThread  *thread;
+    os_memsz sz;
+    os_char buf[E_OEXSTR_BUF_SZ];
+    os_boolean multiplethreads;
 
-    eNameSpace
-        *process_ns;
-
-    eName
-        *name,
-        *nextname;
-
-    eContainer
-        *targetlist;
-
-    eThread 
-        *thread;
-
-    ePointer 
-        *ptr;
-
-    os_memsz 
-        sz;
-
-    os_char 
-        buf[E_OEXSTR_BUF_SZ];
-
-    os_boolean
-        multiplethreads;
-
+    /* Get pointer to process namespace. This is never NULL (or if it is, it is programming error).
+     */
     process_ns = eglobal_process_ns();
-    if (process_ns == OS_NULL) 
-    {
-        osal_debug_error("No process name space");
-        goto getout;
-    }
 
     /* If this is message to process ?
      */
@@ -1481,14 +1450,11 @@ void eObject::message_process_ns(
          */
         name = process_ns->findname(objname);
 
-        /* If not found
+        /* If name not found: End synchronization/clen up, reply with ECMD_NOTARGET
+           and return.
          */
         if (name == OS_NULL)
         {
-            /* Post notarget message !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
-            /* End synchronization
-             */
             osal_mutex_system_unlock();
             delete objname;
             goto getout;
@@ -1510,14 +1476,17 @@ void eObject::message_process_ns(
             }
         }
 
-        /* Remove object name from envelope's target path.
-         */
-        envelope->move_target_over_objname((os_short)sz - 1);
-
         /* Single thread target (common case).
          */
         if (!multiplethreads)
         {
+            /* Remove object name from envelope's target path.
+             */
+            if (thread == name->parent()) 
+            {
+                envelope->move_target_over_objname((os_short)sz - 1);
+            }
+
             /* Move the envelope to thread's message queue.
              */
             thread->queue(envelope);
@@ -1527,37 +1496,45 @@ void eObject::message_process_ns(
          */
         else
         {
-            /* Generate list of targets threads.
+            /* Save target path in envelope without name of next target.
              */
-            targetlist = new eContainer(this);
-	        targetlist->ns_create();
+            envelope->move_target_over_objname((os_short)sz - 1);
+            savedtarget = new eVariable(this);
+            savedtarget->sets(envelope->target());
+            mytarget = new eVariable(this);
 
-            for (nextname = name; nextname; nextname = nextname->ns_next())
+            while (name)
             {
-                /* Get thread object pointer and thread object index string.
+                nextname = name->ns_next();
+
+                /* Get thread object pointer. 
                  */
                 thread = name->thread();
-                thread->oixstr(buf, sizeof(buf));
-
-                /* If target thread is already listed.
+                
+                /* If message is not to thread itself.
                  */
-                if (targetlist->ns_first(buf)) continue;
+                if (thread != name->parent()) 
+                {
+                    name->parent()->oixstr(buf, sizeof(buf));
+                    mytarget->sets(buf);
+                    if (!savedtarget->isempty()) mytarget->appends("/");
+                    mytarget->appendv(savedtarget);
+                    envelope->settarget(mytarget->gets());
+                }
+                else
+                {
+                    envelope->settarget(savedtarget->gets());
+                }
 
-                /* Add thread to target list.
+                /* Queue the envelope and move on. If this is last target for 
+                   the envelope, allow adopting the envelope.
                  */
-                ptr = new ePointer(targetlist);
-                ptr->set_undef(thread);
-                ptr->addname(buf);
+                thread->queue(envelope, nextname == OS_NULL);
+                name = nextname;
             }
 
-            for (ptr = ePointer::cast(targetlist->first()); ptr; ptr = ePointer::cast(ptr->next()))
-            {
-                thread = (eThread*)ptr->get_undef();
-                thread->queue(envelope);
-            } 
-            while (name);
-
-            delete(targetlist);
+            delete savedtarget;
+            delete mytarget;
         }
 
         /* End synchronization
@@ -1570,6 +1547,14 @@ void eObject::message_process_ns(
     return;
 
 getout:
+    /* Send "no target" reply message to indicate that recipient was not found.
+     */
+    if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
+    {
+        message (ECMD_NO_TARGET, envelope->source(), 
+            envelope->target(), OS_NULL, EMSG_KEEP_CONTENT, envelope->context());
+    }
+
     delete envelope;
 }
 
@@ -1605,8 +1590,7 @@ void eObject::message_oix(
     count = oixparse(envelope->target(), &oix, &ucnt);
     if (count == 0)
     {
-        // ERROR NOTARGET
-        return;
+        goto getout;
     }
 
     /* Synchnronize and find handle pointer.
@@ -1616,8 +1600,7 @@ void eObject::message_oix(
     if (ucnt != handle->m_ucnt)
     {
         osal_mutex_system_unlock();
-        // ERROR NOTARGET
-        return;
+        goto getout;
     }
 
     /* If object is in same root tree (same thread), end syncronization and call function.
@@ -1638,11 +1621,23 @@ void eObject::message_oix(
     thread = eThread::cast(handle->m_root->parent());
     if (thread == handle->m_object) envelope->move_target_over_objname(count);
    
+    /* Place the envelope in thread's message queue.
+     */
     thread->queue(envelope);
 
-    /* Finish with synchronization.
+    /* Finish with synchronization and return.
      */
     osal_mutex_system_unlock();
+    return;
+
+getout:
+    /* Send "no target" reply message to indicate that recipient was not found.
+     */
+    if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
+    {
+        message (ECMD_NO_TARGET, envelope->source(), 
+            envelope->target(), OS_NULL, EMSG_KEEP_CONTENT, envelope->context());
+    }
 }
 
 

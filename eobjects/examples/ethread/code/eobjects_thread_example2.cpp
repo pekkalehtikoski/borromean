@@ -36,44 +36,35 @@ class eMyThread1 : public eThread
     virtual void onmessage(
         eEnvelope *envelope) 
     {
-        eVariable
-            *txt;
-
-os_char *p = envelope->target();
-osal_console_write("------------------");
-osal_console_write(p);
-osal_console_write("------------------");
+        eVariable *txt, *v;
 
         /* If at final destination for the message.
          */
         if (*envelope->target()=='\0')
         {
-            osal_console_write(envelope->source());
-            osal_console_write(": ->thread1: ");
-            eVariable *v = eVariable::cast(envelope->content());
-            osal_console_write(v ? v->gets() : "NULL");
-
             switch (envelope->command())
             {
                 case MYCMD_WAKE_UP:
-                    osal_console_write("*** WAKE UP");
+                    v = eVariable::cast(envelope->content());
+                    osal_console_write(v ? v->gets() : "NULL");
+                    osal_console_write(" *** WAKE UP (t1)\n");
 
                     txt = new eVariable(this);
                     txt->sets("hi, anyone there?");
                     message (MYCMD_HI_COMRADE, "//thread2", OS_NULL, txt, EMSG_DEL_CONTENT);
-                    break;
+                    return;
 
                 case MYCMD_HI_OTHER_COMRADE:
-                    osal_console_write("*** HI OTHER COMRADE");
-                    break;
+                     v = eVariable::cast(envelope->content());
+                    osal_console_write(v ? v->gets() : "NULL");
+                    osal_console_write(" *** HI OTHER COMRADE (t1)\n");
+                    return;
 
-                default:
-                    osal_console_write("UNKNOWN COMMAND");
-                    break;
+                case ECMD_NO_TARGET:
+                    osal_console_write(envelope->source());
+                    osal_console_write(" *** NO TARGET (t1)\n");
+                    return;
             }
-
-            osal_console_write("\n");
-            return;
         }
 
         eThread::onmessage(envelope);
@@ -95,36 +86,25 @@ class eMyThread2 : public eThread
     virtual void onmessage(
         eEnvelope *envelope) 
     {
-        eVariable
-            *txt;
+        eVariable *txt, *v;
 
         /* If at final destination for the message.
          */
         if (*envelope->target()=='\0')
         {
-            osal_console_write(envelope->source());
-            osal_console_write(": ");
-            eVariable *v = eVariable::cast(envelope->content());
-            osal_console_write(v ? v->gets() : "NULL");
-
             switch (envelope->command())
             {
                 case MYCMD_HI_COMRADE:
-                    osal_console_write("*** HI_COMRADE");
+                    v = eVariable::cast(envelope->content());
+                    osal_console_write(v ? v->gets() : "NULL");
+                    osal_console_write(" *** HI_COMRADE (t2)\n");
 
                     txt = new eVariable(this);
                     txt->sets("hi, I am here?");
                     message (MYCMD_HI_OTHER_COMRADE, envelope->source(), 
                         OS_NULL, txt, EMSG_DEL_CONTENT, envelope->context());
-                    break;
-
-                default:
-                    osal_console_write("UNKNOWN COMMAND 2");
-                    break;
+                    return;
             }
-            
-            osal_console_write("\n");
-            return;
         }
 
         eThread::onmessage(envelope);

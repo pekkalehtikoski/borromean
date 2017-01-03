@@ -62,7 +62,11 @@ eGlobal;
  */
 extern eGlobal *eglobal;
 
-inline eNameSpace *eglobal_process_ns() {return eglobal->process_ns;}
+inline eNameSpace *eglobal_process_ns() 
+{
+    osal_debug_assert(eglobal->process_ns);
+    return eglobal->process_ns;
+}
 
 /* THIS MUST BE AS FAST FUNCTION AS POSSIBLE                NOT USED YET
  */

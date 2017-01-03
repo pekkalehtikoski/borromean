@@ -22,6 +22,27 @@
 /**
 ****************************************************************************************************
 
+  @name Command identifiers for messages.
+
+  Commend identifiers used in envelopes and in by message(), onmessage(), etc. functions.
+  All command identifiers used by eobjects library are negative, range -1 ... -999 is reserved
+  for these. Application may use positive command identifiers or negative command identifiers 
+  smaller than -999.
+ 
+****************************************************************************************************
+*/
+/*@{*/
+
+/** Reply to attemp to sens message to invalid path.
+ */
+#define ECMD_NO_TARGET -50
+
+/*@}*/
+
+
+/**
+****************************************************************************************************
+
   @brief Object base class.
 
   The eObject is base class for all eobject library objects. It defines basic functionality for
