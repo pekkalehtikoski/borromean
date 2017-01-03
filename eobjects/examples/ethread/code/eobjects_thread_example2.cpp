@@ -63,6 +63,7 @@ class eMyThread1 : public eThread
                     break;
 
                 default:
+                    osal_console_write("UNKNOWN COMMAND");
                     break;
             }
 
@@ -110,15 +111,15 @@ class eMyThread2 : public eThread
 
                     txt = new eVariable(this);
                     txt->sets("hi, I am here?");
-                    message (MYCMD_HI_OTHER_COMRADE, "//thread1", OS_NULL, txt, EMSG_DEL_CONTENT);
-
+                    message (MYCMD_HI_OTHER_COMRADE, envelope->source(), 
+                        OS_NULL, txt, EMSG_DEL_CONTENT, envelope->context());
                     break;
 
                 default:
+                    osal_console_write("UNKNOWN COMMAND 2");
                     break;
             }
             
-
             osal_console_write("\n");
             return ESTATUS_SUCCESS;
         }
@@ -167,7 +168,6 @@ void thread_example_2()
      */
     t = new eMyThread2();
 	t->addname("thread2", ENAME_PROCESS_NS);
-//    t->setpriority();
     t->start(&thandle2); /* After this t pointer is useless */
 
     for (os_int i = 0; i<20; i++)

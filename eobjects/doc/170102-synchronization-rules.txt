@@ -1,0 +1,6 @@
+Access to handle tables (eHandles)
+
+- Only thread which owns handle can modify m_root and m_object pointers. When m_root is modified, process mutext must be locked.
+- When m_root is 
+
+When m_root is 

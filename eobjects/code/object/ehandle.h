@@ -246,7 +246,7 @@ public:
 		m_oflags = EOBJ_IS_RED | flags;
 		m_parent = m_left = m_right = m_up = m_children = OS_NULL;
 		m_object = obj;
-	}
+    }
 
     /* Verify whole object tree.
      */
@@ -464,6 +464,10 @@ protected:
     /* Pointer to contained object.
      */
     eObject *m_object; 
+
+	/** Root of the object of the index tree.
+     */
+	eRoot *m_root; 
 
 	/** Root child object handle in red/black tree.
      */

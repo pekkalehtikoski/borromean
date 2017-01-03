@@ -438,9 +438,6 @@ void eHandle::delete_children()
 		*n,
 		*p;
 
-    eRoot
-        *root;
-
     enum direc
     {
         EH_FROM_UP,
@@ -452,7 +449,6 @@ void eHandle::delete_children()
 	n = m_children;
 	if (n == OS_NULL) return;
 
-    root = m_object->mm_root;
 	while (OS_TRUE)
 	{
         p = OS_NULL;
@@ -474,7 +470,7 @@ void eHandle::delete_children()
 
 		    n->m_oflags |= EOBJ_FAST_DELETE;
 		    delete n->m_object;
-            root->freehandle(n);
+            m_root->freehandle(n);
 
             if (p == OS_NULL) return;
             direc = (p->m_left == n) ? EH_FROM_LEFT : EH_FROM_RIGHT;
@@ -782,7 +778,7 @@ void eHandle::verify_whole_tree()
     eRoot
         *root;
 
-    root = m_object->mm_root;
+    root = m_root;
     osal_debug_assert(root->classid() == ECLASSID_ROOT);
     verify_node(root);
 
@@ -826,7 +822,7 @@ void eHandle::verify_node(
     if (m_up) osal_debug_assert(m_up->m_left == this || m_up->m_right == this);
     if (m_children) osal_debug_assert(m_children->m_parent == this);
     osal_debug_assert(m_object->mm_handle == this);
-    osal_debug_assert(m_object->mm_root == root);
+    osal_debug_assert(m_root == root);
 }        
 #endif 
 

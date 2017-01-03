@@ -236,11 +236,18 @@ public:
      */
     #define E_OEXSTR_BUF_SZ (2 * OSAL_NBUF_SZ+2)
 
-    /** Get oix and ucnt as string.
+    /** Convert oix and ucnt to string.
      */
     void oixstr(
         os_char *buf, 
         os_memsz bufsz);
+
+    /** Get oix and ucnt from string.
+     */
+    os_short eObject::oixparse(
+        os_char *str,
+        e_oix *oix, 
+        os_int *ucnt);
 
     /* Get number of childern.
      */
@@ -565,7 +572,10 @@ public:
     /*@}*/
 
 private:
-    void process_ns_message(
+    void message_process_ns(
+        eEnvelope *envelope);
+
+    void message_oix(
         eEnvelope *envelope);
 
 protected:
@@ -601,7 +611,7 @@ protected:
 
 	/** Root of the object of the index tree.
      */
-	eRoot *mm_root; 
+//	eRoot *mm_root; 
 
 	/* Pointer to object's handle.
      */

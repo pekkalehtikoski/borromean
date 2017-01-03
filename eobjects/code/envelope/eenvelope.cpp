@@ -302,7 +302,7 @@ void eEnvelope::nexttarget(
   The eEnvelope::appendsourceoix function...
 
   Example appended string:
-  - "@17_@3" oix=15, ucnt = 3
+  - "@17_3" oix=15, ucnt = 3
   - "@15" oix=15, ucnt = 0
 
   @param  o Pointer to object whose use oix and ucnt are to be appended.

@@ -101,6 +101,7 @@ void eRoot::newhandle(
 	   join to tree hierarchy, no children yet.
 	 */
 	handle->clear(obj, oid, flags);
+    handle->m_root = this;
 	obj->mm_handle = handle;
     if (parent) handle->m_parent = parent->mm_handle;
 
@@ -122,6 +123,9 @@ void eRoot::freehandle(
     /* Join to chain of free handles.
      */
     handle->m_right = m_first_free_handle;
+    handle->m_root = OS_NULL;
+    handle->m_object = OS_NULL;
+
     m_first_free_handle = handle;
     m_free_handle_count++;
 

@@ -85,15 +85,6 @@ eHandle *ehandleroot_releasehandles(
 	eHandle *h,
 	e_oix nro_handles);
 
-/* THIS MUST BE AS FAST FUNCTION AS POSSIBLE                NOT USED YET
- */
-/* inline eHandle *eget_handle(
-    e_oix oix)
-{
-	oix++;
-    return eglobal->hroot.m_table[oix >> EHANDLE_HANDLE_BITS]->m_handle + (oix & EHANDLE_TABLE_MAX);
-}
-*/
 
 /*@}*/
 

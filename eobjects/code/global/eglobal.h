@@ -64,4 +64,12 @@ extern eGlobal *eglobal;
 
 inline eNameSpace *eglobal_process_ns() {return eglobal->process_ns;}
 
+/* THIS MUST BE AS FAST FUNCTION AS POSSIBLE                NOT USED YET
+ */
+inline eHandle *eget_handle(
+    e_oix oix)
+{
+    return eglobal->hroot.m_table[oix >> EHANDLE_HANDLE_BITS]->m_handle + (oix & EHANDLE_TABLE_MAX);
+}
+
 #endif

@@ -89,6 +89,9 @@ eObject::eObject(
     e_oid oid,
 	os_int flags)
 {
+    eRoot
+        *root;
+
 	/* If this if not primitive object? 
 	 */
 	if (oid != EOID_ITEM || parent != OS_NULL)
@@ -99,16 +102,16 @@ eObject::eObject(
 		{
 			/* Allocate root helper object. 
 			 */
-			mm_root = new eRoot(this, EOID_ROOT_HELPER,
+			root = new eRoot(this, EOID_ROOT_HELPER,
 				EOBJ_IS_ATTACHMENT | EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE);
 
 			/* Allocate handle for this object
 			 */
-			mm_root->newhandle(this, OS_NULL, oid, flags);
+			root->newhandle(this, OS_NULL, oid, flags);
 
 			/* Allocate handle for the root helper object.
 			*/
-			mm_root->newhandle(mm_root, this, EOID_ROOT_HELPER, 
+			root->newhandle(root, this, EOID_ROOT_HELPER, 
 				EOBJ_IS_ATTACHMENT | EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE);
 		}
 
@@ -118,7 +121,6 @@ eObject::eObject(
 		{
             /* Here we cannot use type checked cast, because object is not fully initialized.
              */
-			mm_root = (eRoot*)this;
     		mm_handle = OS_NULL;
 		}
 
@@ -127,8 +129,8 @@ eObject::eObject(
 		*/
 		else
 		{
-			mm_root = parent->mm_root;
-			mm_root->newhandle(this, parent, oid, flags);
+			root = parent->mm_handle->m_root;
+			root->newhandle(this, parent, oid, flags);
 
 // verify_whole_tree();
 		}
@@ -138,7 +140,6 @@ eObject::eObject(
 	 */
 	else
 	{
-		mm_root = OS_NULL;
 		mm_handle = OS_NULL;
 	}
 }
@@ -192,7 +193,7 @@ eObject::~eObject()
             
             /* Handle no longer needed.
              */
-            mm_root->freehandle(mm_handle);
+            mm_handle->m_root->freehandle(mm_handle);
         }
     }
 }
@@ -333,16 +334,17 @@ void eObject::operator delete(
 /**
 ****************************************************************************************************
 
-  @brief Append object index and use counter.
+  @brief Convert oix and ucnt to string.
 
-  The eEnvelope::appendsourceoix function...
+  The eObject::oixstr function creates string which contains both object index and use counter
+  of this object. This string can be used as unique identifier of an object/
 
-  Example appended string:
-  - "@17_@3" oix=15, ucnt = 3
+  Example strings:
+  - "@17_3" oix=15, ucnt = 3
   - "@15" oix=15, ucnt = 0
 
-  @param  o Pointer to object whose use oix and ucnt are to be appended.
-  @return None.
+  @param  buf Buffer for resulting string. Recommended size is E_OEXSTR_BUF_SZ.
+  @return Size of buffer in bytes. 
 
 ****************************************************************************************************
 */
@@ -374,6 +376,56 @@ void eObject::oixstr(
 /**
 ****************************************************************************************************
 
+  @brief Parse oix and ucnt to string.
+
+  The eObject::oixparse function parses object index and use counter from string. See 
+  eObject::oixstr() function.
+
+  @param  str Pointer to string to parse. 
+   buf Buffer for resulting string. Recommended size is E_OEXSTR_BUF_SZ.
+  @return Number of characters parsed to skip over. Zero if the function failed.
+
+****************************************************************************************************
+*/
+os_short eObject::oixparse(
+    os_char *str,
+    e_oix *oix, 
+    os_int *ucnt)
+{
+    os_memsz
+        count;
+
+    os_char
+        *p;
+
+    p = str;
+
+    if (*(p++) != '@') goto failed;
+
+    *oix = (e_oix)osal_string_to_int(p, &count);
+    if (count == 0) goto failed;
+    if (*p != '_') 
+    {
+        *ucnt = 0;
+        return (os_short)(p - str);
+    }
+    p++;
+
+    *ucnt = (os_int)osal_string_to_int(p, &count);
+    p += count;
+    return (os_short)(p - str);
+
+failed:
+    *oix = 0;
+    *ucnt = 0;
+    return 0;
+}
+
+
+
+/**
+****************************************************************************************************
+
   @brief Get thread object.
 
   The eObject::thread() function returns pointer to eThread object to which this object belongs
@@ -385,9 +437,9 @@ void eObject::oixstr(
 */
 eThread *eObject::thread() 
 {
-	if (mm_root) 
+	if (mm_handle) 
     {
-        eObject *o = mm_root->parent();
+        eObject *o = mm_handle->m_root->parent();
         if (o->classid() == ECLASSID_THREAD) return eThread::cast(o);
     }
 	return OS_NULL;
@@ -611,9 +663,7 @@ void eObject::adopt(
         sync = OS_FALSE; // || m_root->is_process ???????????????????????????????????????????????????????????????????????
         if (sync) osal_mutex_system_lock();
 
-        mm_root->newhandle(child, this, oid, 0);
-
-        child->mm_root = mm_root;
+        mm_handle->m_root->newhandle(child, this, oid, 0);
 
         if (sync) osal_mutex_system_unlock();
     }
@@ -625,11 +675,12 @@ void eObject::adopt(
 
         // Detach names
 
+        childh = child->mm_handle;
+
         /* Synchronize if adopting from three structure to another.
          */
-        sync = (mm_root != child->mm_root);
+        sync = (mm_handle->m_root != childh->m_root);
 
-        childh = child->mm_handle;
 
         if (sync) 
         {
@@ -667,7 +718,7 @@ void eObject::adopt(
 
         if (mapflags)
         {        
-            child->mm_root = mm_root;
+            childh->m_root = mm_handle->m_root;
             child->map(E_ATTACH_NAMES|E_SET_ROOT_POINTER);
         }
 
@@ -972,9 +1023,8 @@ eNameSpace *eObject::findnamespace(
 	    /* If thread name space, just return pointer to the name space.
 	     */
         case '\0':
-            if (mm_root == OS_NULL) return OS_NULL;
             if (info) *info = E_INFO_ABOVE_CHECKPOINT;
-            return eNameSpace::cast(mm_root->first(EOID_NAMESPACE));
+            return eNameSpace::cast(mm_handle->m_root->first(EOID_NAMESPACE));
 
         default:
             if (!os_strcmp(namespace_id, "."))
@@ -1156,7 +1206,7 @@ void eObject::map2(
     {
         if (mflags & E_SET_ROOT_POINTER)
         {
-            childh->m_object->mm_root = mm_root;
+            childh->m_root = handle->m_root;
         }
 
         /* If this is name which needs to be attaached or detached, do it.
@@ -1307,7 +1357,7 @@ void eObject::message(
         if (target[1] == '/') 
         {
             envelope->move_target_pos(2);
-            process_ns_message(envelope);
+            message_process_ns(envelope);
         } 
 
         /* Otherwise thread name space.
@@ -1317,6 +1367,12 @@ void eObject::message(
             envelope->move_target_pos(1);
         }
         return;
+
+      /* Targer specified using object index
+       */
+      case '@':
+        message_oix(envelope);
+        break;
             
       /* Parent or this object's name space
        */
@@ -1342,7 +1398,7 @@ void eObject::message(
      */
 }
 
-void eObject::process_ns_message(
+void eObject::message_process_ns(
     eEnvelope *envelope)
 {
     eVariable
@@ -1503,6 +1559,58 @@ eStatus eObject::onmessage(
     eEnvelope *envelope)
 {
     return ESTATUS_SUCCESS;
+}
+
+void eObject::message_oix(
+    eEnvelope *envelope)
+{
+    eHandle *handle;
+    eThread *thread;
+    e_oix oix;
+    os_int ucnt;
+    os_short count;
+
+    /* Parse object index and use count from string.
+     */
+    count = oixparse(envelope->target(), &oix, &ucnt);
+    if (count == 0)
+    {
+        // ERROR NOTARGET
+        return;
+    }
+
+    /* Synchnronize and find handle pointer.
+     */
+    osal_mutex_system_lock();
+    handle = eget_handle(oix);
+    if (ucnt != handle->m_ucnt)
+    {
+        osal_mutex_system_unlock();
+        // ERROR NOTARGET
+        return;
+    }
+
+    /* Advance in target path.
+     */
+    envelope->move_target_over_objname(count);
+
+    /* If object is in same root tree (same thread), end syncronization and call function.
+     */
+    if (mm_handle->m_root == handle->m_root)
+    {
+        osal_mutex_system_unlock();
+        handle->m_object->onmessage(envelope);
+        return;
+    }
+
+    /* Otherwise different threads
+     */
+    thread = eThread::cast(handle->m_root->parent());
+    thread->queue(envelope);
+
+    /* Finish with synchronization.
+     */
+    osal_mutex_system_unlock();
 }
 
 
