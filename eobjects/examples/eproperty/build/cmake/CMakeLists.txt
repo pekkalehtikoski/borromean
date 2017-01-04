@@ -1,8 +1,8 @@
-# eobjects/examples/enames/build/cmake/CmakeLists.txt - Cmake build for eobject names example.
+# eobjects/examples/eproperty/build/cmake/CmakeLists.txt - Cmake build for eobject properties example.
 cmake_minimum_required(VERSION 2.8.9)
 
 # Set project name (= project root folder name).
-set(E_PROJECT "enames")
+set(E_PROJECT "eproperty")
 project(${E_PROJECT})
 
 # include build information common to all projects.

@@ -1,4 +1,4 @@
-# eobjects/examples/container/build/cmake/CmakeLists.txt - Cmake build for eobject container example.
+# eobjects/examples/ethread/build/cmake/CmakeLists.txt - Cmake build for eobject thread example.
 cmake_minimum_required(VERSION 2.8.9)
 
 # Set project name (= project root folder name).
