@@ -65,6 +65,43 @@ eThread::eThread(
      */
     m_message_queue = new eContainer(this, EOID_INTERNAL, 
         EOBJ_IS_ATTACHMENT|EOBJ_NOT_CLONABLE|EOBJ_NOT_SERIALIZABLE);
+
+    m_exit_requested = OS_FALSE;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Function to process incoming messages. 
+
+  The eObject::onmessage function handles messages received by object.
+  
+  @param   envelope Message envelope. Contains command, target and source paths and
+           message content, etc.
+  @return  None. 
+
+****************************************************************************************************
+*/
+void eThread::onmessage(
+    eEnvelope *envelope)
+{
+    os_char
+        *target;
+
+    target = envelope->target();
+
+    if (*target == '\0')
+    {
+        switch (envelope->command())
+        {
+            case ECMD_EXIT_THREAD:
+                m_exit_requested = OS_TRUE;
+                return;
+        }
+    }
+
+    eObject::onmessage(envelope);
 }
 
 
@@ -108,6 +145,10 @@ void eThread::start(
 
 	osalThreadHandle
 		*handle;
+
+    /* Save unique name into handle for controlling thread trough handle.
+     */
+    thandle->save_unique_thread_name(this);
 
     os_memclear(&prmstruct, sizeof(prmstruct));
     prmstruct.thread = this;
@@ -191,8 +232,7 @@ void eThread::run()
 */
 os_boolean eThread::exitnow()
 {
-//     return osal_thread_exit_requested(m_exit_requested);
-	return OS_FALSE;
+    return m_exit_requested;
 }
 
 

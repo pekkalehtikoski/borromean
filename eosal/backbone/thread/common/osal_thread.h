@@ -42,7 +42,7 @@
   time then the lower priority threads will receive it. Multiprocessor or multi-core environment
   will change this, since one processor or core can be executing only one task.
 
-  The OSAL_THREAD_PRIORITY_LOW, OSAL_THREAD_PRIORITY_NORMAL and OSAL_THREAD_PRIORITY_HIGH are 
+  The OSAL_THREAD_PRIORITY_LOW, OSAL_THREAD_PRIORITY_NORMAL and OSAL_THREAD_PRIORITY_HIGH are .
   used to prioritize execution of normal threads. The OSAL_THREAD_PRIORITY_TIME_CRITICAL is
   reserved for real time tasks only, and using this priority will put special requirements on 
   the thread.
@@ -115,7 +115,6 @@ osalThreadPriority;
  */
 typedef void osal_thread_func(
 	void *prm,
-	/* volatile os_boolean *exit_requested, */
     osalEvent done);
 
 /*@}*/
@@ -217,16 +216,6 @@ osalThreadHandle;
     #define osal_thread_get_id() 0
 
 #endif
-
-    /* Request a worker thread to exit.
-    */
-    /* void osal_thread_request_exit(
-	    osalThreadHandle *handle); */
-
-    /* Check if either thread or process exit has been requested.
-    */
-    /* os_boolean osal_thread_exit_requested(
-	    volatile os_boolean *exit_requested); */
 
     /* Suspend thread execution for a specific time.
      */

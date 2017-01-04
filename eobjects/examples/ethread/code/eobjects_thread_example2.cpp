@@ -151,7 +151,7 @@ void thread_example_2()
 	t->addname("thread2", ENAME_PROCESS_NS);
     t->start(&thandle2); /* After this t pointer is useless */
 
-    for (os_int i = 0; i<20; i++)
+    for (os_int i = 0; i<2; i++)
     {
         osal_console_write("master running\n");
 

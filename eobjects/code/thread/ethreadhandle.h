@@ -48,7 +48,7 @@ public:
 	 */
 	eThreadHandle(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+		e_oid oid = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -102,10 +102,18 @@ public:
     /*@}*/
 
 private:
-    void set_osal_handle(osalThreadHandle *h) {m_osal_handle = h;}
+    inline void set_osal_handle(
+        osalThreadHandle *h) 
+    {
+        m_osal_handle = h;
+    }
+
+    void save_unique_thread_name(
+        eThread *thread);
 
 	osalThreadHandle *m_osal_handle;
 
+    os_char m_unique_thread_name[E_OEXSTR_BUF_SZ];
 };
 
 #endif

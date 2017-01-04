@@ -35,6 +35,9 @@
 
 /** Reply to attemp to sens message to invalid path.
  */
+
+#define ECMD_EXIT_THREAD -30
+
 #define ECMD_NO_TARGET -50
 
 /*@}*/

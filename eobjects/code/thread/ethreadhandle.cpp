@@ -36,6 +36,7 @@ eThreadHandle::eThreadHandle(
     : eObject(parent, oid, flags)
 {
     m_osal_handle = OS_NULL;
+    m_unique_thread_name[0] = '\0';
 }
 
 
@@ -52,24 +53,65 @@ eThreadHandle::eThreadHandle(
 */
 eThreadHandle::~eThreadHandle()
 {
-    /* if (m_osal_handle)
+    if (m_osal_handle)
     {
-	    osal_thread_request_exit(m_osal_handle);
+        terminate();
 	    osal_thread_join(m_osal_handle);
         m_osal_handle = OS_NULL;
-    } */
+    } 
 }
 
 
-/* Request to terminate a thread.
-    */
+/**
+****************************************************************************************************
+
+  @brief Save unique thread name for terminating the thread.
+
+  X...
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eThreadHandle::save_unique_thread_name(
+    eThread *thread)
+{
+    thread->oixstr(m_unique_thread_name, sizeof(m_unique_thread_name));
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Request to terminate a thread.
+
+  X...
+
+  @return  None.
+
+****************************************************************************************************
+*/
 void eThreadHandle::terminate()
 {
-//    osal_thread_request_exit(m_osal_handle);
+    if (m_unique_thread_name[0] != '\0')
+    {
+        message (ECMD_EXIT_THREAD, m_unique_thread_name, 
+            OS_NULL, OS_NULL, EMGS_NO_REPLIES);
+    }
 }
 
-/* Wait until thread has terminated.
-    */
+
+/**
+****************************************************************************************************
+
+  @brief Wait until thread has terminated.
+
+  X...
+
+  @return  None.
+
+****************************************************************************************************
+*/
 void eThreadHandle::join()
 {
     if (m_osal_handle)

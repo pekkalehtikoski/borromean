@@ -76,6 +76,9 @@ public:
         return new eThread(parent, oid, flags);
     }
 
+    virtual void onmessage(
+        eEnvelope *envelope);
+
     inline osalEvent trigger() {return m_trigger;}
 
     /*@}*/
@@ -106,14 +109,6 @@ public:
      */
     os_boolean exitnow();
 
-    /* Save OSAL thread exit request byte pointer.
-     */
-    inline void setexitreq(
-        volatile os_boolean *exit_requested) 
-    {
-        m_exit_requested = exit_requested;
-    }
-
     /* Get next message to thread to process.
      */
     void queue(
@@ -137,9 +132,9 @@ private:
      */
     eContainer *m_message_queue;
 
-    /* OSAL exit requested pointer
+    /* Exit requested
      */
-    volatile os_boolean *m_exit_requested;
+    os_boolean m_exit_requested;
 };
 
 #endif
