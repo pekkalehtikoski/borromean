@@ -398,13 +398,9 @@ eStatus eName::mapname()
      */
     if (m_namespace) return ESTATUS_NAME_ALREADY_MAPPED;
 
-    /* If name has no parent, we cannot map
-     */
-    if (parent() == OS_NULL) return ESTATUS_NAME_MAPPING_FAILED;
-
     /* Find name space to map to. If none, return error.
      */
-    ns = parent()->findnamespace(namespaceid(), &info);
+    ns = findnamespace(namespaceid(), &info);
     if (ns == OS_NULL) return ESTATUS_NAME_MAPPING_FAILED;
 
     return mapname2(ns, info);

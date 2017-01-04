@@ -58,7 +58,13 @@ public:
 	inline static eThread *cast(
 		eObject *o) 
 	{ 
-        e_assert_type(o, ECLASSID_THREAD)
+#if OSAL_DEBUG == 0
+        if (o) 
+        {
+            os_int cid = (o)->classid();
+            osal_debug_assert(cid==EOID_THREAD || cid==EOID_PROCESS);
+        }
+#endif
 		return (eThread*)o;
 	}
 

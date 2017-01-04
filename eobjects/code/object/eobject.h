@@ -93,6 +93,13 @@ private:
      */
 	eObject(eObject const&);
 	eObject& operator=(eObject const&);
+
+    /* Create root helper object and handles for root and root helper.
+     */
+    void makeroot(
+        e_oid oid,
+	    os_int flags);
+
 public:
 
     /* Delete eObject, virtual destructor.
@@ -571,6 +578,10 @@ public:
     /*@}*/
 
 private:
+    void message_within_thread(
+        eEnvelope *envelope,
+        os_char *namespace_id);
+
     void message_process_ns(
         eEnvelope *envelope);
 

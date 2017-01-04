@@ -63,17 +63,15 @@ void eProcess::run()
 {
     while (!exitnow())
     {
+        /* Wait for thread to be trigged.
+         */
+        osal_event_wait(trigger(), OSAL_EVENT_INFINITE); 
+
         /* Process messages
          */
         osal_mutex_system_lock();
         alive(0);
         osal_mutex_system_unlock();
-
-        osal_console_write("worker running\n");
-
-        /* Wait for thread to be trigged.
-         */
-        osal_event_wait(trigger(), 1000); // OSAL_EVENT_INFINITE); // SHOULD BE OSAL_EVENT_INFINITE, NOT YET READY
     }
 }
 
@@ -120,6 +118,7 @@ void eprocess_create()
         osal_mutex_system_unlock();
     }
 }
+
 
 /**
 ****************************************************************************************************

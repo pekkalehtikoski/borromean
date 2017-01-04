@@ -76,9 +76,6 @@
 		   which is generic list item. 
   
   @param   flags 
-		   - EOID_PRIMITIVE object is stand primitiva stand alone object, which cannot be 
-		     part of object tree. This is typically used for eVariable allocated from stack
-			 or as member of a C++ class.
 
   @return  None.
 
@@ -92,6 +89,8 @@ eObject::eObject(
     eRoot
         *root;
 
+    mm_handle = OS_NULL;
+
 	/* If this if not primitive object? 
 	 */
 	if (oid != EOID_ITEM || parent != OS_NULL)
@@ -100,48 +99,64 @@ eObject::eObject(
 		 */
 		if (parent == OS_NULL)
 		{
-			/* Allocate root helper object. 
+			/* Allocate root helper object hand two handles. 
 			 */
-			root = new eRoot(this, EOID_ROOT_HELPER,
-				EOBJ_IS_ATTACHMENT | EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE);
-
-			/* Allocate handle for this object
-			 */
-			root->newhandle(this, OS_NULL, oid, flags);
-
-			/* Allocate handle for the root helper object.
-			*/
-			root->newhandle(root, this, EOID_ROOT_HELPER, 
-				EOBJ_IS_ATTACHMENT | EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE);
+            makeroot(oid, flags);
 		}
 
-		/* Otherwise if root object constructor?
-		 */
-		else if (oid == EOID_ROOT_HELPER)
-		{
-            /* Here we cannot use type checked cast, because object is not fully initialized.
-             */
-    		mm_handle = OS_NULL;
-		}
-
-		/* Otherwise normal child object.  Copy parent's root object pointer
+		/* If not root object constructor?
+		   Otherwise normal child object.  Copy parent's root object pointer
 		   and allocate handle for the new child object object.
 		*/
-		else
+		else if (oid != EOID_ROOT_HELPER)
 		{
+            /* If parent has no root helper object, create one
+             */
+            if (parent->mm_handle == OS_NULL)
+            {
+                parent->makeroot(EOID_ITEM, EOBJ_DEFAULT);
+            }
+
 			root = parent->mm_handle->m_root;
 			root->newhandle(this, parent, oid, flags);
 
 // verify_whole_tree();
 		}
 	}
+}
 
-	/* This is primitive object (typically eVariable).
+
+/**
+****************************************************************************************************
+
+  @brief Create root helper object and handles for root and root helper.
+
+  The eObject::makeroot() function...
+  This object is pointer to tree root (not helper).
+ 
+  @return  None.
+
+****************************************************************************************************
+*/
+void eObject::makeroot(
+    e_oid oid,
+	os_int flags)
+{
+    eRoot *root;
+
+	/* Allocate root helper object. 
+	*/
+	root = new eRoot(this, EOID_ROOT_HELPER,
+		EOBJ_IS_ATTACHMENT | EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE);
+
+	/* Allocate handle for this object
 	 */
-	else
-	{
-		mm_handle = OS_NULL;
-	}
+	root->newhandle(this, OS_NULL, oid, flags);
+
+	/* Allocate handle for the root helper object.
+	 */
+	root->newhandle(root, this, EOID_ROOT_HELPER, 
+		EOBJ_IS_ATTACHMENT | EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE);
 }
 
 
@@ -166,23 +181,16 @@ eObject::~eObject()
 
     /* Delete child objects.
      */
-	if (mm_handle) if (mm_handle->m_parent) 
+	if (mm_handle) 
     {
-        mm_handle->delete_children();
-    }
+        osal_mutex_system_lock();
 
-	/* This would be more straight forward code to delete children instead of delete_children(),
-	   but quite a bit slower.
+        if (mm_handle->m_parent) 
+        {
+            mm_handle->delete_children();
+        }
 
-    while (m_children)
-    {
-        delete m_children; or delete first();
-    }
-	*/
-
-    if ((flags() & EOBJ_FAST_DELETE) == 0)
-    {
-		if (mm_handle) 
+        if ((flags() & EOBJ_FAST_DELETE) == 0)
         {
             /* If handle has parent, remove from parent's children.
              */
@@ -194,7 +202,9 @@ eObject::~eObject()
             /* Handle no longer needed.
              */
             mm_handle->m_root->freehandle(mm_handle);
+
         }
+        osal_mutex_system_unlock();
     }
 }
 
@@ -973,8 +983,6 @@ eContainer *eObject::ns_getc(
 
   The eObject::findnamespace() function adds name to this object and maps it to name space.
 
-  Notice: ".." Refers to name space of this object or closest parent.
-  
   @param  namespace_id Identifier for the name space. OS_NULL refers to first parent name space,
           regardless of name space identifier.
   @param  info Pointer where to set information bits. OS_NULL if not needed. 
@@ -1042,7 +1050,7 @@ eNameSpace *eObject::findnamespace(
 
     /* Look upwards for parent or matching name space.
      */
-    h = mm_handle;
+    h = mm_handle->parent();
     while (h)
     {
         if (h->flags() & EOBJ_HAS_NAMESPACE)
@@ -1322,7 +1330,9 @@ void eObject::message(
 void eObject::message(
     eEnvelope *envelope)
 {
-    os_char *target;
+    os_char *target, *namespace_id;
+    eVariable *nspacevar;
+    os_memsz sz;
 
     /* Resolve path.
      */
@@ -1359,6 +1369,7 @@ void eObject::message(
         else 
         {
             envelope->move_target_pos(1);
+            message_within_thread(envelope, E_THREAD_NS);
         }
         return;
 
@@ -1366,7 +1377,7 @@ void eObject::message(
        */
       case '@':
         message_oix(envelope);
-        break;
+        return;
             
       /* Parent or this object's name space
        */
@@ -1375,14 +1386,18 @@ void eObject::message(
          */
         if (target[1] == '/' || target[1] == '\0') 
         {
+            envelope->move_target_over_objname(1);
+            message_within_thread(envelope, E_THIS_NS);
             return;
         } 
 
-        /* Otherwise thread name space.
+        /* Otherwise parent name space.
          */
         else if (target[1] == '.') 
              if (target[2] == '/' || target[2] == '\0')
         {
+            envelope->move_target_over_objname(2);
+            message_within_thread(envelope, E_PARENT_NS);
             return;
         }
         break;
@@ -1390,7 +1405,65 @@ void eObject::message(
 
     /* Name or user specified name space.
      */
+    nspacevar = new eVariable();
+    envelope->nexttarget(nspacevar);
+    namespace_id = nspacevar->gets(&sz);
+    envelope->move_target_over_objname((os_short)sz-1);
+
+    message_within_thread(envelope, namespace_id);
+    delete nspacevar;
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Send message within thread.
+
+  The eObject::message_process_ns is helper function for eObject::message() to send message
+  trough process name space. It finds to which thread's object tree the message target belongs
+  to and places message to that thread's message queue.
+  
+  @param   envelope Message envelope to send. Contains command, target and source paths and
+           message content, etc.
+  @return  None. 
+
+****************************************************************************************************
+*/
+void eObject::message_within_thread(
+    eEnvelope *envelope,
+    os_char *namespace_id)
+{
+	eNameSpace *nspace;
+    eVariable *objname;
+    eName *name;
+    os_memsz sz;
+
+    nspace = findnamespace(namespace_id);
+    if (nspace == OS_NULL) goto getout;
+
+    /* Get next object name in target path. 
+        Remember length of object name.
+        */
+    objname = new eVariable();
+    envelope->nexttarget(objname);
+    objname->gets(&sz);
+
+    /* Find the name in process name space. Done with objname.
+     */
+    name = nspace->findname(objname);
+    delete objname;
+    if (name == OS_NULL)
+    {
+        goto getout;
+    }
+ 
+
+    return;
+
+getout:
+    delete envelope;
+}    
 
 
 /**
@@ -1414,7 +1487,7 @@ void eObject::message_process_ns(
     eVariable *objname, *savedtarget, *mytarget;
     eNameSpace *process_ns;
     eName *name, *nextname;
-    eThread  *thread;
+    eThread *thread;
     os_memsz sz;
     os_char buf[E_OEXSTR_BUF_SZ];
     os_boolean multiplethreads;
@@ -1438,7 +1511,7 @@ void eObject::message_process_ns(
         /* Get next object name in target path. 
            Remember length of object name.
          */
-        objname = new eVariable(this);
+        objname = new eVariable();
         envelope->nexttarget(objname);
         objname->gets(&sz);
 
@@ -1499,9 +1572,10 @@ void eObject::message_process_ns(
             /* Save target path in envelope without name of next target.
              */
             envelope->move_target_over_objname((os_short)sz - 1);
-            savedtarget = new eVariable(this);
+            savedtarget = new eVariable();
+
             savedtarget->sets(envelope->target());
-            mytarget = new eVariable(this);
+            mytarget = new eVariable();
 
             while (name)
             {
@@ -1616,7 +1690,7 @@ void eObject::message_oix(
         return;
     }
 
-    /* Otherwise different threads
+    /* Otherwise different threads.
      */
     thread = eThread::cast(handle->m_root->parent());
     if (thread == handle->m_object) envelope->move_target_over_objname(count);
@@ -1638,6 +1712,8 @@ getout:
         message (ECMD_NO_TARGET, envelope->source(), 
             envelope->target(), OS_NULL, EMSG_KEEP_CONTENT, envelope->context());
     }
+
+    delete envelope;
 }
 
 

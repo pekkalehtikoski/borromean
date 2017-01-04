@@ -113,7 +113,6 @@ protected:
 	/** Number of free handles.
 	 */
 	os_int m_free_handle_count;
-
 };
 
 #endif

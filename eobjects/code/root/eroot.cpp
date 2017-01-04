@@ -59,8 +59,17 @@ eRoot::~eRoot()
 }
 
 
-/* Reserve and initialize handle for object obj.
-    */
+/**
+****************************************************************************************************
+
+  @brief Reserve and initialize handle for object.
+
+  param oid Object identifier, for example EOID_ITEM.
+
+  @return  None.
+
+****************************************************************************************************
+*/
 void eRoot::newhandle(
 	eObject *obj,
 	eObject *parent,
@@ -103,13 +112,13 @@ void eRoot::newhandle(
 	handle->clear(obj, oid, flags);
     handle->m_root = this;
 	obj->mm_handle = handle;
-    if (parent) handle->m_parent = parent->mm_handle;
+    if (parent) 
+    {
+        handle->m_parent = parent->mm_handle;
 
-	/* Save parent object pointer. If parent object is given, join the new object
-	   to red black tree of parent's children.
-	*/
-	if (parent) 
-	{
+	    /* Save parent object pointer. If parent object is given, join the new object
+	       to red black tree of parent's children.
+	     */
         parent->mm_handle->rbtree_insert(handle);
 	}
 }

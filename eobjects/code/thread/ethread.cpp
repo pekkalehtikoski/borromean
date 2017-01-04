@@ -118,7 +118,6 @@ void eThread::onmessage(
 */
 eThread::~eThread()
 {
-
     /* Release thread triggger. 
      */
     osal_event_delete(m_trigger);

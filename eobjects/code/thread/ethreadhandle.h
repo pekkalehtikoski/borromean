@@ -48,7 +48,7 @@ public:
 	 */
 	eThreadHandle(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_RITEM,
+		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
