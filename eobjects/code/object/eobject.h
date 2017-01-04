@@ -525,16 +525,29 @@ public:
     */
     /*@{*/
 
+    /* Property name to number.
+     */
+    os_int propertynr(
+        os_char *propertyname);
+
+    /* Property number to name.
+     */
+    void propertyname(os_int propertynr,
+        os_char buf,
+        os_memsz bufsz);
+
     /* Set property value.
      */
     eStatus setproperty(
-        os_char *propertyname, 
+        os_int propertynr, 
         eVariable *variable, 
         eObject *source, 
         os_int flags);
 
-    eStatus getproperty(
-        os_char *propertyname, 
+    /* Get property value.
+     */
+    eStatus property(
+        os_int propertynr, 
         eVariable *variable, 
         os_int flags);
 

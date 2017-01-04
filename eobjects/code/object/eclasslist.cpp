@@ -65,7 +65,8 @@ void eclasslist_add_eobjects()
         eclasslist = &eclasslist_buf;
 
 //    eclasslist_add(ECLASSID_ECONTAINER, ?
-        eclasslist_add(ECLASSID_VARIABLE, (eNewObjFunc)eVariable::newobj);
+        eclasslist_add(ECLASSID_VARIABLE, (eNewObjFunc)eVariable::newobj, (eSetupClassFunc)eVariable::setupclass); 
+        ;
     }
 }
 

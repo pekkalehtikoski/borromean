@@ -7,3 +7,4 @@ add_subdirectory($ENV{E_ROOT}/eobjects/examples/econtainer/build/cmake "${CMAKE_
 add_subdirectory($ENV{E_ROOT}/eobjects/examples/evariables/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/evariables_example")
 add_subdirectory($ENV{E_ROOT}/eobjects/examples/enames/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/enames_example")
 add_subdirectory($ENV{E_ROOT}/eobjects/examples/ethread/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/ethread_example")
+add_subdirectory($ENV{E_ROOT}/eobjects/examples/eproperty/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/eproperty_example")
