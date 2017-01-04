@@ -109,15 +109,13 @@ osalThreadPriority;
 
     @param  prm Pointer to parameters for new thread. This pointer must can be used only
             before "done" event is set. This can be OS_NULL if no parameters are needed.
-	@param  exit requested. Pointer to integer which is OS_FALSE if thread exit has not been
-	        requested, or OS_TRUE if it has. 
 	@param  done Event to set when parameters have been copied to thread's own memory and
 	        prm pointer is no longer needed by thread function. 
 	@return None.
  */
 typedef void osal_thread_func(
 	void *prm,
-	volatile os_boolean *exit_requested,
+	/* volatile os_boolean *exit_requested, */
     osalEvent done);
 
 /*@}*/
@@ -222,13 +220,13 @@ osalThreadHandle;
 
     /* Request a worker thread to exit.
     */
-    void osal_thread_request_exit(
-	    osalThreadHandle *handle);
+    /* void osal_thread_request_exit(
+	    osalThreadHandle *handle); */
 
     /* Check if either thread or process exit has been requested.
     */
-    os_boolean osal_thread_exit_requested(
-	    volatile os_boolean *exit_requested);
+    /* os_boolean osal_thread_exit_requested(
+	    volatile os_boolean *exit_requested); */
 
     /* Suspend thread execution for a specific time.
      */

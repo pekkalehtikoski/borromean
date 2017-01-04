@@ -43,12 +43,6 @@ typedef struct
      */
     void *prm;
 
-	/**	Pointer to integer which is OS_FALSE if thread exit has not been requested,
-	or OS_TRUE if it has. OS_NULL if this thread is detached from one which created
-	it.
-	*/
-	volatile os_boolean *exit_requested;
-
     /** Event to set when parameters have been copied to entry point functions own memory.
      */
     osalEvent done;
@@ -62,11 +56,6 @@ typedef struct
 	/* Windows thread handle.
 	*/
 	HANDLE thread_handle;
-
-	/* Exit requested. Pointer to integer which is OS_FALSE if thread exit has not been
-	   requested, or OS_TRUE if it has.
-	*/
-	volatile os_boolean exit_requested;
 }
 osalWindowsThreadHandle;
 #endif
@@ -168,12 +157,10 @@ osalThreadHandle *osal_thread_create(
 	{
 		handle = osal_memory_allocate(sizeof(osalWindowsThreadHandle), OS_NULL);
 		os_memclear(handle, sizeof(osalWindowsThreadHandle));
-		winprm.exit_requested = &handle->exit_requested;
 	}
 	else
 	{
 		handle = OS_NULL;
-		winprm.exit_requested = OS_NULL;
 	}
 
     /* Call Windows to create and start the new thread.
@@ -262,8 +249,7 @@ static DWORD WINAPI osal_thread_intermediate_func(
 
     /* Call the final thread entry point function.
      */
-    winprm->func(winprm->prm, winprm->exit_requested  ? winprm->exit_requested 
-		: &local_exit_requested, winprm->done);
+    winprm->func(winprm->prm, winprm->done);
 
 	/* Inform resource monitor that thread is terminated.
 	*/
@@ -316,35 +302,6 @@ void osal_thread_join(
 }
 #endif
 
-/**
-****************************************************************************************************
-
-  @brief Request a worker thread to exit.
-
-  The osal_thread_request_exit() function is called by thread which created a worker thread to
-  request the worker thread to exit.
-
-  @param   handle Thread handle as returned by osal_thread_create.
-  @return  None.
-
-****************************************************************************************************
-*/
-void osal_thread_request_exit(
-	osalThreadHandle *handle)
-{
-	/* Check for programming errors.
-	 */
-	if (handle == OS_NULL)
-	{
-		osal_debug_error("osal_thread,osal_thread_request_exit NULL handle");
-		return;
-	}
-
-	/* Set request exit flag.
-	 */
-	((osalWindowsThreadHandle*)handle)->exit_requested = OS_TRUE;
-}
-
 
 /**
 ****************************************************************************************************
@@ -375,28 +332,6 @@ void osal_thread_exit(
     ExitThread(1);
 }
 #endif
-
-
-/**
-****************************************************************************************************
-
-  @brief Check if either thread or process exit has been requested.
-
-  The osal_thread_exit_requested() function is called by thread to check if it has been requested
-  to exit or whole process has been requested to exit.
-
-  @param   osal_thread_exit_requested Pointer to exit rquested function as received by
-  thread entry point.
-
-  @return  OS_TRUE if thread or process exit has been requested.
-
-****************************************************************************************************
-*/
-os_boolean osal_thread_exit_requested(
-	volatile os_boolean *exit_requested)
-{
-	return *exit_requested /* || process exit requested */;
-}
 
 
 /**

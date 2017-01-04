@@ -65,7 +65,7 @@ eThreadHandle::~eThreadHandle()
     */
 void eThreadHandle::terminate()
 {
-    osal_thread_request_exit(m_osal_handle);
+//    osal_thread_request_exit(m_osal_handle);
 }
 
 /* Wait until thread has terminated.

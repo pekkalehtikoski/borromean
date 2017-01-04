@@ -36,7 +36,6 @@ eThreadParameters;
  */
 static void ethread_func(
     void *prm,
-	volatile os_boolean *exit_requested,
 	osalEvent done);
 
 
@@ -137,7 +136,6 @@ void eThread::start(
 */
 static void ethread_func(
     void *prm,
-	volatile os_boolean *exit_requested,
 	osalEvent done)
 {
     eThreadParameters
@@ -149,7 +147,7 @@ static void ethread_func(
 
     /* Save OSAL exit request flag pointer.
      */
-    prmstruct.thread->setexitreq(exit_requested);
+    // prmstruct.thread->setexitreq(exit_requested);
 
     /* Initialize the thread.
      */
@@ -193,7 +191,8 @@ void eThread::run()
 */
 os_boolean eThread::exitnow()
 {
-    return osal_thread_exit_requested(m_exit_requested);
+//     return osal_thread_exit_requested(m_exit_requested);
+	return OS_FALSE;
 }
 
 
