@@ -111,6 +111,8 @@ public:
 
     virtual void run();
 
+    virtual void finish() {};
+
     /* Check if thread exit is requested.
      */
     os_boolean exitnow();

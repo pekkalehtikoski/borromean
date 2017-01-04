@@ -86,8 +86,7 @@ eObject::eObject(
     e_oid oid,
 	os_int flags)
 {
-    eRoot
-        *root;
+    eRoot *root;
 
     mm_handle = OS_NULL;
 
@@ -248,8 +247,7 @@ eObject *eObject::newchild(
     e_oid oid,
 	os_int flags) 
 {
-    eNewObjFunc 
-        func;
+    eNewObjFunc func;
 
     /* Look for static constructor by class identifier. If not found, return OS_NULL.
      */
@@ -278,8 +276,7 @@ eObject *eObject::newchild(
 void *eObject::operator new(
 	size_t size)
 {
-	os_char 
-		*buf;
+	os_char *buf;
 		
 	size += sizeof(os_memsz);
 	buf = (os_char*)osal_memory_allocate((os_memsz)size, OS_NULL);
@@ -362,9 +359,7 @@ void eObject::oixstr(
     os_char *buf, 
     os_memsz bufsz)
 {
-    os_int 
-        pos,
-        ucnt;
+    os_int pos, ucnt;
 
     osal_debug_assert(mm_handle);
 
@@ -402,11 +397,8 @@ os_short eObject::oixparse(
     e_oix *oix, 
     os_int *ucnt)
 {
-    os_memsz
-        count;
-
-    os_char
-        *p;
+    os_memsz count;
+    os_char *p;
 
     p = str;
 
@@ -641,8 +633,8 @@ eObject *eObject::prev(
   The eObject::adopt() function moves on object from it's position in tree structure to
   an another. 
   
-  @param   aflags EOBJ_BEFORE_THIS Adopt before this object. EOBJ_NO_MAP not to map names.
   @param   oid EOID_CHILD object identifier unchanged.
+  @param   aflags EOBJ_BEFORE_THIS Adopt before this object. EOBJ_NO_MAP not to map names.
   @return  None.
 
 ****************************************************************************************************
@@ -652,14 +644,9 @@ void eObject::adopt(
     e_oid oid,
     os_int aflags)
 {
-    os_boolean
-        sync;
-
-    eHandle
-        *childh;
-
-    os_int
-        mapflags;
+    os_boolean sync;
+    eHandle *childh;
+    os_int mapflags;
 
     /* Make sure that parent object is already part of tree structure.
      */
@@ -757,8 +744,7 @@ void eObject::adopt(
 void eObject::ns_create(
 	os_char *namespace_id)
 {
-	eNameSpace
-		*ns;
+	eNameSpace *ns;
 
 	/* If object has already name space.
 	 */
@@ -867,19 +853,12 @@ eName *eObject::ns_firstv(
     eVariable *name,
     os_char *namespace_id)
 {
-    eNameSpace 
-        *ns;
+    eNameSpace *ns;
+    eName *n;
+    os_char *p, *q;
+    eVariable *tmp_name, *tmp_id;
 
-    eName 
-        *n;
-
-    os_char 
-        *p, 
-        *q;
-
-    eVariable 
-        *tmp_name = OS_NULL,
-        *tmp_id = OS_NULL;
+    tmp_name = tmp_id = OS_NULL;
 
     /* String type may contain name space prefix, check for it.
      */
@@ -942,11 +921,8 @@ eObject *eObject::ns_get(
     os_char *namespace_id,
     os_int classid)
 {
-    eName 
-        *n;
-
-    eObject
-        *p;
+    eName *n;
+    eObject *p;
 
     n  = ns_first(name, namespace_id);
     while (n)
@@ -983,6 +959,11 @@ eContainer *eObject::ns_getc(
 
   The eObject::findnamespace() function adds name to this object and maps it to name space.
 
+  - When looking for parent namespace with "..", the function returns next namespace ABOVE this 
+    object. If this object has name space, it will not be returned.
+  - When searching by name space identifier, the first name with matching identifier is returned.
+    This can be object's (this) own name space.
+
   @param  namespace_id Identifier for the name space. OS_NULL refers to first parent name space,
           regardless of name space identifier.
   @param  info Pointer where to set information bits. OS_NULL if not needed. 
@@ -1000,15 +981,9 @@ eNameSpace *eObject::findnamespace(
     os_int *info,
     eObject *checkpoint)
 {
-	eNameSpace
-		*ns;
-
-    eHandle
-        *h,
-        *ns_h;
-
-    os_boolean
-        getparent;
+	eNameSpace *ns;
+    eHandle *h, *ns_h;
+    os_boolean getparent;
 
     /* No information yet.
      */
@@ -1050,7 +1025,7 @@ eNameSpace *eObject::findnamespace(
 
     /* Look upwards for parent or matching name space.
      */
-    h = mm_handle->parent();
+    h = getparent ? mm_handle->parent() : mm_handle;
     while (h)
     {
         if (h->flags() & EOBJ_HAS_NAMESPACE)
@@ -1107,8 +1082,7 @@ eName *eObject::addname(
     os_int flags,
 	os_char *namespace_id)
 {
-	eName
-		*n;
+	eName *n;
 
 	/* Create name object.
 	 */
@@ -1444,7 +1418,7 @@ void eObject::message_within_thread(
 
     /* Get next object name in target path. 
         Remember length of object name.
-        */
+     */
     objname = new eVariable();
     envelope->nexttarget(objname);
     objname->gets(&sz);
@@ -1457,11 +1431,22 @@ void eObject::message_within_thread(
     {
         goto getout;
     }
- 
 
+    name->parent()->onmessage(envelope);
+    delete envelope;
     return;
 
 getout:
+
+    /* Send "no target" reply message to indicate that recipient was not found.
+     */
+    if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
+    {
+        message (ECMD_NO_TARGET, envelope->source(), 
+            envelope->target(), OS_NULL, 
+            EMSG_DEL_CONTEXT, 
+            envelope->context());
+    }
     delete envelope;
 }    
 
@@ -1500,8 +1485,22 @@ void eObject::message_process_ns(
      */
     if (*envelope->target() == '\0')
     {
-//        thread = processobj;
-        goto getout;
+        /* Synchronize.
+         */
+        osal_mutex_system_lock();
+
+        if (eglobal->process == OS_NULL) 
+        {
+            osal_mutex_system_unlock();
+            goto getout;
+        }
+
+        eglobal->process->queue(envelope);
+
+        /* Done, finish with synnchronization and return.
+         */
+        osal_mutex_system_unlock();
+        return;
     }
 
     /* Otherwise message to named object.
@@ -1626,7 +1625,7 @@ getout:
     if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
     {
         message (ECMD_NO_TARGET, envelope->source(), 
-            envelope->target(), OS_NULL, EMSG_KEEP_CONTENT, envelope->context());
+            envelope->target(), OS_NULL, EMSG_DEL_CONTEXT, envelope->context());
     }
 
     delete envelope;
@@ -1687,6 +1686,7 @@ void eObject::message_oix(
 
         osal_mutex_system_unlock();
         handle->m_object->onmessage(envelope);
+        delete envelope;
         return;
     }
 
@@ -1710,7 +1710,7 @@ getout:
     if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
     {
         message (ECMD_NO_TARGET, envelope->source(), 
-            envelope->target(), OS_NULL, EMSG_KEEP_CONTENT, envelope->context());
+            envelope->target(), OS_NULL, EMSG_DEL_CONTEXT, envelope->context());
     }
 
     delete envelope;
@@ -1733,8 +1733,11 @@ getout:
 void eObject::onmessage(
     eEnvelope *envelope)
 {
-    os_char
-        *target;
+    os_char *target;
+    eVariable objname;
+    eNameSpace *nspace;
+    eName *name, *nextname;
+    os_memsz sz;
 
     target = envelope->target();
 
@@ -1743,17 +1746,46 @@ void eObject::onmessage(
         /* Message to child object using object idenfifier.
          */
         case '@':
+            osal_debug_error("illegal @ in target path");
             break;
 
-        /* Message to this object.
+        /* Message to this object. 
          */
         case '\0':
             break;
 
-        /* Messages to named child objects
+        /* Messages to named child objects.
          */
         default:
+            envelope->nexttarget(&objname);
+            objname.gets(&sz);
+            envelope->move_target_over_objname((os_short)sz-1);
+
+            nspace = eNameSpace::cast(first(EOID_NAMESPACE));
+            if (nspace == OS_NULL) goto getout;
+            name = nspace->findname(&objname);
+            if (name == OS_NULL) goto getout;
+           
+            do
+            {
+                nextname = name->ns_next();
+                name->parent()->onmessage(envelope);
+                name = nextname;
+            } 
+            while (name);
+                
             break;
+    }
+
+    return;
+
+getout:
+    /* Send "no target" reply message to indicate that recipient was not found.
+     */
+    if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
+    {
+        message (ECMD_NO_TARGET, envelope->source(), 
+            envelope->target(), OS_NULL, EMSG_KEEP_CONTENT, envelope->context());
     }
 }
 
@@ -1779,11 +1811,8 @@ eStatus eObject::write(
     eStream *stream, 
     os_int sflags) 
 {
-    eObject 
-        *child;
-
-    os_long
-        n_attachements;
+    eObject *child;
+    os_long n_attachements;
 
     /* Write class identifier, object identifier and persistant object flags.
      */
@@ -1845,17 +1874,9 @@ eObject *eObject::read(
     eStream *stream, 
     os_int sflags)
 {
-    os_int
-        cid,
-        oid,
-        oflags;
-
-    os_long
-        n_attachements,
-        i;
-
-    eObject
-        *child;
+    os_int cid, oid, oflags;
+    os_long n_attachements, i;
+    eObject *child;
 
     /* Read class identifier, object identifier, persistant object flags
        and number of attachments.

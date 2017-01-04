@@ -151,8 +151,11 @@ void eThread::start(
 
     os_memclear(&prmstruct, sizeof(prmstruct));
     prmstruct.thread = this;
-    prmstruct.params = params; // CHECK WHICH THREAD OWNS && MAKE COPY??????????????????????????????????????????????????????????????????????
-
+    if (params)
+    {
+        prmstruct.params = eContainer::cast(params->clone(this, EOID_INTERNAL));
+    }
+    
     handle = osal_thread_create(ethread_func, &prmstruct, OSAL_THREAD_ATTACHED, 0, "threadnamehere");
     thandle->set_osal_handle(handle);
 }
@@ -185,10 +188,6 @@ static void ethread_func(
      */
     os_memcpy(&prmstruct, prm, sizeof(eThreadParameters));
 
-    /* Save OSAL exit request flag pointer.
-     */
-    // prmstruct.thread->setexitreq(exit_requested);
-
     /* Initialize the thread.
      */
     prmstruct.thread->initialize(prmstruct.params);
@@ -200,14 +199,17 @@ static void ethread_func(
     /* Run the thread.
      */
     prmstruct.thread->run();
+
+    /* Finish with thread
+     */
+    prmstruct.thread->finish();
+    
+    /* Delete the thread object.
+     */
+    delete prmstruct.thread;
 }
 
 
-/* void eThread::initialize(
-    eContainer *params)
-{
-}
-*/
 
 void eThread::run()
 {
