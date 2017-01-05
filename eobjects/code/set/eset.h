@@ -131,7 +131,7 @@ public:
 
     /* Get value from set.
      */
-    virtual void get(
+    virtual os_boolean get(
         os_int id,
         eVariable *x);
 

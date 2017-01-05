@@ -58,7 +58,7 @@ void eobjects_initialize(
 
     /* Initialize class list
      */
-    eclasslist_initialize()
+    eclasslist_initialize();
 }
 
 

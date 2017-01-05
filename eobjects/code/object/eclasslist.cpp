@@ -94,8 +94,8 @@ eNewObjFunc eclasslist_newobj_func(
     func = OS_NULL;
     osal_mutex_system_lock();
 
-    item = eglobal->classlist->first(cid);
-    if (item) func = eclasslist->func[cid];
+/*     item = eglobal->classlist->first(cid);
+    if (item) func = eclasslist->func[cid]; */
 
     osal_mutex_system_unlock();
 

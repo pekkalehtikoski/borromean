@@ -47,6 +47,7 @@ void eobjects_shutdown();
 #include "eobjects/code/object/eclasslist.h"
 #include "eobjects/code/root/eroot.h"
 #include "eobjects/code/variable/evariable.h"
+#include "eobjects/code/set/eset.h"
 #include "eobjects/code/container/econtainer.h"
 #include "eobjects/code/pointer/epointer.h"
 #include "eobjects/code/name/ename.h"

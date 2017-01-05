@@ -223,26 +223,46 @@ void eSet::set(
     eVariable *x,
     os_int sflags)
 {
+    eVariable *v;
 
+    /* If we have old variable with this id, remove it.
+     */
+    v = firstv(id);
+    if (v) delete v;
+    
+    if (id < 0 || id > 255) 
+    {
+        goto store_as_var;
+    }
 
+//    ibytes = 
+    
+
+       
+   return;
+
+store_as_var:
+    v = new eVariable(this, id);
+    v->setv(x);
 }
 
 /* Get value from set.
    Return value can be used between empty value and unset value. This is needed for properties.
    @return OS_TRUE if item is set. OS_FALSE if not.
  */
-oe_boolean eSet::get(
+os_boolean eSet::get(
     os_int id,
     eVariable *x)
 {
     eVariable *v;
+    eObject *objptr;
     os_char *p, *e, *strptr;
     os_uchar iid, ibytes;
     os_schar itype;
 
     /* Try first if this value is stored in separate variable.
      */
-    v = firstv();
+    v = firstv(id);
     if (v)
     {
         x->setv(v);
@@ -301,12 +321,12 @@ oe_boolean eSet::get(
 
                 case -OS_STRING:
                     strptr = *(os_char**)p;
-                    x->sets(p, strptr);
+                    x->sets(strptr);
                     return OS_TRUE;
 
                 case OS_OBJECT:
-                    objtr = *(os_Object**)p;
-                    x->seto(p, objptr);
+                    objptr = *(eObject**)p;
+                    x->seto(objptr);
                     return OS_TRUE;
             }
                 

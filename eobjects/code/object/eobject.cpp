@@ -251,7 +251,7 @@ eObject *eObject::newchild(
 
     /* Look for static constructor by class identifier. If not found, return OS_NULL.
      */
-    func = eclasslist_get_func(cid);
+    func = eclasslist_newobj_func(cid);
     if (func == OS_NULL) return OS_NULL;
 
     /* Create new object of the class.
