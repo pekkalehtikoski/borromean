@@ -35,6 +35,8 @@ eSet::eSet(
 	os_int flags)
     : eObject(parent, oid, flags)
 {
+    m_items = OS_NULL;
+    m_used = m_alloc = 0;
 }
 
 
@@ -212,3 +214,111 @@ failed:
     return ESTATUS_READING_OBJ_FAILED;
 }
 
+
+
+/* Store value into set.
+ */
+void eSet::set(
+    os_int id,
+    eVariable *x,
+    os_int sflags)
+{
+
+
+}
+
+/* Get value from set.
+   Return value can be used between empty value and unset value. This is needed for properties.
+   @return OS_TRUE if item is set. OS_FALSE if not.
+ */
+oe_boolean eSet::get(
+    os_int id,
+    eVariable *x)
+{
+    eVariable *v;
+    os_char *p, *e, *strptr;
+    os_uchar iid, ibytes;
+    os_schar itype;
+
+    /* Try first if this value is stored in separate variable.
+     */
+    v = firstv();
+    if (v)
+    {
+        x->setv(v);
+        return OS_TRUE;
+    }
+
+    /* If this ID cannot be presented as unsigned char.
+     */
+    if (id < 0 || id > 255) goto getout;
+
+    /* Prepare to go trough items.
+     */
+    p = m_items;
+    if (p == OS_NULL) goto getout;
+    e = p + m_used;
+
+    /* Search id from items untim match found.
+     */
+    while (p < e)
+    {
+        iid = *(os_uchar*)(p++);
+        ibytes = *(os_uchar*)(p++);
+        if (iid == id)
+        {
+            if (ibytes == 0)
+            {
+                x->clear();
+                return OS_TRUE;
+            }
+            itype = *(os_schar*)(p++);
+
+            switch (itype)
+            {
+                case OS_CHAR:
+                    x->setl(*(os_schar*)p);
+                    return OS_TRUE;
+
+                case OS_INT:
+                    x->setl(*(os_short*)p);
+                    return OS_TRUE;
+
+                case OS_LONG:
+                    x->setl(*(os_long*)p);
+                    return OS_TRUE;
+
+                case OS_DOUBLE:
+                    if (ibytes == 1)
+                        x->setd(*(os_schar*)p);
+                    else
+                        x->setd(*(os_double*)p);
+                    return OS_TRUE;
+
+                case OS_STRING:
+                    x->sets(p, ibytes+1);
+                    return OS_TRUE;
+
+                case -OS_STRING:
+                    strptr = *(os_char**)p;
+                    x->sets(p, strptr);
+                    return OS_TRUE;
+
+                case OS_OBJECT:
+                    objtr = *(os_Object**)p;
+                    x->seto(p, objptr);
+                    return OS_TRUE;
+            }
+                
+            return OS_TRUE;
+        }
+
+        p += ibytes + 1;       
+    }        
+
+    /* comtinues ...
+     */
+getout:
+    x->clear();
+    return OS_FALSE;
+}

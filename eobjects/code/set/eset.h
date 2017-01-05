@@ -18,35 +18,6 @@
 #ifndef ESET_INCLUDED
 #define ESET_INCLUDED
 
-#define ESET_SMALLSTR_SZ 8
-
-typedef struct 
-{
-    /** Item identifier number, like property number.
-     */
-    os_short id;
-
-    /** Data type, see osal_typeid.h
-     */
-    os_uchar type;
-
-    /** If ESET_PTR flag is set, the data/ptr contains pointer to data.
-     */
-    os_uchar flags;
-
-    /* Union holding the data or pointer to data.
-     */
-    union
-    {
-        os_long l;
-        os_double d;
-        os_char smallstr[ESET_SMALLSTR_SZ];
-        os_char *strptr;
-        eObject *objptr;
-    }
-    data;
-} 
-eSetItem;
 
 /**
 ****************************************************************************************************
@@ -144,7 +115,8 @@ public:
 
 	  @name eObject Setting and getting item values.
 
-	  X... 
+	  A value can be stored into set using set() function. If the value with this id exists,
+      it is overwritten. Values are retrieved by get() function.
 
 	************************************************************************************************
 	*/
@@ -153,29 +125,30 @@ public:
     /* Store value into set.
      */
     virtual void set(
-        os_int nr,
-        eVariable *x);
+        os_int id,
+        eVariable *x,
+        os_int sflags = 0);
 
     /* Get value from set.
      */
-    virtual eStatus reader(
-        os_int nr,
+    virtual void get(
+        os_int id,
         eVariable *x);
 
     /*@}*/
 
 protected:
-    /* Array of items
+    /* Buffer containing items
      */
-    eSetItem *m_items;
-    
-    /** Number of used items in m_items array.
-     */
-    os_int m_nitems;
+    os_char *m_items;
 
-    /** Number of allocated items in items array.
+    /* Buffer used, bytes.
      */
-    os_int m_itemsalloc;
+    os_int m_used;
+
+    /* Buffer allocated, bytes.
+     */
+    os_int m_alloc;
 };
 
 #endif
