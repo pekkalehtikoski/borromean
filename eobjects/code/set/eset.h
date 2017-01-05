@@ -18,6 +18,36 @@
 #ifndef ESET_INCLUDED
 #define ESET_INCLUDED
 
+#define ESET_SMALLSTR_SZ 8
+
+typedef struct 
+{
+    /** Item identifier number, like property number.
+     */
+    os_short id;
+
+    /** Data type, see osal_typeid.h
+     */
+    os_uchar type;
+
+    /** If ESET_PTR flag is set, the data/ptr contains pointer to data.
+     */
+    os_uchar flags;
+
+    /* Union holding the data or pointer to data.
+     */
+    union
+    {
+        os_long l;
+        os_double d;
+        os_char smallstr[ESET_SMALLSTR_SZ];
+        os_char *strptr;
+        eObject *objptr;
+    }
+    data;
+} 
+eSetItem;
+
 /**
 ****************************************************************************************************
 
@@ -109,6 +139,43 @@ public:
 
     /*@}*/
 
+	/** 
+	************************************************************************************************
+
+	  @name eObject Setting and getting item values.
+
+	  X... 
+
+	************************************************************************************************
+	*/
+	/*@{*/
+
+    /* Store value into set.
+     */
+    virtual void set(
+        os_int nr,
+        eVariable *x);
+
+    /* Get value from set.
+     */
+    virtual eStatus reader(
+        os_int nr,
+        eVariable *x);
+
+    /*@}*/
+
+protected:
+    /* Array of items
+     */
+    eSetItem *m_items;
+    
+    /** Number of used items in m_items array.
+     */
+    os_int m_nitems;
+
+    /** Number of allocated items in items array.
+     */
+    os_int m_itemsalloc;
 };
 
 #endif
