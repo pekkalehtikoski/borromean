@@ -52,9 +52,18 @@ void eclasslist_add(
  */
 void eclasslist_add_eobjects();
 
-/* Get static constuctor function pointer by class ID.
+/* Get static object constuctor function pointer by class ID.
  */
-eNewObjFunc eclasslist_get_func(
+eNewObjFunc eclasslist_newobj_func(
     os_int cid);
+
+
+/* Initialize class list.
+ */
+void eclasslist_initialize();
+
+/* release class list.
+ */
+void eclasslist_release();
 
 #endif

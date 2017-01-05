@@ -41,6 +41,10 @@ typedef struct eGlobal
 
     eHandleRoot hroot;
 
+    /* Pointer to root of class list
+     */
+    eContainer *classlist;
+
     /** Pointer to process handle
      */
     eThreadHandle *processhandle;
@@ -48,9 +52,6 @@ typedef struct eGlobal
     /** Pointer to process object.
      */
     eProcess *process;
-
-
-
 
     /* Process name space
      */

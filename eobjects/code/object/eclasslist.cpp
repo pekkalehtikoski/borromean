@@ -86,15 +86,36 @@ void eclasslist_add_eobjects()
 
 ****************************************************************************************************
 */
-eNewObjFunc eclasslist_get_func(
+eNewObjFunc eclasslist_newobj_func(
     os_int cid)
 {
-    if (eclasslist == OS_NULL) 
-        eclasslist_add_eobjects();
+    eNewObjFunc func;
 
-    if (cid > 0 && cid <= ECLASSID_MAX) 
-        return eclasslist->func[cid];
+    func = OS_NULL;
+    osal_mutex_system_lock();
 
-    return OS_NULL;
+    item = eglobal->classlist->first(cid);
+    if (item) func = eclasslist->func[cid];
+
+    osal_mutex_system_unlock();
+
+    return func;
 }
 
+/* Initialize class list.
+   Must be called before any threads are created.
+ */
+void eclasslist_initialize()
+{
+    eglobal->classlist = new eContainer();
+
+    eclasslist_add_eobjects();
+}
+
+/* release class list.
+   Must be called when all thread except current one have been terminated.
+ */
+void eclasslist_release()
+{
+    delete eglobal->classlist;
+}

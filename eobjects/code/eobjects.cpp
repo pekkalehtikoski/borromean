@@ -55,6 +55,10 @@ void eobjects_initialize(
     /* Initialize handle tables.
      */
     ehandleroot_initialize();
+
+    /* Initialize class list
+     */
+    eclasslist_initialize()
 }
 
 
@@ -79,6 +83,10 @@ void eobjects_shutdown()
     /* Delete handle tables.
      */
     ehandleroot_shutdown();
+
+    /* Release resources allocated for the class list.
+     */
+    eclasslist_release();
 
     /* Mark eobjects library uninitialized.
      */
