@@ -23,6 +23,8 @@ typedef eObject *(*eNewObjFunc)(
     e_oid oid,
 	os_int flags);
 
+typedef void (*eSetupClassFunc)();
+
 /**
 ****************************************************************************************************
 
@@ -43,7 +45,8 @@ eClassList;
  */
 void eclasslist_add(
     os_int cid, 
-    eNewObjFunc func);
+    eNewObjFunc nfunc,
+    eSetupClassFunc sfunc);
 
 /* Add a eobjects base classes to class list.
  */

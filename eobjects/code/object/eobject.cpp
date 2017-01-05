@@ -1793,6 +1793,234 @@ getout:
 /**
 ****************************************************************************************************
 
+  @brief Add property to property set (any type).
+
+  The addproperty function adds a property to classes property set. 
+  
+  @param  classid Specifies to which classes property set the property is being added.
+  @param  propertynr Property number, class specific. 
+  @param  propertyname Property name, class specific.
+  @param  pflags Bit fields, combination of:
+          - EPRO_DEFAULT (0): No options
+          - EPRO_PERSISTENT: Property value is persistant is when saving classes properties.
+          - EPRO_METADATA: Much like EPRO_PERSISTENT, but property value is saved only if
+            also metadata is to be saved.
+          - EPRO_SIMPLE: Do not keep copy of non default property in variable. Class implementation 
+            takes care about this.
+          - EPRO_NOONPRCH 8: Do not call onpropertychange when value changes. 
+  @param  text Name of the property displayed to user. 
+
+  @return Pointer to eVariable in property set defining the property. Additional attributes for
+          property can be added trough this returned pointer.
+
+****************************************************************************************************
+*/
+eVariable *eObject::addproperty(
+    os_int classid, 
+    os_int propertynr, 
+    os_char *propertyname,
+    os_int pflags,
+    os_char *text)
+{
+    eVariable *p;
+    p = new eVariable; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE INTO PROPERTY SET
+
+    /* Set name of the property to display to user.
+     */
+    if (text) p->setpropertys(EVARP_TEXT, text);
+
+    return p;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Add integer property to property set.
+
+  The addpropertyl function adds property typed as integer to property set, and optionally
+  sets default value for it. See addproperty() for more information.
+  
+  @param  x Default value.
+  @return Pointer to eVariable in property set.
+
+****************************************************************************************************
+*/
+eVariable *eObject::addpropertyl(
+    os_int classid, 
+    os_int propertynr, 
+    os_char *propertyname,
+    os_int pflags,
+    os_char *text,
+    os_long x)
+{
+    eVariable *p;
+    p = addproperty(classid, propertynr, propertyname, pflags, text);
+    p->setl(x);
+    p->setpropertyl(EVARP_TYPE, OS_LONG);
+    p->setpropertyl(EVARP_DEFAULT, x);
+    return p;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Add double property to property set.
+
+  The addpropertyd function adds property typed as double precision float to property set, and 
+  optionally sets default value for it. See addproperty() for more information.
+  
+  @param  x Default value.
+  @return Pointer to eVariable in property set.
+
+****************************************************************************************************
+*/
+eVariable *eObject::addpropertyd(
+    os_int classid, 
+    os_int propertynr, 
+    os_char *propertyname,
+    os_int pflags,
+    os_char *text,
+    os_double x,
+    os_int digs)
+{
+    eVariable *p;
+    p = addproperty(classid, propertynr, propertyname, pflags, text);
+    p->setd(x);
+    p->setpropertyl(EVARP_TYPE, OS_DOUBLE);
+    p->setpropertyd(EVARP_DEFAULT, x);
+    p->setpropertyl(EVARP_DIGS, digs);
+    return p;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Add string property to property set.
+
+  The addpropertys function adds property typed as string to property set, and optionally sets
+  default value for it. See addproperty() for more information.
+  
+  @param  x Default value.
+  @return Pointer to eVariable in property set.
+
+****************************************************************************************************
+*/
+eVariable *eObject::addpropertys(
+    os_int classid, 
+    os_int propertynr, 
+    os_char *propertyname,
+    os_int pflags,
+    os_char *text,
+    os_char *x)
+{
+    eVariable *p;
+    p = addproperty(classid, propertynr, propertyname, pflags, text);
+    p->setpropertyl(EVARP_TYPE, OS_STRING);
+    if (x)
+    {
+        p->sets(x);
+        p->setpropertys(EVARP_DEFAULT, x);
+    }
+    return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Set property value.
+
+  The setproperty function sets property value from eVariable.
+  
+  @param  stream The stream to write to.
+  @param  sflags Serialization flags.
+  @param  propertynr, 
+  @param  variable, 
+  @param  source, 
+  @param  flags)
+
+  @return If successfull the function returns ESTATUS_SUCCESS (0). Assume that all nonzero values
+          indicate an error.
+
+****************************************************************************************************
+*/
+void eObject::setproperty(
+    os_int propertynr, 
+    eVariable *variable, 
+    eObject *source, 
+    os_int flags)
+{
+    osal_debug_error("setproperty: Class has no property support");
+}
+
+
+/* Set property value as integer.
+ */
+void eObject::setpropertyl(
+    os_int propertynr, 
+    os_long x)
+{
+    eVariable v;
+    v = x;
+    setproperty(propertynr, &v);
+}
+
+/* Set property value as double.
+    */
+void eObject::setpropertyd(
+    os_int propertynr, 
+    os_double x)
+{
+    eVariable v;
+    v = x;
+    setproperty(propertynr, &v);
+}
+
+/* Set property value as string.
+    */
+void eObject::setpropertys(
+    os_int propertynr, 
+    os_char *x)
+{
+    eVariable v;
+    v = x;
+    setproperty(propertynr, &v);
+}
+
+/* Get property value.
+ */
+eStatus eObject::property(
+    os_int propertynr, 
+    eVariable *variable, 
+    os_int flags)
+{
+    osal_debug_error("setproperty: Class has no property support");
+    return ESTATUS_NO_CLASS_PROPERTY_SUPPORT;
+}
+
+os_long eObject::propertyl(
+    os_int propertynr)
+{
+    eVariable v;
+    if (property(propertynr, &v)) return 0;
+    return v.geti();
+}
+
+os_double eObject::propertyd(
+    os_int propertynr)
+{
+    eVariable v;
+    if (property(propertynr, &v)) return 0;
+    return v.getd();
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Write object to stream.
 
   The eObject::write() function writes object with class information, attachments, etc to

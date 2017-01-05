@@ -34,6 +34,42 @@
  */
 #define EVARIABLE_STRBUF_SZ (sizeof(os_memsz)*2 + sizeof(os_char*) - sizeof(os_uchar))
 
+/* Enumeration of variable properties.
+ */
+#define EVARP_VALUE 10
+#define EVARP_DIGS 12
+#define EVARP_TEXT 14
+#define EVARP_UNIT 16
+#define EVARP_MIN 18
+#define EVARP_MAX 20
+#define EVARP_TYPE 22
+#define EVARP_ATTR 24
+#define EVARP_DEFAULT 26
+#define EVARP_GAIN 28
+#define EVARP_OFFSET 30
+#define EVARP_QUALITY 32
+#define EVARP_TIMESTAMP 34
+#define EVARP_CONF 36
+
+/* Variable property names.
+ */
+extern os_char
+    evarp_value[],
+    evarp_digs[],
+    evarp_text[],
+    evarp_unit[],
+    evarp_min[],
+    evarp_max[],
+    evarp_type[],
+    evarp_attr[],
+    evarp_default[],
+    evarp_gain[],
+    evarp_offset[],
+    evarp_quality[],
+    evarp_timestamp[],
+    evarp_conf[];
+
+
 /*@}*/
 
 
@@ -113,6 +149,10 @@ public:
     /* Get class identifier.
      */
     virtual os_int classid() {return ECLASSID_VARIABLE;}
+
+    /* Static function to configure class'es propertyset.
+     */
+    static void setupclass();
 
     /* Static constructor function for generating instance by class list.
      */

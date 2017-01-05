@@ -36,13 +36,15 @@ eClassList *eclasslist = &eclasslist_buf;
 */
 void eclasslist_add(
     os_int cid, 
-    eNewObjFunc func)
+    eNewObjFunc nfunc,
+    eSetupClassFunc sfunc)
 {
 //    eclasslist->func[0] = eVariable::newobj;
 
     if (cid > 0 && cid <= ECLASSID_MAX)
     {
-        eclasslist->func[cid] = func;
+//        eclasslist->nfunc[cid] = nfunc;
+//        eclasslist->sfunc[cid] = sfunc;
     }
 }
 
@@ -64,9 +66,10 @@ void eclasslist_add_eobjects()
     {
         eclasslist = &eclasslist_buf;
 
-//    eclasslist_add(ECLASSID_ECONTAINER, ?
+        /* eVariable must be first to add to class list, since it is used to describe properties
+           for the class.
+         */
         eclasslist_add(ECLASSID_VARIABLE, (eNewObjFunc)eVariable::newobj, (eSetupClassFunc)eVariable::setupclass); 
-        ;
     }
 }
 

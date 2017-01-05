@@ -18,6 +18,25 @@
 #include "eobjects/eobjects.h"
 
 
+/* Variable property names.
+ */
+os_char
+    evarp_value[] = "x",
+    evarp_digs[] = "x.digs",
+    evarp_text[] = "x.text",
+    evarp_unit[] = "x.unit",
+    evarp_min[] = "x.min",
+    evarp_max[] = "x.max",
+    evarp_type[] = "x.type",
+    evarp_attr[] = "x.attr",
+    evarp_default[] = "x.default",
+    evarp_gain[] = "x.gain",
+    evarp_offset[] = "x.offset",
+    evarp_quality[] = "x.quality",
+    evarp_timestamp[] = "x.timestamp",
+    evarp_conf[] = "conf";
+
+
 /**
 ****************************************************************************************************
 
@@ -56,6 +75,42 @@ eVariable::~eVariable()
     /* Release any allocated memory.
      */
     clear();
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Add properties to class'es property set.
+
+  The eVariable::setupclass X...
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eVariable::setupclass()
+{
+    const os_int cls = ECLASSID_VARIABLE;
+
+    /* Order of these addproperty() calls is important, since eVariable itself is used to 
+       describe the properties in property set. The property to set must be added to 
+       property set before setting value for it. This effects only eVariable class.
+     */
+    addproperty (cls, EVARP_DEFAULT, evarp_default, EPRO_METADATA|EPRO_NOONPRCH, "default");
+    addpropertys(cls, EVARP_TEXT, evarp_text, EPRO_METADATA|EPRO_NOONPRCH, "text");
+    addpropertyl(cls, EVARP_TYPE, evarp_type, EPRO_METADATA|EPRO_NOONPRCH, "type", OS_UNDEFINED_TYPE);
+    addproperty (cls, EVARP_VALUE, evarp_value, EPRO_PERSISTENT|EPRO_SIMPLE, "value");
+    addpropertyl(cls, EVARP_DIGS, evarp_digs, EPRO_METADATA|EPRO_NOONPRCH|EPRO_SIMPLE, "digs", 2);
+    addpropertys(cls, EVARP_UNIT, evarp_unit, EPRO_METADATA|EPRO_NOONPRCH, "unit");
+    addpropertyd(cls, EVARP_MIN, evarp_min, EPRO_METADATA|EPRO_NOONPRCH, "min");
+    addpropertyd(cls, EVARP_MAX, evarp_max, EPRO_METADATA|EPRO_NOONPRCH, "max");
+    addpropertyl(cls, EVARP_ATTR, evarp_attr, EPRO_METADATA|EPRO_NOONPRCH, "digs", 2);
+    addpropertyd(cls, EVARP_GAIN, evarp_gain, EPRO_METADATA|EPRO_NOONPRCH, "gain");
+    addpropertyd(cls, EVARP_OFFSET, evarp_offset, EPRO_METADATA|EPRO_NOONPRCH, "offset");
+    addproperty(cls, EVARP_QUALITY, evarp_quality, EPRO_METADATA|EPRO_NOONPRCH, "quality");
+    addproperty(cls, EVARP_TIMESTAMP, evarp_timestamp, EPRO_METADATA|EPRO_NOONPRCH, "timestamp");
+    addproperty(cls, EVARP_CONF, evarp_conf, EPRO_METADATA|EPRO_NOONPRCH, "conf");
 }
 
 
@@ -1305,8 +1360,6 @@ failed:
 void eVariable::onmessage()
 {
 }
-
-
 
 
 /**

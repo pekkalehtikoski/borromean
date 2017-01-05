@@ -51,6 +51,15 @@ class eThread;
   #define e_assert_type(o,id) if (o) osal_debug_assert((o)->classid()==(id));
 #endif 
 
+/* Flags for addproperty() function.
+ */
+#define EPRO_DEFAULT 0
+#define EPRO_PERSISTENT 1
+#define EPRO_METADATA 2
+#define EPRO_SIMPLE 4
+#define EPRO_NOONPRCH 8
+
+
 
 /**
 ****************************************************************************************************
@@ -115,7 +124,10 @@ public:
 
     /* Get class identifier
      */
-    virtual os_int classid() {return ECLASSID_OBJECT;}
+    virtual os_int classid() 
+    {
+        return ECLASSID_OBJECT;
+    }
 
     /* Allocate new child object by class identifier.
      */
@@ -525,6 +537,46 @@ public:
     */
     /*@{*/
 
+    /* Add property to property set (any type).
+     */
+    static eVariable *addproperty(
+        os_int classid, 
+        os_int propertynr, 
+        os_char *propertyname,
+        os_int pflags = EPRO_DEFAULT,
+        os_char *text = OS_NULL);
+
+    /* Add integer property to property set.
+     */
+    static eVariable *addpropertyl(
+        os_int classid, 
+        os_int propertynr, 
+        os_char *propertyname,
+        os_int pflags = EPRO_DEFAULT,
+        os_char *text = OS_NULL,
+        os_long x = 0);
+
+    /* Add double property to property set.
+     */
+    static eVariable *addpropertyd(
+        os_int classid, 
+        os_int propertynr, 
+        os_char *propertyname,
+        os_int pflags = EPRO_DEFAULT,
+        os_char *text = OS_NULL,
+        os_double x = 0.0,
+        os_int digs = 2);
+
+    /* Add string property to property set.
+     */
+    static eVariable *addpropertys(
+        os_int classid, 
+        os_int propertynr, 
+        os_char *propertyname,
+        os_int pflags = EPRO_DEFAULT,
+        os_char *text = OS_NULL,
+        os_char *x = OS_NULL);
+
     /* Property name to number.
      */
     os_int propertynr(
@@ -538,20 +590,46 @@ public:
 
     /* Set property value.
      */
-    eStatus setproperty(
+    void setproperty(
         os_int propertynr, 
         eVariable *variable, 
-        eObject *source, 
-        os_int flags);
+        eObject *source = OS_NULL, 
+        os_int flags = 0);
+
+    /* Set property value as integer.
+     */
+    void setpropertyl(
+        os_int propertynr, 
+        os_long x);
+
+    /* Set property value as double.
+     */
+    void setpropertyd(
+        os_int propertynr, 
+        os_double x);
+
+    /* Set property value as string.
+     */
+    void setpropertys(
+        os_int propertynr, 
+        os_char *x);
 
     /* Get property value.
      */
     eStatus property(
         os_int propertynr, 
         eVariable *variable, 
-        os_int flags);
+        os_int flags = 0);
 
-    virtual eStatus onpropertychange(
+    os_long propertyl(
+        os_int propertynr);
+
+    os_double propertyd(
+        os_int propertynr);
+
+    /* Property change callback
+     */
+    eStatus onpropertychange(
         os_int propertynr, 
         eVariable *variable, 
         os_int flags) {return ESTATUS_SUCCESS;}

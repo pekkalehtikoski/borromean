@@ -35,6 +35,10 @@ typedef enum
 	 */
 	ESTATUS_SUCCESS = 0,
 
+	/** Object properties, properties not supported for the class.
+	 */
+    ESTATUS_NO_CLASS_PROPERTY_SUPPORT = 90,
+
 	/** Object serialization. Writing object to stream has failed.
 	 */
 	ESTATUS_WRITING_OBJ_FAILED = 100,
