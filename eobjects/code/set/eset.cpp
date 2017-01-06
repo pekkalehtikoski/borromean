@@ -215,30 +215,242 @@ failed:
 }
 
 
+/**
+****************************************************************************************************
 
-/* Store value into set.
- */
+  @brief Store value into set.
+
+  The eSet::set function 
+  
+  @param  id Identification number (for example property number) for value to store.
+  @param  x Variable containing value to store.
+          - x = OS_NULL -> delete value
+          - x = empty var -> store empty mark;
+  @param  flags Reserved for future, set 0 for now.
+
+  @return None.
+
+****************************************************************************************************
+*/
 void eSet::set(
     os_int id,
     eVariable *x,
     os_int sflags)
 {
     eVariable *v;
+    eObject *o, *optr;
+    os_long l;
+    os_double d;
+    os_int i, isz;
+    os_short s;
+    os_schar itype, jtype, c;
+    os_uchar ibytes, jbytes, jid;
+    os_char *p, *e, *q, *sptr, *start;
+    os_memsz sz;
+    const os_int slack = 10;
+    void *iptr;
 
-    /* If we have old variable with this id, remove it.
+    /* If we have variable with this id, use it.
      */
     v = firstv(id);
-    if (v) delete v;
+    if (v) 
+    {
+        if (x == OS_NULL) delete v;
+        else v->setv(x);
+        return;
+    }
     
+    /* If this id cannot be presented as uchar, use variable. 
+     */
     if (id < 0 || id > 255) 
     {
         goto store_as_var;
     }
 
-//    ibytes = 
-    
+    /* Determnine size and type)
+     */
+    switch (x->type())
+    {
+        case OS_LONG:
+            l = v->getl();
+            if (l >= -0x80 && l <= 0x7F)
+            {
+                itype = OS_CHAR;
+                ibytes = sizeof(os_schar);
+                c = (os_schar)l;
+                iptr = &c;
+            }
+            else if (l >= -0x8000 && l <= 0x7FFF)
+            {
+                itype = OS_SHORT;
+                ibytes = sizeof(os_short);
+                s = (os_short)l;
+                iptr = &s;
+            }
+            else if (l >= -2147483647 && l <= 0x7FFFFFFF) 
+            {
+                itype = OS_INT;
+                ibytes = sizeof(os_int);
+                i = (os_int)l;
+                iptr = &i;
+            }
+            else 
+            {
+                itype = OS_LONG;
+                ibytes = sizeof(os_long);
+                iptr = &l;
+            }
+            break;
 
-       
+        case OS_DOUBLE:
+            d = v->getd();
+            itype = OS_DOUBLE;
+            ibytes = sizeof(os_double);
+            iptr = &d;
+            if (d >= -128.0 && d <= 127.0)
+            {
+                if (d == (os_double)v->getl())
+                {
+                    ibytes = sizeof(os_char);
+                    if (d >= 0) c = (os_char)(d+0.5);
+                    else c = -(os_char)(-d+0.5);
+                    iptr = &c;
+                }   
+            }
+            break;
+
+        case OS_OBJECT:
+            itype = OS_OBJECT;
+            ibytes = sizeof(eObject *);
+            o = x->geto();
+            optr = o->clone(this);
+            iptr = &optr;
+            break;
+
+        default:
+        case OS_STRING:
+            q = x->gets(&sz);
+            if (q == '\0')
+            {
+                itype = OS_UNDEFINED_TYPE;
+                ibytes = 0;
+                iptr = OS_NULL;
+            }
+            else if (sz > 64) 
+            {
+                itype = -OS_STRING;
+                ibytes = sizeof(os_char*) + sizeof(os_int);
+                sptr = (os_char*)osal_memory_allocate(sz, OS_NULL);
+                iptr = &sptr;
+                isz = (os_int)sz;
+            }
+            else
+            {
+                itype = OS_STRING;
+                ibytes = (os_uchar)sz-1;
+                iptr = q;
+            }
+            break;
+
+        case OS_UNDEFINED_TYPE: /* empty */
+            itype = OS_UNDEFINED_TYPE;
+            ibytes = 0;
+            iptr = OS_NULL;
+            break;
+    }
+
+    /* If no m_items buffer allocated.
+     */    
+    if (m_items == OS_NULL) 
+    {
+        m_items = (os_char*)osal_memory_allocate(3 * sizeof(os_char) + ibytes + slack, &sz);
+        m_used = 0;
+        m_alloc = (os_int)sz;
+    }
+
+    /* Prepare to go trough items.
+     */
+    p = m_items;
+    e = p + m_used;
+
+    /* Search id from items untim match found.
+     */
+    while (p < e)
+    {
+        start = p;
+        jid = *(os_uchar*)(p++);
+        jbytes = *(os_uchar*)(p++);
+        if (jbytes) jtype = *(os_uchar*)(p++);
+        else jtype = OS_UNDEFINED_TYPE;
+        if (jid == (os_uchar)id)
+        {
+            /* Release memory allocated for previous value.
+             */
+            if (jtype == OS_OBJECT) 
+            {
+                delete *(eObject**)p;
+            }
+            else if (jtype == -OS_STRING) 
+            {
+                osal_memory_free(*(eObject**)p, *(os_int*)(p + sizeof(os_char*)));
+            }
+
+            /* If it is same length
+             */
+            if (ibytes == jbytes)
+            {
+                p = start + 1;
+                *(os_uchar*)(p++) = ibytes;
+                if (ibytes == 0) return;
+                *(os_schar*)(p++) = itype;
+                *(void **)p = iptr;
+                if (itype == -OS_STRING)
+                {
+                    p += sizeof(void *);
+                    *(os_int*)p = isz;
+                }
+                return;
+            }
+
+            /* Different length, remove this entry form m_items buffer.
+             */
+            p += jbytes;
+            if (e != p) 
+            {
+                os_memmove(start, p, e-p); 
+                m_used -= (os_int)(p - start);
+            }
+            break;
+        }
+    }
+
+    /* If we need to allocate more memory?
+     */
+    if (m_used + ibytes > m_alloc)
+    {
+        start = (os_char*)osal_memory_allocate(3 * sizeof(os_char) + ibytes + m_used/4 + slack, &sz);
+        m_alloc = (os_int)sz;
+        os_memcpy(start, m_items, m_used);
+        m_items = start;
+    }
+
+    /* Append new value.
+     */
+    p = m_items + m_used;
+    *(os_uchar*)(p++) = (os_uchar)id;
+    *(os_uchar*)(p++) = (os_uchar)ibytes;
+    if (ibytes)
+    {
+        *(os_uchar*)(p++) = (os_uchar)ibytes;
+        *(void **)p = iptr;
+        p += sizeof(void *);
+        if (itype == -OS_STRING)
+        {
+            *(os_int*)p = isz;
+            p += sizeof(os_int);
+        }
+    }
+    m_used = (os_int)(p - m_items);
    return;
 
 store_as_var:
@@ -246,10 +458,26 @@ store_as_var:
     v->setv(x);
 }
 
-/* Get value from set.
-   Return value can be used between empty value and unset value. This is needed for properties.
-   @return OS_TRUE if item is set. OS_FALSE if not.
- */
+
+/**
+****************************************************************************************************
+
+  @brief Get value from set.
+
+  The eSet::get function 
+  
+  @param  id Identification number (for example property number) for value to store.
+  @param  x Variable containing value to store.
+          - x = OS_NULL -> delete value
+          - x = empty var -> store empty mark;
+  @param  flags Reserved for future, set 0 for now.
+
+  @return Return value can be used between empty value and unset value. This is needed for 
+          properties. OS_TRUE if value was found, even empty one. OS_FALSE if no value for 
+          the ID was found.
+
+****************************************************************************************************
+*/
 os_boolean eSet::get(
     os_int id,
     eVariable *x)
@@ -285,7 +513,7 @@ os_boolean eSet::get(
     {
         iid = *(os_uchar*)(p++);
         ibytes = *(os_uchar*)(p++);
-        if (iid == id)
+        if (iid == (os_uchar)id)
         {
             if (ibytes == 0)
             {
@@ -298,36 +526,44 @@ os_boolean eSet::get(
             {
                 case OS_CHAR:
                     x->setl(*(os_schar*)p);
-                    return OS_TRUE;
+                    break;
+
+                case OS_SHORT:
+                    x->setl(*(os_short*)p);
+                    break;
 
                 case OS_INT:
-                    x->setl(*(os_short*)p);
-                    return OS_TRUE;
+                    x->setl(*(os_int*)p);
+                    break;
 
                 case OS_LONG:
                     x->setl(*(os_long*)p);
-                    return OS_TRUE;
+                    break;
 
                 case OS_DOUBLE:
                     if (ibytes == 1)
                         x->setd(*(os_schar*)p);
                     else
                         x->setd(*(os_double*)p);
-                    return OS_TRUE;
+                    break;
 
                 case OS_STRING:
                     x->sets(p, ibytes+1);
-                    return OS_TRUE;
+                    break;
 
                 case -OS_STRING:
                     strptr = *(os_char**)p;
                     x->sets(strptr);
-                    return OS_TRUE;
+                    break;
 
                 case OS_OBJECT:
                     objptr = *(eObject**)p;
                     x->seto(objptr);
-                    return OS_TRUE;
+                    break;
+
+                default:
+                    x->clear();
+                    break;
             }
                 
             return OS_TRUE;
