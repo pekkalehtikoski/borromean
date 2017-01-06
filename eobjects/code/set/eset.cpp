@@ -53,6 +53,13 @@ eSet::eSet(
 */
 eSet::~eSet()
 {
+    /* Clear the set to release all allocated memory.
+     */
+    clear();
+    
+    /* Release items buffer
+     */    
+    osal_memory_free(m_items, m_alloc);
 }
 
 
@@ -428,7 +435,8 @@ void eSet::set(
      */
     if (m_used + ibytes + 3 * sizeof(os_char) > m_alloc)
     {
-        start = (os_char*)osal_memory_allocate(3 * sizeof(os_char) + ibytes + m_used + m_used/4 + slack, &sz);
+        start = (os_char*)osal_memory_allocate(3 * sizeof(os_char)
+            + ibytes + m_used + m_used/4 + slack, &sz);
         if (m_items)
         {
             os_memcpy(start, m_items, m_used);
@@ -461,7 +469,6 @@ void eSet::set(
                 *(os_int*)p = isz;
                 p += sizeof(os_int);
             }
-
         }
     }
     m_used = (os_int)(p - m_items);
@@ -583,7 +590,7 @@ os_boolean eSet::get(
             return OS_TRUE;
         }
 
-        p += ibytes + 1;       
+        if (ibytes) p += ibytes + 1;       
     }        
 
     /* comtinues ...
@@ -591,4 +598,62 @@ os_boolean eSet::get(
 getout:
     x->clear();
     return OS_FALSE;
+}
+
+/**
+****************************************************************************************************
+
+  @brief Clear the set.
+
+  The eSet::clear function ...
+
+  @return Return value can be used between empty value and unset value. This is needed for 
+          properties. OS_TRUE if value was found, even empty one. OS_FALSE if no value for 
+          the ID was found.
+
+****************************************************************************************************
+*/
+void eSet::clear()
+{
+    eObject *objptr;
+    os_char *p, *e, *strptr;
+    os_uchar iid, ibytes;
+    os_schar itype;
+    os_int strsz;
+
+    /* Prepare to go trough items.
+     */
+    p = m_items;
+    if (p == OS_NULL) return;
+    e = p + m_used;
+
+    /* Search id from items untim match found.
+     */
+    while (p < e)
+    {
+        iid = *(os_uchar*)(p++);
+        ibytes = *(os_uchar*)(p++);
+        if (ibytes)
+        {
+            itype = *(os_schar*)(p++);
+
+            switch (itype)
+            {
+                case -OS_STRING:
+                    strptr = *(os_char**)p;
+                    strsz = *(os_int*)(p + sizeof(char*)) ;
+                    osal_memory_free(strptr, strsz);
+                    break;
+
+                case OS_OBJECT:
+                    objptr = *(eObject**)p;
+                    delete objptr;
+                    break;
+            }
+            
+            p += ibytes;       
+        }
+    }        
+
+    m_used = 0;
 }

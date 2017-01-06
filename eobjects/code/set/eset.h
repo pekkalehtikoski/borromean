@@ -135,6 +135,10 @@ public:
         os_int id,
         eVariable *x);
 
+    /* Clear the set.
+     */
+    void eSet::clear();
+
     /*@}*/
 
 protected:
