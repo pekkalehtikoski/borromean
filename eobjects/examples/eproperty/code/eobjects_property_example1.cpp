@@ -63,14 +63,17 @@ void property_example_1()
     v = 20.72;
     collection.set(20, &v);
 
-//    v .clear();
- //   collection.set(10, &v);
+    collection.set(5, &v);
 
     if (collection.get(10, &v)) osal_console_write("HAS VALUE");
     osal_console_write(v.gets());
     osal_console_write("\n");
 
     collection.get(20, &v);
+    osal_console_write(v.gets());
+    osal_console_write("\n");
+
+    collection.get(5, &v);
     osal_console_write(v.gets());
     osal_console_write("\n");
 

@@ -419,6 +419,7 @@ void eSet::set(
             }
             break;
         }
+        p += jbytes;
     }
 
     if (x == OS_NULL) return;
@@ -427,9 +428,13 @@ void eSet::set(
      */
     if (m_used + ibytes + 3 * sizeof(os_char) > m_alloc)
     {
-        start = (os_char*)osal_memory_allocate(3 * sizeof(os_char) + ibytes + m_used/4 + slack, &sz);
+        start = (os_char*)osal_memory_allocate(3 * sizeof(os_char) + ibytes + m_used + m_used/4 + slack, &sz);
+        if (m_items)
+        {
+            os_memcpy(start, m_items, m_used);
+            osal_memory_free(m_items, m_alloc);
+        }
         m_alloc = (os_int)sz;
-        os_memcpy(start, m_items, m_used);
         m_items = start;
     }
 
