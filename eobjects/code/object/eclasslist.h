@@ -25,6 +25,9 @@ typedef eObject *(*eNewObjFunc)(
 
 typedef void (*eSetupClassFunc)();
 
+#define ECLASSENTRY_NFUNC 1
+#define ECLASSENTRY_SFUNC 2
+
 /**
 ****************************************************************************************************
 
@@ -46,7 +49,7 @@ eClassList;
 void eclasslist_add(
     os_int cid, 
     eNewObjFunc nfunc,
-    eSetupClassFunc sfunc);
+    eSetupClassFunc sfunc = OS_NULL);
 
 /* Add a eobjects base classes to class list.
  */

@@ -254,6 +254,12 @@ public:
 	    eObject *x,
         os_boolean adopt_x = OS_FALSE);
 
+    /* Set pointer value to variable.
+     */
+    void setp(
+	    os_pointer x);
+
+
     /*@}*/
 
 
@@ -301,6 +307,10 @@ public:
 	/* Get pointer to object contained by variable.
      */
 	eObject *geto();
+
+    /* Get pointer stored in variable.
+     */
+    os_pointer getp();
 
     /*@}*/
 
@@ -493,6 +503,7 @@ protected:
 				os_long l;
 				os_double d;
 				eObject *o;
+                os_pointer p;
 			}
 			v;
 

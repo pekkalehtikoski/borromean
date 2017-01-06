@@ -87,6 +87,10 @@ typedef float os_float;
  */
 typedef double os_double;
 
+/** Pointer type, often function pointer.
+ */
+typedef void *os_pointer;
+
 /*@}*/
 
 #endif

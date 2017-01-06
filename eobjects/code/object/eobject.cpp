@@ -1795,7 +1795,7 @@ getout:
 
   @brief Add property to property set (any type).
 
-  The addproperty function adds a property to classes property set. 
+  The addproperty function adds a property to class'es global property set. 
   
   @param  classid Specifies to which classes property set the property is being added.
   @param  propertynr Property number, class specific. 
@@ -1822,12 +1822,30 @@ eVariable *eObject::addproperty(
     os_int pflags,
     os_char *text)
 {
+    eContainer *propertyset;
     eVariable *p;
-    p = new eVariable; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE INTO PROPERTY SET
+
+    /* Get pointer to class'es property set. If not found, create one. Property set always
+       has name space
+     */
+    propertyset = eglobal->propertysets->firstc(classid);
+    if (propertyset == OS_NULL)
+    {
+	    propertyset = new eContainer(eglobal->propertysets, classid, EOBJ_IS_ATTACHMENT);
+        propertyset->ns_create();
+    }
+
+    /* Add variable for this property in property set.
+     */
+    p = new eVariable(propertyset, propertynr); 
 
     /* Set name of the property to display to user.
      */
     if (text) p->setpropertys(EVARP_TEXT, text);
+
+    /* Store flags as configuration.
+     */
+    p->setpropertyl(EVARP_CONF, pflags);
 
     return p;
 }

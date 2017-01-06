@@ -69,6 +69,10 @@
  */
 #define EOID_CONTEXT -31
 
+/** Content, used to indicate property set.
+ */
+#define EOID_PROPERTY_SET -33
+
 /** This is special object identifier that can be given as argument to object hierarchy 
 	functions, like getfirstchild(). The EOID_CHILD specifies to get a child object, 
 	which is not flagged as attachment.

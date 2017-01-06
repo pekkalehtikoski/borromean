@@ -98,7 +98,11 @@ typedef enum
 
 	/** Object type.
 	 */
-	OS_OBJECT = 14
+	OS_OBJECT = 14,
+
+	/** Pointer type.
+	 */
+	OS_POINTER = 15
 }
 osalTypeId;
 

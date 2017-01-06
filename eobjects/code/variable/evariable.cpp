@@ -486,6 +486,35 @@ void eVariable::seto(
 	}
 }
 
+  
+/**
+****************************************************************************************************
+
+  @brief Set pointer as a value to variable.
+
+  The setd() function sets apointer value to variable. 
+
+  @param   x Value to set.
+  @return  None.
+
+****************************************************************************************************
+*/
+void eVariable::setp(
+    os_pointer x)
+{
+    /* Release any allocated memory.
+     */
+    clear();
+
+    /* Save value.
+     */
+    m_value.valbuf.v.p = x;
+
+    /* Set data type.
+     */
+	settype(OS_POINTER);
+}
+
 
 /**
 ****************************************************************************************************
@@ -784,6 +813,27 @@ eObject *eVariable::geto()
 	return OS_NULL;
 }
 
+/**
+****************************************************************************************************
+
+  @brief Get pointer value of variable.
+
+  The getp() function returns pointer which was stored as variable value, if value type 
+  is OE_POINTER.
+
+  @return  Pointer value, or OS_NULL if variable value is pointer or is NULL pointer.
+
+****************************************************************************************************
+*/
+os_pointer eVariable::getp() 
+{
+	if (type() == OS_POINTER)
+	{
+		return m_value.valbuf.v.p;
+	}
+
+	return OS_NULL;
+}
 
 /**
 ****************************************************************************************************
@@ -1004,7 +1054,14 @@ osal_int_to_string(nbuf, sizeof(nbuf), x->m_value.valbuf.v.d); // ??????????????
             break;
 
         case OS_OBJECT:
-            rval = 0;
+            break;
+
+        case OS_POINTER:
+            if (y->type() == OS_POINTER)
+            {
+                if (y->m_value.valbuf.v.p > x->m_value.valbuf.v.p) rval = 1;
+                if (y->m_value.valbuf.v.p < x->m_value.valbuf.v.p) rval = -1;
+            }
             break;
     }
     return reverse * rval;

@@ -37,21 +37,22 @@ osalTypeInfo;
 /** Type names and sizes.
  */
 static osalTypeInfo osal_typeinfo[] = {
-    {"undef", 0},					/* OS_UNDEFINED_TYPE = 0 */
-	{"char", sizeof(os_char)},		/* OS_CHAR = 1 */
-	{"uchar", sizeof(os_uchar)},	/* OS_UCHAR = 2 */
-	{"short", sizeof(os_short)},	/* OS_SHORT = 3 */
-	{"ushort", sizeof(os_ushort)},	/* OS_USHORT = 4 */
-	{"int", sizeof(os_int)},		/* OS_INT = 5 */
-	{"uint", sizeof(os_uint)},		/* OS_UINT = 6 */
-	{"int64", sizeof(os_int64)},	/* OS_INT64 = 7 */
-	{"long", sizeof(os_long)},		/* OS_LONG = 8 */
-	{"float", sizeof(os_float)},	/* OS_FLOAT = 9 */
-	{"double", sizeof(os_double)},	/* OS_DOUBLE = 10 */
-	{"dec01", sizeof(os_short)},	/* OS_DEC01 = 11 */
-	{"dec001", sizeof(os_short)},	/* OS_DEC001 = 12 */
-	{"str", 0},	                    /* OS_STRING = 13 */
-    {"object", 0}};	                /* OS_OBJECT = 14 */
+    {"undef", 0},					  /* OS_UNDEFINED_TYPE = 0 */
+	{"char", sizeof(os_char)},		  /* OS_CHAR = 1 */
+	{"uchar", sizeof(os_uchar)},	  /* OS_UCHAR = 2 */
+	{"short", sizeof(os_short)},	  /* OS_SHORT = 3 */
+	{"ushort", sizeof(os_ushort)},	  /* OS_USHORT = 4 */
+	{"int", sizeof(os_int)},		  /* OS_INT = 5 */
+	{"uint", sizeof(os_uint)},		  /* OS_UINT = 6 */
+	{"int64", sizeof(os_int64)},	  /* OS_INT64 = 7 */
+	{"long", sizeof(os_long)},		  /* OS_LONG = 8 */
+	{"float", sizeof(os_float)},	  /* OS_FLOAT = 9 */
+	{"double", sizeof(os_double)},	  /* OS_DOUBLE = 10 */
+	{"dec01", sizeof(os_short)},	  /* OS_DEC01 = 11 */
+	{"dec001", sizeof(os_short)},	  /* OS_DEC001 = 12 */
+	{"str", 0},	                      /* OS_STRING = 13 */
+    {"object", 0},	                  /* OS_OBJECT = 14 */
+    {"pointer", sizeof(os_pointer)}}; /* OS_POINTER = 15 */
 
 /** Number of rows in osal_typeinfo table.
  */

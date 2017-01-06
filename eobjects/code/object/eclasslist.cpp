@@ -39,13 +39,42 @@ void eclasslist_add(
     eNewObjFunc nfunc,
     eSetupClassFunc sfunc)
 {
-//    eclasslist->func[0] = eVariable::newobj;
+    eSet *classentry;
+    eVariable *pointer;
 
-    if (cid > 0 && cid <= ECLASSID_MAX)
+    /* Syncronization neeeded for eclasslist_add() function.
+     */
+    osal_mutex_system_lock();
+
+#if OSAL_DEBUG
+    /* Check for duplicated calls with same cid.
+     */
+    classentry = eSet::cast(eglobal->classlist->first(cid));
+    if (classentry)
     {
-//        eclasslist->nfunc[cid] = nfunc;
-//        eclasslist->sfunc[cid] = sfunc;
+        osal_debug_error("eclasslist_add() called with same cid twice");
+        goto getout;
     }
+#endif
+    classentry = new eSet(eglobal->classlist, cid);
+    
+    /* Store pointers to functions.
+     */
+    if (nfunc)
+    {
+        pointer = new eVariable(classentry, ECLASSENTRY_NFUNC);
+        pointer->setp(nfunc);
+    }
+    if (sfunc)
+    {
+        pointer = new eVariable(classentry, ECLASSENTRY_SFUNC);
+        pointer->setp(sfunc);
+    }
+
+getout:
+    /* Finished with synchronization.
+     */
+    osal_mutex_system_unlock();
 }
 
 
@@ -66,10 +95,13 @@ void eclasslist_add_eobjects()
     {
         eclasslist = &eclasslist_buf;
 
-        /* eVariable must be first to add to class list, since it is used to describe properties
-           for the class.
+        /* eSet should be first to add to class list followed by then eVariable since these is 
+           used to store description of class properties. 
          */
-        eclasslist_add(ECLASSID_VARIABLE, (eNewObjFunc)eVariable::newobj, (eSetupClassFunc)eVariable::setupclass); 
+        eclasslist_add(ECLASSID_SET, (eNewObjFunc)eSet::newobj); 
+        eclasslist_add(ECLASSID_VARIABLE, (eNewObjFunc)eVariable::newobj, 
+                (eSetupClassFunc)eVariable::setupclass); 
+
     }
 }
 
@@ -107,7 +139,9 @@ eNewObjFunc eclasslist_newobj_func(
  */
 void eclasslist_initialize()
 {
-    eglobal->classlist = new eContainer();
+    eglobal->root = new eContainer();
+    eglobal->classlist = new eContainer(eglobal->root);
+    eglobal->propertysets = new eContainer(eglobal->root);
 
     eclasslist_add_eobjects();
 }

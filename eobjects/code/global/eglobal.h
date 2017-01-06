@@ -41,9 +41,17 @@ typedef struct eGlobal
 
     eHandleRoot hroot;
 
-    /* Pointer to root of class list
+    /** Root container for global objects.
+     */
+    eContainer *root;
+
+    /* Container for class list.
      */
     eContainer *classlist;
+
+    /* Container for property sets.
+     */
+    eContainer *propertysets;
 
     /** Pointer to process handle
      */
