@@ -80,13 +80,13 @@ void eobjects_shutdown()
      */
     if (!eglobal->initialized) return;
 
-    /* Delete handle tables.
-     */
-    ehandleroot_shutdown();
-
     /* Release resources allocated for the class list.
      */
     eclasslist_release();
+
+    /* Delete handle tables.
+     */
+    ehandleroot_shutdown();
 
     /* Mark eobjects library uninitialized.
      */

@@ -54,7 +54,27 @@ class eMyClass : public eObject
 */
 void property_example_1()
 {
-	eMyClass
-		myobj;
+	eSet collection;
+    eVariable v;
+
+    v = "Abba12345678901234567890123456789012345678901234567890123456789012345678901234567890!";
+    collection.set(10, &v);
+
+    v = 20.72;
+    collection.set(20, &v);
+
+//    v .clear();
+ //   collection.set(10, &v);
+
+    if (collection.get(10, &v)) osal_console_write("HAS VALUE");
+    osal_console_write(v.gets());
+    osal_console_write("\n");
+
+    collection.get(20, &v);
+    osal_console_write(v.gets());
+    osal_console_write("\n");
+
+//    MyClass
+//		myobj;
 
 }

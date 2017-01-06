@@ -267,12 +267,16 @@ void eSet::set(
         goto store_as_var;
     }
 
-    /* Determnine size and type)
+    /* Determnine size and type,
      */
-    switch (x->type())
+    if (x == OS_NULL)
+    {
+        ibytes = -1;
+    }
+    else switch (x->type())
     {
         case OS_LONG:
-            l = v->getl();
+            l = x->getl();
             if (l >= -0x80 && l <= 0x7F)
             {
                 itype = OS_CHAR;
@@ -303,13 +307,13 @@ void eSet::set(
             break;
 
         case OS_DOUBLE:
-            d = v->getd();
+            d = x->getd();
             itype = OS_DOUBLE;
             ibytes = sizeof(os_double);
             iptr = &d;
             if (d >= -128.0 && d <= 127.0)
             {
-                if (d == (os_double)v->getl())
+                if (d == (os_double)x->getl())
                 {
                     ibytes = sizeof(os_char);
                     if (d >= 0) c = (os_char)(d+0.5);
@@ -341,6 +345,7 @@ void eSet::set(
                 itype = -OS_STRING;
                 ibytes = sizeof(os_char*) + sizeof(os_int);
                 sptr = (os_char*)osal_memory_allocate(sz, OS_NULL);
+                os_memcpy(sptr, q, sz);
                 iptr = &sptr;
                 isz = (os_int)sz;
             }
@@ -359,21 +364,12 @@ void eSet::set(
             break;
     }
 
-    /* If no m_items buffer allocated.
-     */    
-    if (m_items == OS_NULL) 
-    {
-        m_items = (os_char*)osal_memory_allocate(3 * sizeof(os_char) + ibytes + slack, &sz);
-        m_used = 0;
-        m_alloc = (os_int)sz;
-    }
-
     /* Prepare to go trough items.
      */
     p = m_items;
     e = p + m_used;
 
-    /* Search id from items untim match found.
+    /* Search id from items until match found.
      */
     while (p < e)
     {
@@ -392,7 +388,7 @@ void eSet::set(
             }
             else if (jtype == -OS_STRING) 
             {
-                osal_memory_free(*(eObject**)p, *(os_int*)(p + sizeof(os_char*)));
+                osal_memory_free(*(void**)p, *(os_int*)(p + sizeof(os_char*)));
             }
 
             /* If it is same length
@@ -403,10 +399,11 @@ void eSet::set(
                 *(os_uchar*)(p++) = ibytes;
                 if (ibytes == 0) return;
                 *(os_schar*)(p++) = itype;
-                *(void **)p = iptr;
+
+                os_memcpy(p, iptr, ibytes);
                 if (itype == -OS_STRING)
                 {
-                    p += sizeof(void *);
+                    p += ibytes;
                     *(os_int*)p = isz;
                 }
                 return;
@@ -424,9 +421,11 @@ void eSet::set(
         }
     }
 
+    if (x == OS_NULL) return;
+
     /* If we need to allocate more memory?
      */
-    if (m_used + ibytes > m_alloc)
+    if (m_used + ibytes + 3 * sizeof(os_char) > m_alloc)
     {
         start = (os_char*)osal_memory_allocate(3 * sizeof(os_char) + ibytes + m_used/4 + slack, &sz);
         m_alloc = (os_int)sz;
@@ -441,13 +440,23 @@ void eSet::set(
     *(os_uchar*)(p++) = (os_uchar)ibytes;
     if (ibytes)
     {
-        *(os_uchar*)(p++) = (os_uchar)ibytes;
-        *(void **)p = iptr;
-        p += sizeof(void *);
-        if (itype == -OS_STRING)
+        *(os_schar*)(p++) = itype;
+        if (itype != -OS_STRING)
         {
-            *(os_int*)p = isz;
-            p += sizeof(os_int);
+            os_memcpy(p, iptr, ibytes);
+            p += ibytes;
+        }
+        else
+        {
+            ibytes -= sizeof(os_int);
+            os_memcpy(p, iptr, ibytes);
+            p += ibytes;
+            if (itype == -OS_STRING)
+            {
+                *(os_int*)p = isz;
+                p += sizeof(os_int);
+            }
+
         }
     }
     m_used = (os_int)(p - m_items);
@@ -548,7 +557,7 @@ os_boolean eSet::get(
                     break;
 
                 case OS_STRING:
-                    x->sets(p, ibytes+1);
+                    x->sets(p, ibytes);
                     break;
 
                 case -OS_STRING:
