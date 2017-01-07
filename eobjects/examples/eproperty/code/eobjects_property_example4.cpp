@@ -69,14 +69,14 @@ public:
      */
     virtual os_int classid() 
     {
-        return MY_CLASS_ID;
+        return MY_CLASS_ID_1;
     }
 
     /* Add eMyClass'es properties to class'es property set.
     */
     static void setupclass()
     {
-        const os_int cls = MY_CLASS_ID;
+        const os_int cls = MY_CLASS_ID_1;
         eVariable *p;
 
         osal_mutex_system_lock();
