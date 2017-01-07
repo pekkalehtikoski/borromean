@@ -54,9 +54,14 @@ eVariable::eVariable(
 	os_int flags)
 	: eObject(parent, oid, flags)
 {
-	m_vflags = OS_UNDEFINED_TYPE;
+    /* No type, number 2 digits after decimal point for doubles.
+     */
+	m_vflags = OS_UNDEFINED_TYPE|(2 << EVAR_DDIGS_SHIFT);
     m_value.valbuf.tmpstr = OS_NULL;
 }
+
+
+
 
 
 /**
@@ -104,20 +109,21 @@ void eVariable::setupclass()
        after adding property type. This effects only eVariable class.
      */
     p = addproperty(cls, EVARP_TEXT, evarp_text, EPRO_METADATA|EPRO_NOONPRCH, "text");
-    addpropertyl(cls, EVARP_TYPE, evarp_type, EPRO_METADATA|EPRO_NOONPRCH, "type", OS_UNDEFINED_TYPE);
+    addpropertyl (cls, EVARP_TYPE, evarp_type, EPRO_METADATA|EPRO_NOONPRCH, "type");
     p->setpropertyl(EVARP_TYPE, OS_STRING);
-    addproperty (cls, EVARP_DEFAULT, evarp_default, EPRO_METADATA|EPRO_NOONPRCH, "default");
+
     addproperty (cls, EVARP_VALUE, evarp_value, EPRO_PERSISTENT|EPRO_SIMPLE, "value");
-    addpropertyl(cls, EVARP_DIGS, evarp_digs, EPRO_METADATA|EPRO_NOONPRCH|EPRO_SIMPLE, "digs", 2);
+    addproperty (cls, EVARP_DEFAULT, evarp_default, EPRO_METADATA|EPRO_NOONPRCH, "default");
+    addpropertyl(cls, EVARP_DIGS, evarp_digs, EPRO_METADATA|EPRO_SIMPLE, "digs");
     addpropertys(cls, EVARP_UNIT, evarp_unit, EPRO_METADATA|EPRO_NOONPRCH, "unit");
     addpropertyd(cls, EVARP_MIN, evarp_min, EPRO_METADATA|EPRO_NOONPRCH, "min");
     addpropertyd(cls, EVARP_MAX, evarp_max, EPRO_METADATA|EPRO_NOONPRCH, "max");
-    addpropertyl(cls, EVARP_ATTR, evarp_attr, EPRO_METADATA|EPRO_NOONPRCH, "digs", 2);
+    addpropertyl(cls, EVARP_ATTR, evarp_attr, EPRO_METADATA|EPRO_NOONPRCH, "attr");
     addpropertyd(cls, EVARP_GAIN, evarp_gain, EPRO_METADATA|EPRO_NOONPRCH, "gain");
     addpropertyd(cls, EVARP_OFFSET, evarp_offset, EPRO_METADATA|EPRO_NOONPRCH, "offset");
-    addproperty(cls, EVARP_QUALITY, evarp_quality, EPRO_METADATA|EPRO_NOONPRCH, "quality");
-    addproperty(cls, EVARP_TIMESTAMP, evarp_timestamp, EPRO_METADATA|EPRO_NOONPRCH, "timestamp");
-    addproperty(cls, EVARP_CONF, evarp_conf, EPRO_METADATA|EPRO_NOONPRCH, "conf");
+    addproperty (cls, EVARP_QUALITY, evarp_quality, EPRO_METADATA|EPRO_NOONPRCH, "quality");
+    addproperty (cls, EVARP_TIMESTAMP, evarp_timestamp, EPRO_METADATA|EPRO_NOONPRCH, "timestamp");
+    addproperty (cls, EVARP_CONF, evarp_conf, EPRO_METADATA|EPRO_NOONPRCH, "conf");
 }
 
 
@@ -151,6 +157,104 @@ eVariable *eVariable::nextv(
         h = h->next(oid);
     }
     return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Called to inform the class about property value change (override).
+
+  The onpropertychange() function is called when class'es property changes, unless the
+  property is flagged with EPRO_NOONPRCH. 
+  If property is flagged as EPRO_SIMPLE, this function shuold save the property value
+  in class members and and return it when simpleproperty() is called.
+
+  Notice for change logging: Previous value is still valid when this function is called.
+  You can get the old value by calling property() function inside onpropertychange()
+  function.
+
+  @param   propertynr Property number of changed property.
+  @param   x Variable containing the new value.
+  @param   flags
+  @return  None.
+
+****************************************************************************************************
+*/
+void eVariable::onpropertychange(
+    os_int propertynr, 
+    eVariable *x, 
+    os_int flags)
+{
+    switch (propertynr)
+    {
+        case EVARP_VALUE:
+            setv(x);
+            break;
+
+        case EVARP_DIGS:
+            setdigs((os_int)x->getl());
+            break;
+
+        default:
+            eObject::onpropertychange(propertynr, x, flags);
+            break;
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get value of simple property (override).
+
+  The simpleproperty() function stores current value of simple property into variable x.
+
+  @param   propertynr Property number to get.
+  @param   x Variable info which to store the property value.
+  @return  If fproperty with property number was stored in x, the function returns 
+           ESTATUS_SUCCESS (0). Nonzero return values indicate that property with
+           given number was not among simple properties.
+
+****************************************************************************************************
+*/
+eStatus eVariable::simpleproperty(
+    os_int propertynr, 
+    eVariable *x)
+{
+    switch (propertynr)
+    {
+        case EVARP_VALUE:
+            x->setv(this);
+            break;
+
+        case EVARP_DIGS:
+            x->setl(digs());
+            break;
+    
+        default:
+            return eObject::simpleproperty(propertynr, x);
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Set number of digits after decimal point. .
+
+  The setdigs() function sets number of digits after decimal point and clears buffered string,
+  if any.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eVariable::setdigs(os_int ddigs)
+{
+    m_vflags &= ~EVAR_DDIGS_MASK;
+    m_vflags |= ((ddigs << EVAR_DDIGS_SHIFT) & EVAR_DDIGS_MASK);
+    cleartmpstr();
 }
 
 
@@ -196,7 +300,6 @@ void eVariable::clear()
             {
                 osal_memory_free(m_value.valbuf.tmpstr, 
                     m_value.valbuf.tmpstr_sz);
-
             }
             break;
     }
@@ -905,7 +1008,7 @@ void eVariable::appendv(
         return;
     }
 
-    del_tmpstr = !x->tmpstrallocated();
+    del_tmpstr = !x->tmpstrallocated(); // ????????????????????????????????????????????
 
     str = x->gets(&sz);
     appends_internal(str, sz-1);

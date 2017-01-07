@@ -2019,6 +2019,13 @@ void eObject::setproperty(
             property(propertynr, &v);
             if (!v.compare(x)) return;
         }
+
+        /* Call class'es onpropertychange function.
+         */
+        if ((pflags & EPRO_NOONPRCH) == 0)
+        {
+            onpropertychange(propertynr, x,  0); // CHECK FLAGS
+        }
     }
     else
     {
@@ -2034,6 +2041,13 @@ void eObject::setproperty(
          */
         properties->get(propertynr, &v);
         if (!v.compare(x)) return;
+
+        /* Call class'es onpropertychange function.
+         */
+        if ((pflags & EPRO_NOONPRCH) == 0)
+        {
+            onpropertychange(propertynr, x,  0); // CHECK FLAGS
+        }
 
         /* If x matches to default value, then remove the
            value from eSet. 
@@ -2051,12 +2065,6 @@ void eObject::setproperty(
         }
     }
 
-    /* Call class'es onpropertychange function.
-     */
-    if ((pflags & EPRO_NOONPRCH) == 0)
-    {
-        onpropertychange(propertynr, x,  0); // CHECK FLAGS
-    }
 
     /* Forward property value to bindings, if any.
      */

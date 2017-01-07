@@ -45,7 +45,10 @@
 #define ECLASSID_POINTER 12
 #define ECLASSID_STREAM 13
 
-#define ECLASSID_MAX 20
+/* First class id referved for application applications. All positive 32 bit integers
+  starting from ECLASSID_APP_BASE can be used by application.
+ */
+#define ECLASSID_APP_BASE 1000
 
 /*@}*/
 

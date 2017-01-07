@@ -18,9 +18,20 @@
 #include "eobjects/eobjects.h"
 #include "eobjects_thread_example.h"
 
+/* Purpose of a message is specified by 32 bit command. Negative command identifiers are
+   reserved for the eobject library related, but positive ones can be used freely.
+   Here commands are:
+ */
 #define MYCMD_WAKE_UP 10
 #define MYCMD_HI_COMRADE 11
 #define MYCMD_HI_OTHER_COMRADE 12
+
+/* Every class needs to have unique class identifier (classid). Class identifier is is 32 bit
+   integer. Class identifiers starting from ECLASSID_APP_BASE are reserved for the application.
+ */
+#define MY_CLASS_ID_1 (ECLASSID_APP_BASE + 1)
+#define MY_CLASS_ID_2 (ECLASSID_APP_BASE + 2)
+
 
 /**
 ****************************************************************************************************
@@ -33,6 +44,13 @@
 */
 class eMyThread1 : public eThread
 {
+    /* Get class identifier.
+     */
+    virtual os_int classid() 
+    {
+        return MY_CLASS_ID_1;
+    }
+
     virtual void onmessage(
         eEnvelope *envelope) 
     {
@@ -83,6 +101,13 @@ class eMyThread1 : public eThread
 */
 class eMyThread2 : public eThread
 {
+    /* Get class identifier.
+     */
+    virtual os_int classid() 
+    {
+        return MY_CLASS_ID_2;
+    }
+
     virtual void onmessage(
         eEnvelope *envelope) 
     {

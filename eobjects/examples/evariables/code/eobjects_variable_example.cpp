@@ -60,7 +60,7 @@ os_int emain(
 	osal_console_write("\n");
 
     dar = 1110.018;
-	dar.setddigs(5);
+	dar.setdigs(5);
     dar += var;
 	osal_console_write(dar.gets());
 	osal_console_write("\n");

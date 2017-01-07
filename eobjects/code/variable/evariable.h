@@ -118,7 +118,7 @@ class eVariable : public eObject
 	/** 
 	************************************************************************************************
 
-	  @name Constructor, destructor and other.
+	  @name eVariable overrides for eObject base class functions.
 
 	  X...
 
@@ -169,8 +169,20 @@ public:
 	eVariable *nextv(
 		e_oid oid = EOID_CHILD);
 
-    /*@}*/
+    /* Called when property value changes.
+     */
+    virtual void onpropertychange(
+        os_int propertynr, 
+        eVariable *x, 
+        os_int flags);
 
+    /* Get value of simple property.
+     */
+    virtual eStatus simpleproperty(
+        os_int propertynr, 
+        eVariable *x);
+
+    /*@}*/
 
 
 	/** 
@@ -200,13 +212,10 @@ public:
 
     /** Set number of digits after decimal point. 
      */
-	void setddigs(os_int ddigs)
-    {
-        m_vflags &= ~EVAR_DDIGS_MASK;
-        m_vflags |= ((ddigs << EVAR_DDIGS_SHIFT) & EVAR_DDIGS_MASK);
-    }
+	void setdigs(os_int ddigs);
 
     /*@}*/
+
 
 
 	/** 
@@ -451,6 +460,11 @@ protected:
     {
         return (type() != OS_STRING && m_value.valbuf.tmpstr) 
             ? OS_TRUE : OS_FALSE;
+    }
+
+    inline void cleartmpstr()
+    {
+        if (tmpstrallocated()) gets_free();
     }
 
 	/* Append string to variable value, internal.

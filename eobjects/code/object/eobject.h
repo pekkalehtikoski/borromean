@@ -627,14 +627,14 @@ public:
     os_double propertyd(
         os_int propertynr);
 
-    /* Property change callback
+    /* Called when property value changes.
      */
     virtual void onpropertychange(
         os_int propertynr, 
-        eVariable *variable, 
+        eVariable *x, 
         os_int flags) {}
 
-    /* Property change callback
+    /* Get value of simple property.
      */
     virtual eStatus simpleproperty(
         os_int propertynr, 
@@ -642,7 +642,6 @@ public:
     {
         return ESTATUS_NO_SIMPLE_PROPERTY_NR;
     }
-
 
     /*@}*/
 
