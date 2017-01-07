@@ -445,8 +445,8 @@ void eSet::set(
             if (e != p) 
             {
                 os_memmove(start, p, e-p); 
-                m_used -= (os_int)(p - start);
             }
+            m_used -= (os_int)(p - start);
             break;
         }
         p += jbytes;

@@ -1945,6 +1945,48 @@ eVariable *eObject::addpropertys(
 /**
 ****************************************************************************************************
 
+  @brief Initialize properties to default values.
+
+  The initproperties function can be called from class'es constructor, if classes properties need 
+  to be initialized to default values. Properties with EPRO_SIMPLE or EPRO_NOONPRCH flag will not 
+  be initialized.
+  
+
+****************************************************************************************************
+*/
+void eObject::initproperties()
+{
+    eContainer *propertyset;
+    eVariable *p;
+
+    /* Get global property set for the class.
+       Synchnonize, to get class'es property set, in case someone is adding class at this moment.
+     */
+    osal_mutex_system_lock();
+    propertyset = eglobal->propertysets->firstc(classid());
+    osal_mutex_system_unlock();
+    if (propertyset == OS_NULL)
+    {
+        osal_debug_error("setproperty: Class has no property support");
+        return;
+    }
+
+    /* Get global eVariable describing this property.
+     */
+    for (p = propertyset->firstv();
+         p;
+         p = p->nextv())
+    {
+        if ((p->flags() & (EPRO_SIMPLE|EPRO_NOONPRCH)) == 0)
+        {
+            onpropertychange(p->oid(), p, 0);
+        }
+    }
+}
+
+/**
+****************************************************************************************************
+
   @brief Set property value.
 
   The setproperty function sets property value from eVariable.

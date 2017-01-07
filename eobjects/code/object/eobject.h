@@ -577,6 +577,10 @@ public:
         os_char *text = OS_NULL,
         os_char *x = OS_NULL);
 
+    /* Initialize properties to default values.
+     */
+    void initproperties();
+
     /* Property name to number.
      */
     os_int propertynr(

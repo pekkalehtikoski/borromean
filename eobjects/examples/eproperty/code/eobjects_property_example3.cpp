@@ -53,6 +53,17 @@ os_char emyclassp_opinion[] = "opinion";
 class eMyClass : public eObject
 {
 public:
+	/** Constructor. It is here just to initialize properties to default values.s
+     */
+    eMyClass(
+		eObject *parent = OS_NULL,
+		e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT)
+	    : eObject(parent, oid, flags)
+    {
+        initproperties();
+    }
+
     /* Get class identifier.
      */
     virtual os_int classid() 
