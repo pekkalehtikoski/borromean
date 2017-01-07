@@ -17,9 +17,6 @@
 */
 #include "eobjects/eobjects.h"
 
-static eClassList eclasslist_buf;
-
-eClassList *eclasslist = &eclasslist_buf;
 
 
 /**
@@ -36,10 +33,8 @@ eClassList *eclasslist = &eclasslist_buf;
 */
 void eclasslist_add(
     os_int cid, 
-    eNewObjFunc nfunc,
-    eSetupClassFunc sfunc)
+    eNewObjFunc nfunc)
 {
-    eSet *classentry;
     eVariable *pointer;
 
     /* Syncronization neeeded for eclasslist_add() function.
@@ -49,27 +44,17 @@ void eclasslist_add(
 #if OSAL_DEBUG
     /* Check for duplicated calls with same cid.
      */
-    classentry = eSet::cast(eglobal->classlist->first(cid));
-    if (classentry)
+    pointer = eglobal->classlist->firstv(cid);
+    if (pointer)
     {
         osal_debug_error("eclasslist_add() called with same cid twice");
         goto getout;
     }
 #endif
-    classentry = new eSet(eglobal->classlist, cid);
-    
-    /* Store pointers to functions.
+    /* Store pointer to class'es newobj() function.
      */
-    if (nfunc)
-    {
-        pointer = new eVariable(classentry, ECLASSENTRY_NFUNC);
-        pointer->setp(nfunc);
-    }
-    if (sfunc)
-    {
-        pointer = new eVariable(classentry, ECLASSENTRY_SFUNC);
-        pointer->setp(sfunc);
-    }
+    pointer = new eVariable(eglobal->classlist, cid);
+    pointer->setp(nfunc);
 
 getout:
     /* Finished with synchronization.
@@ -81,75 +66,93 @@ getout:
 /**
 ****************************************************************************************************
 
-  @brief Add a eobjects base classes to class list.
-
-  The eclasslist_add_eobjects function...
-
-  @return  None.
-
-****************************************************************************************************
-*/
-void eclasslist_add_eobjects()
-{
-    if (eclasslist == OS_NULL)
-    {
-        eclasslist = &eclasslist_buf;
-
-        /* eSet should be first to add to class list followed by then eVariable since these is 
-           used to store description of class properties. 
-         */
-        eclasslist_add(ECLASSID_SET, (eNewObjFunc)eSet::newobj); 
-        eclasslist_add(ECLASSID_VARIABLE, (eNewObjFunc)eVariable::newobj, 
-                (eSetupClassFunc)eVariable::setupclass); 
-
-    }
-}
-
-
-/**
-****************************************************************************************************
-
   @brief Get static constuctor function pointer by class ID.
 
-  The eclasslist_get_func function...
+  The eclasslist_newobj function...
 
   @param   cid Class ifentifier to look for.
   @return  Pointer to static constructor function, or OS_NULL if none found.
 
 ****************************************************************************************************
 */
-eNewObjFunc eclasslist_newobj_func(
+eNewObjFunc eclasslist_newobj(
     os_int cid)
 {
-    eNewObjFunc func;
+    eVariable *pointer;
+    eNewObjFunc nfunc;
 
-    func = OS_NULL;
+    nfunc = OS_NULL;
     osal_mutex_system_lock();
 
-/*     item = eglobal->classlist->first(cid);
-    if (item) func = eclasslist->func[cid]; */
+    /* Check for duplicated calls with same cid.
+     */
+    pointer = eglobal->classlist->firstv(cid);
+    if (pointer)
+    {
+        nfunc = (eNewObjFunc)pointer->getp();
+    }
+    else 
+    {
+        osal_debug_error("eclasslist_newobj: Class not found.");
+    }
 
     osal_mutex_system_unlock();
-
-    return func;
+    return nfunc;
 }
 
-/* Initialize class list.
-   Must be called before any threads are created.
- */
+
+/**
+****************************************************************************************************
+
+  @brief Add a eobjects base classes to class list.
+
+  The eclasslist_add_eobjects function...
+
+****************************************************************************************************
+*/
+void eclasslist_add_eobjects()
+{
+    /* eVariable should be first to add to class list followed by then eSet and eContainer. 
+       Reason is that these same classes are used to store description of classes, including
+       themselves.
+     */
+    eVariable::setupclass(); 
+    eSet::setupclass(); 
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Initialize class list and property sets.
+
+  The eclasslist_initialize function must be called before any objects are created.
+
+****************************************************************************************************
+*/
 void eclasslist_initialize()
 {
     eglobal->root = new eContainer();
     eglobal->classlist = new eContainer(eglobal->root);
     eglobal->propertysets = new eContainer(eglobal->root);
+    eglobal->empty = new eVariable();
 
     eclasslist_add_eobjects();
 }
 
-/* release class list.
-   Must be called when all thread except current one have been terminated.
- */
+
+/**
+****************************************************************************************************
+
+  @brief Free memory allocated for class list, property sets, etc.
+
+  The eclasslist_release function should be called when all thread except current one have 
+  been terminated.
+
+****************************************************************************************************
+*/
 void eclasslist_release()
 {
-    delete eglobal->classlist;
+    delete eglobal->root;
+    delete eglobal->empty;
 }

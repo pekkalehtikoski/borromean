@@ -31,32 +31,38 @@
 */
 class eMyClass : public eObject
 {
-    virtual eStatus onpropertychange(
+    virtual void onpropertychange(
         os_int propertynr, 
         eVariable *variable, 
         os_int flags)
     {
-        return ESTATUS_SUCCESS;
-    }
+     }
 };
 
 
 /**
 ****************************************************************************************************
 
-  @brief Thread example 1.
+  @brief Property example 2.
 
-  The property_example_1() function...
+  The property_example_2() function...
 
   @return  None.
 
 ****************************************************************************************************
 */
-void property_example_1()
+void property_example_2()
 {
-	eSet collection;
-    eVariable v;
+    eVariable v, u;
 
+    v.setpropertys(EVARP_TEXT, "ulle");
+
+    v.property(EVARP_TEXT, &u);
+    osal_console_write(u.gets());
+    osal_console_write("\n");
+
+    osal_console_write("\n");
+/*
     v = "Abba12345678901234567890123456789012345678901234567890123456789012345678901234567890!";
     collection.set(10, &v);
 
@@ -79,5 +85,6 @@ void property_example_1()
 
 //    MyClass
 //		myobj;
+*/
 
 }

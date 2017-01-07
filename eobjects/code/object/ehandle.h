@@ -57,6 +57,7 @@ X...
 #define EOBJ_CUST_FLAG2    0x00000020
 #define EOBJ_CUST_FLAG3    0x00000040
 #define EOBJ_CUST_FLAG4    0x00000080
+#define EOBJ_CUST_FLAG5    0x00000100
 
 /** Flag EOBJ_FAST_DELETE is used internallly to speed up deletion: When an object is being deleted,
 there is no need to detach it's children from red/black of the object. The EOBJ_FAST_DELETE

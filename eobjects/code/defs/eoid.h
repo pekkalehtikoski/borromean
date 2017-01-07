@@ -69,9 +69,9 @@
  */
 #define EOID_CONTEXT -31
 
-/** Content, used to indicate property set.
+/** Content, used to indicate object's stored properties eContainer.
  */
-#define EOID_PROPERTY_SET -33
+#define EOID_PROPERTIES -33
 
 /** This is special object identifier that can be given as argument to object hierarchy 
 	functions, like getfirstchild(). The EOID_CHILD specifies to get a child object, 

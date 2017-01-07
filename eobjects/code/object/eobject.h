@@ -54,11 +54,11 @@ class eThread;
 /* Flags for addproperty() function.
  */
 #define EPRO_DEFAULT 0
-#define EPRO_PERSISTENT 1
-#define EPRO_METADATA 2
-#define EPRO_SIMPLE 4
-#define EPRO_NOONPRCH 8
-
+#define EPRO_PERSISTENT EOBJ_CUST_FLAG1
+#define EPRO_METADATA EOBJ_CUST_FLAG2
+#define EPRO_SIMPLE EOBJ_CUST_FLAG3
+#define EPRO_NOONPRCH EOBJ_CUST_FLAG4
+#define EPRO_NOPACK EOBJ_CUST_FLAG5
 
 
 /**
@@ -442,7 +442,7 @@ public:
     eObject *ns_get(
         os_char *name,
         os_char *namespace_id = OS_NULL,
-        os_int classid = ECLASSID_OBJECT);
+        os_int cid = ECLASSID_OBJECT);
 
     eVariable *ns_getv(
         os_char *name,
@@ -540,7 +540,7 @@ public:
     /* Add property to property set (any type).
      */
     static eVariable *addproperty(
-        os_int classid, 
+        os_int cid, 
         os_int propertynr, 
         os_char *propertyname,
         os_int pflags = EPRO_DEFAULT,
@@ -549,7 +549,7 @@ public:
     /* Add integer property to property set.
      */
     static eVariable *addpropertyl(
-        os_int classid, 
+        os_int cid, 
         os_int propertynr, 
         os_char *propertyname,
         os_int pflags = EPRO_DEFAULT,
@@ -559,7 +559,7 @@ public:
     /* Add double property to property set.
      */
     static eVariable *addpropertyd(
-        os_int classid, 
+        os_int cid, 
         os_int propertynr, 
         os_char *propertyname,
         os_int pflags = EPRO_DEFAULT,
@@ -570,7 +570,7 @@ public:
     /* Add string property to property set.
      */
     static eVariable *addpropertys(
-        os_int classid, 
+        os_int cid, 
         os_int propertynr, 
         os_char *propertyname,
         os_int pflags = EPRO_DEFAULT,
@@ -592,7 +592,7 @@ public:
      */
     void setproperty(
         os_int propertynr, 
-        eVariable *variable, 
+        eVariable *x, 
         eObject *source = OS_NULL, 
         os_int flags = 0);
 
@@ -616,9 +616,9 @@ public:
 
     /* Get property value.
      */
-    eStatus property(
+    void property(
         os_int propertynr, 
-        eVariable *variable, 
+        eVariable *x, 
         os_int flags = 0);
 
     os_long propertyl(
@@ -629,10 +629,20 @@ public:
 
     /* Property change callback
      */
-    eStatus onpropertychange(
+    virtual void onpropertychange(
         os_int propertynr, 
         eVariable *variable, 
-        os_int flags) {return ESTATUS_SUCCESS;}
+        os_int flags) {}
+
+    /* Property change callback
+     */
+    virtual eStatus simpleproperty(
+        os_int propertynr, 
+        eVariable *x) 
+    {
+        return ESTATUS_NO_SIMPLE_PROPERTY_NR;
+    }
+
 
     /*@}*/
 

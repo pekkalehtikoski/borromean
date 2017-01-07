@@ -81,25 +81,32 @@ eVariable::~eVariable()
 /**
 ****************************************************************************************************
 
-  @brief Add properties to class'es property set.
+  @brief Add eVariable to list and properties to class'es property set.
 
-  The eVariable::setupclass X...
-
-  @return  None.
+  The eVariable::setupclass function adds function to class list. This enables creating 
+  new objects dynamically by class identifier, which is used for serialization reader()
+  functions.
 
 ****************************************************************************************************
 */
 void eVariable::setupclass()
 {
     const os_int cls = ECLASSID_VARIABLE;
+    eVariable *p;
+
+    /* Add the class to class list.
+     */
+    eclasslist_add(cls, (eNewObjFunc)newobj);
 
     /* Order of these addproperty() calls is important, since eVariable itself is used to 
        describe the properties in property set. The property to set must be added to 
-       property set before setting value for it. This effects only eVariable class.
+       property set before setting value for it. There is trick with p to set text type
+       after adding property type. This effects only eVariable class.
      */
-    addproperty (cls, EVARP_DEFAULT, evarp_default, EPRO_METADATA|EPRO_NOONPRCH, "default");
-    addpropertys(cls, EVARP_TEXT, evarp_text, EPRO_METADATA|EPRO_NOONPRCH, "text");
+    p = addproperty(cls, EVARP_TEXT, evarp_text, EPRO_METADATA|EPRO_NOONPRCH, "text");
     addpropertyl(cls, EVARP_TYPE, evarp_type, EPRO_METADATA|EPRO_NOONPRCH, "type", OS_UNDEFINED_TYPE);
+    p->setpropertyl(EVARP_TYPE, OS_STRING);
+    addproperty (cls, EVARP_DEFAULT, evarp_default, EPRO_METADATA|EPRO_NOONPRCH, "default");
     addproperty (cls, EVARP_VALUE, evarp_value, EPRO_PERSISTENT|EPRO_SIMPLE, "value");
     addpropertyl(cls, EVARP_DIGS, evarp_digs, EPRO_METADATA|EPRO_NOONPRCH|EPRO_SIMPLE, "digs", 2);
     addpropertys(cls, EVARP_UNIT, evarp_unit, EPRO_METADATA|EPRO_NOONPRCH, "unit");
@@ -285,6 +292,10 @@ void eVariable::sets(
 
     os_char
         *tmpstr;
+
+    /* Minimum string is:
+     */
+    if (x == OS_NULL) x = "";
 
     /* Save temporary buffer if any, in case it is used as argument.
      */
@@ -672,7 +683,8 @@ os_double eVariable::getd()
   @param   sz Pointer where to store number of bytes in string (including terminating null 
            character), OS_NULL if not needed.
 
-  @return  Pointer to value as string.
+  @return  Pointer to value as string. This function always returns some string, returned
+           pointer is vener OS_NULL.
 
 ****************************************************************************************************
 */
@@ -741,7 +753,12 @@ os_char *eVariable::gets(
             break;
 
         case OS_OBJECT:
-            os_strncpy(buf, "?", sizeof(buf));
+            os_strncpy(buf, "<obj>", sizeof(buf));
+            vsz = os_strlen(buf);
+            break;
+
+        case OS_POINTER:
+            os_strncpy(buf, "<ptr>", sizeof(buf));
             vsz = os_strlen(buf);
             break;
 
@@ -1047,6 +1064,10 @@ osal_int_to_string(nbuf, sizeof(nbuf), x->m_value.valbuf.v.d); // ??????????????
                     rval = -1;
                     break;
 
+                case OS_UNDEFINED_TYPE:
+                    rval = -!x->isempty();
+                    break;
+
                 default:
                     osal_debug_error("eVariable::compare error 3");
                     break;
@@ -1062,6 +1083,10 @@ osal_int_to_string(nbuf, sizeof(nbuf), x->m_value.valbuf.v.d); // ??????????????
                 if (y->m_value.valbuf.v.p > x->m_value.valbuf.v.p) rval = 1;
                 if (y->m_value.valbuf.v.p < x->m_value.valbuf.v.p) rval = -1;
             }
+            break;
+
+        case OS_UNDEFINED_TYPE:
+            rval = !y->isempty();
             break;
     }
     return reverse * rval;

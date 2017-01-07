@@ -23,10 +23,6 @@ typedef eObject *(*eNewObjFunc)(
     e_oid oid,
 	os_int flags);
 
-typedef void (*eSetupClassFunc)();
-
-#define ECLASSENTRY_NFUNC 1
-#define ECLASSENTRY_SFUNC 2
 
 /**
 ****************************************************************************************************
@@ -48,18 +44,16 @@ eClassList;
  */
 void eclasslist_add(
     os_int cid, 
-    eNewObjFunc nfunc,
-    eSetupClassFunc sfunc = OS_NULL);
+    eNewObjFunc nfunc);
+
+/* Get static object constuctor function pointer by class ID.
+ */
+eNewObjFunc eclasslist_newobj(
+    os_int cid);
 
 /* Add a eobjects base classes to class list.
  */
 void eclasslist_add_eobjects();
-
-/* Get static object constuctor function pointer by class ID.
- */
-eNewObjFunc eclasslist_newobj_func(
-    os_int cid);
-
 
 /* Initialize class list.
  */

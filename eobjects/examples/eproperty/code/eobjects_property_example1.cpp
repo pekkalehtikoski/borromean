@@ -18,36 +18,13 @@
 #include "eobjects/eobjects.h"
 #include "eobjects_property_example.h"
 
-#define MY_COMMAND 10
 
 /**
 ****************************************************************************************************
 
-  @brief Example property class.
+  @brief Set example 1.
 
-  X...
-
-****************************************************************************************************
-*/
-class eMyClass : public eObject
-{
-    virtual eStatus onpropertychange(
-        os_int propertynr, 
-        eVariable *variable, 
-        os_int flags)
-    {
-        return ESTATUS_SUCCESS;
-    }
-};
-
-
-/**
-****************************************************************************************************
-
-  @brief Thread example 1.
-
-  The property_example_1() function...
-
+  Sets are used to implement properties...
   @return  None.
 
 ****************************************************************************************************
@@ -76,8 +53,4 @@ void property_example_1()
     collection.get(5, &v);
     osal_console_write(v.gets());
     osal_console_write("\n");
-
-//    MyClass
-//		myobj;
-
 }

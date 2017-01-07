@@ -45,6 +45,10 @@ typedef struct eGlobal
      */
     eContainer *root;
 
+    /* Empty variable which does not belong to any thread.
+     */
+    eVariable *empty;
+
     /* Container for class list.
      */
     eContainer *classlist;

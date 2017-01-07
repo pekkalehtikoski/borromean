@@ -66,6 +66,26 @@ eSet::~eSet()
 /**
 ****************************************************************************************************
 
+  @brief Add eSet to class list.
+
+  The eSet::setupclass function adds newobj function pointer to class list. This enables creating 
+  new objects dynamically by class identifier, which is used for serialization reader()
+  functions.
+
+****************************************************************************************************
+*/
+void eSet::setupclass()
+{
+    const os_int cls = ECLASSID_SET;
+
+    /* Add the class to class list.
+     */
+    eclasslist_add(cls, (eNewObjFunc)newobj);
+}
+
+/**
+****************************************************************************************************
+
   @brief Clone object
 
   The eSet::clone function clones and object including object's children. 

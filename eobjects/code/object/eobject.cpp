@@ -251,7 +251,7 @@ eObject *eObject::newchild(
 
     /* Look for static constructor by class identifier. If not found, return OS_NULL.
      */
-    func = eclasslist_newobj_func(cid);
+    func = eclasslist_newobj(cid);
     if (func == OS_NULL) return OS_NULL;
 
     /* Create new object of the class.
@@ -919,7 +919,7 @@ eName *eObject::ns_firstv(
 eObject *eObject::ns_get(
     os_char *name,
     os_char *namespace_id,
-    os_int classid)
+    os_int cid)
 {
     eName *n;
     eObject *p;
@@ -928,7 +928,7 @@ eObject *eObject::ns_get(
     while (n)
     {
         p = n->parent();
-        if (classid == ECLASSID_OBJECT || p->classid() == classid) return p;
+        if (cid == ECLASSID_OBJECT || p->classid() == cid) return p;
         n = n->ns_next();
     }
 
@@ -1807,7 +1807,8 @@ getout:
             also metadata is to be saved.
           - EPRO_SIMPLE: Do not keep copy of non default property in variable. Class implementation 
             takes care about this.
-          - EPRO_NOONPRCH 8: Do not call onpropertychange when value changes. 
+          - EPRO_NOONPRCH: Do not call onpropertychange when value changes. 
+          - EPRO_NOPACK: Do not pack this property value within property set.
   @param  text Name of the property displayed to user. 
 
   @return Pointer to eVariable in property set defining the property. Additional attributes for
@@ -1816,7 +1817,7 @@ getout:
 ****************************************************************************************************
 */
 eVariable *eObject::addproperty(
-    os_int classid, 
+    os_int cid, 
     os_int propertynr, 
     os_char *propertyname,
     os_int pflags,
@@ -1828,24 +1829,20 @@ eVariable *eObject::addproperty(
     /* Get pointer to class'es property set. If not found, create one. Property set always
        has name space
      */
-    propertyset = eglobal->propertysets->firstc(classid);
+    propertyset = eglobal->propertysets->firstc(cid);
     if (propertyset == OS_NULL)
     {
-	    propertyset = new eContainer(eglobal->propertysets, classid, EOBJ_IS_ATTACHMENT);
+	    propertyset = new eContainer(eglobal->propertysets, cid, EOBJ_IS_ATTACHMENT);
         propertyset->ns_create();
     }
 
     /* Add variable for this property in property set.
      */
-    p = new eVariable(propertyset, propertynr); 
+    p = new eVariable(propertyset, propertynr, pflags); 
 
     /* Set name of the property to display to user.
      */
     if (text) p->setpropertys(EVARP_TEXT, text);
-
-    /* Store flags as configuration.
-     */
-    p->setpropertyl(EVARP_CONF, pflags);
 
     return p;
 }
@@ -1865,7 +1862,7 @@ eVariable *eObject::addproperty(
 ****************************************************************************************************
 */
 eVariable *eObject::addpropertyl(
-    os_int classid, 
+    os_int cid, 
     os_int propertynr, 
     os_char *propertyname,
     os_int pflags,
@@ -1873,10 +1870,10 @@ eVariable *eObject::addpropertyl(
     os_long x)
 {
     eVariable *p;
-    p = addproperty(classid, propertynr, propertyname, pflags, text);
+    p = addproperty(cid, propertynr, propertyname, pflags, text);
     p->setl(x);
     p->setpropertyl(EVARP_TYPE, OS_LONG);
-    p->setpropertyl(EVARP_DEFAULT, x);
+    p->setl(x);
     return p;
 }
 
@@ -1895,7 +1892,7 @@ eVariable *eObject::addpropertyl(
 ****************************************************************************************************
 */
 eVariable *eObject::addpropertyd(
-    os_int classid, 
+    os_int cid, 
     os_int propertynr, 
     os_char *propertyname,
     os_int pflags,
@@ -1904,11 +1901,11 @@ eVariable *eObject::addpropertyd(
     os_int digs)
 {
     eVariable *p;
-    p = addproperty(classid, propertynr, propertyname, pflags, text);
+    p = addproperty(cid, propertynr, propertyname, pflags, text);
     p->setd(x);
     p->setpropertyl(EVARP_TYPE, OS_DOUBLE);
-    p->setpropertyd(EVARP_DEFAULT, x);
     p->setpropertyl(EVARP_DIGS, digs);
+    p->setd(x);
     return p;
 }
 
@@ -1927,7 +1924,7 @@ eVariable *eObject::addpropertyd(
 ****************************************************************************************************
 */
 eVariable *eObject::addpropertys(
-    os_int classid, 
+    os_int cid, 
     os_int propertynr, 
     os_char *propertyname,
     os_int pflags,
@@ -1935,12 +1932,11 @@ eVariable *eObject::addpropertys(
     os_char *x)
 {
     eVariable *p;
-    p = addproperty(classid, propertynr, propertyname, pflags, text);
+    p = addproperty(cid, propertynr, propertyname, pflags, text);
     p->setpropertyl(EVARP_TYPE, OS_STRING);
     if (x)
     {
         p->sets(x);
-        p->setpropertys(EVARP_DEFAULT, x);
     }
     return OS_NULL;
 }
@@ -1953,25 +1949,118 @@ eVariable *eObject::addpropertys(
 
   The setproperty function sets property value from eVariable.
   
-  @param  stream The stream to write to.
-  @param  sflags Serialization flags.
-  @param  propertynr, 
-  @param  variable, 
-  @param  source, 
-  @param  flags)
+  @param  propertynr
+  @param  x
+  @param  source
+  @param  flags
 
-  @return If successfull the function returns ESTATUS_SUCCESS (0). Assume that all nonzero values
-          indicate an error.
+  @return None.
 
 ****************************************************************************************************
 */
 void eObject::setproperty(
     os_int propertynr, 
-    eVariable *variable, 
+    eVariable *x, 
     eObject *source, 
     os_int flags)
 {
-    osal_debug_error("setproperty: Class has no property support");
+    eContainer *propertyset;
+    eSet *properties;
+    eVariable *p;
+    eVariable v;
+    os_int pflags;
+
+    /* Synchronize access to global property set.
+     */
+    osal_mutex_system_lock();
+
+    /* Get global property set for the class.
+     */
+    propertyset = eglobal->propertysets->firstc(classid());
+    if (propertyset == OS_NULL)
+    {
+        osal_debug_error("setproperty: Class has no property support");
+        osal_mutex_system_unlock();
+        return;
+    }
+
+    /* Get global eVariable describing this property.
+     */
+    p = propertyset->firstv(propertynr);
+    if (p == OS_NULL)
+    {
+        osal_debug_error("setproperty: Property number is not valid for the class");
+        osal_mutex_system_unlock();
+        return;
+    }
+    pflags = p->flags();
+
+    /* Finished with synchronization.
+        */
+    osal_mutex_system_unlock();
+
+
+    /* Empty x and x as null pointer are thes ame thing, handle these in 
+       the same way. 
+     */
+    if (x == OS_NULL) 
+    {
+        x = eglobal->empty;
+    }
+
+    /* If this is simple property without marking.
+     */
+    if (pflags & EPRO_SIMPLE)
+    {
+        /* If new value variable is same as current one, do nothing.
+         */
+        if (x->type() != OS_OBJECT)
+        {
+            property(propertynr, &v);
+            if (!v.compare(x)) return;
+        }
+    }
+    else
+    {
+        /* Get eSet holding stored property values. If it doesn't exist, create it.
+         */
+        properties = eSet::cast(first(EOID_PROPERTIES));
+        if (properties == OS_NULL)
+        {
+            properties = new eSet(this, EOID_PROPERTIES);
+        }
+
+        /* Find stored property value. If matches value to set, do nothing.
+         */
+        properties->get(propertynr, &v);
+        if (!v.compare(x)) return;
+
+        /* If x matches to default value, then remove the
+           value from eSet. 
+         */
+        if (!p->compare(x)) 
+        {
+            properties->set(propertynr, OS_NULL);
+        }
+
+        /* No match. Store x in eSet. 
+         */
+        else
+        {
+            properties->set(propertynr, x);
+        }
+    }
+
+    /* Call class'es onpropertychange function.
+     */
+    if ((pflags & EPRO_NOONPRCH) == 0)
+    {
+        onpropertychange(propertynr, x,  0); // CHECK FLAGS
+    }
+
+    /* Forward property value to bindings, if any.
+     */
+    
 }
 
 
@@ -1982,7 +2071,7 @@ void eObject::setpropertyl(
     os_long x)
 {
     eVariable v;
-    v = x;
+    v.setl(x);
     setproperty(propertynr, &v);
 }
 
@@ -1993,7 +2082,7 @@ void eObject::setpropertyd(
     os_double x)
 {
     eVariable v;
-    v = x;
+    v.setd(x);
     setproperty(propertynr, &v);
 }
 
@@ -2004,26 +2093,77 @@ void eObject::setpropertys(
     os_char *x)
 {
     eVariable v;
-    v = x;
+    v.sets(x);
     setproperty(propertynr, &v);
 }
 
 /* Get property value.
  */
-eStatus eObject::property(
+void eObject::property(
     os_int propertynr, 
-    eVariable *variable, 
+    eVariable *x, 
     os_int flags)
 {
-    osal_debug_error("setproperty: Class has no property support");
-    return ESTATUS_NO_CLASS_PROPERTY_SUPPORT;
+    eSet *properties;
+    eContainer *propertyset;
+    eVariable *p;
+    
+    /* Look for eSet holding stored property values. If found, check for 
+       property number.
+     */
+    properties = eSet::cast(first(EOID_PROPERTIES));
+    if (properties)
+    {
+        /* Find stored property value. If matches value to set, do nothing.
+         */
+        if (properties->get(propertynr, x)) return;
+    }
+    
+    /* Check for simple property
+     */
+    if (simpleproperty(propertynr, x) == ESTATUS_SUCCESS) return;
+
+    /* Look for default value. Start by synchronizing access to global property data.
+     */
+    osal_mutex_system_lock();
+
+    /* Get global property set for the class.
+     */
+    propertyset = eglobal->propertysets->firstc(classid());
+    if (propertyset == OS_NULL)
+    {
+        osal_debug_error("setproperty: Class has no property support");
+        goto getout;
+    }
+
+    /* Get global eVariable describing this property.
+     */
+    p = propertyset->firstv(propertynr);
+    if (p == OS_NULL)
+    {
+        osal_debug_error("setproperty: Property number is not valid for the class");
+        goto getout;
+    }
+
+    /* Finished with synchwonization.
+     */
+    osal_mutex_system_unlock();
+
+    /* Return default value for the property.
+     */
+    x->setv(p);
+    return;
+
+getout:
+    osal_mutex_system_unlock();
+    x->clear();
 }
 
 os_long eObject::propertyl(
     os_int propertynr)
 {
     eVariable v;
-    if (property(propertynr, &v)) return 0;
+    property(propertynr, &v);
     return v.geti();
 }
 
@@ -2031,7 +2171,7 @@ os_double eObject::propertyd(
     os_int propertynr)
 {
     eVariable v;
-    if (property(propertynr, &v)) return 0;
+    property(propertynr, &v);
     return v.getd();
 }
 

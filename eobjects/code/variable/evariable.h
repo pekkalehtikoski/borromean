@@ -150,7 +150,7 @@ public:
      */
     virtual os_int classid() {return ECLASSID_VARIABLE;}
 
-    /* Static function to configure class'es propertyset.
+    /* Static function to add class to propertysets and class list.
      */
     static void setupclass();
 

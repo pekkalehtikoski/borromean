@@ -53,7 +53,12 @@ typedef enum
 
 	/** Names, name already mapped, skipping remapping.
 	 */
-    ESTATUS_NAME_ALREADY_MAPPED = 201
+    ESTATUS_NAME_ALREADY_MAPPED = 201,
+
+	/** Propertie, simpleproperty() did not find property.
+	 */
+    ESTATUS_NO_SIMPLE_PROPERTY_NR = 300
+
 } 
 eStatus;
 

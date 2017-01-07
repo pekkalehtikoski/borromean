@@ -74,6 +74,10 @@ public:
      */
     virtual os_int classid() {return ECLASSID_SET;}
 
+    /* Static function to add class to propertysets and class list.
+     */
+    static void setupclass();
+
     /* Static constructor function for generating instance by class list.
      */
     static eSet *newobj(
@@ -128,6 +132,39 @@ public:
         os_int id,
         eVariable *x,
         os_int sflags = 0);
+
+    /* Store value into set.
+     */
+    inline void setl(
+        os_int id, 
+        os_long x)
+    {
+        eVariable v;
+        v.setl(x);
+        set(id, &v); // ??????????? CHECK SHOULD FLAGS BE ADDED
+    }
+
+    /* Store value into set.
+     */
+    inline void setd(
+        os_int id, 
+        os_double x)
+    {
+        eVariable v;
+        v.setd(x);
+        set(id, &v);
+    }
+
+    /* Store value into set.
+     */
+    inline void sets(
+        os_int id, 
+        os_char *x)
+    {
+        eVariable v;
+        v.sets(x);
+        set(id, &v);
+    }
 
     /* Get value from set.
      */
