@@ -118,8 +118,6 @@ public:
 
     /*@}*/
 
-    void 
-
 };
 
 #endif

@@ -199,7 +199,7 @@ void eVariable::onpropertychange(
             break;
 
         default:
-            eObject::onpropertychange(propertynr, x, flags);
+            /* eObject::onpropertychange(propertynr, x, flags); */
             break;
     }
 }
@@ -235,8 +235,10 @@ eStatus eVariable::simpleproperty(
             break;
     
         default:
-            return eObject::simpleproperty(propertynr, x);
+            /* return eObject::simpleproperty(propertynr, x); */
+            return ESTATUS_NO_SIMPLE_PROPERTY_NR;
     }
+    return ESTATUS_SUCCESS;
 }
 
 

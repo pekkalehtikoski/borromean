@@ -28,7 +28,8 @@
 /* Every class needs to have unique class identifier (classid). Class identifier is is 32 bit
    integer. Class identifiers starting from ECLASSID_APP_BASE are reserved for the application.
  */
-#define MY_CLASS_ID (ECLASSID_APP_BASE + 1)
+#define MY_CLASS_ID_1 (ECLASSID_APP_BASE + 1)
+#define MY_CLASS_ID_2 (ECLASSID_APP_BASE + 1)
 
 /* Enumeration of eMyClass properties. Normally these would be in header file.
  */
@@ -50,12 +51,12 @@ static os_char emyclassp_opinion[] = "opinion";
 
 ****************************************************************************************************
 */
-class eMyClass : public eObject
+class eMyClass1 : public eObject
 {
 public:
 	/** Constructor. It is here just to initialize properties to default values.s
      */
-    eMyClass(
+    eMyClass1(
 		eObject *parent = OS_NULL,
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
@@ -128,17 +129,17 @@ public:
 
 ****************************************************************************************************
 */
-void property_example_3()
+void property_example_4()
 {
-    eMyClass *converter;
+    eMyClass1 *converter;
     eVariable v, u;
     os_double f;
 
     /* Adds the eMyClass to class list and creates property set for the class.
      */
-    eMyClass::setupclass(); 
+    eMyClass1::setupclass(); 
 
-    converter = new eMyClass();
+    converter = new eMyClass1();
    
     f = converter->propertyd(EMYCLASSP_FAHRENHEIT);
     converter->property(EMYCLASSP_OPINION, &v);

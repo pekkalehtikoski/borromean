@@ -29,7 +29,7 @@
 
 ****************************************************************************************************
 */
-class ePropertyBinding : public eObject
+class ePropertyBinding : public eBinding
 {
 	/** 
 	************************************************************************************************
@@ -65,13 +65,13 @@ public:
 	inline static ePropertyBinding *cast(
 		eObject *o) 
 	{ 
-        e_assert_type(o, ECLASSID_PROPERTYBINDING)
+        e_assert_type(o, ECLASSID_PROPERTY_BINDING)
 		return (ePropertyBinding*)o;
 	}
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_PROPERTYBINDING;}
+    virtual os_int classid() {return ECLASSID_PROPERTY_BINDING;}
 
     /* Static constructor function for generating instance by class list.
      */
@@ -82,11 +82,6 @@ public:
     {
         return new ePropertyBinding(parent, oid, flags);
     }
-
-    /* Get next child propertybinding identified by oid.
-     */
-    ePropertyBinding *nextc(
-	    e_oid oid);
 
     /*@}*/
 

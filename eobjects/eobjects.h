@@ -52,6 +52,8 @@ void eobjects_shutdown();
 #include "eobjects/code/pointer/epointer.h"
 #include "eobjects/code/name/ename.h"
 #include "eobjects/code/name/enamespace.h"
+#include "eobjects/code/binding/ebinding.h"
+#include "eobjects/code/binding/epropertybinding.h"
 #include "eobjects/code/envelope/eenvelope.h"
 #include "eobjects/code/thread/ethreadhandle.h"
 #include "eobjects/code/thread/ethread.h"
