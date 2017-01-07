@@ -40,7 +40,7 @@ os_int emain(
     os_int argc,
     os_char *argv[])
 {
-    property_example_2();
+    property_example_3();
 
     return 0;
 }

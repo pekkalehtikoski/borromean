@@ -101,6 +101,7 @@ void eVariable::setupclass()
 
     /* Add the class to class list.
      */
+    osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj);
 
     /* Order of these addproperty() calls is important, since eVariable itself is used to 
@@ -124,6 +125,7 @@ void eVariable::setupclass()
     addproperty (cls, EVARP_QUALITY, evarp_quality, EPRO_METADATA|EPRO_NOONPRCH, "quality");
     addproperty (cls, EVARP_TIMESTAMP, evarp_timestamp, EPRO_METADATA|EPRO_NOONPRCH, "timestamp");
     addproperty (cls, EVARP_CONF, evarp_conf, EPRO_METADATA|EPRO_NOONPRCH, "conf");
+    osal_mutex_system_unlock();
 }
 
 

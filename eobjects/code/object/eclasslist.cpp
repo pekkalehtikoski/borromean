@@ -104,26 +104,6 @@ eNewObjFunc eclasslist_newobj(
 /**
 ****************************************************************************************************
 
-  @brief Add a eobjects base classes to class list.
-
-  The eclasslist_add_eobjects function...
-
-****************************************************************************************************
-*/
-void eclasslist_add_eobjects()
-{
-    /* eVariable should be first to add to class list followed by then eSet and eContainer. 
-       Reason is that these same classes are used to store description of classes, including
-       themselves.
-     */
-    eVariable::setupclass(); 
-    eSet::setupclass(); 
-}
-
-
-/**
-****************************************************************************************************
-
   @brief Initialize class list and property sets.
 
   The eclasslist_initialize function must be called before any objects are created.
@@ -137,7 +117,12 @@ void eclasslist_initialize()
     eglobal->propertysets = new eContainer(eglobal->root);
     eglobal->empty = new eVariable();
 
-    eclasslist_add_eobjects();
+    /* eVariable should be first to add to class list followed by then eSet and eContainer. 
+       Reason is that these same classes are used to store description of classes, including
+       themselves.
+     */
+    eVariable::setupclass(); 
+    eSet::setupclass(); 
 }
 
 

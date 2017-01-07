@@ -23,23 +23,6 @@ typedef eObject *(*eNewObjFunc)(
     e_oid oid,
 	os_int flags);
 
-
-/**
-****************************************************************************************************
-
-  @brief Class list structure.
-
-  X...
-
-
-****************************************************************************************************
-*/
-typedef struct eClassList
-{
-    eNewObjFunc func[ECLASSID_MAX+1];
-}
-eClassList;
-
 /* Add class to class list.
  */
 void eclasslist_add(
@@ -50,10 +33,6 @@ void eclasslist_add(
  */
 eNewObjFunc eclasslist_newobj(
     os_int cid);
-
-/* Add a eobjects base classes to class list.
- */
-void eclasslist_add_eobjects();
 
 /* Initialize class list.
  */

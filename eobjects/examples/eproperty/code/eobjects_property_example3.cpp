@@ -6,7 +6,8 @@
   @version 1.0
   @date    28.12.2016
 
-  This example demonstrates how to create a property and sen messages to it.
+  This example demonstrates setting up a new class with properties, and how to react to property
+  value changes.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -17,6 +18,7 @@
 */
 #include "eobjects/eobjects.h"
 #include "eobjects_property_example.h"
+#include <stdio.h>
 
 /* Purpose of a message is specified by 32 bit command. Negative command identifiers are
    reserved for the eobject library related, but positive ones can be used freely.
@@ -27,6 +29,17 @@
    integer. Class identifiers starting from ECLASSID_APP_BASE are reserved for the application.
  */
 #define MY_CLASS_ID (ECLASSID_APP_BASE + 1)
+
+/* Enumeration of eMyClass properties. Normally these would be in header file.
+ */
+#define EMYCLASSP_CELCIUS 10
+#define EMYCLASSP_FAHRENHEIT 12
+#define EMYCLASSP_OPINION 14
+
+os_char emyclassp_celcius[] = "C";
+os_char emyclassp_fahrenheit[] = "F";
+os_char emyclassp_opinion[] = "opinion";
+
 
 /**
 ****************************************************************************************************
@@ -39,56 +52,91 @@
 */
 class eMyClass : public eObject
 {
+public:
     /* Get class identifier.
      */
-    virtual os_int classid() {return MY_CLASS_ID;}
+    virtual os_int classid() 
+    {
+        return MY_CLASS_ID;
+    }
 
+    /* Add eMyClass'es properties to class'es property set.
+    */
+    static void setupclass()
+    {
+        const os_int cls = MY_CLASS_ID;
+        eVariable *p;
+
+        osal_mutex_system_lock();
+        p = addpropertyd(cls, EMYCLASSP_CELCIUS, emyclassp_celcius, EPRO_PERSISTENT, "value", 20.0);
+        p->setpropertys(EVARP_UNIT, "C");
+        
+        p = addpropertyd(cls, EMYCLASSP_FAHRENHEIT, emyclassp_fahrenheit, EPRO_NOONPRCH, "default");
+        p->setpropertys(EVARP_UNIT, "F");
+        p->setpropertyl(EVARP_DIGS, 5);
+
+        addpropertys(cls, EMYCLASSP_OPINION, emyclassp_opinion, EPRO_NOONPRCH, "default");
+        osal_mutex_system_unlock();
+    }
+
+    /* This gets called when property value changes
+     */
     virtual void onpropertychange(
         os_int propertynr, 
-        eVariable *variable, 
+        eVariable *x, 
         os_int flags)
     {
-     }
+        os_double c, f;
+
+        switch (propertynr)
+        {
+            case EMYCLASSP_CELCIUS:
+                c = x->getd();
+                printf ("calculating C -> F\n");
+
+                f = c * 9.0 / 5.0 + 32.0;
+                setpropertyd(EMYCLASSP_FAHRENHEIT, f);
+                if (f < 70) setpropertys(EMYCLASSP_OPINION, "cold");
+                else if (f < 80) setpropertys(EMYCLASSP_OPINION, "ok");
+                else setpropertys(EMYCLASSP_OPINION, "hot");
+                break;
+        }
+    }
 };
 
 
 /**
 ****************************************************************************************************
 
-  @brief Property example 2.
+  @brief Property example 3.
 
-  The property_example_2() function...
+  The property_example_3() function sets up new class eMyClass and uses for Celcius
+  to Fahrenheit conversion. Purpose of this is to show how class can react to property changes.
 
   @return  None.
 
 ****************************************************************************************************
 */
-void property_example_2()
+void property_example_3()
 {
+    eMyClass *converter;
     eVariable v, u;
+    os_double f;
 
-    v.setpropertys(EVARP_VALUE, "ulle");
-    osal_console_write("\nv.gets() = ");
-    osal_console_write(v.gets());
+    /* Adds the eMyClass to class list and creates property set for the class.
+     */
+    eMyClass::setupclass(); 
 
-    v.setpropertyd(EVARP_VALUE, 10.22);
-    osal_console_write("\nv.gets() = ");
-    osal_console_write(v.gets());
+    converter = new eMyClass();
+   
+    f = converter->propertyd(EMYCLASSP_FAHRENHEIT);
+    converter->property(EMYCLASSP_OPINION, &v);
+    printf ("initial F = %f, opinion = %s\n", f, v.gets());
+   
+    converter->setpropertyd(EMYCLASSP_CELCIUS, 40.0);
+    f = converter->propertyd(EMYCLASSP_FAHRENHEIT);
+    converter->property(EMYCLASSP_OPINION, &v);
+    printf ("initial F = %f, opinion = %s\n", f, v.gets());
 
-    v.setpropertyd(EVARP_DIGS, 5);
-    osal_console_write("\nv.gets() = ");
-    osal_console_write(v.gets());
-
-    v.setpropertys(EVARP_TEXT, "nasse");
-    v.property(EVARP_TEXT, &u);
-    osal_console_write("\nv.property(EVARP_TEXT, &u), u.gets() = ");
-    osal_console_write(u.gets());
-
-    osal_console_write("\n");
-/*
-
-//    MyClass
-//		myobj;
-*/
-
+    delete converter;
 }

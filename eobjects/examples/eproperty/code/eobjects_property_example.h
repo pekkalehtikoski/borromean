@@ -18,3 +18,4 @@
 
 void property_example_1();
 void property_example_2();
+void property_example_3();

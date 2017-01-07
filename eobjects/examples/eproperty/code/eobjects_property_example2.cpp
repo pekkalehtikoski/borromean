@@ -18,39 +18,6 @@
 #include "eobjects/eobjects.h"
 #include "eobjects_property_example.h"
 
-/* Purpose of a message is specified by 32 bit command. Negative command identifiers are
-   reserved for the eobject library related, but positive ones can be used freely.
- */
-#define MY_COMMAND 10
-
-/* Every class needs to have unique class identifier (classid). Class identifier is is 32 bit
-   integer. Class identifiers starting from ECLASSID_APP_BASE are reserved for the application.
- */
-#define MY_CLASS_ID (ECLASSID_APP_BASE + 1)
-
-/**
-****************************************************************************************************
-
-  @brief Example property class.
-
-  X...
-
-****************************************************************************************************
-*/
-class eMyClass : public eObject
-{
-    /* Get class identifier.
-     */
-    virtual os_int classid() {return MY_CLASS_ID;}
-
-    virtual void onpropertychange(
-        os_int propertynr, 
-        eVariable *variable, 
-        os_int flags)
-    {
-     }
-};
-
 
 /**
 ****************************************************************************************************
@@ -85,10 +52,4 @@ void property_example_2()
     osal_console_write(u.gets());
 
     osal_console_write("\n");
-/*
-
-//    MyClass
-//		myobj;
-*/
-
 }
