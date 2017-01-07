@@ -1,12 +1,12 @@
 /**
 
-  @file    ebinding.cpp
-  @brief   Binding properties, DB tables and files.
+  @file    epropertybinding.cpp
+  @brief   Simple object propertybinding.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  The binding object is like a box holding a set of child objects.
+  The propertybinding object is like a box holding a set of child objects.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -29,7 +29,7 @@
 
 ****************************************************************************************************
 */
-eBinding::eBinding(
+ePropertyBinding::ePropertyBinding(
 	eObject *parent,
 	e_oid oid,
 	os_int flags)
@@ -49,7 +49,7 @@ eBinding::eBinding(
 
 ****************************************************************************************************
 */
-eBinding::~eBinding()
+ePropertyBinding::~ePropertyBinding()
 {
 }
 
@@ -59,7 +59,7 @@ eBinding::~eBinding()
 
   @brief Clone object
 
-  The eBinding::clone function clones and object including object's children. 
+  The ePropertyBinding::clone function clones and object including object's children. 
   Names will be left detached in clone.
 
   @param  parent Parent for the clone.
@@ -68,7 +68,7 @@ eBinding::~eBinding()
 
 ****************************************************************************************************
 */
-eObject *eBinding::clone(
+eObject *ePropertyBinding::clone(
     eObject *parent, 
     e_oid oid,
     os_int aflags)
@@ -77,7 +77,7 @@ eObject *eBinding::clone(
         *clonedobj,
         *child;
 
-    clonedobj = new eBinding(parent, oid, flags());
+    clonedobj = new ePropertyBinding(parent, oid, flags());
 
     for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
     {
@@ -91,14 +91,45 @@ eObject *eBinding::clone(
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Get next child propertybinding identified by oid.
+
+  The eVariable::nextc() function returns pointer to the next child propertybinding of this object.
+
+  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
+           child objects, regardless wether these are attachment or not. Other values
+		   specify object identifier, only children with that specified object identifier 
+           are searched for. 
+
+  @return  Pointer to the first child propertybinding, or OS_NULL if none found.
+
+****************************************************************************************************
+*/
+ePropertyBinding *ePropertyBinding::nextc(
+	e_oid oid)
+{
+	if (mm_handle == OS_NULL) return OS_NULL;
+	eHandle *h = mm_handle->next(oid);
+    while (h)
+    {
+        if (h->object()->classid() == ECLASSID_PROPERTYBINDING) 
+            return ePropertyBinding::cast(h->object());
+
+        h = h->next(oid);
+    }
+    return OS_NULL;
+}
 
 
 /**
 ****************************************************************************************************
 
-  @brief Write binding content to stream.
+  @brief Write propertybinding content to stream.
 
-  The eBinding::writer() function serialized the binding to stream. This writes only the 
+  The ePropertyBinding::writer() function serialized the propertybinding to stream. This writes only the 
   content, use eObject::write() to save also class information, attachements, etc.
   
   @param  stream The stream to write to.
@@ -110,7 +141,7 @@ eObject *eBinding::clone(
 
 ****************************************************************************************************
 */
-eStatus eBinding::writer(
+eStatus ePropertyBinding::writer(
     eStream *stream, 
     os_int flags) 
 {
@@ -158,7 +189,7 @@ failed:
 
   @brief Read conatiner content from stream.
 
-  The eBinding::reader() function reads serialized binding from stream. This function 
+  The ePropertyBinding::reader() function reads serialized propertybinding from stream. This function 
   reads only the object content. To read whole object including attachments, names, etc, 
   use eObject::read().
   
@@ -171,7 +202,7 @@ failed:
 
 ****************************************************************************************************
 */
-eStatus eBinding::reader(
+eStatus ePropertyBinding::reader(
     eStream *stream, 
     os_int flags) 
 {

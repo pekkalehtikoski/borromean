@@ -1,12 +1,12 @@
 /**
 
-  @file    ebinding.h
-  @brief   Binding properties, DB tables and files.
+  @file    epropertybinding.h
+  @brief   Simple object propertybinding.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  The binding object is like a box holding a set of child objects.
+  The propertybinding object is like a box holding a set of child objects.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -15,17 +15,8 @@
 
 ****************************************************************************************************
 */
-#ifndef EBINDING_INCLUDED
-#define EBINDING_INCLUDED
-
-
-/* Flags for bind()
- */
-#define EBIND_DEFAULT 0
-#define EBIND_CLIENTINIT 1
-#define EBIND_NOFLOWCLT 2
-#define EBIND_ATTRIBUTES 4
-
+#ifndef EPROPERTYBINDING_INCLUDED
+#define EPROPERTYBINDING_INCLUDED
 
 /**
 ****************************************************************************************************
@@ -38,7 +29,7 @@
 
 ****************************************************************************************************
 */
-class eBinding : public eObject
+class ePropertyBinding : public eObject
 {
 	/** 
 	************************************************************************************************
@@ -53,14 +44,14 @@ class eBinding : public eObject
 public:
     /** Constructor.
 	 */
-	eBinding(
+	ePropertyBinding(
 		eObject *parent = OS_NULL,
 		e_oid oid = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
  	 */
-	virtual ~eBinding();
+	virtual ~ePropertyBinding();
 
     /* Clone an obejct.
      */
@@ -69,28 +60,33 @@ public:
         e_oid oid = EOID_CHILD,
 		os_int aflags = 0);
 
-    /* Casting eObject pointer to eBinding pointer.
+    /* Casting eObject pointer to ePropertyBinding pointer.
         */
-	inline static eBinding *cast(
+	inline static ePropertyBinding *cast(
 		eObject *o) 
 	{ 
-        e_assert_type(o, ECLASSID_BINDING)
-		return (eBinding*)o;
+        e_assert_type(o, ECLASSID_PROPERTYBINDING)
+		return (ePropertyBinding*)o;
 	}
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_BINDING;}
+    virtual os_int classid() {return ECLASSID_PROPERTYBINDING;}
 
     /* Static constructor function for generating instance by class list.
      */
-    static eBinding *newobj(
+    static ePropertyBinding *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eBinding(parent, oid, flags);
+        return new ePropertyBinding(parent, oid, flags);
     }
+
+    /* Get next child propertybinding identified by oid.
+     */
+    ePropertyBinding *nextc(
+	    e_oid oid);
 
     /*@}*/
 
@@ -104,21 +100,19 @@ public:
 	************************************************************************************************
 	*/
 	/*@{*/
-    /* Write binding content to stream.
+    /* Write propertybinding content to stream.
      */
     virtual eStatus writer(
         eStream *stream, 
         os_int flags);
 
-    /* Read binding content from stream.
+    /* Read propertybinding content from stream.
      */
     virtual eStatus reader(
         eStream *stream, 
         os_int flags);
 
     /*@}*/
-
-    void 
 
 };
 
