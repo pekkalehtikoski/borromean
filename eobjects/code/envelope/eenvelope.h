@@ -36,9 +36,23 @@
 /** Reply to attemp to sens message to invalid path.
  */
 
-#define ECMD_EXIT_THREAD -30
+/* Messaging, no target.
+ */
+#define ECMD_NO_TARGET -1
 
-#define ECMD_NO_TARGET -50
+/* Binding related commands. 
+ */
+#define ECMD_BIND -20
+#define ECMD_BIND_REPLY -21
+#define ECMD_UNBIND -22
+#define ECMD_SRV_UNBIND -23
+#define ECMD_REBIND -24
+#define ECMD_FWRD -25
+#define ECMD_ACK -26
+
+/* Thread control, exit thread.
+ */
+#define ECMD_EXIT_THREAD -30
 
 /*@}*/
 

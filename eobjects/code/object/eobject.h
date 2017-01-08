@@ -40,6 +40,7 @@ class eThread;
 #define EMSG_KEEP_CONTENT 0
 #define EMSG_NO_RESOLVE 2
 #define EMSG_NO_NEW_SOURCE_OIX 4
+#define EMSG_NO_ERROR_MSGS 8
 #define EMSG_DEL_CONTENT 128
 #define EMSG_DEL_CONTEXT 256
 
@@ -660,11 +661,25 @@ public:
     ************************************************************************************************
     */
     /*@{*/
-    /* Binding
+
+    /* Bind properties.
      */
-    void bind();
-    virtual void onmessagefrombinding() {}
-    void messagetobinding();
+    void bind(
+        os_int localpropertynr,
+        os_char *remotepath,
+        os_char *remoteproperty,
+        os_int bflags);
+
+    /* Bind properties, remote property .
+     */
+    void bind(
+        os_int localpropertynr,
+        os_char *remotepath,
+        os_int bflags);
+
+
+    /* virtual void onmessagefrombinding() {}
+    void messagetobinding(); */
     /*@}*/
 
     /** 

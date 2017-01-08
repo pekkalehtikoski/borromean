@@ -172,6 +172,27 @@ public:
         os_int id,
         eVariable *x);
 
+    /* Get value as integer.
+     */
+    inline os_long getl(
+        os_int id)
+    {
+        eVariable v;
+        get(id, &v);
+        return v.getl();
+    }
+
+    /* Get value as double.
+     */
+    inline os_double getd(
+        os_int id)
+    {
+        eVariable v;
+        get(id, &v);
+        return v.getd();
+    }
+
+
     /* Clear the set.
      */
     void eSet::clear();

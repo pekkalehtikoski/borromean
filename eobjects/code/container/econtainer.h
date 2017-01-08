@@ -61,7 +61,7 @@ public:
 		os_int aflags = 0);
 
     /* Casting eObject pointer to eContainer pointer.
-        */
+     */
 	inline static eContainer *cast(
 		eObject *o) 
 	{ 
@@ -71,7 +71,10 @@ public:
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_CONTAINER;}
+    virtual os_int classid() 
+    {
+        return ECLASSID_CONTAINER;
+    }
 
     /* Static constructor function for generating instance by class list.
      */

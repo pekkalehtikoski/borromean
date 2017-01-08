@@ -19,12 +19,36 @@
 #define EBINDING_INCLUDED
 
 
+/* Binding type flag values for bind()
+ */
+#define EBIND_PROPERTY 0
+#define EBIND_TABLE 1
+#define EBIND_FILE 2
+#define EBIND_CONTAINER 3
+
 /* Flags for bind()
  */
 #define EBIND_DEFAULT 0
-#define EBIND_CLIENTINIT 1
-#define EBIND_NOFLOWCLT 2
-#define EBIND_ATTRIBUTES 4
+#define EBIND_CLIENTINIT 8
+#define EBIND_NOFLOWCLT 16
+#define EBIND_METADATA 32
+#define EBIND_TEMPORARY 256
+#define EBIND_DEL_PARAMS 512
+#define EBIND_CLIENT 1024 /* no need to give as argument */
+#define EBIND_CHANGED 2048 /* no need to give as argument */
+
+#define EBIND_TYPE_MASK 7
+#define EBIND_SER_MASK (EBIND_TYPE_MASK|EBIND_CLIENTINIT|EBIND_NOFLOWCLT|EBIND_METADATA)
+
+/* Binding states
+ */
+#define E_BINDING_UNUSED 0
+#define E_BINDING_NOW 1
+#define E_BINDING_OK 2
+
+/* Enumeration of binding parameters
+ */
+#define E_BINDPRM_FLAGS 1
 
 
 /**
@@ -70,7 +94,7 @@ public:
 		os_int aflags = 0);
 
     /* Casting eObject pointer to eBinding pointer.
-        */
+     */
 	inline static eBinding *cast(
 		eObject *o) 
 	{ 
@@ -80,7 +104,10 @@ public:
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_BINDING;}
+    virtual os_int classid() 
+    {
+        return ECLASSID_BINDING;
+    }
 
     /* Static constructor function for generating instance by class list.
      */
@@ -97,7 +124,7 @@ public:
 	/** 
 	************************************************************************************************
 
-	  @name eObject virtual function implementations
+	  @name Virtual function overrides.
 
 	  X... 
 
@@ -118,6 +145,118 @@ public:
 
     /*@}*/
 
+
+	/** 
+	************************************************************************************************
+
+	  @name Virtual function overrides.
+
+	  X... 
+
+	************************************************************************************************
+	*/
+	/*@{*/
+
+    /* Connect client eBinding to server eBinding.
+     */
+    void bind(
+        os_char *objpath,
+        eSet *parameters,
+        os_int bflags);
+
+    /* Bind the server end
+     */
+    void srvbind(
+        eEnvelope *envelope,
+        eSet *parameters,
+        os_int bflags);
+
+    /* Complete client end of binding.
+     */
+    void cbindok(
+        eEnvelope *envelope);
+
+    /* Mark that value has changed.
+     */
+    inline void changed() 
+    {
+        m_bflags |= EBIND_CHANGED;
+    }
+
+    void forward(
+        eEnvelope *envelope);
+
+    void sendack(
+        eEnvelope *envelope);
+
+    void ack(
+        eEnvelope *envelope);
+
+    /* Process received messages
+     */
+    virtual void onmessage(
+        eEnvelope *envelope);
+
+    /*@}*/
+
+protected:
+
+    /* Save object path.
+     */
+    void set_objpath(
+        os_char *objpath);
+
+    /* Set bind path.
+     */
+    void set_bindpath(
+        os_char *bindpath);
+
+    /* Disconnect the binding and release allocated memory.
+     */
+    void disconnect(
+        os_boolean keep_objpath = OS_FALSE);
+
+
+	/** 
+	************************************************************************************************
+
+	  @name Member variables.
+
+	  X... 
+
+	************************************************************************************************
+	*/
+	/*@{*/
+        /* Client: Path to object to bind to as given as argument to bind(). 
+           Server: Always OS_NULL.
+         */
+        os_char *m_objpath;
+
+        /* Unique path to eBinding which we are bound to. 
+         */
+        os_char *m_bindpath;
+
+        /** Binding flags.
+         */
+        os_short m_bflags;
+
+        /* Size of object path allocation in bytes.
+         */
+        os_short m_objpathsz;
+
+        /* Size of bind path allocation in bytes.
+         */
+        os_short m_bindpathsz;
+
+        /** Number of ECMD_FWRD messages sent but have not been acknowledged.
+         */
+        os_char m_ackcount;
+
+        /** Binding state, one of: E_BINDING_UNUSED (0), E_BINDING_NOW (1) or E_BINDING_OK.
+         */
+        os_char m_state;
+
+    /*@}*/
 };
 
 #endif

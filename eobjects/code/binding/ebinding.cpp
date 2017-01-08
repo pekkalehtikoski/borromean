@@ -17,14 +17,14 @@
 */
 #include "eobjects/eobjects.h"
 
+#define EBIND_MAX_ACK_COUNT 3
 
 /**
 ****************************************************************************************************
 
   @brief Constructor.
 
-  X...
-
+  Clear member variables. 
   @return  None.
 
 ****************************************************************************************************
@@ -35,6 +35,14 @@ eBinding::eBinding(
 	os_int flags)
     : eObject(parent, oid, flags)
 {
+    /* Clear member variables.
+     */
+    m_state = E_BINDING_UNUSED;
+    m_bflags = EBIND_DEFAULT;
+    m_ackcount = 0;
+    m_objpathsz = m_bindpathsz = 0;
+    m_objpath = m_bindpath = OS_NULL;
+
 }
 
 
@@ -43,7 +51,7 @@ eBinding::eBinding(
 
   @brief Virtual destructor.
 
-  X...
+  Disconnect binding.
 
   @return  None.
 
@@ -51,6 +59,9 @@ eBinding::eBinding(
 */
 eBinding::~eBinding()
 {
+    /* Disconnect and clear all allocated memory
+     */
+    disconnect();
 }
 
 
@@ -89,8 +100,6 @@ eObject *eBinding::clone(
 
     return clonedobj;
 }
-
-
 
 
 /**
@@ -210,5 +219,356 @@ eStatus eBinding::reader(
      */
 failed:
     return ESTATUS_READING_OBJ_FAILED;
+}
+
+
+void eBinding::onmessage(
+    eEnvelope *envelope) 
+{
+    eSet *parameters;
+
+    /* If at final destination for the message.
+        */
+    if (*envelope->target()=='\0')
+    {
+        switch (envelope->command())
+        {
+            case ECMD_BIND:  
+                parameters = new eSet(this);
+                srvbind(envelope, parameters, EBIND_DEL_PARAMS);
+                return;
+
+            case ECMD_BIND_REPLY:
+                cbindok(envelope);
+                return;
+
+            case ECMD_UNBIND:
+                disconnect(OS_TRUE);
+                break;
+
+            case ECMD_SRV_UNBIND:
+                delete this;
+
+            case ECMD_FWRD:
+                sendack(envelope);
+                break;
+    
+            case ECMD_ACK:
+                ack(envelope);
+                break;
+
+            case ECMD_REBIND:
+                parameters = new eSet(this);
+                bind(OS_NULL, parameters, EBIND_DEL_PARAMS);
+                break;
+        }
+    }
+}
+
+/**
+****************************************************************************************************
+
+  @brief Connect client eBinding to server eBinding.
+
+  The bind function initiates the binding in client end.
+
+  @param  objpath Path to object to bind to. If objpath is NULL, it or m_bflags is not changed.
+          This is used for reactivating binding.
+  @param  parameters Parameters for binding, depends on binding use.
+  @param  bflags Binding flags. Combination of EBIND_DEFAULT (0), EBIND_CLIENTINIT, 
+          EBIND_NOFLOWCLT, EBIND_METADATA and EBIND_DEL_PARAMS.
+          Plus one of EBIND_PROPERTY, EBIND_TABLE, EBIND_FILE or EBIND_CONTAINER.
+
+  @return None.
+
+****************************************************************************************************
+*/
+void eBinding::bind(
+    os_char *objpath,
+    eSet *parameters,
+    os_int bflags)
+{
+    /* Disconnect, just in case binding is reused. If objpath is not given as argument, keep
+       current object path.
+     */
+    disconnect(objpath == OS_NULL);
+
+    /* Save objpath and flags. If objpath is NULL, it or m_bflags is not changed. This is 
+       used for reactivating binding.
+     */
+    if (objpath)
+    {
+        set_objpath(objpath);
+        m_bflags = bflags | EBIND_CLIENT;
+    }
+
+// ?* Here we could get info if we are sending message within thread ?????????????????????????????????????????
+
+    /* Add flags to parameters.
+     */
+    parameters->setl(E_BINDPRM_FLAGS, m_bflags & EBIND_SER_MASK);
+
+    /* Send ECMD_BIND message to object to bind to.
+     */
+    message(ECMD_BIND, m_objpath, OS_NULL, parameters, 
+        (bflags & EBIND_DEL_PARAMS) ? EMSG_DEL_CONTENT : 0 /* EMSG_NO_ERROR_MSGS */);
+
+    /* Set that we are binding now
+     */
+    m_state = E_BINDING_NOW;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Complete server end of binding.
+
+  The srvbind function...
+  
+  @param  bflags Binding flags. Either EBIND_DEFAULT (0), or EBIND_DEL_PARAMS.
+  @return None.
+
+****************************************************************************************************
+*/
+void eBinding::srvbind(
+    eEnvelope *envelope,
+    eSet *parameters,
+    os_int bflags)
+{
+    /* Save path from which the message was received.
+     */           
+    set_bindpath(envelope->source());
+
+    /* Get flags from parameters.
+     */
+    m_bflags = (os_short)parameters->getl(E_BINDPRM_FLAGS);
+
+    /* Send ECMD_BIND_REPLY message to back to client binding.
+     */
+    message(ECMD_BIND_REPLY, m_bindpath, OS_NULL, parameters, 
+        (bflags & EBIND_DEL_PARAMS) ? EMSG_DEL_CONTENT : 0 /* EMSG_NO_ERROR_MSGS */);
+
+    /* Set binding state ok. 
+     */
+    m_state = E_BINDING_OK;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Complete client end of binding.
+
+  The cbindok function...
+  
+  @param  envelope Message envelope from server binding.
+  @return None.
+
+****************************************************************************************************
+*/
+void eBinding::cbindok(
+    eEnvelope *envelope)
+{
+    /* Save path from which the message was received.
+     */           
+    set_bindpath(envelope->source());
+
+    /* If server is master, then do not send changes before this moment.
+     */
+    if ((m_bflags & EBIND_CLIENTINIT) == 0)
+    {
+        m_bflags &= ~EBIND_CHANGED;
+    }
+
+    /* Set binding state ok. 
+     */
+    m_state = E_BINDING_OK;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Forward change.
+
+  The cbindok function...
+  
+  @param  envelope Message envelope from server binding.
+
+  @param bflags Binding flags. Either EBIND_DEFAULT (0), or EBIND_DEL_PARAMS.
+  @return None.
+
+THIS NEEDS TO BE OVERRIDDEN BY DERIVED CLASS TO GET CURRENT VALUE
+
+****************************************************************************************************
+*/
+void eBinding::forward(
+    eEnvelope *envelope)
+{
+    if ((m_bflags & EBIND_CHANGED) && 
+         (m_ackcount < EBIND_MAX_ACK_COUNT || (m_bflags & EBIND_NOFLOWCLT)))
+    {
+        /* Send ECMD_BIND_REPLY message to back to client binding.
+         */
+        message(ECMD_FWRD, m_bindpath, OS_NULL, OS_NULL, 0 /* EMSG_DEL_CONTENT :  EMSG_NO_ERROR_MSGS */);
+
+        /* Clear changed bit and increment acknowledge count.
+         */
+        m_bflags &= ~EBIND_CHANGED;
+        m_ackcount++;
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Send acknowledge.
+
+  The sendack function.
+  
+  @param  envelope Message envelope from server binding.
+  @return None.
+
+****************************************************************************************************
+*/
+void eBinding::sendack(
+    eEnvelope *envelope)
+{
+    /* Send ECMD_BIND_REPLY message to back to client binding.
+     */
+    message(ECMD_ACK, m_bindpath, OS_NULL, OS_NULL, 0 /* EMSG_DEL_CONTENT :  EMSG_NO_ERROR_MSGS */);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Acknowledge received.
+
+  The ack function decrements acknowledge wait count and tries to send again.
+  
+  @param  envelope Message envelope from server binding.
+  @return None.
+
+****************************************************************************************************
+*/
+void eBinding::ack(
+    eEnvelope *envelope)
+{
+    m_ackcount--;
+    forward(envelope);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Save object path.
+
+  The eBinding::set_objpath() releases current m_objpath and stores objpath given as argument.
+  If objpath is OS_NULL, memory is just freeed.
+  @param  objpath Pointer to object path.
+
+  @return None.
+
+****************************************************************************************************
+*/
+void eBinding::set_objpath(
+    os_char *objpath)
+{
+    if (m_objpath)
+    {
+        osal_memory_free(m_objpath, m_objpathsz);
+        m_objpath = OS_NULL;
+        m_objpathsz = 0;
+    }
+
+    if (objpath)
+    {
+        m_objpathsz = (os_short)os_strlen(objpath);
+        m_objpath = (os_char*)osal_memory_allocate(m_objpathsz, OS_NULL);
+        os_memcpy(m_objpath, objpath, m_objpathsz);
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Save object path.
+
+  The eBinding::set_objpath() releases current m_objpath and stores objpath given as argument.
+  If objpath is OS_NULL, memory is just freeed.
+  @param  objpath Pointer to object path.
+
+  @return None.
+
+****************************************************************************************************
+*/
+void eBinding::set_bindpath(
+    os_char *bindpath)
+{
+    if (m_bindpath)
+    {
+        osal_memory_free(m_bindpath, m_bindpathsz);
+        m_bindpath = OS_NULL;
+        m_bindpathsz = 0;
+    }
+
+    if (bindpath)
+    {
+        m_bindpathsz = (os_short)os_strlen(bindpath);
+        m_bindpath = (os_char*)osal_memory_allocate(m_bindpathsz, OS_NULL);
+        os_memcpy(m_bindpath, bindpath, m_bindpathsz);
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Disconnect the binding and release allocated memory.
+
+  The eBinding::disconnects() disconnects and clears allocated memory. 
+  @return None.
+
+****************************************************************************************************
+*/
+void eBinding::disconnect(
+    os_boolean keep_objpath)
+{
+    /* Send disconnect message
+     */
+    switch (m_state)
+    {
+        case E_BINDING_UNUSED:
+            break;
+
+        case E_BINDING_NOW:
+            message(ECMD_UNBIND,
+                 m_objpath, OS_NULL, OS_NULL, EMSG_NO_ERROR_MSGS);
+        
+        case E_BINDING_OK:
+            message((m_bflags & EBIND_CLIENT) ? ECMD_UNBIND : ECMD_SRV_UNBIND,
+                 m_bindpath, OS_NULL, OS_NULL, EMSG_NO_ERROR_MSGS|EMSG_NO_RESOLVE);
+    }
+
+    if (m_objpath && !keep_objpath)
+    {
+        set_objpath(OS_NULL);
+    }
+
+    if (m_bindpath)
+    {
+        set_bindpath(OS_NULL);
+    }
+
+    /* Set unused state and clear changed bit and ack counter.
+     */
+    m_state = E_BINDING_UNUSED;
+    m_bflags &= ~EBIND_CHANGED;
+    m_ackcount = 0;
 }
 

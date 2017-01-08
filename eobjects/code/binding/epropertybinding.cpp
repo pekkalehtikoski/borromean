@@ -210,3 +210,41 @@ failed:
     return ESTATUS_READING_OBJ_FAILED;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Bind this object's property to remote property.
+
+  The eObject::bind() function creates binding to remote property. When two variables are bound
+  together, they have the same value. When the other changes, so does the another. Bindings
+  work over messaging, thus binding work as well between objects in same thread or objects in 
+  different computers.
+  
+  @param  localpropertyno This object's propery number to bind.
+  @param  remotepath Path to remote object to bind to.
+  @param  remoteproperty Name of remote property to bind. If OS_NULL variable value
+          is assumed.
+  @param  bflags Combination of EBIND_DEFAULT (0), EBIND_CLIENTINIT, EBIND_NOFLOWCLT
+          and EBIND_METADATA. 
+          - EBIND_DEFAULT:  bind without special options.
+          - EBIND_CLIENTINIT: Local property value is used as initial value. Normally
+            remote end's value is used as initial value.
+          - EBIND_NOFLOWCLT: Disable flow control. Normally if property value changes
+            faster than it can be transferred, some values are skipped. If EBIND_NOFLOWCLT
+            flag is given, it disables flow control and every value is transferred without
+            any limit to buffered memory use.
+          - EBIND_METADATA: If meta data, like text, unit, attributes, etc exists, it is 
+            also transferred from remote object to local object.
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::bind(
+    os_int localpropertynr,
+    os_char *remotepath,
+    os_char *remoteproperty,
+    os_int bflags)
+{
+
+}

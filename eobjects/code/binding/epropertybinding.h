@@ -61,7 +61,7 @@ public:
 		os_int aflags = 0);
 
     /* Casting eObject pointer to ePropertyBinding pointer.
-        */
+     */
 	inline static ePropertyBinding *cast(
 		eObject *o) 
 	{ 
@@ -71,7 +71,10 @@ public:
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_PROPERTY_BINDING;}
+    virtual os_int classid() 
+    {
+        return ECLASSID_PROPERTY_BINDING;
+    }
 
     /* Static constructor function for generating instance by class list.
      */
@@ -106,6 +109,28 @@ public:
     virtual eStatus reader(
         eStream *stream, 
         os_int flags);
+
+    /*@}*/
+
+
+	/** 
+	************************************************************************************************
+
+	  @name Binding functions
+
+	  X... 
+
+	************************************************************************************************
+	*/
+	/*@{*/
+
+    /* Bind property.
+     */
+    void bind(
+        os_int localpropertynr,
+        os_char *remotepath,
+        os_char *remoteproperty,
+        os_int bflags);
 
     /*@}*/
 

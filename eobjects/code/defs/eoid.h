@@ -65,13 +65,17 @@
  */
 #define EOID_CONTENT -30
 
-/** Content, used for envelopes, etc.
+/** Context, used for envelopes, etc.
  */
 #define EOID_CONTEXT -31
 
-/** Content, used to indicate object's stored properties eContainer.
+/** Object's stored properties eContainer.
  */
 #define EOID_PROPERTIES -33
+
+/* Object's bindings container.
+ */
+#define EOID_BINDINGS -35
 
 /** This is special object identifier that can be given as argument to object hierarchy 
 	functions, like getfirstchild(). The EOID_CHILD specifies to get a child object, 
