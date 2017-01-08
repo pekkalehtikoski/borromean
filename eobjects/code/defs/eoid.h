@@ -89,7 +89,6 @@
  */
 #define EOID_ALL -1001
 
-
 /** Object identifier EOID_INTERNAL is used for attachments, which are to be ignored
     in loops trough object's children.
  */

@@ -41,6 +41,7 @@ class eThread;
 #define EMSG_NO_RESOLVE 2
 #define EMSG_NO_NEW_SOURCE_OIX 4
 #define EMSG_NO_ERROR_MSGS 8
+#define EMSG_INTERTHREAD 16 /* Message has been passed from thread to another */
 #define EMSG_DEL_CONTENT 128
 #define EMSG_DEL_CONTEXT 256
 
@@ -61,6 +62,11 @@ class eThread;
 #define EPRO_NOONPRCH EOBJ_CUST_FLAG4
 #define EPRO_NOPACK EOBJ_CUST_FLAG5
 
+/* Flags for adopt(), clone() and clonegeeric() functions.
+    */
+#define EOBJ_BEFORE_THIS 1
+#define EOBJ_NO_MAP 2
+#define EOBJ_CLONE_ALL_CHILDREN 4
 
 /**
 ****************************************************************************************************
@@ -122,6 +128,12 @@ public:
         eObject *parent, 
         e_oid oid = EOID_CHILD,
 		os_int aflags = 0);
+
+    /* Helper function for clone functionality.
+     */
+    void clonegeneric(
+        eObject *clonedobj,
+        os_int aflags);
 
     /* Get class identifier
      */
@@ -330,11 +342,6 @@ public:
 	eObject *prev(
 		e_oid oid = EOID_CHILD);
 
-    /* Flags for adopt() and clone() functions.
-     */
-    #define EOBJ_BEFORE_THIS 1
-    #define EOBJ_NO_MAP 2
-
     /** Adopting object as child of this object.
      */
 	void adopt(
@@ -522,6 +529,17 @@ public:
 
     virtual void onmessage(
         eEnvelope *envelope);
+
+    /* Set object's property by sending a message.
+     */
+    void setproperty_msg(
+        os_char *remotepath,
+        eObject *x,
+        os_int flags);
+
+    void setpropertyd_msg(
+        os_char *remotepath,
+        os_double x);
 
     /*@}*/
 

@@ -53,7 +53,7 @@ public:
  	 */
 	virtual ~ePropertyBinding();
 
-    /* Clone an obejct.
+    /* Clone object.
      */
     virtual eObject *clone(
         eObject *parent, 

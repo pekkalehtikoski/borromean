@@ -40,6 +40,10 @@
  */
 #define ECMD_NO_TARGET -1
 
+/* Set property by message
+ */
+#define ECMD_SETPROPERTY 19
+
 /* Binding related commands. 
  */
 #define ECMD_BIND -20
@@ -91,6 +95,13 @@ public:
 	/* Virtual destructor.
  	 */
 	virtual ~eEnvelope();
+
+    /* Clone object.
+     */
+    virtual eObject *clone(
+        eObject *parent, 
+        e_oid oid = EOID_CHILD,
+		os_int aflags = 0);
 
     /* Casting eObject pointer to eEnvelope pointer.
         */
@@ -253,6 +264,9 @@ private:
      */
     os_int m_command;
 
+    /* Combination of bits EMSG_KEEP_CONTENT (0), EMGS_NO_REPLIES, EMSG_NO_RESOLVE, 
+       EMSG_NO_NEW_SOURCE_OIX, EMSG_NO_ERROR_MSGS and EMSG_INTERTHREAD.
+    */
     os_short m_mflags;
 
     os_short m_target_pos;

@@ -137,6 +137,13 @@ public:
      */
 	virtual ~eVariable();
 
+    /* Clone object.
+     */
+    eObject *clone(
+        eObject *parent, 
+        e_oid oid,
+        os_int aflags);
+
     /* Casting eObject pointer to eVariable pointer.
      */
 	inline static eVariable *cast(

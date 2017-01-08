@@ -75,6 +75,7 @@ eBinding::~eBinding()
 
   @param  parent Parent for the clone.
   @param  oid Object identifier for the clone.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names.
   @return Pointer to the clone.
 
 ****************************************************************************************************
@@ -299,8 +300,6 @@ void eBinding::bind(
         m_bflags = bflags | EBIND_CLIENT;
     }
 
-// ?* Here we could get info if we are sending message within thread ?????????????????????????????????????????
-
     /* Get parameters from derived class and add flags to parameters.
      */
     parameters = new eSet(this);
@@ -333,7 +332,7 @@ void eBinding::srvbind(
     eEnvelope *envelope)
 {
     eSet *parameters;
-        
+
     /* Save path from which the message was received.
      */           
     set_bindpath(envelope->source());
@@ -343,7 +342,14 @@ void eBinding::srvbind(
     parameters = eSet::cast(envelope->content());
     m_bflags = (os_short)parameters->getl(E_BINDPRM_FLAGS);
 
-    /* Get parameters from derived class
+    /* If envelope has not been moved from thread to another.
+     */
+    if (envelope->mflags() & EMSG_INTERTHREAD)
+    {
+        m_bflags |= EBIND_INTERTHREAD;
+    }
+    
+    /* Get parameters from derived class.
      */
     parameters = new eSet(this);
     get_srvbind_parameters(parameters);
@@ -378,11 +384,22 @@ void eBinding::cbindok(
      */           
     set_bindpath(envelope->source());
 
+    /* If envelope has not been moved from thread to another.
+     */
+    if (envelope->mflags() & EMSG_INTERTHREAD)
+    {
+        m_bflags |= EBIND_INTERTHREAD;
+    }
+
     /* If server is master, then do not send changes before this moment.
      */
     if ((m_bflags & EBIND_CLIENTINIT) == 0)
     {
         m_bflags &= ~EBIND_CHANGED;
+    }
+    else
+    {
+        forward(envelope);
     }
 
     /* Set binding state ok. 
@@ -396,7 +413,7 @@ void eBinding::cbindok(
 
   @brief Forward change.
 
-  The cbindok function...
+  The forward function sends value of a property. 
   
   @param  envelope Message envelope from server binding.
   @return None.
@@ -409,7 +426,10 @@ void eBinding::forward(
     eEnvelope *envelope)
 {
     if ((m_bflags & EBIND_CHANGED) && 
-         (m_ackcount < EBIND_MAX_ACK_COUNT || (m_bflags & EBIND_NOFLOWCLT)))
+         m_state == E_BINDING_OK &&
+         (m_ackcount < EBIND_MAX_ACK_COUNT || 
+           (m_bflags & EBIND_NOFLOWCLT) || 
+           (m_bflags & EBIND_INTERTHREAD) == 0))
     {
         /* Send ECMD_BIND_REPLY message to back to client binding.
          */
@@ -440,7 +460,10 @@ void eBinding::sendack(
 {
     /* Send ECMD_BIND_REPLY message to back to client binding.
      */
-    message(ECMD_ACK, m_bindpath, OS_NULL, OS_NULL, 0 /* EMSG_DEL_CONTENT :  EMSG_NO_ERROR_MSGS */);
+    if (m_bflags & EBIND_INTERTHREAD)
+    {
+        message(ECMD_ACK, m_bindpath, OS_NULL, OS_NULL, 0 /* EMSG_DEL_CONTENT :  EMSG_NO_ERROR_MSGS */);
+    }
 }
 
 
@@ -570,7 +593,7 @@ void eBinding::disconnect(
     /* Set unused state and clear changed bit and ack counter.
      */
     m_state = E_BINDING_UNUSED;
-    m_bflags &= ~EBIND_CHANGED;
+    m_bflags &= ~(EBIND_CHANGED|EBIND_INTERTHREAD);
     m_ackcount = 0;
 }
 

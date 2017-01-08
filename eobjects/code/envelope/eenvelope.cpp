@@ -72,6 +72,43 @@ eEnvelope::~eEnvelope()
 /**
 ****************************************************************************************************
 
+  @brief Clone object
+
+  The clone function clones and object including object's children. 
+  Names will be left detached in clone if EOBJ_NO_MAP flag is given.
+
+  @param  parent Parent for the clone.
+  @param  oid Object identifier for the clone.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names. 
+  @return Pointer to the clone.
+
+****************************************************************************************************
+*/
+eObject *eEnvelope::clone(
+    eObject *parent, 
+    e_oid oid,
+    os_int aflags)
+{
+    eEnvelope *clonedobj;
+    clonedobj = new eEnvelope(parent, oid, flags());
+  
+    /** Clone envelope specific stuff.
+     */
+    clonedobj->m_command = m_command;
+    clonedobj->m_mflags = m_command;
+    clonedobj->settarget(target());
+    clonedobj->appendsource(source());
+
+    /* Copy all clonable children.
+     */
+    clonegeneric(clonedobj, aflags|EOBJ_CLONE_ALL_CHILDREN);
+    return clonedobj;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Set destination for the envelope.
 
   The eEnvelope::settarget() function. 

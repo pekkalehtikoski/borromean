@@ -53,7 +53,7 @@ public:
  	 */
 	virtual ~eContainer();
 
-    /* Clone an obejct.
+    /* Clone object.
      */
     virtual eObject *clone(
         eObject *parent, 

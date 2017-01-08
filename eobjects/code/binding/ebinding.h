@@ -35,6 +35,7 @@
 #define EBIND_TEMPORARY 256
 #define EBIND_CLIENT 1024 /* no need to give as argument */
 #define EBIND_CHANGED 2048 /* no need to give as argument */
+#define EBIND_INTERTHREAD 4096 /* no need to give as argument */
 
 #define EBIND_TYPE_MASK 7
 #define EBIND_SER_MASK (EBIND_TYPE_MASK|EBIND_CLIENTINIT|EBIND_NOFLOWCLT|EBIND_METADATA)
@@ -85,7 +86,7 @@ public:
  	 */
 	virtual ~eBinding();
 
-    /* Clone an obejct.
+    /* Clone object.
      */
     virtual eObject *clone(
         eObject *parent, 

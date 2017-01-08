@@ -96,6 +96,7 @@ void eSet::setupclass()
 
   @param  parent Parent for the clone.
   @param  oid Object identifier for the clone.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names.
   @return Pointer to the clone.
 
 ****************************************************************************************************

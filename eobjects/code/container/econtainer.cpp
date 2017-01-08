@@ -64,6 +64,7 @@ eContainer::~eContainer()
 
   @param  parent Parent for the clone.
   @param  oid Object identifier for the clone.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names.
   @return Pointer to the clone.
 
 ****************************************************************************************************
@@ -73,20 +74,9 @@ eObject *eContainer::clone(
     e_oid oid,
     os_int aflags)
 {
-    eObject
-        *clonedobj,
-        *child;
-
+    eObject *clonedobj;
     clonedobj = new eContainer(parent, oid, flags());
-
-    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
-    {
-        if (child->isclonable())
-        {
-            child->clone(clonedobj, child->oid(), aflags);
-        }
-    }
-
+    clonegeneric(clonedobj, aflags|EOBJ_CLONE_ALL_CHILDREN);
     return clonedobj;
 }
 

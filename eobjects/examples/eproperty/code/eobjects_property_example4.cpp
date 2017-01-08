@@ -31,15 +31,21 @@
 #define MY_CLASS_ID_1 (ECLASSID_APP_BASE + 1)
 #define MY_CLASS_ID_2 (ECLASSID_APP_BASE + 1)
 
-/* Enumeration of eMyClass properties. Normally these would be in header file.
+/* Enumeration of eMyClass1 properties. Normally these would be in header file.
  */
-#define EMYCLASSP_CELCIUS 10
-#define EMYCLASSP_FAHRENHEIT 12
-#define EMYCLASSP_OPINION 14
+#define EMYCLASS1P_A 10
+#define EMYCLASS1P_B 20
 
-static os_char emyclassp_celcius[] = "C";
-static os_char emyclassp_fahrenheit[] = "F";
-static os_char emyclassp_opinion[] = "opinion";
+static os_char emyclass1p_a[] = "A";
+static os_char emyclass1p_b[] = "B";
+
+/* Enumeration of eMyClass2 properties. Normally these would be in header file.
+ */
+#define EMYCLASS2P_X 10
+#define EMYCLASS2P_Y 20
+
+static os_char emyclass2p_x[] = "X";
+static os_char emyclass2p_y[] = "Y";
 
 
 /**
@@ -51,7 +57,7 @@ static os_char emyclassp_opinion[] = "opinion";
 
 ****************************************************************************************************
 */
-class eMyClass1 : public eObject
+class eMyClass1 : public eThread
 {
 public:
 	/** Constructor. It is here just to initialize properties to default values.s
@@ -60,7 +66,7 @@ public:
 		eObject *parent = OS_NULL,
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
-	    : eObject(parent, oid, flags)
+	    : eThread(parent, oid, flags)
     {
         initproperties();
     }
@@ -77,17 +83,10 @@ public:
     static void setupclass()
     {
         const os_int cls = MY_CLASS_ID_1;
-        eVariable *p;
 
         osal_mutex_system_lock();
-        p = addpropertyd(cls, EMYCLASSP_CELCIUS, emyclassp_celcius, EPRO_PERSISTENT, "value", 20.0);
-        p->setpropertys(EVARP_UNIT, "C");
-        
-        p = addpropertyd(cls, EMYCLASSP_FAHRENHEIT, emyclassp_fahrenheit, EPRO_NOONPRCH, "default");
-        p->setpropertys(EVARP_UNIT, "F");
-        p->setpropertyl(EVARP_DIGS, 5);
-
-        addpropertys(cls, EMYCLASSP_OPINION, emyclassp_opinion, EPRO_NOONPRCH, "default");
+        addproperty(cls, EMYCLASS1P_A, emyclass1p_a, EPRO_PERSISTENT, "A");
+        addproperty(cls, EMYCLASS1P_B, emyclass1p_b, EPRO_PERSISTENT, "A");
         osal_mutex_system_unlock();
     }
 
@@ -98,19 +97,20 @@ public:
         eVariable *x, 
         os_int flags)
     {
-        os_double c, f;
+        os_double a;
 
         switch (propertynr)
         {
-            case EMYCLASSP_CELCIUS:
-                c = x->getd();
-                printf ("calculating C -> F\n");
+            case EMYCLASS1P_A:
+                a = x->getd();
+                printf ("GOT A + %f\n", a);
 
-                f = c * 9.0 / 5.0 + 32.0;
+                /* f = c * 9.0 / 5.0 + 32.0;
                 setpropertyd(EMYCLASSP_FAHRENHEIT, f);
                 if (f < 70) setpropertys(EMYCLASSP_OPINION, "cold");
                 else if (f < 80) setpropertys(EMYCLASSP_OPINION, "ok");
                 else setpropertys(EMYCLASSP_OPINION, "hot");
+            */
                 break;
         }
     }
@@ -131,24 +131,29 @@ public:
 */
 void property_example_4()
 {
-    eMyClass1 *converter;
-    eVariable v, u;
-    os_double f;
+    eThread *t;
+    eThreadHandle thandle1;
+    eContainer c;
 
     /* Adds the eMyClass to class list and creates property set for the class.
      */
     eMyClass1::setupclass(); 
 
-    converter = new eMyClass1();
-   
-    f = converter->propertyd(EMYCLASSP_FAHRENHEIT);
-    converter->property(EMYCLASSP_OPINION, &v);
-    printf ("initial F = %f, opinion = %s\n", f, v.gets());
-   
-    converter->setpropertyd(EMYCLASSP_CELCIUS, 40.0);
-    f = converter->propertyd(EMYCLASSP_FAHRENHEIT);
-    converter->property(EMYCLASSP_OPINION, &v);
-    printf ("initial F = %f, opinion = %s\n", f, v.gets());
+    /* Create and start thread 1 named "thread1".
+     */
+    t = new eMyClass1();
+	t->addname("thread1", ENAME_PROCESS_NS);
+//    t->setpriority();
+    t->start(&thandle1); /* After this t pointer is useless */
 
-    delete converter;
+    c.setpropertyd_msg("//thread1/_p/A", 11.5);
+
+    osal_thread_sleep(10000);
+
+    // f = converter->se>propertyd(EMYCLASSP_FAHRENHEIT);
+
+    /* Wait for thread to terminate
+     */
+    thandle1.terminate();
+    thandle1.join();
 }

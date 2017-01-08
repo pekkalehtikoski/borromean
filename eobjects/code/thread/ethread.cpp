@@ -257,11 +257,11 @@ void eThread::queue(
 {
     if (delete_envelope)
     {
-        m_message_queue->adopt(envelope, EOID_CHILD, EOBJ_NO_MAP);
+        m_message_queue->adopt(envelope, EOID_ITEM, EOBJ_NO_MAP);
     }
     else
     {
-        envelope->clone(m_message_queue, EOID_CHILD, EOBJ_NO_MAP);
+        envelope->clone(m_message_queue, EOID_ITEM, EOBJ_NO_MAP);
     }
     osal_event_set(m_trigger);
 }
@@ -291,11 +291,18 @@ void eThread::alive(
 
     while (OS_TRUE)
     {
-        /* Synchronize and get message from queue.
+        /* Synchronize and get message (envelope) from queue.
          */
 	    osal_mutex_system_lock();
         envelope = eEnvelope::cast(m_message_queue->first());
-        if (envelope) adopt(envelope, EOID_CHILD, EOBJ_NO_MAP);
+        if (envelope) 
+        {
+            adopt(envelope, EOID_CHILD, EOBJ_NO_MAP);
+
+            /* Flag that envelope has been moved from thread to another.
+             */
+            envelope->addmflags(EMSG_INTERTHREAD);
+        }
 	    osal_mutex_system_unlock();
 
         /* If no message, do nothing more.

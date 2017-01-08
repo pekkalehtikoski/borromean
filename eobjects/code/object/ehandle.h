@@ -204,6 +204,13 @@ public:
         return m_object;
     }
 
+    /** Get root handle.
+     */
+    inline eRoot *root() 
+    {
+        return m_root;
+    }
+
     /* Get number of childern.
      */
     os_long childcount(

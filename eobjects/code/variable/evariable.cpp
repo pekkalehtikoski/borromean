@@ -61,9 +61,6 @@ eVariable::eVariable(
 }
 
 
-
-
-
 /**
 ****************************************************************************************************
 
@@ -80,6 +77,40 @@ eVariable::~eVariable()
     /* Release any allocated memory.
      */
     clear();
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Clone object
+
+  The eContainer::clone function clones and object including object's children. 
+  Names will be left detached in clone if EOBJ_NO_MAP flag is given.
+
+  @param  parent Parent for the clone.
+  @param  oid Object identifier for the clone.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names. 
+  @return Pointer to the clone.
+
+****************************************************************************************************
+*/
+eObject *eVariable::clone(
+    eObject *parent, 
+    e_oid oid,
+    os_int aflags)
+{
+    eVariable *clonedobj;
+    clonedobj = new eVariable(parent, oid, flags());
+  
+    /** Copy variable value. 
+     */
+    clonedobj->setv(this);
+
+    /* Copy clonable attachments.
+     */
+    clonegeneric(clonedobj, aflags|EOBJ_CLONE_ALL_CHILDREN);
+    return clonedobj;
 }
 
 

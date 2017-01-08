@@ -214,6 +214,7 @@ eObject::~eObject()
   @brief Clone object
 
   The eObject::clone function is base class only. Cloning eObject base class is not supported.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names.
 
 ****************************************************************************************************
 */
@@ -224,6 +225,55 @@ eObject *eObject::clone(
 {
 	osal_debug_error("clone() not supported for the class");
     return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Helper function for clone functionality
+
+  The eObject::clonegeneric is helper function to implement cloning object. It copies attachments
+  or all child objects and maps names to name space. This depends on flags.
+
+  @param  clonedobj Pointer to cloned object being created.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names. EOBJ_CLONE_ALL_CHILDREN
+          to clone all children, not just attachments.
+  @return None.
+
+****************************************************************************************************
+*/
+void eObject::clonegeneric(
+    eObject *clonedobj,
+    os_int aflags)
+{
+    eHandle *handle;
+
+    /* If there is no handle pointer, there can be no children to clone.
+     */
+    if (mm_handle == OS_NULL) return;
+
+    /* Copy clonable attachments or all clonable object.
+     */
+    for (handle = mm_handle->first();
+         handle;
+         handle = handle->next())
+    {
+
+        if (((handle->m_oflags & EOBJ_IS_ATTACHMENT) || 
+             (aflags & EOBJ_CLONE_ALL_CHILDREN)) &&
+             (handle->m_oflags & EOBJ_NOT_CLONABLE) == 0)
+        {
+            handle->m_object->clone(clonedobj, handle->oid(), EOBJ_NO_MAP);
+        }
+    }
+
+    /* Map names to name spaces.
+     */
+    if ((aflags & EOBJ_NO_MAP) == 0)
+    {
+        map(E_ATTACH_NAMES);
+    }
 }
 
 
@@ -1192,7 +1242,7 @@ void eObject::map2(
             childh->m_root = handle->m_root;
         }
 
-        /* If this is name which needs to be attaached or detached, do it.
+        /* If this is name which needs to be attached or detached, do it.
          */
         if (childh->oid() == EOID_NAME && 
            (mflags & (E_ATTACH_NAMES|E_DETACH_FROM_NAMESPACES_ABOVE)))
@@ -1787,6 +1837,25 @@ getout:
         message (ECMD_NO_TARGET, envelope->source(), 
             envelope->target(), OS_NULL, EMSG_KEEP_CONTENT, envelope->context());
     }
+}
+
+
+void eObject::setproperty_msg(
+    os_char *remotepath,
+    eObject *x,
+    os_int flags)
+{
+    message (ECMD_SETPROPERTY, remotepath, OS_NULL, x, EMSG_KEEP_CONTENT);
+}
+
+
+void eObject::setpropertyd_msg(
+    os_char *remotepath,
+    os_double x)
+{
+    eVariable v;
+    v.setd(x);
+    setproperty_msg(remotepath,  &v, 0);
 }
 
 
