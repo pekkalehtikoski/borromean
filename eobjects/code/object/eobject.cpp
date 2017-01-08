@@ -2107,7 +2107,6 @@ void eObject::setproperty(
         }
     }
 
-
     /* Forward property value to bindings, if any.
      */
     
@@ -2292,8 +2291,8 @@ void eObject::bind(
 
   @brief Bind this object's property to remote property.
 
-  See bind() function above. Remote path may contain also property name, separated by "/_p.". 
-  If not, the variable value is used as default.
+  See bind() function above, this almost the same but remote path may contain also property 
+  name, separated from path by "/_p/". If "/_p/" is not found, the "x" is used as default.
 
 ****************************************************************************************************
 */

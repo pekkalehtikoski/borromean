@@ -33,7 +33,6 @@
 #define EBIND_NOFLOWCLT 16
 #define EBIND_METADATA 32
 #define EBIND_TEMPORARY 256
-#define EBIND_DEL_PARAMS 512
 #define EBIND_CLIENT 1024 /* no need to give as argument */
 #define EBIND_CHANGED 2048 /* no need to give as argument */
 
@@ -161,15 +160,16 @@ public:
      */
     void bind(
         os_char *objpath,
-        eSet *parameters,
         os_int bflags);
 
-    /* Bind the server end
+    virtual void get_bind_parameters(eSet *set) {};
+
+    /* Bind the server end.
      */
     void srvbind(
-        eEnvelope *envelope,
-        eSet *parameters,
-        os_int bflags);
+        eEnvelope *envelope);
+
+    virtual void get_srvbind_parameters(eSet *set) {};
 
     /* Complete client end of binding.
      */

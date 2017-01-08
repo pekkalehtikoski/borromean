@@ -225,17 +225,14 @@ failed:
 void eBinding::onmessage(
     eEnvelope *envelope) 
 {
-    eSet *parameters;
-
     /* If at final destination for the message.
-        */
+     */
     if (*envelope->target()=='\0')
     {
         switch (envelope->command())
         {
             case ECMD_BIND:  
-                parameters = new eSet(this);
-                srvbind(envelope, parameters, EBIND_DEL_PARAMS);
+                srvbind(envelope);
                 return;
 
             case ECMD_BIND_REPLY:
@@ -258,8 +255,7 @@ void eBinding::onmessage(
                 break;
 
             case ECMD_REBIND:
-                parameters = new eSet(this);
-                bind(OS_NULL, parameters, EBIND_DEL_PARAMS);
+                bind(OS_NULL, 0);
                 break;
         }
     }
@@ -276,7 +272,7 @@ void eBinding::onmessage(
           This is used for reactivating binding.
   @param  parameters Parameters for binding, depends on binding use.
   @param  bflags Binding flags. Combination of EBIND_DEFAULT (0), EBIND_CLIENTINIT, 
-          EBIND_NOFLOWCLT, EBIND_METADATA and EBIND_DEL_PARAMS.
+          EBIND_NOFLOWCLT and EBIND_METADATA.
           Plus one of EBIND_PROPERTY, EBIND_TABLE, EBIND_FILE or EBIND_CONTAINER.
 
   @return None.
@@ -285,9 +281,10 @@ void eBinding::onmessage(
 */
 void eBinding::bind(
     os_char *objpath,
-    eSet *parameters,
     os_int bflags)
 {
+    eSet *parameters;
+
     /* Disconnect, just in case binding is reused. If objpath is not given as argument, keep
        current object path.
      */
@@ -304,14 +301,16 @@ void eBinding::bind(
 
 // ?* Here we could get info if we are sending message within thread ?????????????????????????????????????????
 
-    /* Add flags to parameters.
+    /* Get parameters from derived class and add flags to parameters.
      */
+    parameters = new eSet(this);
+    get_bind_parameters(parameters);
     parameters->setl(E_BINDPRM_FLAGS, m_bflags & EBIND_SER_MASK);
 
     /* Send ECMD_BIND message to object to bind to.
      */
     message(ECMD_BIND, m_objpath, OS_NULL, parameters, 
-        (bflags & EBIND_DEL_PARAMS) ? EMSG_DEL_CONTENT : 0 /* EMSG_NO_ERROR_MSGS */);
+        EMSG_DEL_CONTENT /* EMSG_NO_ERROR_MSGS */);
 
     /* Set that we are binding now
      */
@@ -326,28 +325,33 @@ void eBinding::bind(
 
   The srvbind function...
   
-  @param  bflags Binding flags. Either EBIND_DEFAULT (0), or EBIND_DEL_PARAMS.
   @return None.
 
 ****************************************************************************************************
 */
 void eBinding::srvbind(
-    eEnvelope *envelope,
-    eSet *parameters,
-    os_int bflags)
+    eEnvelope *envelope)
 {
+    eSet *parameters;
+        
     /* Save path from which the message was received.
      */           
     set_bindpath(envelope->source());
 
     /* Get flags from parameters.
      */
+    parameters = eSet::cast(envelope->content());
     m_bflags = (os_short)parameters->getl(E_BINDPRM_FLAGS);
+
+    /* Get parameters from derived class
+     */
+    parameters = new eSet(this);
+    get_srvbind_parameters(parameters);
 
     /* Send ECMD_BIND_REPLY message to back to client binding.
      */
     message(ECMD_BIND_REPLY, m_bindpath, OS_NULL, parameters, 
-        (bflags & EBIND_DEL_PARAMS) ? EMSG_DEL_CONTENT : 0 /* EMSG_NO_ERROR_MSGS */);
+        EMSG_DEL_CONTENT /* EMSG_NO_ERROR_MSGS */);
 
     /* Set binding state ok. 
      */
@@ -395,8 +399,6 @@ void eBinding::cbindok(
   The cbindok function...
   
   @param  envelope Message envelope from server binding.
-
-  @param bflags Binding flags. Either EBIND_DEFAULT (0), or EBIND_DEL_PARAMS.
   @return None.
 
 THIS NEEDS TO BE OVERRIDDEN BY DERIVED CLASS TO GET CURRENT VALUE
