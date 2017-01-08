@@ -134,7 +134,7 @@ void property_example_3()
     eVariable v, u;
     os_double f;
 
-    /* Adds the eMyClass to class list and creates property set for the class.
+    /* Adds the eMyClass to class list and creates property set for the class. 
      */
     eMyClass::setupclass(); 
 

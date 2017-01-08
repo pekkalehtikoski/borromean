@@ -182,7 +182,7 @@ void thread_example_2()
 
         txt = new eVariable(&root);
         txt->sets("message content");
-        root.message (MYCMD_WAKE_UP, "//thread1", OS_NULL, txt, EMSG_DEL_CONTENT|EMGS_NO_REPLIES);
+        root.message (MYCMD_WAKE_UP, "//thread1", OS_NULL, txt, EMSG_DEL_CONTENT|EMSG_NO_REPLIES);
 
         osal_thread_sleep(2000);
     }

@@ -106,10 +106,11 @@ eObject *eVariable::clone(
     /** Copy variable value. 
      */
     clonedobj->setv(this);
-
+    clonedobj->setdigs(digs());
+    
     /* Copy clonable attachments.
      */
-    clonegeneric(clonedobj, aflags|EOBJ_CLONE_ALL_CHILDREN);
+    clonegeneric(clonedobj, aflags);
     return clonedobj;
 }
 

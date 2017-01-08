@@ -86,7 +86,7 @@ public:
 
         osal_mutex_system_lock();
         addproperty(cls, EMYCLASS1P_A, emyclass1p_a, EPRO_PERSISTENT, "A");
-        addproperty(cls, EMYCLASS1P_B, emyclass1p_b, EPRO_PERSISTENT, "A");
+        addproperty(cls, EMYCLASS1P_B, emyclass1p_b, EPRO_PERSISTENT, "B");
         osal_mutex_system_unlock();
     }
 
@@ -97,20 +97,93 @@ public:
         eVariable *x, 
         os_int flags)
     {
-        os_double a;
+        os_double a, b;
 
         switch (propertynr)
         {
             case EMYCLASS1P_A:
                 a = x->getd();
-                printf ("GOT A + %f\n", a);
+                printf ("1: GOT A %f\n", a);
+                break;
 
-                /* f = c * 9.0 / 5.0 + 32.0;
-                setpropertyd(EMYCLASSP_FAHRENHEIT, f);
-                if (f < 70) setpropertys(EMYCLASSP_OPINION, "cold");
-                else if (f < 80) setpropertys(EMYCLASSP_OPINION, "ok");
-                else setpropertys(EMYCLASSP_OPINION, "hot");
-            */
+            case EMYCLASS1P_B:
+                b = x->getd();
+                printf ("1: GOT B %f\n", b);
+                break;
+        }
+    }
+};
+
+
+
+/**
+****************************************************************************************************
+
+  @brief Example property class.
+
+  X...
+
+****************************************************************************************************
+*/
+class eMyClass2 : public eThread
+{
+public:
+	/** Constructor. It is here just to initialize properties to default values.s
+     */
+    eMyClass2(
+		eObject *parent = OS_NULL,
+		e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT)
+	    : eThread(parent, oid, flags)
+    {
+        initproperties();
+    }
+
+    /* Get class identifier.
+     */
+    virtual os_int classid() 
+    {
+        return MY_CLASS_ID_2;
+    }
+
+    virtual void initialize(
+        eContainer *params = OS_NULL)
+    {
+        bind(EMYCLASS2P_X, "//thread1/_p/A", EBIND_DEFAULT);
+        bind(EMYCLASS2P_Y, "//thread1/_p/B", EBIND_CLIENTINIT);
+    }
+
+    /* Add eMyClass'es properties to class'es property set.
+    */
+    static void setupclass()
+    {
+        const os_int cls = MY_CLASS_ID_2;
+
+        osal_mutex_system_lock();
+        addproperty(cls, EMYCLASS2P_X, emyclass2p_x, EPRO_PERSISTENT, "X");
+        addproperty(cls, EMYCLASS2P_Y, emyclass2p_y, EPRO_PERSISTENT, "Y");
+        osal_mutex_system_unlock();
+    }
+
+    /* This gets called when property value changes
+     */
+    virtual void onpropertychange(
+        os_int propertynr, 
+        eVariable *x, 
+        os_int flags)
+    {
+        os_double a, b;
+
+        switch (propertynr)
+        {
+            case EMYCLASS2P_X:
+                a = x->getd();
+                printf ("2: GOT X %f\n", a);
+                break;
+
+            case EMYCLASS2P_Y:
+                b = x->getd();
+                printf ("1: GOT Y %f\n", b);
                 break;
         }
     }
@@ -132,28 +205,33 @@ public:
 void property_example_4()
 {
     eThread *t;
-    eThreadHandle thandle1;
+    eThreadHandle thandle1, thandle2;
     eContainer c;
 
     /* Adds the eMyClass to class list and creates property set for the class.
      */
     eMyClass1::setupclass(); 
 
-    /* Create and start thread 1 named "thread1".
+    /* Create and start thread named "thread1".
      */
     t = new eMyClass1();
 	t->addname("thread1", ENAME_PROCESS_NS);
-//    t->setpriority();
     t->start(&thandle1); /* After this t pointer is useless */
+
+    /* Create and start thread named "thread2".
+     */
+    t = new eMyClass2();
+	t->addname("thread2", ENAME_PROCESS_NS);
+    t->start(&thandle2); /* After this t pointer is useless */
 
     c.setpropertyd_msg("//thread1/_p/A", 11.5);
 
-    osal_thread_sleep(10000);
+    osal_thread_sleep(3000);
 
-    // f = converter->se>propertyd(EMYCLASSP_FAHRENHEIT);
-
-    /* Wait for thread to terminate
+    /* Wait for the threads to terminate.
      */
     thandle1.terminate();
     thandle1.join();
+    thandle2.terminate();
+    thandle2.join();
 }

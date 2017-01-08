@@ -493,7 +493,10 @@ eThread *eObject::thread()
 	if (mm_handle) 
     {
         eObject *o = mm_handle->m_root->parent();
-        if (o->classid() == ECLASSID_THREAD) return eThread::cast(o);
+        
+        /* If this is thread, return pointer.
+         */
+        if (o->isthread()) return (eThread*)o;
     }
 	return OS_NULL;
 }
@@ -1367,7 +1370,7 @@ void eObject::message(
 
     /* Add oix to source path when needed.
      */
-    if ((envelope->mflags() & (EMGS_NO_REPLIES|EMSG_NO_NEW_SOURCE_OIX)) == 0)
+    if ((envelope->mflags() & (EMSG_NO_REPLIES|EMSG_NO_NEW_SOURCE_OIX)) == 0)
     {
         envelope->appendsourceoix(this);
         envelope->addmflags(EMSG_NO_NEW_SOURCE_OIX);
@@ -1490,7 +1493,7 @@ getout:
 
     /* Send "no target" reply message to indicate that recipient was not found.
      */
-    if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
+    if ((envelope->mflags() & EMSG_NO_REPLIES) == 0)
     {
         message (ECMD_NO_TARGET, envelope->source(), 
             envelope->target(), OS_NULL, 
@@ -1578,6 +1581,12 @@ void eObject::message_process_ns(
         if (name == OS_NULL)
         {
             osal_mutex_system_unlock();
+#if OSAL_DEBUG
+            if ((envelope->flags() & EMSG_NO_ERROR_MSGS) == 0)
+            {
+                osal_debug_error("Name not found");   
+            }
+#endif
             delete objname;
             goto getout;
         }
@@ -1585,6 +1594,15 @@ void eObject::message_process_ns(
         /* Get thread to which the named object belongs to.
          */
         thread = name->thread();
+        if (thread == OS_NULL)
+        {
+            osal_mutex_system_unlock();
+            delete objname;
+#if OSAL_DEBUG
+            osal_debug_error("Name in process NS has no thread");
+#endif
+            goto getout;
+        }
 
         /* Check if targeted to multiple threads.
          */
@@ -1672,7 +1690,7 @@ void eObject::message_process_ns(
 getout:
     /* Send "no target" reply message to indicate that recipient was not found.
      */
-    if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
+    if ((envelope->mflags() & EMSG_NO_REPLIES) == 0)
     {
         message (ECMD_NO_TARGET, envelope->source(), 
             envelope->target(), OS_NULL, EMSG_DEL_CONTEXT, envelope->context());
@@ -1747,7 +1765,14 @@ void eObject::message_oix(
    
     /* Place the envelope in thread's message queue.
      */
-    thread->queue(envelope);
+    if (thread)
+    {
+        thread->queue(envelope);
+    }
+    else
+    {
+        delete envelope;
+    }
 
     /* Finish with synchronization and return.
      */
@@ -1757,7 +1782,7 @@ void eObject::message_oix(
 getout:
     /* Send "no target" reply message to indicate that recipient was not found.
      */
-    if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
+    if ((envelope->mflags() & EMSG_NO_REPLIES) == 0)
     {
         message (ECMD_NO_TARGET, envelope->source(), 
             envelope->target(), OS_NULL, EMSG_DEL_CONTEXT, envelope->context());
@@ -1788,6 +1813,7 @@ void eObject::onmessage(
     eNameSpace *nspace;
     eName *name, *nextname;
     os_memsz sz;
+    os_int command;
 
     target = envelope->target();
 
@@ -1804,6 +1830,30 @@ void eObject::onmessage(
         case '\0':
             break;
 
+        /* Messages to internal names
+         */
+        case '_':
+            command = envelope->command();
+            /* If properties
+             */
+            if (target[1] == 'p')
+            {
+                /* Commands to specific property.
+                 */
+                if (target[2] == '/')
+                {
+                    if (command == ECMD_SETPROPERTY)
+                    {
+                        setproperty(propertynr(target+3), 
+                            eVariable::cast(envelope->content()));
+                        return;
+                    }
+                }
+            }                       
+
+            /* continues...
+             */
+    
         /* Messages to named child objects.
          */
         default:
@@ -1832,7 +1882,7 @@ void eObject::onmessage(
 getout:
     /* Send "no target" reply message to indicate that recipient was not found.
      */
-    if ((envelope->mflags() & EMGS_NO_REPLIES) == 0)
+    if ((envelope->mflags() & EMSG_NO_REPLIES) == 0)
     {
         message (ECMD_NO_TARGET, envelope->source(), 
             envelope->target(), OS_NULL, EMSG_KEEP_CONTENT, envelope->context());
@@ -1845,7 +1895,7 @@ void eObject::setproperty_msg(
     eObject *x,
     os_int flags)
 {
-    message (ECMD_SETPROPERTY, remotepath, OS_NULL, x, EMSG_KEEP_CONTENT);
+    message (ECMD_SETPROPERTY, remotepath, OS_NULL, x, EMSG_KEEP_CONTENT|EMSG_NO_REPLIES);
 }
 
 
@@ -1905,9 +1955,10 @@ eVariable *eObject::addproperty(
         propertyset->ns_create();
     }
 
-    /* Add variable for this property in property set.
+    /* Add variable for this property in property set and name it.
      */
     p = new eVariable(propertyset, propertynr, pflags); 
+    p->addname(propertyname);
 
     /* Set name of the property to display to user.
      */
@@ -2051,6 +2102,109 @@ void eObject::initproperties()
             onpropertychange(p->oid(), p, 0);
         }
     }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get property number by property name.
+
+  The propertynr() function gets property number for this class by property name.
+  
+  @param  propertyname Name of the property numnr
+  @return Property number, -1 if failed.
+
+****************************************************************************************************
+*/
+os_int eObject::propertynr(
+    os_char *propertyname)
+{
+    eContainer *propertyset;
+    eNameSpace *ns;
+    eName *name;
+    os_int pnr;
+    eVariable v;
+
+    /* Synchronize.
+     */
+    osal_mutex_system_lock();
+ 
+    /* Get pointer to class'es property set. If not found, create one. Property set always
+       has name space
+     */
+    propertyset = eglobal->propertysets->firstc(classid());
+    if (propertyset == OS_NULL) goto notfound;
+
+    /* Get property nr from global variable describing the property by name.
+     */
+    ns = eNameSpace::cast(propertyset->first(EOID_NAMESPACE));
+    if (ns == OS_NULL) goto notfound;
+    v.sets(propertyname);
+    name = ns->findname(&v);
+    if (name == OS_NULL) goto notfound;
+    pnr = name->parent()->oid();
+
+    /* End sync and return.
+     */
+    osal_mutex_system_unlock();
+    return pnr;
+
+notfound:
+    osal_mutex_system_unlock();
+    return -1;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get property name by property number.
+
+  The propertynr() function gets property number for this class by property name.
+  
+  @param  propertyname Name of the property numnr
+  @return Property number, OS_NULL if failed.
+
+****************************************************************************************************
+*/
+os_char *eObject::propertyname(
+    os_int propertynr)
+{
+    eContainer *propertyset;
+    eName *name;
+    eVariable *p;
+    os_char *namestr;
+
+    /* Synchronize.
+     */
+    osal_mutex_system_lock();
+ 
+    /* Get pointer to class'es property set. If not found, create one. Property set always
+       has name space
+     */
+    propertyset = eglobal->propertysets->firstc(classid());
+    if (propertyset == OS_NULL) goto notfound;
+
+    /* Get global variable for this propery.
+     */
+    p = propertyset->firstv(propertynr);
+    if (p == OS_NULL) goto notfound;
+
+    /* get first name.
+     */
+    name = p->firstn(EOID_NAME);
+    if (name == OS_NULL) goto notfound;
+    namestr = name->gets();
+
+    /* End sync and return.
+     */
+    osal_mutex_system_unlock();
+    return namestr;
+
+notfound:
+    osal_mutex_system_unlock();
+    return OS_NULL;
 }
 
 /**

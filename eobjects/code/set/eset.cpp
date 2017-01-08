@@ -92,7 +92,6 @@ void eSet::setupclass()
   @brief Clone object
 
   The eSet::clone function clones and object including object's children. 
-  Names will be left detached in clone.
 
   @param  parent Parent for the clone.
   @param  oid Object identifier for the clone.
@@ -106,20 +105,62 @@ eObject *eSet::clone(
     e_oid oid,
     os_int aflags)
 {
-    eObject
-        *clonedobj,
-        *child;
+    eSet *clonedobj;
+    eObject *objptr;
+    os_char *p, *e, *strptr, *newstr;
+    os_uchar iid, ibytes;
+    os_schar itype;
+    os_int strsz;
+    os_memsz sz;
 
     clonedobj = new eSet(parent, oid, flags());
 
-    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
+    if (m_items)
     {
-        if (child->isclonable())
+        clonedobj->m_items = (os_char*)osal_memory_allocate(m_used, &sz);
+        clonedobj->m_used = m_used;
+        clonedobj->m_alloc = (os_int)sz;
+        os_memcpy(clonedobj->m_items, m_items, m_used);
+
+        /* Prepare to go trough items.
+         */
+        p = clonedobj->m_items;
+        e = p + m_used;
+
+        /* Search id from items untim match found.
+         */
+        while (p < e)
         {
-            child->clone(clonedobj, child->oid(), aflags);
-        }
+            iid = *(os_uchar*)(p++);
+            ibytes = *(os_uchar*)(p++);
+            if (ibytes)
+            {
+                itype = *(os_schar*)(p++);
+
+                switch (itype)
+                {
+                    case -OS_STRING:
+                        strptr = *(os_char**)p;
+                        strsz = *(os_int*)(p + sizeof(char*));
+                        newstr = (os_char*)osal_memory_allocate(strsz, OS_NULL);
+                        os_memcpy(newstr, strptr, strsz);
+                        *(os_char**)p = newstr;
+                        break;
+
+                    case OS_OBJECT:
+                        objptr = *(eObject**)p;
+                        *(eObject**)p = objptr->clone(clonedobj, EOID_CHILD, EOBJ_NO_MAP);
+                        break;
+                }
+            
+                p += ibytes;       
+            }
+        }        
     }
 
+    /* Copy clonable attachments.
+     */
+    clonegeneric(clonedobj, aflags);
     return clonedobj;
 }
 

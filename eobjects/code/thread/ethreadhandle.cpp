@@ -96,7 +96,7 @@ void eThreadHandle::terminate()
     if (m_unique_thread_name[0] != '\0')
     {
         message (ECMD_EXIT_THREAD, m_unique_thread_name, 
-            OS_NULL, OS_NULL, EMGS_NO_REPLIES);
+            OS_NULL, OS_NULL, EMSG_NO_REPLIES);
     }
 }
 

@@ -43,7 +43,8 @@ class eMyThread : public eThread
      */
     virtual os_int classid() {return MY_CLASS_ID;}
 
-    virtual void initialize(eContainer *params = OS_NULL)
+    virtual void initialize(
+        eContainer *params = OS_NULL)
     {
         osal_console_write("initializing worker\n");
     }
@@ -115,7 +116,7 @@ void thread_example_1()
 
         txt = new eVariable(&root);
         txt->sets("message content");
-        root.message (MY_COMMAND, "//worker", OS_NULL, txt, EMSG_DEL_CONTENT|EMGS_NO_REPLIES);
+        root.message (MY_COMMAND, "//worker", OS_NULL, txt, EMSG_DEL_CONTENT|EMSG_NO_REPLIES);
     }
 
     /* Wait for thread to terminate

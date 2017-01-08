@@ -36,7 +36,7 @@ class eThread;
 
 /* Flags for message()
  */
-#define EMGS_NO_REPLIES 1
+#define EMSG_NO_REPLIES 1
 #define EMSG_KEEP_CONTENT 0
 #define EMSG_NO_RESOLVE 2
 #define EMSG_NO_NEW_SOURCE_OIX 4
@@ -140,6 +140,13 @@ public:
     virtual os_int classid() 
     {
         return ECLASSID_OBJECT;
+    }
+
+    /* Return OS_TRUE if object is thread (derived). 
+     */
+    virtual os_boolean isthread() 
+    {
+        return OS_FALSE;
     }
 
     /* Allocate new child object by class identifier.
@@ -607,9 +614,8 @@ public:
 
     /* Property number to name.
      */
-    void propertyname(os_int propertynr,
-        os_char buf,
-        os_memsz bufsz);
+    os_char *propertyname(
+        os_int propertynr);
 
     /* Set property value.
      */

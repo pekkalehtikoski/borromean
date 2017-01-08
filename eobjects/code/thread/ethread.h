@@ -58,19 +58,27 @@ public:
 	inline static eThread *cast(
 		eObject *o) 
 	{ 
-#if OSAL_DEBUG == 0
         if (o) 
         {
-            os_int cid = (o)->classid();
-            osal_debug_assert(cid==EOID_THREAD || cid==EOID_PROCESS);
+            if (o->isthread()) return (eThread*)o;
+            osal_debug_assert(0);
         }
-#endif
-		return (eThread*)o;
+        return OS_NULL;
 	}
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_THREAD;}
+    virtual os_int classid() 
+    {
+        return ECLASSID_THREAD;
+    }
+
+    /* Return OS_TRUE if object is thread (derived). 
+     */
+    virtual os_boolean isthread() 
+    {
+        return OS_TRUE;
+    }
 
     /* Static constructor function for generating instance by class list.
      */
