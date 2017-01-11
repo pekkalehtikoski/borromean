@@ -36,6 +36,7 @@ class eThread;
 
 /* Flags for message()
  */
+#define EMSG_DEFAULT 0
 #define EMSG_NO_REPLIES 1
 #define EMSG_KEEP_CONTENT 0
 #define EMSG_NO_RESOLVE 2
@@ -297,7 +298,7 @@ public:
 		return 0;
 	}
 
-    /** Move trough object hirarcy.
+    /** Get parent object of tis object.
      */
     inline eObject *parent() 
 	{
@@ -309,6 +310,20 @@ public:
         }
 		return OS_NULL;
 	}
+
+    /** Get grandparent of this object.
+     */
+    inline eObject *grandparent() 
+	{
+		if (mm_handle) 
+        {
+            eHandle *h;
+            h = mm_handle->grandparent();
+            if (h) return h->m_object;
+        }
+		return OS_NULL;
+	}
+
 
     /** Get thread object.
      */
@@ -729,6 +744,11 @@ private:
         eEnvelope *envelope);
 
     void message_oix(
+        eEnvelope *envelope);
+
+    /* Forward message by object index within thread's object tree.
+     */
+    void onmessage_oix(
         eEnvelope *envelope);
 
     /* Create server side of property binding.

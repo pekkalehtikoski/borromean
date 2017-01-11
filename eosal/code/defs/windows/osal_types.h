@@ -30,7 +30,7 @@
 typedef char os_char;
 
 /** 8 bit signed character. This is forced to be always signed. Use this for type conversions
-    instead of oe_char.
+    instead of os_char.
  */
 typedef signed char os_schar;
 

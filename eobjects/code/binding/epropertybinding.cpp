@@ -252,14 +252,25 @@ void ePropertyBinding::bind(
     os_char *remoteproperty,
     os_int bflags)
 {
-    /* Save bind parameters
+    eSet 
+        *parameters;
+
+    /* Save bind parameters and flags.
      */
     set_propertyname(remoteproperty);
     m_localpropertynr = localpropertynr;
+    m_bflags = bflags | EBIND_CLIENT;
+
+    /* Get parameters from derived class and add flags to parameters.
+     */
+    parameters = new eSet(this);
+    get_bind_parameters(parameters);
+    parameters->setl(E_BINDPRM_FLAGS, bflags & EBIND_SER_MASK);
+    parameters->sets(E_BINDPRM_PROPERTYNAME, remoteproperty);
 
     /* Call base class to do binding.
      */
-    eBinding::bind(remotepath, bflags);
+    eBinding::bind(remotepath, parameters);
 }
 
 
@@ -276,19 +287,104 @@ void ePropertyBinding::bind(
 ****************************************************************************************************
 */
 void ePropertyBinding::srvbind(
+    eObject *obj,
     eEnvelope *envelope)
 {
-    /* Store property number on server side.
+    eSet *parameters, *reply;
+    eVariable propertyname;
+
+    parameters = eSet::cast(envelope->content());
+    if (parameters == OS_NULL)
+    {
+#if OSAL_DEBUG
+        osal_debug_error("srvbind() failed: no content.");
+#endif
+        goto notarget;
+    }
+
+    /* Get property name. 
      */
+    if (!parameters->get(E_BINDPRM_PROPERTYNAME, &propertyname)) 
+    {
+#if OSAL_DEBUG
+        osal_debug_error("srvbind() failed: Property name missing.");
+#endif
+        goto notarget;
+    }
 
+    /* Convert property name to property number (-1 = unknown property).
+     */
+    m_localpropertynr = obj->propertynr(propertyname.gets());
+    if (m_localpropertynr < 0)
+    {
+#if OSAL_DEBUG
+        osal_debug_error("srvbind() failed: Property name unknwon.");
+        osal_debug_error(propertyname.gets());
+#endif
+        goto notarget;
+    }
 
+    /* Set flags. Set EBIND_INTERTHREAD if envelope has not been moved from thread to another.
+     */
+    m_bflags = (os_short)parameters->getl(E_BINDPRM_FLAGS);
+    if (envelope->mflags() & EMSG_INTERTHREAD)
+    {
+        m_bflags |= EBIND_INTERTHREAD;
+    }
+
+    /* . If subproperties are requested, list ones matching in both ends.
+         Store initial property value.
+     */
+    reply = new eSet(this);
+    /* if (m_flags & ATTR)
+    {
+
+    } */
+
+    /* Complete the server end of binding and return.  
+     */
+    srvbind_base(envelope, reply);
+    return;
+
+notarget:
+    /* Send "no target" reply message to indicate that recipient was not found.
+     */
+    if ((envelope->mflags() & EMSG_NO_REPLIES) == 0)
+    {
+        message (ECMD_NO_TARGET, envelope->source(), 
+            envelope->target(), OS_NULL, EMSG_DEFAULT);
+    }
 }
 
 
 /**
 ****************************************************************************************************
 
-  @brief Save property name.
+  @brief Complete property binding at client end.
+
+  The ePropertyBinding::cbindok() function...
+
+  @param  obj Pointer to object being bound.
+  @param  envelope The enveloped returned from server end as ECMD_BIND_REPLY.
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::cbindok(
+    eObject *obj,
+    eEnvelope *envelope)
+{
+
+    /* Call base class to complete the binding.
+     */
+    cbindok_base(envelope);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Save remote property name.
 
   The ePropertyBinding::set_propertyname() releases current m_propertyname and stores 
   propertyname given as argument. If propertyname is OS_NULL, memory is just freeed.

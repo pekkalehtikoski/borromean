@@ -1851,7 +1851,7 @@ void eObject::onmessage(
         /* Message to child object using object idenfifier.
          */
         case '@':
-            osal_debug_error("illegal @ in target path");
+            onmessage_oix(envelope);
             break;
 
         /* Message to this object. 
@@ -1941,6 +1941,80 @@ getout:
     }
 #endif
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Forward message by object index within thread's object tree.
+
+  The eObject::onmessage_oix forwards message using object index string, like "@11_1". 
+  This function works only within thread.
+  
+  @param   envelope Message envelope to send. Contains command, target and source paths and
+           message content, etc.
+  @return  None. 
+
+****************************************************************************************************
+*/
+void eObject::onmessage_oix(
+    eEnvelope *envelope)
+{
+    eHandle *handle;
+    e_oix oix;
+    os_int ucnt;
+    os_short count;
+
+    /* Parse object index and use count from string.
+     */
+    count = oixparse(envelope->target(), &oix, &ucnt);
+    if (count == 0)
+    {
+#if OSAL_DEBUG
+        if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
+        {
+            osal_debug_error("onmessage() failed: object index format error, not \"@11_2\" format.");
+        }
+#endif
+        goto getout;
+    }
+
+    /* Find handle pointer.
+     */
+    handle = eget_handle(oix);
+    if (ucnt != handle->m_ucnt)
+    {
+#if OSAL_DEBUG
+        if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
+        {
+            osal_debug_error("message() failed: target object has been deleted.");
+        }
+#endif
+        goto getout;
+    }
+
+    /* Here object must be in same root tree (same thread).
+     */
+    osal_debug_assert(mm_handle != OS_NULL);
+    osal_debug_assert(mm_handle->m_root == handle->m_root);
+
+    /* Advance in target path and call function.
+     */
+    envelope->move_target_over_objname(count);
+    handle->m_object->onmessage(envelope);
+
+    return;
+
+getout:
+    /* Send "no target" reply message to indicate that recipient was not found.
+     */
+    if ((envelope->mflags() & EMSG_NO_REPLIES) == 0)
+    {
+        message (ECMD_NO_TARGET, envelope->source(), 
+            envelope->target(), OS_NULL, EMSG_DEL_CONTEXT, envelope->context());
+    }
+}
+
 
 
 void eObject::setproperty_msg(
@@ -2600,7 +2674,10 @@ void eObject::srvbind(
 
     /* Bind properties.
      */
-    binding->srvbind(envelope);
+    if (binding) 
+    {
+        binding->srvbind(this,  envelope);
+    }
 }
 
 

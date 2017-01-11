@@ -135,7 +135,15 @@ public:
     /* Bind the server end.
      */
     virtual void srvbind(
+        eObject *obj,
         eEnvelope *envelope);
+
+    /* Finish the client end of binding.
+     */
+    virtual void ePropertyBinding::cbindok(
+        eObject *obj,
+        eEnvelope *envelope);
+
 
     /*@}*/
 
@@ -145,7 +153,7 @@ protected:
     void set_propertyname(
         os_char *propertyname);
 
-    /** Client: Path to peropery name to bind to.
+    /** Client: Path to peropery name on remotr object to bind to.
         Server: Always OS_NULL.
      */
     os_char *m_propertyname;

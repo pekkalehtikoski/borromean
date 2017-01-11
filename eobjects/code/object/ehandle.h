@@ -216,9 +216,20 @@ public:
     os_long childcount(
         e_oid oid = EOID_CHILD);
 
-    /** Move trough object hirarcy.
+    /** Get parent object's handle.
      */
-    eHandle *parent() {return m_parent;}
+    eHandle *parent() 
+    {
+        return m_parent;
+    }
+
+    /** Get grand parent's handle.
+     */
+    eHandle *grandparent() 
+    {
+        if (m_parent) return m_parent ->m_parent;
+        return OS_NULL;
+    }
 
 	/* Get first child object identified by oid.
      */

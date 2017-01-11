@@ -42,7 +42,6 @@ eBinding::eBinding(
     m_ackcount = 0;
     m_objpathsz = m_bindpathsz = 0;
     m_objpath = m_bindpath = OS_NULL;
-
 }
 
 
@@ -85,6 +84,8 @@ eObject *eBinding::clone(
     e_oid oid,
     os_int aflags)
 {
+return OS_NULL;
+/* 
     eObject
         *clonedobj,
         *child;
@@ -100,6 +101,7 @@ eObject *eBinding::clone(
     }
 
     return clonedobj;
+*/
 }
 
 
@@ -232,12 +234,12 @@ void eBinding::onmessage(
     {
         switch (envelope->command())
         {
-            case ECMD_BIND:  
+            /* case ECMD_BIND:  
                 srvbind(envelope);
-                return;
+                return; */
 
             case ECMD_BIND_REPLY:
-                cbindok(envelope);
+                cbindok(this, envelope);
                 return;
 
             case ECMD_UNBIND:
@@ -272,9 +274,6 @@ void eBinding::onmessage(
   @param  objpath Path to object to bind to. If objpath is NULL, it or m_bflags is not changed.
           This is used for reactivating binding.
   @param  parameters Parameters for binding, depends on binding use.
-  @param  bflags Binding flags. Combination of EBIND_DEFAULT (0), EBIND_CLIENTINIT, 
-          EBIND_NOFLOWCLT and EBIND_METADATA.
-          Plus one of EBIND_PROPERTY, EBIND_TABLE, EBIND_FILE or EBIND_CONTAINER.
 
   @return None.
 
@@ -282,29 +281,20 @@ void eBinding::onmessage(
 */
 void eBinding::bind(
     os_char *objpath,
-    os_int bflags)
+    eSet *parameters)
 {
-    eSet *parameters;
 
     /* Disconnect, just in case binding is reused. If objpath is not given as argument, keep
        current object path.
      */
     disconnect(objpath == OS_NULL);
 
-    /* Save objpath and flags. If objpath is NULL, it or m_bflags is not changed. This is 
-       used for reactivating binding.
+    /* Save objpath. If objpath is NULL, this is skipped for reactivating binding.
      */
     if (objpath)
     {
         set_objpath(objpath);
-        m_bflags = bflags | EBIND_CLIENT;
     }
-
-    /* Get parameters from derived class and add flags to parameters.
-     */
-    parameters = new eSet(this);
-    get_bind_parameters(parameters);
-    parameters->setl(E_BINDPRM_FLAGS, m_bflags & EBIND_SER_MASK);
 
     /* Send ECMD_BIND message to object to bind to.
      */
@@ -328,35 +318,17 @@ void eBinding::bind(
 
 ****************************************************************************************************
 */
-void eBinding::srvbind(
-    eEnvelope *envelope)
+void eBinding::srvbind_base(
+    eEnvelope *envelope,
+    eObject *reply)
 {
-    eSet *parameters;
-
     /* Save path from which the message was received.
      */           
     set_bindpath(envelope->source());
 
-    /* Get flags from parameters.
-     */
-    parameters = eSet::cast(envelope->content());
-    m_bflags = (os_short)parameters->getl(E_BINDPRM_FLAGS);
-
-    /* If envelope has not been moved from thread to another.
-     */
-    if (envelope->mflags() & EMSG_INTERTHREAD)
-    {
-        m_bflags |= EBIND_INTERTHREAD;
-    }
-    
-    /* Get parameters from derived class.
-     */
-    parameters = new eSet(this);
-    get_srvbind_parameters(parameters);
-
     /* Send ECMD_BIND_REPLY message to back to client binding.
      */
-    message(ECMD_BIND_REPLY, m_bindpath, OS_NULL, parameters, 
+    message(ECMD_BIND_REPLY, m_bindpath, OS_NULL, reply, 
         EMSG_DEL_CONTENT /* EMSG_NO_ERROR_MSGS */);
 
     /* Set binding state ok. 
@@ -377,7 +349,7 @@ void eBinding::srvbind(
 
 ****************************************************************************************************
 */
-void eBinding::cbindok(
+void eBinding::cbindok_base(
     eEnvelope *envelope)
 {
     /* Save path from which the message was received.
@@ -596,4 +568,3 @@ void eBinding::disconnect(
     m_bflags &= ~(EBIND_CHANGED|EBIND_INTERTHREAD);
     m_ackcount = 0;
 }
-

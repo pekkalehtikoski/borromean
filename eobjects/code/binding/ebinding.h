@@ -50,6 +50,7 @@
 /* Enumeration of binding parameters
  */
 #define E_BINDPRM_FLAGS 1
+#define E_BINDPRM_PROPERTYNAME 2
 
 
 /**
@@ -117,7 +118,7 @@ public:
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eBinding(parent, oid, flags);
+        osal_debug_error("ebinding, newobj(): Cannot create abstract class.");
     }
 
     /*@}*/
@@ -162,20 +163,31 @@ public:
      */
     void bind(
         os_char *objpath,
-        os_int bflags);
+        eSet *parameters);
 
     virtual void get_bind_parameters(eSet *set) {};
 
-    /* Bind the server end.
+    /* Virtual base class to bind the server end.
      */
     virtual void srvbind(
-        eEnvelope *envelope);
+        eObject *obj,
+        eEnvelope *envelope) {};
 
-    virtual void get_srvbind_parameters(eSet *set) {};
-
-    /* Complete client end of binding.
+    /* Base classs function to bind the server end.
      */
-    void cbindok(
+    void srvbind_base(
+        eEnvelope *envelopee,
+        eObject *reply);
+
+    /* Virtual base class to complete client end of binding.
+     */
+    virtual void cbindok(
+        eObject *obj,
+        eEnvelope *envelope) {};
+
+    /* Complete the client end of binding by base class.
+     */
+    void cbindok_base(
         eEnvelope *envelope);
 
     /* Mark that value has changed.
