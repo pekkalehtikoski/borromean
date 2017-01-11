@@ -40,7 +40,7 @@ class eThread;
 #define EMSG_KEEP_CONTENT 0
 #define EMSG_NO_RESOLVE 2
 #define EMSG_NO_NEW_SOURCE_OIX 4
-#define EMSG_NO_ERROR_MSGS 8
+#define EMSG_NO_ERRORS 8
 #define EMSG_INTERTHREAD 16 /* Message has been passed from thread to another */
 #define EMSG_DEL_CONTENT 128
 #define EMSG_DEL_CONTEXT 256
@@ -729,6 +729,11 @@ private:
         eEnvelope *envelope);
 
     void message_oix(
+        eEnvelope *envelope);
+
+    /* Create server side of property binding.
+     */
+    void srvbind(
         eEnvelope *envelope);
 
 protected:

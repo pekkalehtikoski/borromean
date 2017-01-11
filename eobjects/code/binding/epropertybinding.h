@@ -132,8 +132,31 @@ public:
         os_char *remoteproperty,
         os_int bflags);
 
+    /* Bind the server end.
+     */
+    virtual void srvbind(
+        eEnvelope *envelope);
+
     /*@}*/
 
+protected:
+    /* Save property name.
+     */
+    void set_propertyname(
+        os_char *propertyname);
+
+    /** Client: Path to peropery name to bind to.
+        Server: Always OS_NULL.
+     */
+    os_char *m_propertyname;
+
+    /** Size of property name allocation in bytes.
+     */
+    os_short m_propertynamesz;
+
+    /** Which property of local object is bound.
+     */
+    os_int m_localpropertynr;
 };
 
 #endif

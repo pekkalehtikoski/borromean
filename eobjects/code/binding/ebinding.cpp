@@ -573,11 +573,11 @@ void eBinding::disconnect(
 
         case E_BINDING_NOW:
             message(ECMD_UNBIND,
-                 m_objpath, OS_NULL, OS_NULL, EMSG_NO_ERROR_MSGS);
+                 m_objpath, OS_NULL, OS_NULL, EMSG_NO_ERRORS);
         
         case E_BINDING_OK:
             message((m_bflags & EBIND_CLIENT) ? ECMD_UNBIND : ECMD_SRV_UNBIND,
-                 m_bindpath, OS_NULL, OS_NULL, EMSG_NO_ERROR_MSGS|EMSG_NO_RESOLVE);
+                 m_bindpath, OS_NULL, OS_NULL, EMSG_NO_ERRORS|EMSG_NO_RESOLVE);
     }
 
     if (m_objpath && !keep_objpath)

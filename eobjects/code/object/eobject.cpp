@@ -806,9 +806,9 @@ void eObject::ns_create(
 	{
 		/* If namespace identifier matches, just return.
 		 */
-        if (ns->m_namespace_id)
+        if (ns->namespaceid())
         {
-            if (!os_strcmp(namespace_id, ns->m_namespace_id->gets()))
+            if (!os_strcmp(namespace_id, ns->namespaceid()->gets()))
                 return;
         }
 
@@ -816,6 +816,7 @@ void eObject::ns_create(
            We should keep ot if we want to have multiple name spaces???
 		 */
 		delete ns;
+        ns->setnamespaceid(OS_NULL);
 	}
 
 	/* Create name space.
@@ -823,8 +824,8 @@ void eObject::ns_create(
 	ns = eNameSpace::newobj(this, EOID_NAMESPACE);
     if (namespace_id)
     {
-        ns->m_namespace_id = new eVariable(ns);
-        ns->m_namespace_id->sets(namespace_id);
+        ns->setnamespaceid(new eVariable(ns));
+        ns->namespaceid()->sets(namespace_id);
     }
 
 	/* Remap names in child objects ??? Do we need this. In practise name space is created 
@@ -1096,9 +1097,9 @@ eNameSpace *eObject::findnamespace(
                 if (namespace_id)
                 {
                     ns = eNameSpace::cast(ns_h->object());
-                    if (ns) if (ns->m_namespace_id)
+                    if (ns) if (ns->namespaceid())
                     {
-                        if (os_strcmp(namespace_id, ns->m_namespace_id->gets()))
+                        if (os_strcmp(namespace_id, ns->namespaceid()->gets()))
                             return ns;
                     }
                 }
@@ -1500,6 +1501,16 @@ getout:
             EMSG_DEL_CONTEXT, 
             envelope->context());
     }
+
+#if OSAL_DEBUG
+    /* Report "no target: error
+     */    
+    if ((envelope->mflags() & EMSG_NO_ERRORS) == 0)
+    {
+        osal_debug_error("message() failed: Name or namespace not found within thread.");
+    }
+#endif
+
     delete envelope;
 }    
 
@@ -1545,6 +1556,9 @@ void eObject::message_process_ns(
         if (eglobal->process == OS_NULL) 
         {
             osal_mutex_system_unlock();
+#if OSAL_DEBUG
+            osal_debug_error("message() failed: eobjects library not initialized.");
+#endif
             goto getout;
         }
 
@@ -1582,9 +1596,9 @@ void eObject::message_process_ns(
         {
             osal_mutex_system_unlock();
 #if OSAL_DEBUG
-            if ((envelope->flags() & EMSG_NO_ERROR_MSGS) == 0)
+            if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
             {
-                osal_debug_error("Name not found");   
+                osal_debug_error("message() failed: Name not found in process NS.");   
             }
 #endif
             delete objname;
@@ -1599,7 +1613,10 @@ void eObject::message_process_ns(
             osal_mutex_system_unlock();
             delete objname;
 #if OSAL_DEBUG
-            osal_debug_error("Name in process NS has no thread");
+            if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
+            {
+                osal_debug_error("message() failed: Name in process NS has no eThread as root.");
+            }
 #endif
             goto getout;
         }
@@ -1731,6 +1748,12 @@ void eObject::message_oix(
     count = oixparse(envelope->target(), &oix, &ucnt);
     if (count == 0)
     {
+#if OSAL_DEBUG
+        if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
+        {
+            osal_debug_error("message() failed: object index format error, not \"@11_2\" format.");
+        }
+#endif
         goto getout;
     }
 
@@ -1741,6 +1764,12 @@ void eObject::message_oix(
     if (ucnt != handle->m_ucnt)
     {
         osal_mutex_system_unlock();
+#if OSAL_DEBUG
+        if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
+        {
+            osal_debug_error("message() failed: target object has been deleted.");
+        }
+#endif
         goto getout;
     }
 
@@ -1828,6 +1857,20 @@ void eObject::onmessage(
         /* Message to this object. 
          */
         case '\0':
+            command = envelope->command();
+            switch (command)
+            {
+              case ECMD_BIND:
+                srvbind(envelope);
+                return;
+
+              case ECMD_UNBIND:
+                /* THIS IS TRICKY: WE NEED TO FIND BINDING BY SOURCE
+                    PATH AND FORWARD THIS TO IT */
+                ;
+
+            }
+            osal_debug_error("onmessage(): Message not processed");
             break;
 
         /* Messages to internal names
@@ -1842,8 +1885,9 @@ void eObject::onmessage(
                  */
                 if (target[2] == '/')
                 {
-                    if (command == ECMD_SETPROPERTY)
+                    switch (command)
                     {
+                      case ECMD_SETPROPERTY:
                         setproperty(propertynr(target+3), 
                             eVariable::cast(envelope->content()));
                         return;
@@ -1887,6 +1931,15 @@ getout:
         message (ECMD_NO_TARGET, envelope->source(), 
             envelope->target(), OS_NULL, EMSG_KEEP_CONTENT, envelope->context());
     }
+
+#if OSAL_DEBUG
+    /* Show error message.
+     */
+    if ((envelope->mflags() & EMSG_NO_ERRORS) == 0)
+    {
+        osal_debug_error("onmessage() failed: target not found.");
+    }
+#endif
 }
 
 
@@ -2087,7 +2140,8 @@ void eObject::initproperties()
     osal_mutex_system_unlock();
     if (propertyset == OS_NULL)
     {
-        osal_debug_error("setproperty: Class has no property support");
+        osal_debug_error("setproperty: Class has no property support "
+            "(did you call setupclass for it?)");
         return;
     }
 
@@ -2474,6 +2528,7 @@ os_double eObject::propertyd(
           - EBIND_METADATA: If meta data, like text, unit, attributes, etc exists, it is 
             also transferred from remote object to local object.
           - EBIND_TEMPORARY: Binding is temporary and will not be cloned nor serialized.
+  @param  envelope Used for server binding only. OS_NULL for clint binding.
   @return None.
 
 ****************************************************************************************************
@@ -2501,11 +2556,51 @@ void eObject::bind(
     /* Create binding
      */
     binding = new ePropertyBinding(bindings, EOID_ITEM, (bflags & EBIND_TEMPORARY)
-            ? EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE : EOBJ_DEFAULT);
+         ? EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE : EOBJ_DEFAULT);
 
-    /* Bind properties
+    /* Bind properties. This function will send message to remote object to bind.
      */
     binding->bind(localpropertynr, remotepath, remoteproperty, bflags);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Create server end of property binding.
+
+  The eObject::srvbind() function 
+  
+  @param  envelope Message envelope, COMMAND ECMD_BIND.
+  @return None.
+
+****************************************************************************************************
+*/
+void eObject::srvbind(
+    eEnvelope *envelope)
+{
+    eContainer *bindings;
+    ePropertyBinding *binding;
+
+    /* Get or create bindings container.
+     */
+    bindings = firstc(EOID_BINDINGS);
+    if (bindings == OS_NULL)
+    {
+        bindings = new eContainer(this, EOID_BINDINGS, EOBJ_IS_ATTACHMENT);
+    }
+
+    /* Verify that same binding dows not already exist ?? How to modify bindings ????
+     *?
+
+    /* Create binding
+     */
+    binding = new ePropertyBinding(bindings, EOID_ITEM, 
+         EOBJ_NOT_CLONABLE | EOBJ_NOT_SERIALIZABLE);
+
+    /* Bind properties.
+     */
+    binding->srvbind(envelope);
 }
 
 

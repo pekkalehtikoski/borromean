@@ -65,6 +65,13 @@ public:
      */
     virtual ~eNameSpace();
 
+    /* Clone name space
+     */
+    eObject *clone(
+        eObject *parent, 
+        e_oid oid,
+        os_int aflags);
+
     /* Cast eObject pointer to eNameSpace pointer. 
      */
 	inline static eNameSpace *cast(
@@ -76,7 +83,10 @@ public:
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_NAMESPACE;}
+    virtual os_int classid() 
+    {
+        return ECLASSID_NAMESPACE;
+    }
 
     /* Static constructor function for generating instance by class list.
      */
@@ -102,12 +112,26 @@ public:
     */
     /*@{*/
 
+    /* Get name space id, OS_NULL if none.
+     */
+    inline eVariable *namespaceid() 
+    {
+        return m_namespace_id;
+    }
+
+    /* Set name space id.
+     */
+    inline void setnamespaceid(
+        eVariable *nsid) 
+    {
+        m_namespace_id = nsid;
+    }
+
 	/* Get first child object with specific name.
      */
     eName *findname(
         eVariable *x = OS_NULL);
 
-    eVariable *m_namespace_id;
 
     /*@}*/
 
@@ -263,6 +287,8 @@ protected:
      */
     void ixdelete_case6(
         eName *n); 
+
+    eVariable *m_namespace_id;
 };
 
 #endif

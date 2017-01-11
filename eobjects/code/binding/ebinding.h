@@ -36,6 +36,7 @@
 #define EBIND_CLIENT 1024 /* no need to give as argument */
 #define EBIND_CHANGED 2048 /* no need to give as argument */
 #define EBIND_INTERTHREAD 4096 /* no need to give as argument */
+// #define EBIND_XXX 8192
 
 #define EBIND_TYPE_MASK 7
 #define EBIND_SER_MASK (EBIND_TYPE_MASK|EBIND_CLIENTINIT|EBIND_NOFLOWCLT|EBIND_METADATA)
@@ -167,7 +168,7 @@ public:
 
     /* Bind the server end.
      */
-    void srvbind(
+    virtual void srvbind(
         eEnvelope *envelope);
 
     virtual void get_srvbind_parameters(eSet *set) {};

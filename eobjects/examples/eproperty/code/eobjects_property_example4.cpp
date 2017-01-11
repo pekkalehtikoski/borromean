@@ -29,7 +29,7 @@
    integer. Class identifiers starting from ECLASSID_APP_BASE are reserved for the application.
  */
 #define MY_CLASS_ID_1 (ECLASSID_APP_BASE + 1)
-#define MY_CLASS_ID_2 (ECLASSID_APP_BASE + 1)
+#define MY_CLASS_ID_2 (ECLASSID_APP_BASE + 2)
 
 /* Enumeration of eMyClass1 properties. Normally these would be in header file.
  */
@@ -39,7 +39,7 @@
 static os_char emyclass1p_a[] = "A";
 static os_char emyclass1p_b[] = "B";
 
-/* Enumeration of eMyClass2 properties. Normally these would be in header file.
+/* Enumeration of eMyClass2 properties. 
  */
 #define EMYCLASS2P_X 10
 #define EMYCLASS2P_Y 20
@@ -208,9 +208,10 @@ void property_example_4()
     eThreadHandle thandle1, thandle2;
     eContainer c;
 
-    /* Adds the eMyClass to class list and creates property set for the class.
+    /* Adds the eMyClass1 and eMyClass2 to class list and creates property set for the class.
      */
     eMyClass1::setupclass(); 
+    eMyClass2::setupclass(); 
 
     /* Create and start thread named "thread1".
      */

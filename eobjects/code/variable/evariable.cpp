@@ -85,8 +85,8 @@ eVariable::~eVariable()
 
   @brief Clone object
 
-  The eContainer::clone function clones and object including object's children. 
-  Names will be left detached in clone if EOBJ_NO_MAP flag is given.
+  The clone function clones the variable and clonable attachments. Names will be left detached 
+  in clone if EOBJ_NO_MAP flag is given.
 
   @param  parent Parent for the clone.
   @param  oid Object identifier for the clone.

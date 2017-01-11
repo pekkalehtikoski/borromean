@@ -35,6 +35,10 @@ ePropertyBinding::ePropertyBinding(
 	os_int flags)
     : eBinding(parent, oid, flags)
 {
+    /* Clear member variables.
+     */
+    m_propertyname = OS_NULL;
+    m_propertynamesz = 0;
 }
 
 
@@ -51,6 +55,7 @@ ePropertyBinding::ePropertyBinding(
 */
 ePropertyBinding::~ePropertyBinding()
 {
+    set_propertyname(OS_NULL);
 }
 
 
@@ -247,5 +252,87 @@ void ePropertyBinding::bind(
     os_char *remoteproperty,
     os_int bflags)
 {
+    /* Save bind parameters
+     */
+    set_propertyname(remoteproperty);
+    m_localpropertynr = localpropertynr;
+
+    /* Call base class to do binding.
+     */
+    eBinding::bind(remotepath, bflags);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Create server end property binding.
+
+  The ePropertyBinding::srvbind() function...
+
+  @param  envelope Recetved ECMD_BIND command envelope.
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::srvbind(
+    eEnvelope *envelope)
+{
+    /* Store property number on server side.
+     */
+
 
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Save property name.
+
+  The ePropertyBinding::set_propertyname() releases current m_propertyname and stores 
+  propertyname given as argument. If propertyname is OS_NULL, memory is just freeed.
+
+  @param  propertyname Pointer to object path.
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::set_propertyname(
+    os_char *propertyname)
+{
+    if (m_propertyname)
+    {
+        osal_memory_free(m_propertyname, m_propertynamesz);
+        m_propertyname = OS_NULL;
+        m_propertynamesz = 0;
+    }
+
+    if (propertyname)
+    {
+        m_propertynamesz = (os_short)os_strlen(propertyname);
+        m_propertyname = (os_char*)osal_memory_allocate(m_propertynamesz, OS_NULL);
+        os_memcpy(m_propertyname, propertyname, m_propertynamesz);
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Save property name.
+
+  The ePropertyBinding::set_propertyname() releases current m_propertyname and stores 
+  propertyname given as argument. If propertyname is OS_NULL, memory is just freeed.
+
+  @param  propertyname Pointer to object path.
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::set_propertyvalue(
+    os_char *propertyname)
+{
+
+}
+

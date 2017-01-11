@@ -150,6 +150,42 @@ eNameSpace::~eNameSpace()
 /**
 ****************************************************************************************************
 
+  @brief Clone name space
+
+  The clone function clones the name space object and clonable attachments. 
+  Names will be left detached in clone if EOBJ_NO_MAP flag is given.
+
+  @param  parent Parent for the clone.
+  @param  oid Object identifier for the clone.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names. 
+  @return Pointer to the clone.
+
+****************************************************************************************************
+*/
+eObject *eNameSpace::clone(
+    eObject *parent, 
+    e_oid oid,
+    os_int aflags)
+{
+    eNameSpace *clonedobj;
+    clonedobj = new eNameSpace(parent, oid, flags());
+
+    if (m_namespace_id)
+    {
+        clonedobj->m_namespace_id 
+            = eVariable::cast(m_namespace_id->clone(clonedobj, EOID_CHILD, EOBJ_NO_MAP));
+    }
+  
+    /* Copy clonable attachments.
+     */
+    clonegeneric(clonedobj, aflags);
+    return clonedobj;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Delete all child objects.
 
   The eNameSpace::unmap_all() function deletes all children of this object. This is faster code
