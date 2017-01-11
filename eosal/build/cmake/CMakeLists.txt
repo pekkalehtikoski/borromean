@@ -13,7 +13,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_LIB})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $ENV{E_LIB})
 
 # Set path to source files.
-set(BACKBONE "$ENV{E_ROOT}/${E_PROJECT}/backbone")
+set(BACKBONE "$ENV{E_ROOT}/${E_PROJECT}/code")
 set(EXTENSIONS "$ENV{E_ROOT}/${E_PROJECT}/extensions")
 
 # Set include paths.

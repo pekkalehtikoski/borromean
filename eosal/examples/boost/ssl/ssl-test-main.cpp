@@ -15,7 +15,7 @@ it fully.
 */
 #include <cstdlib>
 #include <iostream>
-#include "eosal/backbone/defs/osal_backbone.h"
+#include "eosal/code/defs/osal_code.h"
 #include "eosal/examples/boost/ssl/client.h"
 #include "eosal/examples/boost/ssl/server.h"
 

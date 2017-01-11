@@ -13,7 +13,7 @@
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
-#include "eosal/backbone/defs/osal_backbone.h"
+#include "eosal/code/defs/osal_code.h"
 #include "eosal/examples/boost/ssl/server.h"
 
 typedef boost::asio::ssl::stream<boost::asio::ip::tcp::socket> ssl_socket;

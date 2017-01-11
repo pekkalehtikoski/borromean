@@ -26,7 +26,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/defs/osal_backbone.h"
+#include "eosal/code/defs/osal_code.h"
 #include <boost/thread.hpp>
 #include <boost/thread/scoped_thread.hpp>
 #include <boost/chrono.hpp>

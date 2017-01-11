@@ -33,7 +33,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/defs/osal_backbone.h"
+#include "eosal/code/defs/osal_code.h"
 #define _WIN32_WINNT 0x0403
 #include <windows.h>
 

@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/main/osal_main.h"
+#include "eosal/code/main/osal_main.h"
 
 
 /** Test data array size. To test embedded systems keep the array small because test time

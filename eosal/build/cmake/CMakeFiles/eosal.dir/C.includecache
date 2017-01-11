@@ -6,51 +6,51 @@
 
 #IncludeRegexTransform: 
 
-../../../eosal/backbone/console/common/osal_console.h
+../../../eosal/code/console/common/osal_console.h
 
-../../../eosal/backbone/console/common/osal_sysconsole.h
+../../../eosal/code/console/common/osal_sysconsole.h
 
-../../../eosal/backbone/debug/common/osal_debug.h
+../../../eosal/code/debug/common/osal_debug.h
 
-../../../eosal/backbone/defs/common/osal_common_defs.h
+../../../eosal/code/defs/common/osal_common_defs.h
 
-../../../eosal/backbone/defs/common/osal_global.h
+../../../eosal/code/defs/common/osal_global.h
 
-../../../eosal/backbone/defs/common/osal_status.h
+../../../eosal/code/defs/common/osal_status.h
 
-../../../eosal/backbone/defs/windows/osal_defs.h
+../../../eosal/code/defs/windows/osal_defs.h
 
-../../../eosal/backbone/defs/windows/osal_types.h
+../../../eosal/code/defs/windows/osal_types.h
 
-../../../eosal/backbone/event/common/osal_event.h
+../../../eosal/code/event/common/osal_event.h
 
-../../../eosal/backbone/initialize/common/osal_initialize.h
+../../../eosal/code/initialize/common/osal_initialize.h
 
-../../../eosal/backbone/int64/common/osal_int64.h
+../../../eosal/code/int64/common/osal_int64.h
 
-../../../eosal/backbone/memory/common/osal_memory.h
+../../../eosal/code/memory/common/osal_memory.h
 memory.h
 -
 
-../../../eosal/backbone/memory/common/osal_sysmem.h
+../../../eosal/code/memory/common/osal_sysmem.h
 
-../../../eosal/backbone/mutex/common/osal_mutex.h
+../../../eosal/code/mutex/common/osal_mutex.h
 
-../../../eosal/backbone/resmon/common/osal_resource_monitor.h
+../../../eosal/code/resmon/common/osal_resource_monitor.h
 
-../../../eosal/backbone/string/common/osal_char.h
+../../../eosal/code/string/common/osal_char.h
 
-../../../eosal/backbone/string/common/osal_string.h
+../../../eosal/code/string/common/osal_string.h
 
-../../../eosal/backbone/thread/common/osal_thread.h
+../../../eosal/code/thread/common/osal_thread.h
 
-../../../eosal/backbone/timer/common/osal_timer.h
+../../../eosal/code/timer/common/osal_timer.h
 
-../../../eosal/backbone/utf16/common/osal_utf16.h
+../../../eosal/code/utf16/common/osal_utf16.h
 eosal/osal.h
-../../../eosal/backbone/utf16/common/eosal/osal.h
+../../../eosal/code/utf16/common/eosal/osal.h
 
-../../../eosal/backbone/utf32/common/osal_utf32.h
+../../../eosal/code/utf32/common/osal_utf32.h
 
 ../../../eosal/extensions/clock/common/osal_clock.h
 
@@ -69,48 +69,48 @@ eosal/osal.h
 ../../../eosal/extensions/typeid/common/osal_typeid.h
 
 ../../../eosal/osal.h
-eosal/backbone/defs/windows/osal_defs.h
-../../../eosal/eosal/backbone/defs/windows/osal_defs.h
-eosal/backbone/defs/windows/osal_types.h
-../../../eosal/eosal/backbone/defs/windows/osal_types.h
-eosal/backbone/defs/common/osal_common_defs.h
-../../../eosal/eosal/backbone/defs/common/osal_common_defs.h
-eosal/backbone/int64/common/osal_int64.h
-../../../eosal/eosal/backbone/int64/common/osal_int64.h
-eosal/backbone/memory/common/osal_memory.h
-../../../eosal/eosal/backbone/memory/common/osal_memory.h
-eosal/backbone/memory/common/osal_sysmem.h
-../../../eosal/eosal/backbone/memory/common/osal_sysmem.h
-eosal/backbone/string/common/osal_char.h
-../../../eosal/eosal/backbone/string/common/osal_char.h
-eosal/backbone/string/common/osal_string.h
-../../../eosal/eosal/backbone/string/common/osal_string.h
-eosal/backbone/defs/common/osal_status.h
-../../../eosal/eosal/backbone/defs/common/osal_status.h
-eosal/backbone/timer/common/osal_timer.h
-../../../eosal/eosal/backbone/timer/common/osal_timer.h
-eosal/backbone/debug/common/osal_debug.h
-../../../eosal/eosal/backbone/debug/common/osal_debug.h
-eosal/backbone/resmon/common/osal_resource_monitor.h
-../../../eosal/eosal/backbone/resmon/common/osal_resource_monitor.h
-eosal/backbone/console/common/osal_console.h
-../../../eosal/eosal/backbone/console/common/osal_console.h
-eosal/backbone/console/common/osal_sysconsole.h
-../../../eosal/eosal/backbone/console/common/osal_sysconsole.h
-eosal/backbone/defs/common/osal_global.h
-../../../eosal/eosal/backbone/defs/common/osal_global.h
-eosal/backbone/initialize/common/osal_initialize.h
-../../../eosal/eosal/backbone/initialize/common/osal_initialize.h
-eosal/backbone/mutex/common/osal_mutex.h
-../../../eosal/eosal/backbone/mutex/common/osal_mutex.h
-eosal/backbone/event/common/osal_event.h
-../../../eosal/eosal/backbone/event/common/osal_event.h
-eosal/backbone/thread/common/osal_thread.h
-../../../eosal/eosal/backbone/thread/common/osal_thread.h
-eosal/backbone/utf16/common/osal_utf16.h
-../../../eosal/eosal/backbone/utf16/common/osal_utf16.h
-eosal/backbone/utf32/common/osal_utf32.h
-../../../eosal/eosal/backbone/utf32/common/osal_utf32.h
+eosal/code/defs/windows/osal_defs.h
+../../../eosal/eosal/code/defs/windows/osal_defs.h
+eosal/code/defs/windows/osal_types.h
+../../../eosal/eosal/code/defs/windows/osal_types.h
+eosal/code/defs/common/osal_common_defs.h
+../../../eosal/eosal/code/defs/common/osal_common_defs.h
+eosal/code/int64/common/osal_int64.h
+../../../eosal/eosal/code/int64/common/osal_int64.h
+eosal/code/memory/common/osal_memory.h
+../../../eosal/eosal/code/memory/common/osal_memory.h
+eosal/code/memory/common/osal_sysmem.h
+../../../eosal/eosal/code/memory/common/osal_sysmem.h
+eosal/code/string/common/osal_char.h
+../../../eosal/eosal/code/string/common/osal_char.h
+eosal/code/string/common/osal_string.h
+../../../eosal/eosal/code/string/common/osal_string.h
+eosal/code/defs/common/osal_status.h
+../../../eosal/eosal/code/defs/common/osal_status.h
+eosal/code/timer/common/osal_timer.h
+../../../eosal/eosal/code/timer/common/osal_timer.h
+eosal/code/debug/common/osal_debug.h
+../../../eosal/eosal/code/debug/common/osal_debug.h
+eosal/code/resmon/common/osal_resource_monitor.h
+../../../eosal/eosal/code/resmon/common/osal_resource_monitor.h
+eosal/code/console/common/osal_console.h
+../../../eosal/eosal/code/console/common/osal_console.h
+eosal/code/console/common/osal_sysconsole.h
+../../../eosal/eosal/code/console/common/osal_sysconsole.h
+eosal/code/defs/common/osal_global.h
+../../../eosal/eosal/code/defs/common/osal_global.h
+eosal/code/initialize/common/osal_initialize.h
+../../../eosal/eosal/code/initialize/common/osal_initialize.h
+eosal/code/mutex/common/osal_mutex.h
+../../../eosal/eosal/code/mutex/common/osal_mutex.h
+eosal/code/event/common/osal_event.h
+../../../eosal/eosal/code/event/common/osal_event.h
+eosal/code/thread/common/osal_thread.h
+../../../eosal/eosal/code/thread/common/osal_thread.h
+eosal/code/utf16/common/osal_utf16.h
+../../../eosal/eosal/code/utf16/common/osal_utf16.h
+eosal/code/utf32/common/osal_utf32.h
+../../../eosal/eosal/code/utf32/common/osal_utf32.h
 
 ../../../eosal/osalx.h
 eosal/osal.h
@@ -132,85 +132,85 @@ eosal/extensions/socket/common/osal_socket_worker.h
 eosal/extensions/socket/common/osal_socket.h
 ../../../eosal/eosal/extensions/socket/common/osal_socket.h
 
-/coderoot/borromean/eosal/backbone/debug/common/osal_debug.c
+/coderoot/borromean/eosal/code/debug/common/osal_debug.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/debug/common/eosal/osal.h
+/coderoot/borromean/eosal/code/debug/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/initialize/common/osal_initialize.c
+/coderoot/borromean/eosal/code/initialize/common/osal_initialize.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/initialize/common/eosal/osal.h
+/coderoot/borromean/eosal/code/initialize/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/int64/common/osal_int64.c
+/coderoot/borromean/eosal/code/int64/common/osal_int64.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/int64/common/eosal/osal.h
+/coderoot/borromean/eosal/code/int64/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/memory/common/os_memclear.c
+/coderoot/borromean/eosal/code/memory/common/os_memclear.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/memory/common/eosal/osal.h
+/coderoot/borromean/eosal/code/memory/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/memory/common/os_memcpy.c
+/coderoot/borromean/eosal/code/memory/common/os_memcpy.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/memory/common/eosal/osal.h
+/coderoot/borromean/eosal/code/memory/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/memory/common/osal_memory.c
+/coderoot/borromean/eosal/code/memory/common/osal_memory.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/memory/common/eosal/osal.h
+/coderoot/borromean/eosal/code/memory/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/resmon/common/osal_resource_monitor.c
+/coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/resmon/common/eosal/osal.h
+/coderoot/borromean/eosal/code/resmon/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/string/common/os_strchr.c
+/coderoot/borromean/eosal/code/string/common/os_strchr.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/string/common/eosal/osal.h
+/coderoot/borromean/eosal/code/string/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/string/common/os_strcmp.c
+/coderoot/borromean/eosal/code/string/common/os_strcmp.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/string/common/eosal/osal.h
+/coderoot/borromean/eosal/code/string/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/string/common/os_strlen.c
+/coderoot/borromean/eosal/code/string/common/os_strlen.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/string/common/eosal/osal.h
+/coderoot/borromean/eosal/code/string/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/string/common/os_strncat.c
+/coderoot/borromean/eosal/code/string/common/os_strncat.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/string/common/eosal/osal.h
+/coderoot/borromean/eosal/code/string/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/string/common/os_strncpy.c
+/coderoot/borromean/eosal/code/string/common/os_strncpy.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/string/common/eosal/osal.h
+/coderoot/borromean/eosal/code/string/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/utf16/common/osal_char_utf16_to_utf32.c
+/coderoot/borromean/eosal/code/utf16/common/osal_char_utf16_to_utf32.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/utf16/common/eosal/osal.h
+/coderoot/borromean/eosal/code/utf16/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/utf16/common/osal_char_utf32_to_utf16.c
+/coderoot/borromean/eosal/code/utf16/common/osal_char_utf32_to_utf16.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/utf16/common/eosal/osal.h
+/coderoot/borromean/eosal/code/utf16/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/utf16/common/osal_string_utf16_to_utf8.c
+/coderoot/borromean/eosal/code/utf16/common/osal_string_utf16_to_utf8.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/utf16/common/eosal/osal.h
+/coderoot/borromean/eosal/code/utf16/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/utf16/common/osal_string_utf16_to_utf8_malloc.c
+/coderoot/borromean/eosal/code/utf16/common/osal_string_utf16_to_utf8_malloc.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/utf16/common/eosal/osal.h
+/coderoot/borromean/eosal/code/utf16/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/utf16/common/osal_string_utf8_to_utf16.c
+/coderoot/borromean/eosal/code/utf16/common/osal_string_utf8_to_utf16.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/utf16/common/eosal/osal.h
+/coderoot/borromean/eosal/code/utf16/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/utf16/common/osal_string_utf8_to_utf16_malloc.c
+/coderoot/borromean/eosal/code/utf16/common/osal_string_utf8_to_utf16_malloc.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/utf16/common/eosal/osal.h
+/coderoot/borromean/eosal/code/utf16/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/utf32/common/osal_char_utf32_to_utf8.c
+/coderoot/borromean/eosal/code/utf32/common/osal_char_utf32_to_utf8.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/utf32/common/eosal/osal.h
+/coderoot/borromean/eosal/code/utf32/common/eosal/osal.h
 
-/coderoot/borromean/eosal/backbone/utf32/common/osal_char_utf8_to_utf32.c
+/coderoot/borromean/eosal/code/utf32/common/osal_char_utf8_to_utf32.c
 eosal/osal.h
-/coderoot/borromean/eosal/backbone/utf32/common/eosal/osal.h
+/coderoot/borromean/eosal/code/utf32/common/eosal/osal.h
 
 /coderoot/borromean/eosal/extensions/int64x/common/osal_int64_divide.c
 eosal/osal.h

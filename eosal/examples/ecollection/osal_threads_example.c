@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/defs/osal_backbone.h"
+#include "eosal/code/defs/osal_code.h"
 #include "eosal/examples/examplecollection/osal_threads_example.h"
 
 /** Parameter structure for creating thread.

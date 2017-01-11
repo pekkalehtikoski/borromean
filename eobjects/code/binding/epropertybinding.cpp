@@ -330,9 +330,10 @@ void ePropertyBinding::set_propertyname(
 
 ****************************************************************************************************
 */
-void ePropertyBinding::set_propertyvalue(
+/* void ePropertyBinding::set_propertyvalue(
     os_char *propertyname)
 {
 
 }
+*/
 

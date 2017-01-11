@@ -16,7 +16,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/backbone/defs/osal_backbone.h"
+#include "eosal/code/defs/osal_code.h"
 #include <windows.h>
 
 #if OSAL_MULTITHREAD_SUPPORT
