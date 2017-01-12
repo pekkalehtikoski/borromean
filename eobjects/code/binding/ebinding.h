@@ -51,6 +51,12 @@
  */
 #define E_BINDPRM_FLAGS 1
 #define E_BINDPRM_PROPERTYNAME 2
+#define E_BINDPRM_VALUE 3
+
+/* Maximum number of forwards befoew waiting for acknowledge.
+ */
+#define EBIND_MAX_ACK_COUNT 3
+
 
 
 /**
@@ -190,15 +196,42 @@ public:
     void cbindok_base(
         eEnvelope *envelope);
 
-    /* Mark that value has changed.
+    /* Mark property value, etc changed.
      */
-    inline void changed() 
+    inline void setchanged() 
     {
         m_bflags |= EBIND_CHANGED;
     }
 
-    void forward(
-        eEnvelope *envelope);
+    /* Mark property value, has not been changed after forwarding it.
+     */
+    inline void forwarddone() 
+    {
+        m_bflags &= ~EBIND_CHANGED;
+        m_ackcount++;
+    }
+
+    /* Check if property value should be fowrarded now?
+     */
+    inline os_int forwardnow() 
+    {
+        return (m_bflags & EBIND_CHANGED) && 
+                m_state == E_BINDING_OK &&
+                (m_ackcount < EBIND_MAX_ACK_COUNT || 
+                 (m_bflags & EBIND_NOFLOWCLT) || 
+                 (m_bflags & EBIND_INTERTHREAD) == 0);
+    }
+
+    /* Cirtual function to forward property value trough binding.
+     */
+    virtual void forward(
+        eVariable *x = OS_NULL,
+        os_boolean delete_x = OS_FALSE) {}
+
+    /* Update to property value has been received.
+     */
+    virtual void update(
+        eEnvelope *envelope) {}
 
     void sendack(
         eEnvelope *envelope);

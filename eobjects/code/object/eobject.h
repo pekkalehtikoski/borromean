@@ -640,6 +640,14 @@ public:
         eObject *source = OS_NULL, 
         os_int flags = 0);
 
+    /* Forward property change trough bindings.
+     */
+    void forwardproperty(
+        os_int propertynr, 
+        eVariable *x, 
+        eObject *source, 
+        os_int flags);
+
     /* Set property value as integer.
      */
     void setpropertyl(

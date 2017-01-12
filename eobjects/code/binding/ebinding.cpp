@@ -17,7 +17,6 @@
 */
 #include "eobjects/eobjects.h"
 
-#define EBIND_MAX_ACK_COUNT 3
 
 /**
 ****************************************************************************************************
@@ -250,6 +249,7 @@ void eBinding::onmessage(
                 delete this;
 
             case ECMD_FWRD:
+                update(envelope);
                 sendack(envelope);
                 break;
     
@@ -371,47 +371,12 @@ void eBinding::cbindok_base(
     }
     else
     {
-        forward(envelope);
+        forward();
     }
 
     /* Set binding state ok. 
      */
     m_state = E_BINDING_OK;
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Forward change.
-
-  The forward function sends value of a property. 
-  
-  @param  envelope Message envelope from server binding.
-  @return None.
-
-THIS NEEDS TO BE OVERRIDDEN BY DERIVED CLASS TO GET CURRENT VALUE
-
-****************************************************************************************************
-*/
-void eBinding::forward(
-    eEnvelope *envelope)
-{
-    if ((m_bflags & EBIND_CHANGED) && 
-         m_state == E_BINDING_OK &&
-         (m_ackcount < EBIND_MAX_ACK_COUNT || 
-           (m_bflags & EBIND_NOFLOWCLT) || 
-           (m_bflags & EBIND_INTERTHREAD) == 0))
-    {
-        /* Send ECMD_BIND_REPLY message to back to client binding.
-         */
-        message(ECMD_FWRD, m_bindpath, OS_NULL, OS_NULL, 0 /* EMSG_DEL_CONTENT :  EMSG_NO_ERROR_MSGS */);
-
-        /* Clear changed bit and increment acknowledge count.
-         */
-        m_bflags &= ~EBIND_CHANGED;
-        m_ackcount++;
-    }
 }
 
 
@@ -455,7 +420,7 @@ void eBinding::ack(
     eEnvelope *envelope)
 {
     m_ackcount--;
-    forward(envelope);
+    forward();
 }
 
 

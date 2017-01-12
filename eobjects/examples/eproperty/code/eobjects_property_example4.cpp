@@ -71,13 +71,6 @@ public:
         initproperties();
     }
 
-    /* Get class identifier.
-     */
-    virtual os_int classid() 
-    {
-        return MY_CLASS_ID_1;
-    }
-
     /* Add eMyClass'es properties to class'es property set.
     */
     static void setupclass()
@@ -88,6 +81,13 @@ public:
         addproperty(cls, EMYCLASS1P_A, emyclass1p_a, EPRO_PERSISTENT, "A");
         addproperty(cls, EMYCLASS1P_B, emyclass1p_b, EPRO_PERSISTENT, "B");
         osal_mutex_system_unlock();
+    }
+
+    /* Get class identifier.
+     */
+    virtual os_int classid() 
+    {
+        return MY_CLASS_ID_1;
     }
 
     /* This gets called when property value changes
@@ -109,6 +109,7 @@ public:
             case EMYCLASS1P_B:
                 b = x->getd();
                 printf ("1: GOT B %f\n", b);
+                setpropertyd(EMYCLASS1P_A, b * 1.1);
                 break;
         }
     }
@@ -139,6 +140,18 @@ public:
         initproperties();
     }
 
+    /* Add eMyClass'es properties to class'es property set.
+    */
+    static void setupclass()
+    {
+        const os_int cls = MY_CLASS_ID_2;
+
+        osal_mutex_system_lock();
+        addproperty(cls, EMYCLASS2P_X, emyclass2p_x, EPRO_PERSISTENT, "X");
+        addproperty(cls, EMYCLASS2P_Y, emyclass2p_y, EPRO_PERSISTENT, "Y");
+        osal_mutex_system_unlock();
+    }
+
     /* Get class identifier.
      */
     virtual os_int classid() 
@@ -150,19 +163,8 @@ public:
         eContainer *params = OS_NULL)
     {
         bind(EMYCLASS2P_X, "//thread1/_p/A", EBIND_DEFAULT);
+setpropertyd(EVARP_VALUE, 3.3);
         bind(EMYCLASS2P_Y, "//thread1/_p/B", EBIND_CLIENTINIT);
-    }
-
-    /* Add eMyClass'es properties to class'es property set.
-    */
-    static void setupclass()
-    {
-        const os_int cls = MY_CLASS_ID_2;
-
-        osal_mutex_system_lock();
-        addproperty(cls, EMYCLASS2P_X, emyclass2p_x, EPRO_PERSISTENT, "X");
-        addproperty(cls, EMYCLASS2P_Y, emyclass2p_y, EPRO_PERSISTENT, "Y");
-        osal_mutex_system_unlock();
     }
 
     /* This gets called when property value changes
@@ -179,6 +181,7 @@ public:
             case EMYCLASS2P_X:
                 a = x->getd();
                 printf ("2: GOT X %f\n", a);
+                setpropertyd(EMYCLASS2P_Y, a * 1.1);
                 break;
 
             case EMYCLASS2P_Y:
@@ -227,7 +230,7 @@ void property_example_4()
 
     c.setpropertyd_msg("//thread1/_p/A", 11.5);
 
-    osal_thread_sleep(3000);
+    osal_thread_sleep(15000);
 
     /* Wait for the threads to terminate.
      */

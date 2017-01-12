@@ -144,6 +144,33 @@ public:
         eObject *obj,
         eEnvelope *envelope);
 
+    /* Mark property value changed (may forward it immediately).
+     */
+    void changed(
+        os_int propertynr,
+        eVariable *x,
+        os_boolean delete_x);
+
+    /* Cirtual function to forward property value trough binding.
+     */
+    virtual void forward(
+        eVariable *x = OS_NULL,
+        os_boolean delete_x = OS_FALSE);
+
+    /* Update to property value has been received.
+     */
+    virtual void update(
+        eEnvelope *envelope);
+
+    /* Set object's property from binding.
+     */
+    os_boolean binding_setproperty(
+        eVariable *x);
+
+    /* Get object's property value from binding.
+     */
+    os_boolean binding_getproperty(
+        eVariable *x);
 
     /*@}*/
 

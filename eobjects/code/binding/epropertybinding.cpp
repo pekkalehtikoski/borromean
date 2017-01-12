@@ -252,8 +252,8 @@ void ePropertyBinding::bind(
     os_char *remoteproperty,
     os_int bflags)
 {
-    eSet 
-        *parameters;
+    eSet *parameters;
+    eVariable x;
 
     /* Save bind parameters and flags.
      */
@@ -267,6 +267,20 @@ void ePropertyBinding::bind(
     get_bind_parameters(parameters);
     parameters->setl(E_BINDPRM_FLAGS, bflags & EBIND_SER_MASK);
     parameters->sets(E_BINDPRM_PROPERTYNAME, remoteproperty);
+
+    /* If this client is master, get property value.
+     */
+    if (bflags & EBIND_CLIENTINIT)
+    {
+        if (!binding_getproperty(&x))
+        {
+#if OSAL_DEBUG
+            osal_debug_error("bind(): Unknown property number.");
+#endif
+            return;
+        }
+        parameters->set(E_BINDPRM_VALUE, &x);
+    }
 
     /* Call base class to do binding.
      */
@@ -291,7 +305,7 @@ void ePropertyBinding::srvbind(
     eEnvelope *envelope)
 {
     eSet *parameters, *reply;
-    eVariable propertyname;
+    eVariable v;
 
     parameters = eSet::cast(envelope->content());
     if (parameters == OS_NULL)
@@ -304,7 +318,7 @@ void ePropertyBinding::srvbind(
 
     /* Get property name. 
      */
-    if (!parameters->get(E_BINDPRM_PROPERTYNAME, &propertyname)) 
+    if (!parameters->get(E_BINDPRM_PROPERTYNAME, &v)) 
     {
 #if OSAL_DEBUG
         osal_debug_error("srvbind() failed: Property name missing.");
@@ -314,12 +328,12 @@ void ePropertyBinding::srvbind(
 
     /* Convert property name to property number (-1 = unknown property).
      */
-    m_localpropertynr = obj->propertynr(propertyname.gets());
+    m_localpropertynr = obj->propertynr(v.gets());
     if (m_localpropertynr < 0)
     {
 #if OSAL_DEBUG
         osal_debug_error("srvbind() failed: Property name unknwon.");
-        osal_debug_error(propertyname.gets());
+        osal_debug_error(v.gets());
 #endif
         goto notarget;
     }
@@ -332,14 +346,22 @@ void ePropertyBinding::srvbind(
         m_bflags |= EBIND_INTERTHREAD;
     }
 
-    /* . If subproperties are requested, list ones matching in both ends.
-         Store initial property value.
+    /* If subproperties are requested, list ones matching in both ends.
+       Store initial property value, unless clientmaster.
      */
     reply = new eSet(this);
     /* if (m_flags & ATTR)
     {
 
     } */
+
+    /* If this client is nor master at initialization, get property value.
+     */
+    if ((m_bflags & EBIND_CLIENTINIT) == 0)
+    {
+        binding_getproperty(&v);
+        reply->set(E_BINDPRM_VALUE, &v);
+    }
 
     /* Complete the server end of binding and return.  
      */
@@ -374,11 +396,138 @@ void ePropertyBinding::cbindok(
     eObject *obj,
     eEnvelope *envelope)
 {
+    eSet *parameters;
+    eVariable v;
+
+    parameters = eSet::cast(envelope->content());
+    if (parameters == OS_NULL)
+    {
+#if OSAL_DEBUG
+        osal_debug_error("cbindok() failed: no content.");
+#endif
+        goto notarget;
+    }
+
+    /* If this server side is master at initialization, get property value.
+     */
+    if ((m_bflags & EBIND_CLIENTINIT) == 0)
+    {
+        parameters->get(EVARP_VALUE, &v);    
+        binding_setproperty(&v);
+    }
+notarget:
 
     /* Call base class to complete the binding.
      */
     cbindok_base(envelope);
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Mark property value changed.
+
+  The ePropertyBinding::changed function marks a property value changed, so that it needs
+  to forwarded. The function forwards the property value immediately, if flow control allows. 
+  Otherwise the property just remain marked to be forwarded.
+  If property number given as argument is not for this binding, do nothing.
+
+  @param propertynr Property number of the changed property.
+  @param x Optional property value, used to save requerying it in common case.
+  
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::changed(
+    os_int propertynr,
+    eVariable *x,
+    os_boolean delete_x)
+{
+    /* If not for this property, do nothing.
+     */
+    if (propertynr != m_localpropertynr) return;
+
+    /* Mark property value, etc changed.
+     */
+    setchanged();
+
+    /* Forward immediately, if binding if flow control does not block it.
+     */
+    forward(x, delete_x);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Forward property value trough binding.
+
+  The forward function sends value of a property. 
+  
+  @param  x Variable containing value, if available.
+  @param  delete_x Flag weather value should be deleted.
+  envelope Message envelope from server binding.
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::forward(
+    eVariable *x,
+    os_boolean delete_x)
+{
+    eVariable *tmp;
+
+    if (forwardnow())
+    {
+
+        if (x == OS_NULL)
+        {
+            tmp = new eVariable;
+            binding_getproperty(tmp);
+
+            message(ECMD_FWRD, m_bindpath, OS_NULL, tmp, 
+                EMSG_DEL_CONTENT /* EMSG_NO_ERROR_MSGS */);
+        }
+        else
+        {
+            /* Send data as ECMD_FWRD message.
+             */
+            message(ECMD_FWRD, m_bindpath, OS_NULL, x, 
+                delete_x ? EMSG_DEL_CONTENT : EMSG_DEFAULT  /* EMSG_NO_ERROR_MSGS */);
+            x = OS_NULL;
+        }
+
+        /* Clear changed bit and increment acknowledge count.
+         */
+        forwarddone();
+    }
+
+    if (delete_x && x) delete x;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Property value has been received from binding.
+
+  The ePropertyBinding::update function...
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::update(
+    eEnvelope *envelope)
+{
+    eVariable *x;
+
+    x = eVariable::cast(envelope->content());
+
+    binding_setproperty(x);
+}
+
 
 
 /**
@@ -416,20 +565,55 @@ void ePropertyBinding::set_propertyname(
 /**
 ****************************************************************************************************
 
-  @brief Save property name.
+  @brief Save property value.
 
-  The ePropertyBinding::set_propertyname() releases current m_propertyname and stores 
-  propertyname given as argument. If propertyname is OS_NULL, memory is just freeed.
+  The binding_setproperty() is used to set a property of bound object.
 
-  @param  propertyname Pointer to object path.
-  @return None.
+  @param  x Variable holding property value to set.
+  @return OS_TRUE if successfull.
 
 ****************************************************************************************************
 */
-/* void ePropertyBinding::set_propertyvalue(
-    os_char *propertyname)
+os_boolean ePropertyBinding::binding_setproperty(
+    eVariable *x)
 {
+    eObject *obj;
 
+    obj = grandparent();
+    if (obj == OS_NULL) return OS_FALSE;
+    
+    /* Set property value.
+     */
+    obj->setproperty(m_localpropertynr, x, this);
+
+    return OS_TRUE;
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Get property value.
+
+  The binding_getproperty() function gets property value of bound object.
+
+  @param  x Variable where to store property value.
+  @return OS_TRUE if successfull.
+
+****************************************************************************************************
 */
+os_boolean ePropertyBinding::binding_getproperty(
+    eVariable *x)
+{
+    eObject *obj;
+
+    obj = grandparent();
+    if (obj == OS_NULL) return OS_FALSE;
+    
+    /* Set property value.
+     */
+    obj->setproperty(m_localpropertynr, x, this);
+
+    return OS_TRUE;
+}
 

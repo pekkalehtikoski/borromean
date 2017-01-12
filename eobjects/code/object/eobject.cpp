@@ -2460,7 +2460,47 @@ void eObject::setproperty(
 
     /* Forward property value to bindings, if any.
      */
-    
+    forwardproperty(propertynr, x, source, flags);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Forward property change trough bindings.
+
+  The forwardproperty function...
+  
+  @param  propertynr
+  @param  x
+  @param  source
+  @param  flags
+
+  @return None.
+
+****************************************************************************************************
+*/
+void eObject::forwardproperty(
+    os_int propertynr, 
+    eVariable *x, 
+    eObject *source, 
+    os_int flags)
+{
+    eContainer *bindings;
+    eObject *b;
+
+    /* Get bindings container.
+     */
+    bindings = firstc(EOID_BINDINGS);
+    if (bindings == OS_NULL) return;
+
+    for (b = bindings->first(); b; b = b->next())
+    {
+        if (b->classid() == ECLASSID_PROPERTY_BINDING && b != source)
+        {
+            ePropertyBinding::cast(b)->changed(propertynr, x, OS_FALSE);
+        }
+    }
 }
 
 
