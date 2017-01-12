@@ -243,7 +243,6 @@ void eBinding::bind_base(
     os_char *objpath,
     eSet *parameters)
 {
-
     /* Disconnect, just in case binding is reused. If objpath is not given as argument, keep
        current object path.
      */
@@ -323,6 +322,10 @@ void eBinding::cbindok_base(
         m_bflags |= EBIND_INTERTHREAD;
     }
 
+    /* Set binding state ok. 
+     */
+    m_state = E_BINDING_OK;
+
     /* If server is master, then do not send changes before this moment.
      */
     if ((m_bflags & EBIND_CLIENTINIT) == 0)
@@ -334,9 +337,6 @@ void eBinding::cbindok_base(
         forward();
     }
 
-    /* Set binding state ok. 
-     */
-    m_state = E_BINDING_OK;
 }
 
 

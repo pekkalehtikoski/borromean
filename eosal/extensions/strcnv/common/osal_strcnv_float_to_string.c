@@ -86,7 +86,7 @@ os_memsz osal_strcnv_float_to_string(
 	}
 	while (x >= 10.0)
 	{
-		x = x/10.0;
+		x *= 0.1; // x = x/10.0;
 		c++;
 	}
 

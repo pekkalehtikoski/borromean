@@ -109,7 +109,7 @@ public:
             case EMYCLASS1P_B:
                 b = x->getd();
                 printf ("1: GOT B %f\n", b);
-//                setpropertyd(EMYCLASS1P_A, b * 1.01);
+                setpropertyd(EMYCLASS1P_A, b * 1.01);
                 break;
         }
     }
@@ -163,9 +163,9 @@ public:
         eContainer *params = OS_NULL)
     {
         bind(EMYCLASS2P_X, "//thread1/_p/A", EBIND_DEFAULT);
-setpropertyd(EMYCLASS2P_X, 3.3);
+setpropertyd(EMYCLASS2P_Y, 3.3);
         bind(EMYCLASS2P_Y, "//thread1/_p/B", EBIND_CLIENTINIT);
-setpropertyd(EMYCLASS2P_X, 4.3);
+setpropertyd(EMYCLASS2P_Y, 4.3);
     }
 
     /* This gets called when property value changes
@@ -182,7 +182,7 @@ setpropertyd(EMYCLASS2P_X, 4.3);
             case EMYCLASS2P_X:
                 a = x->getd();
                 printf ("2: GOT X %f\n", a);
-//                setpropertyd(EMYCLASS2P_Y, a * 1.01);
+                setpropertyd(EMYCLASS2P_Y, a * 0.99);
 
                 break;
 

@@ -245,11 +245,16 @@ void ePropertyBinding::onmessage(
                 return;
 
             case ECMD_UNBIND:
-                disconnect(OS_TRUE);
-                return;
-
             case ECMD_SRV_UNBIND:
-                delete this;
+            case ECMD_NO_TARGET:
+                if (m_bflags & EBIND_CLIENT)
+                {
+                    disconnect(OS_TRUE);
+                }
+                else
+                {
+                    delete this;
+                }
                 return;
 
             case ECMD_FWRD:
@@ -475,6 +480,7 @@ void ePropertyBinding::cbindok(
         parameters->get(EVARP_VALUE, &v);    
         binding_setproperty(&v);
     }
+
 notarget:
 
     /* Call base class to complete the binding.
@@ -607,6 +613,13 @@ void ePropertyBinding::sendack(
     eEnvelope *envelope)
 {
     sendack_base(envelope);
+
+    /* If this is server, if m_ackcount is not zero, mark changed.
+     */
+    if ((m_bflags & EBIND_CLIENT) == 0 && m_ackcount)
+    {
+        setchanged();
+    }
 }
 
 
@@ -711,7 +724,7 @@ os_boolean ePropertyBinding::binding_getproperty(
     
     /* Set property value.
      */
-    obj->setproperty(m_localpropertynr, x, this);
+    obj->property(m_localpropertynr, x);
 
     return OS_TRUE;
 }
