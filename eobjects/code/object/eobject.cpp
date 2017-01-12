@@ -1826,7 +1826,7 @@ getout:
 
   @brief Function to process incoming messages. 
 
-  The eObject::onmessage function handles messages received by object.
+  The eObject::onmessage function handles messages received by object. 
   
   @param   envelope Message envelope. Contains command, target and source paths and
            message content, etc.

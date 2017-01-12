@@ -224,46 +224,6 @@ failed:
 }
 
 
-void eBinding::onmessage(
-    eEnvelope *envelope) 
-{
-    /* If at final destination for the message.
-     */
-    if (*envelope->target()=='\0')
-    {
-        switch (envelope->command())
-        {
-            /* case ECMD_BIND:  
-                srvbind(envelope);
-                return; */
-
-            case ECMD_BIND_REPLY:
-                cbindok(this, envelope);
-                return;
-
-            case ECMD_UNBIND:
-                disconnect(OS_TRUE);
-                break;
-
-            case ECMD_SRV_UNBIND:
-                delete this;
-
-            case ECMD_FWRD:
-                update(envelope);
-                sendack(envelope);
-                break;
-    
-            case ECMD_ACK:
-                ack(envelope);
-                break;
-
-            case ECMD_REBIND:
-                bind(OS_NULL, 0);
-                break;
-        }
-    }
-}
-
 /**
 ****************************************************************************************************
 
@@ -279,7 +239,7 @@ void eBinding::onmessage(
 
 ****************************************************************************************************
 */
-void eBinding::bind(
+void eBinding::bind_base(
     os_char *objpath,
     eSet *parameters)
 {
@@ -392,7 +352,7 @@ void eBinding::cbindok_base(
 
 ****************************************************************************************************
 */
-void eBinding::sendack(
+void eBinding::sendack_base(
     eEnvelope *envelope)
 {
     /* Send ECMD_BIND_REPLY message to back to client binding.
@@ -416,7 +376,7 @@ void eBinding::sendack(
 
 ****************************************************************************************************
 */
-void eBinding::ack(
+void eBinding::ack_base(
     eEnvelope *envelope)
 {
     m_ackcount--;

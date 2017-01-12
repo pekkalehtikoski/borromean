@@ -220,6 +220,61 @@ failed:
 /**
 ****************************************************************************************************
 
+  @brief Function to process incoming messages. 
+
+  The ePropertyBinding::onmessage function handles messages received by object. If this function
+  doesn't process message, it calls parent class'es onmessage function.
+  
+  @param   envelope Message envelope. Contains command, target and source paths and
+           message content, etc.
+  @return  None. 
+
+****************************************************************************************************
+*/
+void ePropertyBinding::onmessage(
+    eEnvelope *envelope) 
+{
+    /* If at final destination for the message.
+     */
+    if (*envelope->target()=='\0')
+    {
+        switch (envelope->command())
+        {
+            case ECMD_BIND_REPLY:
+                cbindok(this, envelope);
+                return;
+
+            case ECMD_UNBIND:
+                disconnect(OS_TRUE);
+                return;
+
+            case ECMD_SRV_UNBIND:
+                delete this;
+                return;
+
+            case ECMD_FWRD:
+                update(envelope);
+                return;
+    
+            case ECMD_ACK:
+                ack(envelope);
+                return;
+
+            case ECMD_REBIND:
+                bind_base(OS_NULL, 0);
+                return;
+        }
+    }
+
+    /* Call parent class'es onmessage. 
+     */
+    eBinding::onmessage(envelope);
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Bind this object's property to remote property.
 
   The eObject::bind() function creates binding to remote property. When two variables are bound
@@ -284,7 +339,7 @@ void ePropertyBinding::bind(
 
     /* Call base class to do binding.
      */
-    eBinding::bind(remotepath, parameters);
+    eBinding::bind_base(remotepath, parameters);
 }
 
 
@@ -361,6 +416,11 @@ void ePropertyBinding::srvbind(
     {
         binding_getproperty(&v);
         reply->set(E_BINDPRM_VALUE, &v);
+    }
+    else
+    {
+        parameters->get(E_BINDPRM_VALUE, &v);
+        binding_setproperty(&v);
     }
 
     /* Complete the server end of binding and return.  
@@ -526,8 +586,47 @@ void ePropertyBinding::update(
     x = eVariable::cast(envelope->content());
 
     binding_setproperty(x);
+
+    sendack(envelope);
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Send acknowledge.
+
+  The sendack function.
+  
+  @param  envelope Message envelope from server binding.
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::sendack(
+    eEnvelope *envelope)
+{
+    sendack_base(envelope);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Acknowledge received.
+
+  The ack function decrements acknowledge wait count and tries to send again.
+  
+  @param  envelope Message envelope from server binding.
+  @return None.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::ack(
+    eEnvelope *envelope)
+{
+    ack_base(envelope);
+}
 
 
 /**

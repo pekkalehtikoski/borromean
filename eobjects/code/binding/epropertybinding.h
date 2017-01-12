@@ -110,6 +110,11 @@ public:
         eStream *stream, 
         os_int flags);
 
+    /* Process received messages
+     */
+    virtual void onmessage(
+        eEnvelope *envelope);
+
     /*@}*/
 
 
@@ -134,13 +139,13 @@ public:
 
     /* Bind the server end.
      */
-    virtual void srvbind(
+    void srvbind(
         eObject *obj,
         eEnvelope *envelope);
 
     /* Finish the client end of binding.
      */
-    virtual void ePropertyBinding::cbindok(
+    void ePropertyBinding::cbindok(
         eObject *obj,
         eEnvelope *envelope);
 
@@ -159,7 +164,13 @@ public:
 
     /* Update to property value has been received.
      */
-    virtual void update(
+    void update(
+        eEnvelope *envelope);
+
+    void sendack(
+        eEnvelope *envelope);
+
+    void ack(
         eEnvelope *envelope);
 
     /* Set object's property from binding.

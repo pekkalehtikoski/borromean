@@ -164,32 +164,21 @@ public:
 	************************************************************************************************
 	*/
 	/*@{*/
+protected:
 
     /* Connect client eBinding to server eBinding.
      */
-    void bind(
+    void bind_base(
         os_char *objpath,
         eSet *parameters);
 
     virtual void get_bind_parameters(eSet *set) {};
-
-    /* Virtual base class to bind the server end.
-     */
-    virtual void srvbind(
-        eObject *obj,
-        eEnvelope *envelope) {};
 
     /* Base classs function to bind the server end.
      */
     void srvbind_base(
         eEnvelope *envelopee,
         eObject *reply);
-
-    /* Virtual base class to complete client end of binding.
-     */
-    virtual void cbindok(
-        eObject *obj,
-        eEnvelope *envelope) {};
 
     /* Complete the client end of binding by base class.
      */
@@ -228,20 +217,10 @@ public:
         eVariable *x = OS_NULL,
         os_boolean delete_x = OS_FALSE) {}
 
-    /* Update to property value has been received.
-     */
-    virtual void update(
-        eEnvelope *envelope) {}
-
-    void sendack(
+    void sendack_base(
         eEnvelope *envelope);
 
-    void ack(
-        eEnvelope *envelope);
-
-    /* Process received messages
-     */
-    virtual void onmessage(
+    void ack_base(
         eEnvelope *envelope);
 
     /*@}*/
