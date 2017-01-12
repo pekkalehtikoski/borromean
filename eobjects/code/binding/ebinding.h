@@ -1,12 +1,13 @@
 /**
 
   @file    ebinding.h
-  @brief   Binding properties, DB tables and files.
+  @brief   Binding base class for properties, DB tables and files.
   @author  Pekka Lehtikoski
   @version 1.0
-  @date    9.11.2011
+  @date    12.1.2016
 
-  The binding object is like a box holding a set of child objects.
+  This base class serves derived classes for property, selection to table and file to handle
+  bindings.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -18,36 +19,27 @@
 #ifndef EBINDING_INCLUDED
 #define EBINDING_INCLUDED
 
-
-/* Binding type flag values for bind()
- */
-#define EBIND_PROPERTY 0
-#define EBIND_TABLE 1
-#define EBIND_FILE 2
-#define EBIND_CONTAINER 3
-
-/* Flags for bind()
+/* Binding flags.
  */
 #define EBIND_DEFAULT 0
 #define EBIND_CLIENTINIT 8
 #define EBIND_NOFLOWCLT 16
 #define EBIND_METADATA 32
 #define EBIND_TEMPORARY 256
-#define EBIND_CLIENT 1024 /* no need to give as argument */
-#define EBIND_CHANGED 2048 /* no need to give as argument */
-#define EBIND_INTERTHREAD 4096 /* no need to give as argument */
-// #define EBIND_XXX 8192
+#define EBIND_CLIENT 1024       /* do not give as argument */
+#define EBIND_CHANGED 2048      /* do not give as argument */
+#define EBIND_INTERTHREAD 4096  /* do not give as argument */
 
 #define EBIND_TYPE_MASK 7
 #define EBIND_SER_MASK (EBIND_TYPE_MASK|EBIND_CLIENTINIT|EBIND_NOFLOWCLT|EBIND_METADATA)
 
-/* Binding states
+/* Binding states.
  */
 #define E_BINDING_UNUSED 0
 #define E_BINDING_NOW 1
 #define E_BINDING_OK 2
 
-/* Enumeration of binding parameters
+/* Enumeration of binding parameters.
  */
 #define E_BINDPRM_FLAGS 1
 #define E_BINDPRM_PROPERTYNAME 2
@@ -58,15 +50,14 @@
 #define EBIND_MAX_ACK_COUNT 3
 
 
-
 /**
 ****************************************************************************************************
 
-  @brief Object base class.
+  @brief Binding base class.
 
-  The eObject is base class for all eobject library objects. It defines basic functionality for
-  networked objects.
-
+  The eBinding is base class for different types of bindings, namely property, table/selection 
+  and file/handle bindings. It implements functionality mostly common to all three binding
+  types.
 
 ****************************************************************************************************
 */
@@ -75,9 +66,10 @@ class eBinding : public eObject
 	/** 
 	************************************************************************************************
 
-	  @name Constructors and destructor
+	  @name eObject function overrides.
 
-	  X...
+      Override functions for eObject base class functions to implement generic object properties
+      for bindings.
 
 	************************************************************************************************
 	*/
@@ -127,18 +119,6 @@ public:
         osal_debug_error("ebinding, newobj(): Cannot create abstract class.");
     }
 
-    /*@}*/
-
-	/** 
-	************************************************************************************************
-
-	  @name Virtual function overrides.
-
-	  X... 
-
-	************************************************************************************************
-	*/
-	/*@{*/
     /* Write binding content to stream.
      */
     virtual eStatus writer(
@@ -157,9 +137,10 @@ public:
 	/** 
 	************************************************************************************************
 
-	  @name Virtual function overrides.
+	  @name Binding related functionality for the class.
 
-	  X... 
+	  These are either implementations of common binding functionality, or virtual fuctions
+      to be overridden by specific binding class.
 
 	************************************************************************************************
 	*/
@@ -171,8 +152,6 @@ protected:
     void bind_base(
         os_char *objpath,
         eSet *parameters);
-
-    virtual void get_bind_parameters(eSet *set) {};
 
     /* Base classs function to bind the server end.
      */
@@ -217,15 +196,15 @@ protected:
         eVariable *x = OS_NULL,
         os_boolean delete_x = OS_FALSE) {}
 
+    /* Send ACK
+     */
     void sendack_base(
         eEnvelope *envelope);
 
+    /* Ack received.
+     */
     void ack_base(
         eEnvelope *envelope);
-
-    /*@}*/
-
-protected:
 
     /* Save object path.
      */
@@ -242,45 +221,48 @@ protected:
     void disconnect(
         os_boolean keep_objpath = OS_FALSE);
 
+    /*@}*/
+
 
 	/** 
 	************************************************************************************************
 
 	  @name Member variables.
 
-	  X... 
+	  The member variables hold information where to bind (for client binding) and current 
+      binding state. 
 
 	************************************************************************************************
 	*/
 	/*@{*/
-        /* Client: Path to object to bind to as given as argument to bind(). 
-           Server: Always OS_NULL.
-         */
-        os_char *m_objpath;
+    /* Client: Path to object to bind to as given as argument to bind(). 
+        Server: Always OS_NULL.
+     */
+    os_char *m_objpath;
 
-        /* Unique path to eBinding which we are bound to. 
-         */
-        os_char *m_bindpath;
+    /* Unique path to eBinding which we are bound to. 
+     */
+    os_char *m_bindpath;
 
-        /** Binding flags.
-         */
-        os_short m_bflags;
+    /** Binding flags.
+     */
+    os_short m_bflags;
 
-        /* Size of object path allocation in bytes.
-         */
-        os_short m_objpathsz;
+    /* Size of object path allocation in bytes.
+     */
+    os_short m_objpathsz;
 
-        /* Size of bind path allocation in bytes.
-         */
-        os_short m_bindpathsz;
+    /* Size of bind path allocation in bytes.
+     */
+    os_short m_bindpathsz;
 
-        /** Number of ECMD_FWRD messages sent but have not been acknowledged.
-         */
-        os_char m_ackcount;
+    /** Number of ECMD_FWRD messages sent but have not been acknowledged.
+     */
+    os_char m_ackcount;
 
-        /** Binding state, one of: E_BINDING_UNUSED (0), E_BINDING_NOW (1) or E_BINDING_OK.
-         */
-        os_char m_state;
+    /** Binding state, one of: E_BINDING_UNUSED (0), E_BINDING_NOW (1) or E_BINDING_OK.
+     */
+    os_char m_state;
 
     /*@}*/
 };

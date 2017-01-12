@@ -183,7 +183,6 @@ setpropertyd(EMYCLASS2P_Y, 4.3);
                 a = x->getd();
                 printf ("2: GOT X %f\n", a);
                 setpropertyd(EMYCLASS2P_Y, a * 0.99);
-
                 break;
 
             case EMYCLASS2P_Y:

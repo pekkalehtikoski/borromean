@@ -21,10 +21,9 @@
 /**
 ****************************************************************************************************
 
-  @brief Constructor.
+  @brief Property binding class constructor.
 
-  X...
-
+  Clear member variables. 
   @return  None.
 
 ****************************************************************************************************
@@ -47,8 +46,7 @@ ePropertyBinding::ePropertyBinding(
 
   @brief Virtual destructor.
 
-  X...
-
+  If connected, disconnect binding. Release all resources allocated for the binging.
   @return  None.
 
 ****************************************************************************************************
@@ -121,11 +119,8 @@ eStatus ePropertyBinding::writer(
     /* Version number. Increment if new serialized items are added to the object,
        and check for new version's items in read() function.
      */
-    const os_int 
-        version = 1;
-
-    eObject
-        *child;
+    const os_int version = 1;
+    eObject *child;
 
 	/* Begin the object and write version number.
      */
@@ -181,11 +176,8 @@ eStatus ePropertyBinding::reader(
 {
     /* Version number. Used to check which versions item's are in serialized data.
      */
-    os_int 
-        version;
-
-    os_long
-        count;
+    os_int version;
+    os_long count;
 
 	/* Begin the object and write version number.
      */
@@ -324,7 +316,6 @@ void ePropertyBinding::bind(
     /* Get parameters from derived class and add flags to parameters.
      */
     parameters = new eSet(this);
-    get_bind_parameters(parameters);
     parameters->setl(E_BINDPRM_FLAGS, bflags & EBIND_SER_MASK);
     parameters->sets(E_BINDPRM_PROPERTYNAME, remoteproperty);
 
@@ -515,12 +506,10 @@ void ePropertyBinding::changed(
      */
     if (propertynr != m_localpropertynr) return;
 
-    /* Mark property value, etc changed.
+    /* Mark property value, etc changed. Forward immediately, if binding if flow
+       control does not block it.
      */
     setchanged();
-
-    /* Forward immediately, if binding if flow control does not block it.
-     */
     forward(x, delete_x);
 }
 
@@ -530,11 +519,10 @@ void ePropertyBinding::changed(
 
   @brief Forward property value trough binding.
 
-  The forward function sends value of a property. 
+  The forward function sends value of a property if flow control allows. 
   
   @param  x Variable containing value, if available.
   @param  delete_x Flag weather value should be deleted.
-  envelope Message envelope from server binding.
   @return None.
 
 ****************************************************************************************************
@@ -590,9 +578,7 @@ void ePropertyBinding::update(
     eVariable *x;
 
     x = eVariable::cast(envelope->content());
-
     binding_setproperty(x);
-
     sendack(envelope);
 }
 

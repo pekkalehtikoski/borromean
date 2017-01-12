@@ -1,12 +1,13 @@
 /**
 
   @file    ebinding.cpp
-  @brief   Binding properties, DB tables and files.
+  @brief   Binding base class for properties, DB tables and files.
   @author  Pekka Lehtikoski
   @version 1.0
-  @date    9.11.2011
+  @date    12.1.2016
 
-  The binding object is like a box holding a set of child objects.
+  This base class serves derived classes for property, selection to table and file to handle
+  bindings.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -21,7 +22,7 @@
 /**
 ****************************************************************************************************
 
-  @brief Constructor.
+  @brief Binding base class constructor.
 
   Clear member variables. 
   @return  None.
@@ -49,8 +50,7 @@ eBinding::eBinding(
 
   @brief Virtual destructor.
 
-  Disconnect binding.
-
+  If connected, disconnect binding. Release all resources allocated for the binging.
   @return  None.
 
 ****************************************************************************************************
@@ -128,11 +128,8 @@ eStatus eBinding::writer(
     /* Version number. Increment if new serialized items are added to the object,
        and check for new version's items in read() function.
      */
-    const os_int 
-        version = 1;
-
-    eObject
-        *child;
+    const os_int version = 1;
+    eObject *child;
 
 	/* Begin the object and write version number.
      */
@@ -188,11 +185,8 @@ eStatus eBinding::reader(
 {
     /* Version number. Used to check which versions item's are in serialized data.
      */
-    os_int 
-        version;
-
-    os_long
-        count;
+    os_int version;
+    os_long count;
 
 	/* Begin the object and write version number.
      */
@@ -301,7 +295,8 @@ void eBinding::srvbind_base(
 
   @brief Complete client end of binding.
 
-  The cbindok function...
+  The cbindok function is called when client end of binding receives ECMD_BIND_REPLY message from
+  server end of binding.
   
   @param  envelope Message envelope from server binding.
   @return None.
@@ -454,7 +449,11 @@ void eBinding::set_bindpath(
   @brief Disconnect the binding and release allocated memory.
 
   The eBinding::disconnects() disconnects and clears allocated memory. 
+
+  @param  keep_objpath If set, parth to remote object is not changed. This preserved path may be
+          is used for reactivating bindings later.
   @return None.
+
 
 ****************************************************************************************************
 */

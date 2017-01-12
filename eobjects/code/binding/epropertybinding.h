@@ -21,10 +21,10 @@
 /**
 ****************************************************************************************************
 
-  @brief Object base class.
+  @brief Property binding class.
 
-  The eObject is base class for all eobject library objects. It defines basic functionality for
-  networked objects.
+  The ePropertyBinding is class derived from eBinding. It implements property binding specific
+  functionality.
 
 
 ****************************************************************************************************
@@ -34,9 +34,10 @@ class ePropertyBinding : public eBinding
 	/** 
 	************************************************************************************************
 
-	  @name Constructors and destructor
+	  @name eObject function overrides.
 
-	  X...
+      Override functions for eObject base class functions to implement generic object properties
+      for bindings.
 
 	************************************************************************************************
 	*/
@@ -86,18 +87,6 @@ public:
         return new ePropertyBinding(parent, oid, flags);
     }
 
-    /*@}*/
-
-	/** 
-	************************************************************************************************
-
-	  @name eObject virtual function implementations
-
-	  X... 
-
-	************************************************************************************************
-	*/
-	/*@{*/
     /* Write propertybinding content to stream.
      */
     virtual eStatus writer(
@@ -121,9 +110,9 @@ public:
 	/** 
 	************************************************************************************************
 
-	  @name Binding functions
+	  @name Property binding functions
 
-	  X... 
+	  These functions implement property finding functionality.
 
 	************************************************************************************************
 	*/
@@ -143,12 +132,6 @@ public:
         eObject *obj,
         eEnvelope *envelope);
 
-    /* Finish the client end of binding.
-     */
-    void ePropertyBinding::cbindok(
-        eObject *obj,
-        eEnvelope *envelope);
-
     /* Mark property value changed (may forward it immediately).
      */
     void changed(
@@ -156,11 +139,20 @@ public:
         eVariable *x,
         os_boolean delete_x);
 
+protected:
+
+    /* Finish the client end of binding.
+     */
+    void ePropertyBinding::cbindok(
+        eObject *obj,
+        eEnvelope *envelope);
+
     /* Cirtual function to forward property value trough binding.
      */
     virtual void forward(
         eVariable *x = OS_NULL,
         os_boolean delete_x = OS_FALSE);
+
 
     /* Update to property value has been received.
      */
@@ -185,11 +177,22 @@ public:
 
     /*@}*/
 
-protected:
     /* Save property name.
      */
     void set_propertyname(
         os_char *propertyname);
+
+    /** 
+	************************************************************************************************
+
+	  @name Member variables.
+
+	  The member variables hold information where to bind (for client binding) and current 
+      binding state. 
+
+	************************************************************************************************
+	*/
+	/*@{*/
 
     /** Client: Path to peropery name on remotr object to bind to.
         Server: Always OS_NULL.
@@ -203,6 +206,9 @@ protected:
     /** Which property of local object is bound.
      */
     os_int m_localpropertynr;
+
+    /*@}*/
+
 };
 
 #endif
