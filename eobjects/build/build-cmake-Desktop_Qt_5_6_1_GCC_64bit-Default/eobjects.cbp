@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+   <FileVersion major="1" minor="6" />
+   <Project>
+      <Option title="eobjects" />
+      <Option makefile_is_custom="1" />
+      <Option compiler="gcc" />
+      <Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\build\;CMake Files\..\..\..\build\cmake\;" />
+      <Build>
+      <Target title="all">
+         <Option working_dir="/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="edit_cache">
+         <Option working_dir="/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 edit_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="rebuild_cache">
+         <Option working_dir="/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 rebuild_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="eobjects">
+         <Option output="/coderoot/borromean/lib/mint18_gcc/libeobjects.a" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option object_output="./" />
+         <Option type="2" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/coderoot/borromean" />
+            <Add directory="/usr/include" />
+            <Add directory="/usr/include/c++/5" />
+            <Add directory="/usr/include/c++/5/backward" />
+            <Add directory="/usr/include/x86_64-linux-gnu" />
+            <Add directory="/usr/include/x86_64-linux-gnu/c++/5" />
+            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include" />
+            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 eobjects" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="eobjects/fast">
+         <Option output="/coderoot/borromean/lib/mint18_gcc/libeobjects.a" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option object_output="./" />
+         <Option type="2" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/coderoot/borromean" />
+            <Add directory="/usr/include" />
+            <Add directory="/usr/include/c++/5" />
+            <Add directory="/usr/include/c++/5/backward" />
+            <Add directory="/usr/include/x86_64-linux-gnu" />
+            <Add directory="/usr/include/x86_64-linux-gnu/c++/5" />
+            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include" />
+            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 eobjects/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      </Build>
+      <Unit filename="/coderoot/borromean/eobjects/code/binding/ebinding.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/binding/ebinding.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/binding/epropertybinding.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/container/econtainer.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/container/econtainer.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/defs/eclassid.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/defs/edefs.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/defs/eoid.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/defs/estatus.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/envelope/eenvelope.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/eobjects.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/global/eglobal.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/global/eglobal.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/global/eprocess.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/global/eprocess.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/main/emain.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/name/ename.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/name/ename.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/name/enamespace.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/name/enamespace.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/eclasslist.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/eclasslist.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/ehandle.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/ehandle.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/ehandleroot.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/ehandleroot.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/ehandletable.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/ehandletable.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/eobject.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/eobject.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/pointer/epointer.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/pointer/epointer.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/root/eroot.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/root/eroot.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/set/eset.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/set/eset.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/stream/estream.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/stream/estream.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/thread/ethread.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/thread/ethread.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/thread/ethreadhandle.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/variable/evariable.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/variable/evariable.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/eobjects.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/build/cmake/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/build/cmake/../../../build/cmake/e-build-defs.txt">
+          <Option virtualFolder="CMake Files\..\..\..\build\cmake\" />
+      </Unit>
+   </Project>
+</CodeBlocks_project_file>
