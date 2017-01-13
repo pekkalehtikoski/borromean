@@ -187,7 +187,7 @@ public:
 /* TARGET **************************************************************************************** */
 
     void settarget(
-        os_char *target);
+        const os_char *target);
 
     void settarget(
         eVariable *target);
@@ -198,13 +198,14 @@ public:
      */
     inline os_char *target()
     {
-        if (m_target == OS_NULL) return "";
+        if (m_target == OS_NULL) return (os_char*)"";
         return m_target + m_target_pos;
     }
 
     /* Get next name from target string.
      */
-    void nexttarget(eVariable *x);
+    void nexttarget(
+        eVariable *x);
 
     inline void move_target_pos(
         os_short nchars) 
@@ -225,14 +226,14 @@ public:
 /* SOURCE **************************************************************************************** */
 
     void appendsource(
-        os_char *source);
+        const os_char *source);
 
     void appendsourceoix(
         eObject *o);
 
     inline os_char *source()
     {
-        if (m_source == OS_NULL) return "";
+        if (m_source == OS_NULL) return (os_char*)"";
         return m_source;
     }
 

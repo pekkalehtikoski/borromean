@@ -20,6 +20,9 @@
 #ifdef OSAL_WINDOWS
 #include <memory.h>
 #endif
+#ifdef OSAL_LINUX
+#include <memory.h>
+#endif
 
 #if OSAL_MEMORY_MANAGER
 
@@ -227,6 +230,13 @@ void osal_memory_free(
 /*@{*/
 
 #ifdef OSAL_WINDOWS
+  #define OSAL_MEMORY_OS_CLR_AND_CPY
+  #define os_memclear(d,c) memset((d),0,(size_t)(c))
+  #define os_memcpy(d,s,c) memcpy((d),(s),(size_t)(c))
+  #define os_memmove(d,s,c) memmove((d),(s),(size_t)(c))
+#endif
+
+#ifdef OSAL_LINUX
   #define OSAL_MEMORY_OS_CLR_AND_CPY
   #define os_memclear(d,c) memset((d),0,(size_t)(c))
   #define os_memcpy(d,s,c) memcpy((d),(s),(size_t)(c))

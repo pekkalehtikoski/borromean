@@ -795,7 +795,7 @@ void eObject::adopt(
 ****************************************************************************************************
 */
 void eObject::ns_create(
-	os_char *namespace_id)
+    const os_char *namespace_id)
 {
 	eNameSpace *ns;
 
@@ -870,8 +870,8 @@ void eObject::ns_delete()
 ****************************************************************************************************
 */
 eName *eObject::ns_first(
-    os_char *name,
-    os_char *namespace_id)
+    const os_char *name,
+    const os_char *namespace_id)
 {
     if (name == OS_NULL)
     {
@@ -905,7 +905,7 @@ eName *eObject::ns_first(
 */
 eName *eObject::ns_firstv(
     eVariable *name,
-    os_char *namespace_id)
+    const os_char *namespace_id)
 {
     eNameSpace *ns;
     eName *n;
@@ -971,8 +971,8 @@ eName *eObject::ns_firstv(
 ****************************************************************************************************
 */
 eObject *eObject::ns_get(
-    os_char *name,
-    os_char *namespace_id,
+    const os_char *name,
+    const os_char *namespace_id,
     os_int cid)
 {
     eName *n;
@@ -991,16 +991,16 @@ eObject *eObject::ns_get(
 
 
 eVariable *eObject::ns_getv(
-    os_char *name,
-    os_char *namespace_id)
+    const os_char *name,
+    const os_char *namespace_id)
 {
     return eVariable::cast(ns_get(name, namespace_id, ECLASSID_VARIABLE));
 }
 
 
 eContainer *eObject::ns_getc(
-    os_char *name,
-    os_char *namespace_id)
+    const os_char *name,
+    const os_char *namespace_id)
 {
     return eContainer::cast(ns_get(name, namespace_id, ECLASSID_CONTAINER));
 }
@@ -1031,7 +1031,7 @@ eContainer *eObject::ns_getc(
 ****************************************************************************************************
 */
 eNameSpace *eObject::findnamespace(
-	os_char *namespace_id,
+    const os_char *namespace_id,
     os_int *info,
     eObject *checkpoint)
 {
@@ -1132,9 +1132,9 @@ eNameSpace *eObject::findnamespace(
 ****************************************************************************************************
 */
 eName *eObject::addname(
-	os_char *name,
+    const os_char *name,
     os_int flags,
-	os_char *namespace_id)
+    const os_char *namespace_id)
 {
 	eName *n;
 
@@ -1322,8 +1322,8 @@ void eObject::mapone(
 */
 void eObject::message(
     os_int command, 
-    os_char *target,
-    os_char *source,
+    const os_char *target,
+    const os_char *source,
     eObject *content,
     os_int mflags,
     eObject *context)
@@ -1460,7 +1460,7 @@ void eObject::message(
 */
 void eObject::message_within_thread(
     eEnvelope *envelope,
-    os_char *namespace_id)
+    const os_char *namespace_id)
 {
 	eNameSpace *nspace;
     eVariable *objname;
@@ -2018,7 +2018,7 @@ getout:
 
 
 void eObject::setproperty_msg(
-    os_char *remotepath,
+    const os_char *remotepath,
     eObject *x,
     os_int flags)
 {
@@ -2027,7 +2027,7 @@ void eObject::setproperty_msg(
 
 
 void eObject::setpropertyd_msg(
-    os_char *remotepath,
+    const os_char *remotepath,
     os_double x)
 {
     eVariable v;
@@ -2065,9 +2065,9 @@ void eObject::setpropertyd_msg(
 eVariable *eObject::addproperty(
     os_int cid, 
     os_int propertynr, 
-    os_char *propertyname,
+    const os_char *propertyname,
     os_int pflags,
-    os_char *text)
+    const os_char *text)
 {
     eContainer *propertyset;
     eVariable *p;
@@ -2111,9 +2111,9 @@ eVariable *eObject::addproperty(
 eVariable *eObject::addpropertyl(
     os_int cid, 
     os_int propertynr, 
-    os_char *propertyname,
+    const os_char *propertyname,
     os_int pflags,
-    os_char *text,
+    const os_char *text,
     os_long x)
 {
     eVariable *p;
@@ -2141,9 +2141,9 @@ eVariable *eObject::addpropertyl(
 eVariable *eObject::addpropertyd(
     os_int cid, 
     os_int propertynr, 
-    os_char *propertyname,
+    const os_char *propertyname,
     os_int pflags,
-    os_char *text,
+    const os_char *text,
     os_double x,
     os_int digs)
 {
@@ -2172,11 +2172,11 @@ eVariable *eObject::addpropertyd(
 */
 eVariable *eObject::addpropertys(
     os_int cid, 
-    os_int propertynr, 
-    os_char *propertyname,
+    os_int propertynr,
+    const os_char *propertyname,
     os_int pflags,
-    os_char *text,
-    os_char *x)
+    const os_char *text,
+    const os_char *x)
 {
     eVariable *p;
     p = addproperty(cid, propertynr, propertyname, pflags, text);
@@ -2246,7 +2246,7 @@ void eObject::initproperties()
 ****************************************************************************************************
 */
 os_int eObject::propertynr(
-    os_char *propertyname)
+    const os_char *propertyname)
 {
     eContainer *propertyset;
     eNameSpace *ns;
@@ -2530,7 +2530,7 @@ void eObject::setpropertyd(
     */
 void eObject::setpropertys(
     os_int propertynr, 
-    os_char *x)
+    const os_char *x)
 {
     eVariable v;
     v.sets(x);
@@ -2649,8 +2649,8 @@ os_double eObject::propertyd(
 */
 void eObject::bind(
     os_int localpropertynr,
-    os_char *remotepath,
-    os_char *remoteproperty,
+    const os_char *remotepath,
+    const os_char *remoteproperty,
     os_int bflags)
 {
     eContainer *bindings;
@@ -2733,7 +2733,7 @@ void eObject::srvbind(
 */
 void eObject::bind(
     os_int localpropertynr,
-    os_char *remotepath,
+    const os_char *remotepath,
     os_int bflags)
 {
     eVariable v;

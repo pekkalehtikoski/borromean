@@ -234,7 +234,7 @@ failed:
 ****************************************************************************************************
 */
 void eBinding::bind_base(
-    os_char *objpath,
+    const os_char *objpath,
     eSet *parameters)
 {
     /* Disconnect, just in case binding is reused. If objpath is not given as argument, keep
@@ -393,7 +393,7 @@ void eBinding::ack_base(
 ****************************************************************************************************
 */
 void eBinding::set_objpath(
-    os_char *objpath)
+    const os_char *objpath)
 {
     if (m_objpath)
     {
@@ -425,7 +425,7 @@ void eBinding::set_objpath(
 ****************************************************************************************************
 */
 void eBinding::set_bindpath(
-    os_char *bindpath)
+    const os_char *bindpath)
 {
     if (m_bindpath)
     {

@@ -156,12 +156,12 @@ public:
     
     /* Get name space identifier, if any, for the name.
      */
-    os_char *eName::namespaceid();
+    os_char *namespaceid();
 
     /* Set name space identifier, if any, for the name.
      */
     void setnamespaceid(
-        os_char *namespace_id);
+        const os_char *namespace_id);
 
     /* Map the name to a name space.
      */

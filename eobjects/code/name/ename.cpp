@@ -294,7 +294,7 @@ eName *eName::ns_next(
 */
 os_char *eName::namespaceid()
 {
-    os_char
+    const os_char
         *namespace_id;
 
     switch (m_ns_type)
@@ -321,7 +321,7 @@ os_char *eName::namespaceid()
             break;
     }
 
-    return namespace_id;
+    return (os_char*)namespace_id;
 }
 
 /**
@@ -336,7 +336,7 @@ os_char *eName::namespaceid()
 ****************************************************************************************************
 */
 void eName::setnamespaceid(
-    os_char *namespace_id)
+    const os_char *namespace_id)
 {
     /* Clear old stuff if any
      */

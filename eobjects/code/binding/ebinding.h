@@ -150,7 +150,7 @@ protected:
     /* Connect client eBinding to server eBinding.
      */
     void bind_base(
-        os_char *objpath,
+        const os_char *objpath,
         eSet *parameters);
 
     /* Base classs function to bind the server end.
@@ -209,12 +209,12 @@ protected:
     /* Save object path.
      */
     void set_objpath(
-        os_char *objpath);
+        const os_char *objpath);
 
     /* Set bind path.
      */
     void set_bindpath(
-        os_char *bindpath);
+        const os_char *bindpath);
 
     /* Disconnect the binding and release allocated memory.
      */

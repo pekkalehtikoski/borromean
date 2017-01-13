@@ -118,7 +118,7 @@ eObject *eEnvelope::clone(
 ****************************************************************************************************
 */
 void eEnvelope::settarget(
-    os_char *target)
+    const os_char *target)
 {
     os_memsz
         sz,
@@ -183,7 +183,7 @@ void eEnvelope::settarget(
 ****************************************************************************************************
 */
 void eEnvelope::appendsource(
-    os_char *source)
+    const os_char *source)
 {
     os_memsz
         sz,

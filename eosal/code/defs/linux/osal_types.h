@@ -29,6 +29,11 @@
  */
 typedef char os_char;
 
+/** 8 bit signed character. This is forced to be always signed. Use this for type conversions
+    instead of os_char.
+ */
+typedef signed char os_schar;
+
 /** @brief 8 bit unsigned character. In practise this is always same as unsigned char.
  */
 typedef unsigned char os_uchar;
@@ -77,6 +82,10 @@ typedef float os_float;
     typically 4 bytes.
  */
 typedef double os_double;
+
+/** Pointer type, often function pointer.
+ */
+typedef void *os_pointer;
 
 /*@}*/
 

@@ -159,7 +159,7 @@ public:
      */
     inline void sets(
         os_int id, 
-        os_char *x)
+        const os_char *x)
     {
         eVariable v;
         v.sets(x);
@@ -195,7 +195,7 @@ public:
 
     /* Clear the set.
      */
-    void eSet::clear();
+    void clear();
 
     /*@}*/
 

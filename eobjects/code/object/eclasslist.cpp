@@ -54,7 +54,7 @@ void eclasslist_add(
     /* Store pointer to class'es newobj() function.
      */
     pointer = new eVariable(eglobal->classlist, cid);
-    pointer->setp(nfunc);
+    pointer->setp((os_pointer)nfunc);
 
 getout:
     /* Finished with synchronization.

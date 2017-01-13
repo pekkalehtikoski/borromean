@@ -300,8 +300,8 @@ void ePropertyBinding::onmessage(
 */
 void ePropertyBinding::bind(
     os_int localpropertynr,
-    os_char *remotepath,
-    os_char *remoteproperty,
+    const os_char *remotepath,
+    const os_char *remoteproperty,
     os_int bflags)
 {
     eSet *parameters;
@@ -642,7 +642,7 @@ void ePropertyBinding::ack(
 ****************************************************************************************************
 */
 void ePropertyBinding::set_propertyname(
-    os_char *propertyname)
+    const os_char *propertyname)
 {
     if (m_propertyname)
     {

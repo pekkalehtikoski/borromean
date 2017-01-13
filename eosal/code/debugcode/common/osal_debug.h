@@ -67,7 +67,7 @@
 
 	/* Macro to add file name line number to osal_debug_assert_func() arguments.
 	 */
-	#define osal_debug_assert(cond) osal_debug_assert_func((os_long)(cond), __FILE__, __LINE__)
+    #define osal_debug_assert(cond) osal_debug_assert_func((os_long)(cond), (os_char*)__FILE__, __LINE__)
 
 	/* Log a programming error.
 	 */

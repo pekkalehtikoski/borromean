@@ -284,7 +284,7 @@ public:
 
     /** Get oix and ucnt from string.
      */
-    os_short eObject::oixparse(
+    os_short oixparse(
         os_char *str,
         e_oix *oix, 
         os_int *ucnt);
@@ -449,7 +449,7 @@ public:
     /* Create name space for this object.
      */
 	void ns_create(
-		os_char *namespace_id = OS_NULL);
+        const os_char *namespace_id = OS_NULL);
 
 	/* Delete this object's name space.
      */
@@ -458,29 +458,29 @@ public:
 	/* Find eName by name and name space.
      */
 	eName *ns_first(
-        os_char *name = OS_NULL,
-        os_char *namespace_id = OS_NULL); 
+        const os_char *name = OS_NULL,
+        const os_char *namespace_id = OS_NULL);
 
     /* Find eName by name and name space.
      */
     eName *ns_firstv(
         eVariable *name = OS_NULL,
-        os_char *namespace_id = OS_NULL);
+        const os_char *namespace_id = OS_NULL);
 
     /* Find object by name.
      */
     eObject *ns_get(
-        os_char *name,
-        os_char *namespace_id = OS_NULL,
+        const os_char *name,
+        const os_char *namespace_id = OS_NULL,
         os_int cid = ECLASSID_OBJECT);
 
     eVariable *ns_getv(
-        os_char *name,
-        os_char *namespace_id = OS_NULL);
+        const os_char *name,
+        const os_char *namespace_id = OS_NULL);
 
     eContainer *ns_getc(
-        os_char *name,
-        os_char *namespace_id = OS_NULL);
+        const os_char *name,
+        const os_char *namespace_id = OS_NULL);
 
     /* Info bits for findnamespace().
      */
@@ -490,16 +490,16 @@ public:
     /* Find name space by name space ID. 
      */
 	eNameSpace *findnamespace(
-		os_char *namespace_id = OS_NULL,
+        const os_char *namespace_id = OS_NULL,
         os_int *info = OS_NULL,
         eObject *checkpoint = OS_NULL);
 
 	/* Give name to this object.
      */
 	eName *addname(
-	    os_char *name,
+        const os_char *name,
         os_int flags = 0,
-	    os_char *namespace_id = OS_NULL);
+        const os_char *namespace_id = OS_NULL);
 
     /* Flags for map() function: Attach all names of child object (this) and it's childen to 
        name spaces. If a name is already mapped, it is not remapped.
@@ -537,14 +537,15 @@ public:
 
     /* Send message.
      */
-    void message(eEnvelope *envelope);
+    void message(
+        eEnvelope *envelope);
 
     /* Send message.
      */
     void message(
         os_int command, 
-        os_char *target,
-        os_char *source = OS_NULL,
+        const os_char *target,
+        const os_char *source = OS_NULL,
         eObject *content = OS_NULL,
         os_int mflags = EMSG_DEL_CONTENT,
         eObject *context = OS_NULL);
@@ -555,12 +556,12 @@ public:
     /* Set object's property by sending a message.
      */
     void setproperty_msg(
-        os_char *remotepath,
+        const os_char *remotepath,
         eObject *x,
         os_int flags);
 
     void setpropertyd_msg(
-        os_char *remotepath,
+        const os_char *remotepath,
         os_double x);
 
     /*@}*/
@@ -583,18 +584,18 @@ public:
     static eVariable *addproperty(
         os_int cid, 
         os_int propertynr, 
-        os_char *propertyname,
+        const os_char *propertyname,
         os_int pflags = EPRO_DEFAULT,
-        os_char *text = OS_NULL);
+        const os_char *text = OS_NULL);
 
     /* Add integer property to property set.
      */
     static eVariable *addpropertyl(
         os_int cid, 
         os_int propertynr, 
-        os_char *propertyname,
+        const os_char *propertyname,
         os_int pflags = EPRO_DEFAULT,
-        os_char *text = OS_NULL,
+        const os_char *text = OS_NULL,
         os_long x = 0);
 
     /* Add double property to property set.
@@ -602,9 +603,9 @@ public:
     static eVariable *addpropertyd(
         os_int cid, 
         os_int propertynr, 
-        os_char *propertyname,
+        const os_char *propertyname,
         os_int pflags = EPRO_DEFAULT,
-        os_char *text = OS_NULL,
+        const os_char *text = OS_NULL,
         os_double x = 0.0,
         os_int digs = 2);
 
@@ -613,10 +614,10 @@ public:
     static eVariable *addpropertys(
         os_int cid, 
         os_int propertynr, 
-        os_char *propertyname,
+        const os_char *propertyname,
         os_int pflags = EPRO_DEFAULT,
-        os_char *text = OS_NULL,
-        os_char *x = OS_NULL);
+        const os_char *text = OS_NULL,
+        const os_char *x = OS_NULL);
 
     /* Initialize properties to default values.
      */
@@ -625,7 +626,7 @@ public:
     /* Property name to number.
      */
     os_int propertynr(
-        os_char *propertyname);
+        const os_char *propertyname);
 
     /* Property number to name.
      */
@@ -664,7 +665,7 @@ public:
      */
     void setpropertys(
         os_int propertynr, 
-        os_char *x);
+        const os_char *x);
 
     /* Get property value.
      */
@@ -713,15 +714,15 @@ public:
      */
     void bind(
         os_int localpropertynr,
-        os_char *remotepath,
-        os_char *remoteproperty,
+        const os_char *remotepath,
+        const os_char *remoteproperty,
         os_int bflags);
 
     /* Bind properties, remote property .
      */
     void bind(
         os_int localpropertynr,
-        os_char *remotepath,
+        const os_char *remotepath,
         os_int bflags);
 
 
@@ -746,7 +747,7 @@ public:
 private:
     void message_within_thread(
         eEnvelope *envelope,
-        os_char *namespace_id);
+        const os_char *namespace_id);
 
     void message_process_ns(
         eEnvelope *envelope);

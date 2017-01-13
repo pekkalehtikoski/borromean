@@ -34,6 +34,7 @@ class eStream;
 class eVariable;
 class eNameSpace;
 class eName;
+class eRoot;
 
 
 /**

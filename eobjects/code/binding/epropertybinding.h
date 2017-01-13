@@ -122,8 +122,8 @@ public:
      */
     void bind(
         os_int localpropertynr,
-        os_char *remotepath,
-        os_char *remoteproperty,
+        const os_char *remotepath,
+        const os_char *remoteproperty,
         os_int bflags);
 
     /* Bind the server end.
@@ -143,7 +143,7 @@ protected:
 
     /* Finish the client end of binding.
      */
-    void ePropertyBinding::cbindok(
+    void cbindok(
         eObject *obj,
         eEnvelope *envelope);
 
@@ -180,7 +180,7 @@ protected:
     /* Save property name.
      */
     void set_propertyname(
-        os_char *propertyname);
+        const os_char *propertyname);
 
     /** 
 	************************************************************************************************
