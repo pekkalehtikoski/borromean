@@ -4,7 +4,7 @@
   @brief   Convert integer to string.
   @author  Pekka Lehtikoski
   @version 1.0
-  @date    9.11.2011
+  @date    9.11.20114
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -19,8 +19,8 @@
 /**
 ****************************************************************************************************
 
-  @brief Convert integer to string.
-  @anchor osal_int_to_string
+  @brief Pack integer to serialization format.
+  @anchor osal_int_pack
 
   The osal_int_to_string() function converts an integer x to string and stores the resulting 
   string into buffer. If the buffer is too small to hold the resulting string, the function
@@ -36,7 +36,7 @@
 
 ****************************************************************************************************
 */
-os_memsz osal_int_to_string(
+os_short osal_int_pack(
     os_char *buf,
 	os_memsz buf_sz,
 	os_long x)
