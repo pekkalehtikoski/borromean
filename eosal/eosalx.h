@@ -39,6 +39,7 @@ OSAL_C_HEADER_BEGINS
 #include "eosal/extensions/typeid/common/osal_typeid.h"
 #include "eosal/extensions/socket/common/osal_socket_worker.h"
 #include "eosal/extensions/socket/common/osal_socket.h"
+#include "eosal/extensions/serialize/common/osal_serialize.h"
 
 /* If C++ compilation, end the undecorated code.
  */

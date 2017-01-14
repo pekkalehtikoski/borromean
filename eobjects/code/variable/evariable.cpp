@@ -1177,7 +1177,6 @@ os_int eVariable::compare(
                     }
                     else
                     {
-osal_int_to_string(nbuf, sizeof(nbuf), x->m_value.valbuf.v.d); // ???????????????????????????????
                         rval = os_strcmp(nbuf, y->gets());
                     }
                     break;

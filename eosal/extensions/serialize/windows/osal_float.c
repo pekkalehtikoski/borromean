@@ -15,15 +15,24 @@
 */
 #include "eosal/eosalx.h"
 
-#if OSAL_SMALL_ENDIAN
-    #define ODFLOAT_LOW 0
-    #define ODFLOAT_HIGH 1
-#else
-    #define ODFLOAT_LOW 1
-    #define ODFLOAT_HIGH 0
- #endif
 
+/**
+****************************************************************************************************
 
+  @brief Convert integer mantissa and exponent to double.
+  @anchor osal_ints2double
+
+  The osal_ints2double() function takes mantissa and exponent as arguments converts these to
+  a double precision floating point number.
+
+  @param  x Pointer to double in which to store the result.
+  @param  m Mantissa.
+  @param  e Exponent.
+
+  @return OS_TRUE if successfull, OS_FALSE if overflow or another conversion error.
+
+****************************************************************************************************
+*/
 os_boolean osal_ints2double(
     os_double *x,
     os_long m,
@@ -90,6 +99,23 @@ os_boolean osal_ints2double(
     return rval;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Split double to mantissa and exponent.
+  @anchor osal_double2ints
+
+  The osal_double2ints() function takes double precision floating point number as argument and
+  converts it to integer mantissa and exponent.
+
+  @param  x Number to convert.
+  @param  m Pointer where to store mantissa.
+  @param  e Pointer where to store exponent.
+  @return None.
+
+****************************************************************************************************
+*/
 void osal_double2ints(
 	os_double x,
 	os_long *m,
@@ -129,6 +155,23 @@ void osal_double2ints(
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Convert integer mantissa and exponent to float.
+  @anchor osal_ints2float
+
+  The osal_ints2float() function takes mantissa and exponent as arguments converts these to
+  a single precision floating point number.
+
+  @param  x Pointer to float in which to store the result.
+  @param  m Mantissa.
+  @param  e Exponent.
+
+  @return OS_TRUE if successfull, OS_FALSE if overflow or another conversion error.
+
+****************************************************************************************************
+*/
 os_boolean osal_ints2float(
     os_float *x,
     os_long m,
@@ -196,6 +239,22 @@ os_boolean osal_ints2float(
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Split float to mantissa and exponent.
+  @anchor osal_float2ints
+
+  The osal_float2ints() function takes single precision floating point number as argument and
+  converts it to integer mantissa and exponent.
+
+  @param  x Number to convert.
+  @param  m Pointer where to store mantissa.
+  @param  e Pointer where to store exponent.
+  @return None.
+
+****************************************************************************************************
+*/
 void osal_float2ints(
     os_float x,
     os_long *m,
@@ -233,4 +292,3 @@ void osal_float2ints(
     if (sign) v = -v;
     *m = v;
 }
-
