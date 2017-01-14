@@ -31,6 +31,13 @@
 #define OSAL_DEBUG 1
 #endif
 
+/** Byte order. If OSAL_SMALL_ENDIAN flags is nonzero, the small endian byte format is assumed,
+    otherwise big endian.
+ */
+#ifndef OSAL_SMALL_ENDIAN
+#define OSAL_SMALL_ENDIAN 1
+#endif
+
 /** Include memory debug code. If OSAL_MEMORY_DEBUG flags is nonzero, the memory
     block overwflows and freed block size are checked.
  */

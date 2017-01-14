@@ -1,6 +1,6 @@
 /**
 
-  @file    steam/common/osal_intser.c
+  @file    serialize/common/osal_intser.c
   @brief   Serialize integers.
   @author  Pekka Lehtikoski
   @version 1.0
