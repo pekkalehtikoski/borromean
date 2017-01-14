@@ -414,7 +414,7 @@ void eVariable::setd(
 
   The sets() function sets a string value to variable. 
 
-  @param   x Value to set.
+  @param   x Value to set. OS_NULL is same as empty string.
   @param   max_chars Maximum number of characters to store excluding terminating NULL character.
            -1 for unlimited.
   @return  None.
@@ -1590,8 +1590,9 @@ void eVariable::onmessage()
   The appends_internal() function appends characters from string to variable. After this
   call the variable always contains a string.
 
-  @param   str Pointer to the string to append.
-  @param   nchard Number of characters to append. This should not include terminating null
+  @param   str Pointer to the string to append. If str is NULL, the function just allocates
+           nchars more space for string.
+  @param   nchars Number of characters to append. This should not include terminating null
 		   character.
   @return  None.
 
@@ -1629,7 +1630,7 @@ void eVariable::appends_internal(
          */
         if (n <= EVARIABLE_STRBUF_SZ) 
         {
-            os_memcpy(val + (used - 1), str, nchars);
+            if (str) os_memcpy(val + (used - 1), str, nchars);
             val[n-1] = '\0';
             m_value.strbuf.used = (os_uchar)n;
             return;
@@ -1645,7 +1646,7 @@ void eVariable::appends_internal(
          */
         if (n <= m_value.strptr.allocated)
         {
-            os_memcpy(val + (used - 1), str, nchars);
+            if (str) os_memcpy(val + (used - 1), str, nchars);
             val[n-1] = '\0';
             m_value.strptr.used = n;
             return;
@@ -1656,7 +1657,7 @@ void eVariable::appends_internal(
      */
     newval = (os_char*)osal_memory_allocate(n, &allocated);
     os_memcpy(newval, val, used - 1);
-    os_memcpy(newval + (used - 1), str, nchars);
+    if (str) os_memcpy(newval + (used - 1), str, nchars);
     newval[n-1] = '\0';
 
     /* If we need to delete old buffer.
@@ -1675,4 +1676,30 @@ void eVariable::appends_internal(
     /* Flag that we have allocated buffer.
      */
     m_vflags |= EVAR_STRBUF_ALLOCATED;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Allocate buffer to hold a string.
+
+  The allocate() function clears the variable and sets variable type to string.
+  Returned pointer is pointer to string with quaranteed space for nchars characters followed
+  by NULL character placed in advance.
+
+  Retuenrd string is uninitialized and may contain garbage. 
+
+  @param   nchars Number of characters to allocate space for. This should not include terminating 
+           NULL character. 
+  @return  Pointer to buffer which can be modified, size nchars + 1 (NULL char).
+
+****************************************************************************************************
+*/
+os_char *eVariable::allocate(
+    os_memsz nchars)
+{
+    sets(OS_NULL);
+    appends_internal(OS_NULL, nchars);
+    return gets();
 }

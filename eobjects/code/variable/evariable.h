@@ -331,6 +331,11 @@ public:
      */
     os_pointer getp();
 
+    /* Allocate buffer to hold a string.
+     */
+    os_char *allocate(
+        os_memsz nchars);
+
     /*@}*/
 
 	/** 
@@ -455,6 +460,14 @@ public:
     /*@}*/
 
 
+	/** Check if temporary string buffer has been allocated.
+     */
+    inline os_boolean tmpstrallocated()
+    {
+        return (type() != OS_STRING && m_value.valbuf.tmpstr) 
+            ? OS_TRUE : OS_FALSE;
+    }
+
 protected:
     /** Set data type.
      */
@@ -462,14 +475,6 @@ protected:
     {
         m_vflags &= ~EVAR_TYPE_MASK;
         m_vflags |= (type_id & EVAR_TYPE_MASK);
-    }
-
-	/** Check if temporary string buffer has been allocated.
-     */
-    inline os_boolean tmpstrallocated()
-    {
-        return (type() != OS_STRING && m_value.valbuf.tmpstr) 
-            ? OS_TRUE : OS_FALSE;
     }
 
     inline void cleartmpstr()

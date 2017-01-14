@@ -28,17 +28,30 @@
 */
 /*@{*/
 
+/* Recommended minimum size for buffer argument to osal_intser_writer().
+ */
+#define OSAL_INTSER_BUF_SZ 10
+
 /* Convert integer to packed serial format.
  */
 os_int osal_intser_writer(
-	os_uchar *buf,
+	os_char *buf,
 	os_long x);
 
 /* Get integer from packed serial format.
  */
 os_int osal_intser_reader(
-	os_uchar *buf,
+	os_char *buf,
 	os_long *x);
+
+/* Get number of bytes following first byte
+ */
+inline os_int osal_intser_more_bytes(
+    os_char c)
+{
+    return (c >> 5);
+}
+
 
 /*@}*/
 

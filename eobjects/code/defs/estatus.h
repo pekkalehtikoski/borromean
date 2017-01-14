@@ -57,7 +57,11 @@ typedef enum
 
 	/** Propertie, simpleproperty() did not find property.
 	 */
-    ESTATUS_NO_SIMPLE_PROPERTY_NR = 300
+    ESTATUS_NO_SIMPLE_PROPERTY_NR = 300,
+
+    /** Reading float from stream failed
+     */
+    ESTATUS_STREAM_FLOAT_ERROR = 400
 
 } 
 eStatus;

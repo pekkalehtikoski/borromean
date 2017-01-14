@@ -1,12 +1,12 @@
 /**
 
   @file    estream.h
-  @brief   Virtual stream base class.
+  @brief   Stream base class.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    17.5.2016
 
-  Stream base class.
+  Stream base class sets up general way to interace with different types of streams.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -97,10 +97,10 @@ public:
 
     virtual eStatus flush() {return ESTATUS_SUCCESS;}
 
-    virtual eStatus write(os_char *buf, os_long buf_sz, os_long *nwritten = OS_NULL)
+    virtual eStatus write(const os_char *buf, os_memsz buf_sz, os_memsz *nwritten = OS_NULL)
         {if (nwritten != OS_NULL) *nwritten = 0; return ESTATUS_SUCCESS;}
 
-    virtual eStatus read(os_char *buf, os_long buf_sz, os_long *nread = OS_NULL)
+    virtual eStatus read(os_char *buf, os_memsz buf_sz, os_memsz *nread = OS_NULL)
         {if (nread != OS_NULL) *nread = 0; return ESTATUS_SUCCESS;}
 
 	/** Begin an object, etc. block. This is for versioning, block size may be changed.
@@ -121,28 +121,29 @@ public:
 
 	/* Store long integer value to stream.
      */
-	eStatus setl(
-        const os_long x);
+	eStatus putl(
+        os_long x);
 
     /* Store float value to stream.
      */
-    eStatus setf(
-	    const os_double x);
+    eStatus putf(
+	    os_float x);
 
     /* Store double value to stream.
      */
-    eStatus setd(
-	    const os_double x);
+    eStatus putd(
+	    os_double x);
 
     /* Set string value to variable.
      */
-    eStatus sets(
+    eStatus puts(
 	    const os_char *x);
 
 	/* Set variable value as string.
      */
-    eStatus sets(
+    eStatus puts(
 	    eVariable *x);
+
 
 	/* Get long integer value from stream.
      */
@@ -182,17 +183,17 @@ public:
 
     /** Operator "<<", storing values to stream.
      */
-    inline eStatus operator<<(const os_char x) { return setl(x); }
-    inline eStatus operator<<(const os_uchar x) { return setl(x); }
-    inline eStatus operator<<(const os_short x) { return setl(x); }
-    inline eStatus operator<<(const os_ushort x) { return setl(x); }
-    inline eStatus operator<<(const os_int x) { return setl(x); }
-    inline eStatus operator<<(const os_uint x) { return setl(x); }
-    inline eStatus operator<<(const os_long x) { return setl(x); }
-    inline eStatus operator<<(const os_float x) { return setf(x); }
-    inline eStatus operator<<(const os_double x) { return setd(x); }
-    inline eStatus operator<<(const os_char *x) { return sets(x); }
-    inline eStatus operator<<(eVariable& x) { return sets(&x); }
+    inline eStatus operator<<(const os_char x) { return putl(x); }
+    inline eStatus operator<<(const os_uchar x) { return putl(x); }
+    inline eStatus operator<<(const os_short x) { return putl(x); }
+    inline eStatus operator<<(const os_ushort x) { return putl(x); }
+    inline eStatus operator<<(const os_int x) { return putl(x); }
+    inline eStatus operator<<(const os_uint x) { return putl(x); }
+    inline eStatus operator<<(const os_long x) { return putl(x); }
+    inline eStatus operator<<(const os_float x) { return putf(x); }
+    inline eStatus operator<<(const os_double x) { return putd(x); }
+    inline eStatus operator<<(const os_char *x) { return puts(x); }
+    inline eStatus operator<<(eVariable& x) { return puts(&x); }
 
     /** Operator ">>", getting values from stream.
      */
