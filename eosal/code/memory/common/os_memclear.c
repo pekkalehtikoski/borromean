@@ -39,11 +39,9 @@ void os_memclear(
     void *dst,
     os_memsz count)
 {
-	register os_char
-		*d;
+	register os_char *d;
 
 	if (dst == OS_NULL) return;
-
 	d = dst;
 
 	while (count-- > 0)

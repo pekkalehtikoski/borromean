@@ -61,6 +61,12 @@ void osal_socket_close(
 
 /* Accept connection from listening socket.
  */
+/* osalStream osal_socket_select(
+	osalStream *stream,
+    os_int n); */
+
+/* Accept connection from listening socket.
+ */
 osalStream osal_socket_accept(
 	osalStream stream,
 	os_char *parameters,

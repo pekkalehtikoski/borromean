@@ -39,16 +39,11 @@ os_char *os_strechr(
     os_char *str,
 	os_uint c32)
 {
-	os_char
-		c,
-        *p;
+	os_char c, *p;
 
 #if OSAL_UTF8
-	os_char
-		substr[8];
-
-	os_int
-		n;
+	os_char substr[8];
+	os_int n;
 #endif
 
 	/* If string pointer is OS_NULL, nothing can be found.

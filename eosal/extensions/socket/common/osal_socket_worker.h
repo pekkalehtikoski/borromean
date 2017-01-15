@@ -95,7 +95,7 @@ typedef struct osalSocketWorkerThreadState
 
 	/** Windows only: Windows event to interrupt select wait on the worker thread.
 	 */
-#ifdef OSAL_WIN32
+#ifdef OSAL_WINDOWS
 	void *interrupt_event;
 #endif
 

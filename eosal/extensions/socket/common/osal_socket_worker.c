@@ -313,5 +313,5 @@ static void osal_socket_worker_exit_thread(
 
 	/* Exit the thread.
 	 */
-	osal_thread_exit();
+//	osal_thread_exit();
 }

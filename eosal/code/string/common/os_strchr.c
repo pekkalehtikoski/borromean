@@ -38,15 +38,11 @@ os_char *os_strchr(
     os_char *str,
 	os_uint c32)
 {
-	os_char
-		c;
+	os_char c;
 
 #if OSAL_UTF8
-	os_char
-		substr[8];
-
-	os_int
-		n;
+	os_char substr[8];
+	os_int n;
 #endif
 
 	/* If string pointer is OS_NULL, nothing can be found.

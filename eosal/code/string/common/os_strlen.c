@@ -34,8 +34,7 @@
 os_memsz os_strlen(
     const os_char *str)
 {
-	os_memsz
-		count;
+	os_memsz count;
 
 	count = 1;
 	if (str) while (*(str++)) count++;

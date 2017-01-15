@@ -16,13 +16,11 @@
 ****************************************************************************************************
 */
 #include "eosal/eosalx.h"
-#if 0
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 
 #include <winsock2.h>
-
 
 /** Windows socket library version information.
  */
@@ -126,33 +124,15 @@ osalStream osal_socket_open(
 	osalStatus *status,
 	os_short flags)
 {
-	osalSocket 
-		*mysocket = OS_NULL;
-
-	os_memsz
-		host_sz;
-
-	os_int
-		port_nr;
-
-	os_char
-		*host;
-
-	osalStatus
-		rval;
-
-	unsigned long 
-		addr,
-		no_blocking;
-
-	SOCKET 
-		handle = INVALID_SOCKET;
-
-	struct sockaddr_in 
-		sin;
-
-	struct hostent
-		*he;
+	osalSocket *mysocket = OS_NULL;
+	os_memsz host_sz;
+	os_int port_nr;
+	os_char *host;
+	osalStatus rval;
+	unsigned long addr, no_blocking;
+	SOCKET handle = INVALID_SOCKET;
+	struct sockaddr_in sin;
+	struct hostent *he;
 
 	/* Get host name or numeric IP address and TCP port number from parameters.
 	 */
@@ -340,17 +320,10 @@ getout:
 void osal_socket_close(
 	osalStream stream)
 {
-	osalSocket 
-		*mysocket;
-
-	SOCKET 
-		handle;
-
-    char 
-		buf[64];
-
-	int 
-		n;
+	osalSocket *mysocket;
+	SOCKET handle;
+    char buf[64];
+	int n;
 
 	os_boolean
 		select_halted,
@@ -424,494 +397,6 @@ void osal_socket_close(
 
 
 
-
-/**
-****************************************************************************************************
-
-  @brief Accept connection from listening socket.
-  @anchor osal_socket_open
-
-  The osal_socket_accept() function accepts an incoming connection from listening socket.
-
-  @param   stream Stream pointer representing the listening socket.
-
-  @param   parameters Socket parameters, a list string. 
-
-  @param   callbacks Callback functions.
-
-  @param   status Pointer to integer into which to store the function status code. Value
-		   OSAL_SUCCESS (0) indicates that new connection was successfully accepted.
-		   The value OSAL_STATUS_NO_NEW_CONNECTION indicates that no new incoming 
-		   connection, was accepted.  All other nonzero values indicate an error,
-           See @ref osalStatus "OSAL function return codes" for full list.
-		   This parameter can be OS_NULL, if no status code is needed. 
-
-  @param   flags Flags for creating the socket. Define OSAL_STREAM_DEFAULT for normal operation.
-		   See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
-
-  @return  Stream pointer representing the socket, or OS_NULL if the function failed.
-
-****************************************************************************************************
-*/
-osalStream osal_socket_accept(
-	osalStream stream,
-	os_char *parameters,
-	osalStreamCallbacks *callbacks,
-	osalStatus *status,
-	os_short flags)
-{
-	osalSocket 
-		*mysocket,
-		*newsocket;
-
-	SOCKET 
-		handle,
-		new_handle;
-
-	int 
-		addr_size;
-
-	struct sockaddr_in 
-		sin_remote;
-
-	os_boolean
-		select_halted;
-
-	if (stream)
-	{
-	/* Cast stream pointer to socket structure pointer, lock socket and get OS socket handle.
-	 */
-		mysocket = (osalSocket*)stream;
-		select_halted = osal_socket_lock(mysocket);
-		handle = mysocket->handle;
-
-		/* If socket operating system socket is not already closed.
-		 */
-		if (handle != INVALID_SOCKET)
-		{
-			addr_size = sizeof(sin_remote);
-			new_handle = accept(handle, (struct sockaddr*)&sin_remote, &addr_size);
-		}
-		else
-		{
-			new_handle = INVALID_SOCKET;
-		}
-
-		/* Unlock the listening socket, no longer needed by accept.
-		 */
-		osal_socket_unlock(mysocket, select_halted);
-
-		/* If no new connection, do nothing more.
-		 */
-        if (new_handle == INVALID_SOCKET) 
-		{
-			if (status) *status = OSAL_STATUS_NO_NEW_CONNECTION;
-			return OS_NULL;
-		}
-
-		/* cout << "Accepted connection from " <<
-           inet_ntoa(sinRemote.sin_addr) << ":" <<
-           ntohs(sinRemote.sin_port) << "." << endl;
-		 */
-
-		/* Allocate and clear socket structure.
-		 */
-		newsocket = osal_memory_allocate(sizeof(osalSocket), OS_NULL);
-		if (newsocket == OS_NULL) 
-		{
-			closesocket(new_handle);
-			if (status) *status = OSAL_STATUS_MEMORY_ALLOCATION_FAILED;
-			return OS_NULL;
-		}
-		os_memclear(newsocket, sizeof(osalSocket));
-
-		/* Save socket handle and open flags.
-		 */
-		newsocket->handle = new_handle;
-		newsocket->open_flags = flags;
-
-		/* Save interface pointer.
-		 */
-	#if OSAL_FUNCTION_POINTER_SUPPORT
-		newsocket->hdr.hdr.iface = &osal_socket_iface;
-	#endif
-
-		/* Set timeouts.
-		 */
-		newsocket->hdr.hdr.write_timeout_ms = newsocket->hdr.hdr.read_timeout_ms = -1;
-
-		/* Create mutex to synchronize socket access and start synchronization.
-		 */
-		newsocket->mutex = osal_mutex_create();
-
-		if (callbacks)
-		{
-			osal_socket_set_callbacks(newsocket, callbacks);
-			osal_socket_join_to_worker((osalSocketHeader*)newsocket);
-		}
-
-		/* Set event. It is at least theoretically possible that at very beginning an event
-		   belonging to the accepted socket may go to the listening socket. Creating one time
-		   unnecessary event is much better than any possibility of missing an event.
-		 */
-		if (newsocket->event) WSASetEvent(newsocket->event);
-
-		/* Success set status code and cast socket structure pointer to stream pointer 
-		   and return it.
-		 */
-		if (status) *status = OSAL_SUCCESS;
-		return (osalStream)newsocket;
-	}
-
-	if (status) *status = OSAL_STATUS_FAILED;
-	return OS_NULL;
-}
-
-
-
-
-
-/**
-****************************************************************************************************
-
-  @brief Flush the socket.
-  @anchor osal_socket_flush
-
-  The osal_socket_flush() function flushes data to be written to stream.
-
-  @param   stream Stream pointer representing the socket.
-  @param   flags See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
-  @return  Function status code. Value OSAL_SUCCESS (0) indicates success and all nonzero values
-		   indicate an error. See @ref osalStatus "OSAL function return codes" for full list.
-
-****************************************************************************************************
-*/
-osalStatus osal_socket_flush(
-	osalStream stream,
-	os_short flags)
-{
-	return OSAL_SUCCESS;
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Write data to socket.
-  @anchor osal_socket_write
-
-  The osal_socket_write() function writes up to n bytes of data from buffer to socket.
-
-  @param   stream Stream pointer representing the socket.
-  @param   buf Pointer to the beginning of data to place into the socket.
-  @param   n Maximum number of bytes to write. 
-  @param   n_written Pointer to integer into which the function stores the number of bytes 
-		   actually written to socket,  which may be less than n if there is not enough space
-		   left in the socket. If the function fails n_written is set to zero.
-  @param   flags Flags for the function.
-		   See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
-  @return  Function status code. Value OSAL_SUCCESS (0) indicates success and all nonzero values
-		   indicate an error. See @ref osalStatus "OSAL function return codes" for full list.
-
-****************************************************************************************************
-*/
-osalStatus osal_socket_write(
-	osalStream stream,
-	const os_uchar *buf,
-	os_memsz n,
-	os_memsz *n_written,
-	os_short flags)
-{
-	int 
-		rval;
-
-	os_boolean 
-		select_halted;
-
-	osalSocket 
-		*mysocket;
-
-	SOCKET 
-		handle;
-
-	if (stream)
-	{
-		/* Cast stream pointer to socket structure pointer.
-		 */
-		mysocket = (osalSocket*)stream;
-
-		/* Special case. Writing 0 bytes will trigger write callback by worker thread.
-		 */
-		if (n == 0)
-		{
-			if (mysocket->hdr.hdr.callbacks.write_func)
-			{
-				mysocket->hdr.send_now = OS_TRUE;
-				osal_socket_worker_ctrl(mysocket->hdr.worker_thread, OSAL_SOCKWORKER_INTERRUPT);
-			}
-			*n_written = 0;
-			return OSAL_SUCCESS;
-		}
-
-		/* Lock socket and get OS socket handle.
-		 */
-		select_halted = osal_socket_lock(mysocket);
-		handle = mysocket->handle;
-
-		/* If operating system socket is already closed.
-		 */
-		if (handle == INVALID_SOCKET)
-		{
-			osal_socket_unlock(mysocket, select_halted);
-			goto getout;
-		}
-
-		rval = send(handle, buf, n, 0);
-
-		if (rval == SOCKET_ERROR)
-		{
-			if (WSAGetLastError() != WSAEWOULDBLOCK) 
-			{
-				osal_socket_unlock(mysocket, select_halted);
-				goto getout;
-			}
-			rval = 0;
-		}
-
-		osal_socket_unlock(mysocket, select_halted);
-		*n_written = rval;
-		return OSAL_SUCCESS;
-	}
-
-getout:
-	*n_written = 0;
-	return OSAL_STATUS_FAILED;
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Read data from socket.
-  @anchor osal_socket_read
-
-  The osal_socket_read() function reads up to n bytes of data from socket into buffer. 
-
-  @param   stream Stream pointer representing the socket.
-  @param   buf Pointer to buffer to read into.
-  @param   n Maximum number of bytes to read. The data buffer must large enough to hold
-		   at least this namy bytes. 
-  @param   n_read Pointer to integer into which the function stores the number of bytes read, 
-           which may be less than n if there are fewer bytes available. If the function fails 
-		   n_read is set to zero.
-  @param   flags Flags for the function, use OSAL_STREAM_DEFAULT (0) for default operation. 
-		   The OSAL_STREAM_PEEK flag causes the function to return data in socket, but nothing
-		   will be removed from the socket.
-		   See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
-
-  @return  Function status code. Value OSAL_SUCCESS (0) indicates success and all nonzero values
-		   indicate an error. See @ref osalStatus "OSAL function return codes" for full list.
-
-****************************************************************************************************
-*/
-osalStatus osal_socket_read(
-	osalStream stream,
-	os_uchar *buf,
-	os_memsz n,
-	os_memsz *n_read,
-	os_short flags)
-{
-	int 
-		rval;
-
-	os_boolean 
-		select_halted;
-
-	osalSocket 
-		*mysocket;
-
-	SOCKET 
-		handle;
-
-	if (stream)
-	{
-		/* Cast stream pointer to socket structure pointer, lock socket and get OS socket handle.
-		 */
-		mysocket = (osalSocket*)stream;
-		select_halted = osal_socket_lock(mysocket);
-		handle = mysocket->handle;
-
-		/* If operating system socket is already closed.
-		 */
-		if (handle == INVALID_SOCKET)
-		{
-			osal_socket_unlock(mysocket, select_halted);
-			goto getout;
-		}
-
-		rval = recv(handle, buf, n, 0);
-
-		if (rval == SOCKET_ERROR)
-		{
-			if (WSAGetLastError() != WSAEWOULDBLOCK) 
-			{
-				osal_socket_unlock(mysocket, select_halted);
-				goto getout;
-			}
-			rval = 0;
-		}
-
-		osal_socket_unlock(mysocket, select_halted);
-		*n_read = rval;
-		return OSAL_SUCCESS;
-	}
-
-getout:
-	*n_read = 0;
-	return OSAL_STATUS_FAILED;
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Get socket parameter.
-  @anchor osal_socket_get_parameter
-
-  The osal_socket_get_parameter() function gets a parameter value.
-
-  @param   stream Stream pointer representing the socket.
-  @param   parameter_ix Index of parameter to get.
-		   See @ref osalStreamParameterIx "stream parameter enumeration" for the list.
-  @return  Parameter value.
-
-****************************************************************************************************
-*/
-os_long osal_socket_get_parameter(
-	osalStream stream,
-	osalStreamParameterIx parameter_ix)
-{
-	/* Call the default implementation
-	 */
-	return osal_stream_default_get_parameter(stream, parameter_ix);
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Set socket parameter.
-  @anchor osal_socket_set_parameter
-
-  The osal_socket_set_parameter() function gets a parameter value.
-
-  @param   stream Stream pointer representing the socket.
-  @param   parameter_ix Index of parameter to get.
-		   See @ref osalStreamParameterIx "stream parameter enumeration" for the list.
-  @param   value Parameter value to set.
-  @return  None.
-
-****************************************************************************************************
-*/
-void osal_socket_set_parameter(
-	osalStream stream,
-	osalStreamParameterIx parameter_ix,
-	os_long value)
-{
-	/* Call the default implementation
-	 */
-	osal_stream_default_set_parameter(stream, parameter_ix, value);
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Initialize sockets.
-  @anchor osal_socket_initialize
-
-  The osal_socket_initialize() initializes the underlying sockets library.
-
-  @return  None.
-
-****************************************************************************************************
-*/
-void osal_socket_initialize(
-	void)
-{
-	/* Make sure that OSAL is initailized
-	 */
-	osal_initialize();
-
-	/* If socket library is already initialized, do nothing.
-	 */
-	if (osal_global->sockets_initialized) return;
-
-	/* Lock the system mutex to syncronize.
-	 */
-	osal_mutex_system_lock();
-
-	/* If socket library is already initialized, do nothing. Double checked here
-	   for thread synchronization.
-	 */
-	if (!osal_global->sockets_initialized) 
-	{
-		/* Initialize winsock.
-		 */
-		if (WSAStartup(MAKEWORD(2,2), &osal_wsadata))
-		{
-			osal_debug_error("WSAStartup() failed");
-			return;
-		}
-
-		/* ADD SOCKET SHUTDOWN TO ATEXIT FUNCTION
-		 */
-		
-		/* Mark that socket library has been initialized.
-		 */
-		osal_global->sockets_initialized = OS_TRUE;
-	}
-
-	/* End synchronization.
-	 */
-	osal_mutex_system_unlock();
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Shut down sockets.
-  @anchor osal_socket_shutdown
-
-  The osal_socket_shutdown() shuts down the underlying sockets library.
-
-  @return  None.
-
-****************************************************************************************************
-*/
-void osal_socket_shutdown(
-	void)
-{
-	/* If socket library is not initialized, do nothing.
-	 */
-	if (!osal_global->sockets_initialized) return;
-
-	/* Initialize winsock.
-	 */
-	if (WSACleanup())
-	{
-		osal_debug_error("WSACleanup() failed");
-		return;
-	}
-
-	/* Mark that socket library is no longer initialized.
-	 */
-	osal_global->sockets_initialized = OS_FALSE;
-}
-
-
-
 /**
 ****************************************************************************************************
 
@@ -931,23 +416,11 @@ void osal_socket_shutdown(
 static void osal_socket_select(
 	osalSocketWorkerThreadState *sockworker)
 {
-	WSAEVENT
-		*event;
-
-	WSANETWORKEVENTS 
-		network_events;
-
-	osalWindowsEventInfo
-		*event_info;
-
-	os_memsz
-		n_events,
-		event_sz,
-		event_info_sz,
-		i;
-
-	osalSocket
-		*s;
+	WSAEVENT *event;
+	WSANETWORKEVENTS network_events;
+	osalWindowsEventInfo *event_info;
+	os_memsz n_events, event_sz, event_info_sz, i;
+	osalSocket *s;
 
 	/* Synchronize, this is needed to loop trough socket list.
 	 */
@@ -1147,6 +620,471 @@ getout:
 
 }
 
+
+
+/**
+****************************************************************************************************
+
+  @brief Accept connection from listening socket.
+  @anchor osal_socket_open
+
+  The osal_socket_accept() function accepts an incoming connection from listening socket.
+
+  @param   stream Stream pointer representing the listening socket.
+
+  @param   parameters Socket parameters, a list string. 
+
+  @param   callbacks Callback functions.
+
+  @param   status Pointer to integer into which to store the function status code. Value
+		   OSAL_SUCCESS (0) indicates that new connection was successfully accepted.
+		   The value OSAL_STATUS_NO_NEW_CONNECTION indicates that no new incoming 
+		   connection, was accepted.  All other nonzero values indicate an error,
+           See @ref osalStatus "OSAL function return codes" for full list.
+		   This parameter can be OS_NULL, if no status code is needed. 
+
+  @param   flags Flags for creating the socket. Define OSAL_STREAM_DEFAULT for normal operation.
+		   See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
+
+  @return  Stream pointer representing the socket, or OS_NULL if the function failed.
+
+****************************************************************************************************
+*/
+osalStream osal_socket_accept(
+	osalStream stream,
+	os_char *parameters,
+	osalStreamCallbacks *callbacks,
+	osalStatus *status,
+	os_short flags)
+{
+	osalSocket *mysocket, *newsocket;
+	SOCKET handle, new_handle;
+	int addr_size;
+	struct sockaddr_in sin_remote;
+	os_boolean select_halted;
+
+	if (stream)
+	{
+	/* Cast stream pointer to socket structure pointer, lock socket and get OS socket handle.
+	 */
+		mysocket = (osalSocket*)stream;
+		select_halted = osal_socket_lock(mysocket);
+		handle = mysocket->handle;
+
+		/* If socket operating system socket is not already closed.
+		 */
+		if (handle != INVALID_SOCKET)
+		{
+			addr_size = sizeof(sin_remote);
+			new_handle = accept(handle, (struct sockaddr*)&sin_remote, &addr_size);
+		}
+		else
+		{
+			new_handle = INVALID_SOCKET;
+		}
+
+		/* Unlock the listening socket, no longer needed by accept.
+		 */
+		osal_socket_unlock(mysocket, select_halted);
+
+		/* If no new connection, do nothing more.
+		 */
+        if (new_handle == INVALID_SOCKET) 
+		{
+			if (status) *status = OSAL_STATUS_NO_NEW_CONNECTION;
+			return OS_NULL;
+		}
+
+		/* cout << "Accepted connection from " <<
+           inet_ntoa(sinRemote.sin_addr) << ":" <<
+           ntohs(sinRemote.sin_port) << "." << endl;
+		 */
+
+		/* Allocate and clear socket structure.
+		 */
+		newsocket = osal_memory_allocate(sizeof(osalSocket), OS_NULL);
+		if (newsocket == OS_NULL) 
+		{
+			closesocket(new_handle);
+			if (status) *status = OSAL_STATUS_MEMORY_ALLOCATION_FAILED;
+			return OS_NULL;
+		}
+		os_memclear(newsocket, sizeof(osalSocket));
+
+		/* Save socket handle and open flags.
+		 */
+		newsocket->handle = new_handle;
+		newsocket->open_flags = flags;
+
+		/* Save interface pointer.
+		 */
+	#if OSAL_FUNCTION_POINTER_SUPPORT
+		newsocket->hdr.hdr.iface = &osal_socket_iface;
+	#endif
+
+		/* Set timeouts.
+		 */
+		newsocket->hdr.hdr.write_timeout_ms = newsocket->hdr.hdr.read_timeout_ms = -1;
+
+		/* Create mutex to synchronize socket access and start synchronization.
+		 */
+		newsocket->mutex = osal_mutex_create();
+
+		if (callbacks)
+		{
+			osal_socket_set_callbacks(newsocket, callbacks);
+			osal_socket_join_to_worker((osalSocketHeader*)newsocket);
+		}
+
+		/* Set event. It is at least theoretically possible that at very beginning an event
+		   belonging to the accepted socket may go to the listening socket. Creating one time
+		   unnecessary event is much better than any possibility of missing an event.
+		 */
+		if (newsocket->event) WSASetEvent(newsocket->event);
+
+		/* Success set status code and cast socket structure pointer to stream pointer 
+		   and return it.
+		 */
+		if (status) *status = OSAL_SUCCESS;
+		return (osalStream)newsocket;
+	}
+
+	if (status) *status = OSAL_STATUS_FAILED;
+	return OS_NULL;
+}
+
+
+
+
+
+/**
+****************************************************************************************************
+
+  @brief Flush the socket.
+  @anchor osal_socket_flush
+
+  The osal_socket_flush() function flushes data to be written to stream.
+
+  @param   stream Stream pointer representing the socket.
+  @param   flags See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
+  @return  Function status code. Value OSAL_SUCCESS (0) indicates success and all nonzero values
+		   indicate an error. See @ref osalStatus "OSAL function return codes" for full list.
+
+****************************************************************************************************
+*/
+osalStatus osal_socket_flush(
+	osalStream stream,
+	os_short flags)
+{
+	return OSAL_SUCCESS;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Write data to socket.
+  @anchor osal_socket_write
+
+  The osal_socket_write() function writes up to n bytes of data from buffer to socket.
+
+  @param   stream Stream pointer representing the socket.
+  @param   buf Pointer to the beginning of data to place into the socket.
+  @param   n Maximum number of bytes to write. 
+  @param   n_written Pointer to integer into which the function stores the number of bytes 
+		   actually written to socket,  which may be less than n if there is not enough space
+		   left in the socket. If the function fails n_written is set to zero.
+  @param   flags Flags for the function.
+		   See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
+  @return  Function status code. Value OSAL_SUCCESS (0) indicates success and all nonzero values
+		   indicate an error. See @ref osalStatus "OSAL function return codes" for full list.
+
+****************************************************************************************************
+*/
+osalStatus osal_socket_write(
+	osalStream stream,
+	const os_uchar *buf,
+	os_memsz n,
+	os_memsz *n_written,
+	os_short flags)
+{
+	int rval;
+	os_boolean select_halted;
+	osalSocket *mysocket;
+	SOCKET handle;
+
+	if (stream)
+	{
+		/* Cast stream pointer to socket structure pointer.
+		 */
+		mysocket = (osalSocket*)stream;
+
+		/* Special case. Writing 0 bytes will trigger write callback by worker thread.
+		 */
+		if (n == 0)
+		{
+			if (mysocket->hdr.hdr.callbacks.write_func)
+			{
+				mysocket->hdr.send_now = OS_TRUE;
+				osal_socket_worker_ctrl(mysocket->hdr.worker_thread, OSAL_SOCKWORKER_INTERRUPT);
+			}
+			*n_written = 0;
+			return OSAL_SUCCESS;
+		}
+
+		/* Lock socket and get OS socket handle.
+		 */
+		select_halted = osal_socket_lock(mysocket);
+		handle = mysocket->handle;
+
+		/* If operating system socket is already closed.
+		 */
+		if (handle == INVALID_SOCKET)
+		{
+			osal_socket_unlock(mysocket, select_halted);
+			goto getout;
+		}
+
+		rval = send(handle, buf, n, 0);
+
+		if (rval == SOCKET_ERROR)
+		{
+			if (WSAGetLastError() != WSAEWOULDBLOCK) 
+			{
+				osal_socket_unlock(mysocket, select_halted);
+				goto getout;
+			}
+			rval = 0;
+		}
+
+		osal_socket_unlock(mysocket, select_halted);
+		*n_written = rval;
+		return OSAL_SUCCESS;
+	}
+
+getout:
+	*n_written = 0;
+	return OSAL_STATUS_FAILED;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Read data from socket.
+  @anchor osal_socket_read
+
+  The osal_socket_read() function reads up to n bytes of data from socket into buffer. 
+
+  @param   stream Stream pointer representing the socket.
+  @param   buf Pointer to buffer to read into.
+  @param   n Maximum number of bytes to read. The data buffer must large enough to hold
+		   at least this namy bytes. 
+  @param   n_read Pointer to integer into which the function stores the number of bytes read, 
+           which may be less than n if there are fewer bytes available. If the function fails 
+		   n_read is set to zero.
+  @param   flags Flags for the function, use OSAL_STREAM_DEFAULT (0) for default operation. 
+		   The OSAL_STREAM_PEEK flag causes the function to return data in socket, but nothing
+		   will be removed from the socket.
+		   See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
+
+  @return  Function status code. Value OSAL_SUCCESS (0) indicates success and all nonzero values
+		   indicate an error. See @ref osalStatus "OSAL function return codes" for full list.
+
+****************************************************************************************************
+*/
+osalStatus osal_socket_read(
+	osalStream stream,
+	os_uchar *buf,
+	os_memsz n,
+	os_memsz *n_read,
+	os_short flags)
+{
+	int rval;
+	os_boolean select_halted;
+	osalSocket *mysocket;
+	SOCKET handle;
+
+	if (stream)
+	{
+		/* Cast stream pointer to socket structure pointer, lock socket and get OS socket handle.
+		 */
+		mysocket = (osalSocket*)stream;
+		select_halted = osal_socket_lock(mysocket);
+		handle = mysocket->handle;
+
+		/* If operating system socket is already closed.
+		 */
+		if (handle == INVALID_SOCKET)
+		{
+			osal_socket_unlock(mysocket, select_halted);
+			goto getout;
+		}
+
+		rval = recv(handle, buf, n, 0);
+
+		if (rval == SOCKET_ERROR)
+		{
+			if (WSAGetLastError() != WSAEWOULDBLOCK) 
+			{
+				osal_socket_unlock(mysocket, select_halted);
+				goto getout;
+			}
+			rval = 0;
+		}
+
+		osal_socket_unlock(mysocket, select_halted);
+		*n_read = rval;
+		return OSAL_SUCCESS;
+	}
+
+getout:
+	*n_read = 0;
+	return OSAL_STATUS_FAILED;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get socket parameter.
+  @anchor osal_socket_get_parameter
+
+  The osal_socket_get_parameter() function gets a parameter value.
+
+  @param   stream Stream pointer representing the socket.
+  @param   parameter_ix Index of parameter to get.
+		   See @ref osalStreamParameterIx "stream parameter enumeration" for the list.
+  @return  Parameter value.
+
+****************************************************************************************************
+*/
+os_long osal_socket_get_parameter(
+	osalStream stream,
+	osalStreamParameterIx parameter_ix)
+{
+	/* Call the default implementation
+	 */
+	return osal_stream_default_get_parameter(stream, parameter_ix);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Set socket parameter.
+  @anchor osal_socket_set_parameter
+
+  The osal_socket_set_parameter() function gets a parameter value.
+
+  @param   stream Stream pointer representing the socket.
+  @param   parameter_ix Index of parameter to get.
+		   See @ref osalStreamParameterIx "stream parameter enumeration" for the list.
+  @param   value Parameter value to set.
+  @return  None.
+
+****************************************************************************************************
+*/
+void osal_socket_set_parameter(
+	osalStream stream,
+	osalStreamParameterIx parameter_ix,
+	os_long value)
+{
+	/* Call the default implementation
+	 */
+	osal_stream_default_set_parameter(stream, parameter_ix, value);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Initialize sockets.
+  @anchor osal_socket_initialize
+
+  The osal_socket_initialize() initializes the underlying sockets library.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void osal_socket_initialize(
+	void)
+{
+	/* Make sure that OSAL is initailized
+	 */
+	osal_initialize();
+
+	/* If socket library is already initialized, do nothing.
+	 */
+	if (osal_global->sockets_initialized) return;
+
+	/* Lock the system mutex to syncronize.
+	 */
+	osal_mutex_system_lock();
+
+	/* If socket library is already initialized, do nothing. Double checked here
+	   for thread synchronization.
+	 */
+	if (!osal_global->sockets_initialized) 
+	{
+		/* Initialize winsock.
+		 */
+		if (WSAStartup(MAKEWORD(2,2), &osal_wsadata))
+		{
+			osal_debug_error("WSAStartup() failed");
+			return;
+		}
+
+		/* ADD SOCKET SHUTDOWN TO ATEXIT FUNCTION
+		 */
+		
+		/* Mark that socket library has been initialized.
+		 */
+		osal_global->sockets_initialized = OS_TRUE;
+	}
+
+	/* End synchronization.
+	 */
+	osal_mutex_system_unlock();
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Shut down sockets.
+  @anchor osal_socket_shutdown
+
+  The osal_socket_shutdown() shuts down the underlying sockets library.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void osal_socket_shutdown(
+	void)
+{
+	/* If socket library is not initialized, do nothing.
+	 */
+	if (!osal_global->sockets_initialized) return;
+
+	/* Initialize winsock.
+	 */
+	if (WSACleanup())
+	{
+		osal_debug_error("WSACleanup() failed");
+		return;
+	}
+
+	/* Mark that socket library is no longer initialized.
+	 */
+	osal_global->sockets_initialized = OS_FALSE;
+}
+
+
+
+
 #if 0
 void SetupFDSets(fd_set *ReadFDs, fd_set *WriteFDs, 
         fd_set *ExceptFDs, SOCKET ListeningSocket) 
@@ -1265,11 +1203,8 @@ static void osal_socket_set_callbacks(
 	osalSocket *mysocket,
 	osalStreamCallbacks *callbacks)
 {
-	SOCKET
-		handle;
-
-	long 
-		network_events;
+	SOCKET handle;
+	long network_events;
 
 	/* Save callback function pointers and callback context
 	 */
@@ -1311,8 +1246,7 @@ static void osal_socket_set_callbacks(
 static os_boolean osal_socket_lock(
 	osalSocket *mysocket)
 {
-	osalSocketWorkerThreadState 
-		*sockworker;
+	osalSocketWorkerThreadState *sockworker;
 
 	if (!osal_mutex_try_lock(mysocket->mutex))
 		return OS_FALSE;
@@ -1348,8 +1282,7 @@ static void osal_socket_unlock(
 	osalSocket *mysocket,
 	os_boolean select_halted)
 {
-	osalSocketWorkerThreadState 
-		*sockworker;
+	osalSocketWorkerThreadState *sockworker;
 
 	if (select_halted)
 	{
@@ -1362,7 +1295,6 @@ static void osal_socket_unlock(
 	}
 	osal_mutex_unlock(mysocket->mutex);
 }
-
 
 
 #if OSAL_FUNCTION_POINTER_SUPPORT
@@ -1382,4 +1314,3 @@ osalStreamInterface osal_socket_iface
 
 #endif
 
-#endif

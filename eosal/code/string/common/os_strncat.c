@@ -38,8 +38,7 @@ void os_strncat(
     const os_char *src,
     os_memsz dst_size)
 {
-	os_char 
-		*d;
+	os_char *d;
 
 	/* If we can do nothing.
 	 */

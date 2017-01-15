@@ -43,11 +43,8 @@ void os_memcpy(
     const void *src,
     os_memsz count)
 {
-	register os_char
-		*d;
-
-	const register os_char
-		*s;
+	register os_char *d;
+	const register os_char *s;
 
 	if (dst == OS_NULL || src == OS_NULL) 
 	{

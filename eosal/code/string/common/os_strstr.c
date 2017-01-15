@@ -46,19 +46,9 @@ os_char *os_strstr(
 	const os_char *substr,
 	os_short flags)
 {
-	os_char
-		c,
-		d,
-		e,
-		*s,
-		*p,
-		*q;
-
-	const os_char
-		*u;
-
-	os_boolean
-		quoted;
+	os_char c, d, e, *s, *p, *q;
+	const os_char *u;
+	os_boolean quoted;
 
 	/* If there is nothing to do, just return OS_NULL.
 	 */
