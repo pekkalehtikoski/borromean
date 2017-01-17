@@ -73,10 +73,6 @@ void osal_initialize(
 	 */
 	osal_timer_initialize();
 
-	/* Set output to OSAL_CONSOLE_0 to show up on system console.
-	 */
-//	osal_console_setup_system_console(OSAL_SYSTEM_CONSOLE_NR);
-
     /* Mark that OSAL library is initialized
      */
     osal_global->osal_initialized = OS_TRUE;
@@ -103,6 +99,15 @@ void osal_shutdown(
     if (!osal_global->osal_initialized) return;
 
 #if OSAL_PROCESS_CLEANUP_SUPPORT
+
+#if OSAL_FUNCTION_POINTER_SUPPORT
+    /* Shutdown sockets library if it has been used, this is mostly for windows.
+     */
+    if (osal_global->sockets_shutdown_func)
+    {
+        osal_global->sockets_shutdown_func();
+    }
+#endif
 
 	/* Shut down mutexes. Releases system mutex.
 	 */

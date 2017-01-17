@@ -29,8 +29,10 @@ extern osalStreamInterface osal_socket_iface;
  */
 #define OSAL_SOCKET_IFACE &osal_socket_iface
 
-
-
+/* Default socket port number if not specified
+ */
+#define OSAL_DEFAULT_SOCKET_PORT 21981
+#define OSAL_DEFAULT_SOCKET_PORT_STR "21981"
 
 
 /** 
@@ -131,7 +133,8 @@ void osal_socket_shutdown(
 os_char *osal_socket_get_host_name_and_port(
 	os_char *parameters,
 	os_int  *port,
-	os_memsz *buf_sz);
+	os_memsz *buf_sz,
+    os_boolean *is_ipv6);
 
 
 /* void osal_socket_cleanup(

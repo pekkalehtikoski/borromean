@@ -29,13 +29,17 @@
   returns pointer to it. If port number is specified in parameter string, the function
   stores it to port.
 
-  @param   parameters Socket parameters, a list string. "addr=host:port" sets host name or
-	       numeric address and port number.
+  @param   parameters Socket parameters, a list string. "addr=host:port" or simply 
+           parameter string starting with "host:port", set host name or numeric IP address
+           and port number. Host may be in the brackets, like "[host]:port". This is mostly used
+           for IP V6 addresses, which themselves may contain colons ':'.
+           Marking like ":122" can be used just to specify port number to listen to.
   @param   port Pointer to integer into which to store the port number. If the address
 		   parameters do not specify port number, the port will be set to zero.
   @param   buf_sz Pointer to integer into which to store size of allocated temporary buffer.
 		   This is used only for releasing memory.
-
+  @param   is_ipv6 Flag to set if IP v6 address has been detected. Notice that if host name
+           refers to IPv6 (no numeric address), IPv6 is not detected here.
   @return  If the host was specified, the function returns pointer to null terminated
 		   string containing the host name. This buffer must be freed using
 		   osal_memory_free(buf, buf_sz) function. If parameters do not specify host name,
@@ -46,7 +50,8 @@
 os_char *osal_socket_get_host_name_and_port(
 	os_char *parameters,
 	os_int  *port,
-	os_memsz *buf_sz)
+	os_memsz *buf_sz,
+    os_boolean *is_ipv6)
 {
 	os_memsz
 		n_chars;
@@ -54,18 +59,16 @@ os_char *osal_socket_get_host_name_and_port(
 	os_char
 		*value_pos,
 		*port_pos,
-		*is_ipv6, 
-		*buf;
-
-	os_boolean
-		no_host;
+		*buf,
+        *p;
 
 	*port = 0;
 	*buf_sz = 0;
+    *is_ipv6 = OS_FALSE;
 
 	/* Find newtwork address / port within parameter string. 
 	 */
-    if (parameters == OS_NULL) parameters = "127.0.0.1:21981";
+    if (parameters == OS_NULL) parameters = "127.0.0.1:" OSAL_DEFAULT_SOCKET_PORT_STR;
 	value_pos = osal_string_get_item_value(parameters, "addr", 
 		&n_chars, OSAL_STRING_SEARCH_LINE_ONLY);
 	if (value_pos == OS_NULL) 
@@ -82,41 +85,23 @@ os_char *osal_socket_get_host_name_and_port(
 	os_memcpy(buf, value_pos, n_chars);
 	buf[n_chars] = '\0';
 
-	/* If this has two or more colons, this must be ipv6 address. 
-	 */
-	is_ipv6 = os_strchr(buf, ':');
-	if (is_ipv6) is_ipv6 = os_strchr(is_ipv6+1, ':');
 
 	/* Search for port number position. If this is ipv4 address or unknown address type, 
 	   the port number is separared by ':' or '#'. If this is ipv6 address, port number 
 	   must be separated by '#'. The '#' may change, since we get more familiar with ipv6 
 	   addresses.
 	 */
-	port_pos = os_strchr(buf, '#');
-	if (port_pos == OS_NULL && is_ipv6==OS_NULL) 
+	port_pos = os_strchr(buf, ']');
+    if (port_pos)
+    {
+        *(port_pos++) = '\0';
+        if (*(port_pos++) != ':') port_pos = OS_NULL;
+    }
+    else
+    {
 		port_pos = os_strchr(buf, ':');
-	no_host = OS_FALSE;
-
-	/* If we found separator character for port number position.
-	 */
-	if (port_pos)
-	{
-		/* If separator is first character of the address, we have no host name.
-		 */
-		if (port_pos == buf) no_host = OS_TRUE;
-
-		/* Cut port number out of host name.
-		 */
-		*(port_pos++) = '\0';
-	}
-
-	/* If we didn't find port position, this may be port number only, without any IP address.
-	 */
-	else if (!is_ipv6 && osal_char_isdigit(*buf) && os_strchr(buf, '.') == OS_NULL)
-	{
-		port_pos = buf;
-		no_host = OS_TRUE;
-	}
+        if (port_pos) *(port_pos++) = '\0';
+    }
 
 	/* Parse port number from string.
 	 */
@@ -125,9 +110,16 @@ os_char *osal_socket_get_host_name_and_port(
 		*port = (os_int)osal_string_to_int(port_pos, OS_NULL);
 	}
 
-	/* If we have no host, no byffer needed
+	/* If starts with bracket, skip it. If host is numeric address which contains colons ':',
+       it is IPv6 address. 
 	 */
-	if (no_host)
+    p = buf;
+    if (*p == '[') p++;
+    *is_ipv6 = (os_boolean)(os_strchr(p, ':') != OS_NULL);
+
+	/* If we have no host, no buffer needed
+	 */
+	if (*p == '\0')
 	{
 		osal_memory_free(buf, *buf_sz);
 		buf = OS_NULL;

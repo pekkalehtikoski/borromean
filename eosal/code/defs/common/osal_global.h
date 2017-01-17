@@ -23,6 +23,12 @@
     struct osalMutexStruct;
 #endif
 
+#if OSAL_FUNCTION_POINTER_SUPPORT
+/* Extension module shutdown function type.
+ */
+typedef void osal_shutdown_func(void);
+#endif
+
 /** 
 ****************************************************************************************************
 
@@ -102,13 +108,12 @@ typedef struct
 	 */
 	os_int64 sys_timer_param;
 
-	/** Socket library initialized flag. This is used by osal_sockets module.
-	 */
-	os_boolean sockets_initialized;
-
-	/** List of socket worker thread state structures.
-	 */
-	struct osalSocketWorkerThreadState *sockworker;
+#if OSAL_FUNCTION_POINTER_SUPPORT
+    /** Shut down function to close sockets library. Set if sockets library
+        is initialized.
+     */
+    osal_shutdown_func *sockets_shutdown_func;
+#endif
 }
 osalGlobalStruct;
 

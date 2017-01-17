@@ -124,14 +124,21 @@ osalStream osal_socket_open(
 	SOCKET handle = INVALID_SOCKET;
 	struct sockaddr_in sin;
 	struct hostent *he;
+    os_boolean is_ipv6;
+
+    /* Initialize sockets library, if not already initialized.
+     */
+    osal_socket_initialize();
 
 	/* Get host name or numeric IP address and TCP port number from parameters.
        The host buffer must be released by calling osal_memory_free() function.
 	 */
-	host = osal_socket_get_host_name_and_port(parameters, &port_nr, &host_sz);
+    port_nr = OSAL_DEFAULT_SOCKET_PORT;
+	host = osal_socket_get_host_name_and_port(parameters, &port_nr, &host_sz, &is_ipv6);
 	if (host == OS_NULL) return OS_NULL;
 
     addr = inet_addr(host);
+    // USE inet_pton(is_ipv6 ? AF_INET6 : AF_INET, const char *src, void *dst); instead, works also for IPv6
     if (addr == INADDR_NONE) 
 	{
 /* Set non blocking mode
@@ -293,9 +300,6 @@ void osal_socket_close(
     char buf[64];
 	int n;
 
-	os_boolean
-		cleanup_now = OS_FALSE;
-
 	/* If called with NULL argument, do nothing.
 	 */
 	if (stream == OS_NULL) return;
@@ -344,8 +348,6 @@ void osal_socket_close(
 		{
 			osal_debug_error("closesocket failed");
 		}
-
-		cleanup_now = (os_boolean)(mysocket->event == OS_NULL);
 	}
 }
 
@@ -954,13 +956,9 @@ void osal_socket_set_parameter(
 void osal_socket_initialize(
 	void)
 {
-	/* Make sure that OSAL is initailized
-	 */
-	osal_initialize();
-
 	/* If socket library is already initialized, do nothing.
 	 */
-	if (osal_global->sockets_initialized) return;
+	if (osal_global->sockets_shutdown_func) return;
 
 	/* Lock the system mutex to syncronize.
 	 */
@@ -969,7 +967,7 @@ void osal_socket_initialize(
 	/* If socket library is already initialized, do nothing. Double checked here
 	   for thread synchronization.
 	 */
-	if (!osal_global->sockets_initialized) 
+	if (!osal_global->sockets_shutdown_func) 
 	{
 		/* Initialize winsock.
 		 */
@@ -979,12 +977,12 @@ void osal_socket_initialize(
 			return;
 		}
 
-		/* ADD SOCKET SHUTDOWN TO ATEXIT FUNCTION
+		/* Mark that socket library has been initialized by setting shutdown function pointer.
+           Now the pointer is shared on windows by main program and DLL. If this needs to
+           be separated, move sockets_shutdown_func pointer from global structure to
+           plain global variable.
 		 */
-		
-		/* Mark that socket library has been initialized.
-		 */
-		osal_global->sockets_initialized = OS_TRUE;
+		osal_global->sockets_shutdown_func = osal_socket_shutdown;
 	}
 
 	/* End synchronization.
@@ -1010,7 +1008,7 @@ void osal_socket_shutdown(
 {
 	/* If socket library is not initialized, do nothing.
 	 */
-	if (!osal_global->sockets_initialized) return;
+	if (!osal_global->sockets_shutdown_func) return;
 
 	/* Initialize winsock.
 	 */
@@ -1022,7 +1020,7 @@ void osal_socket_shutdown(
 
 	/* Mark that socket library is no longer initialized.
 	 */
-	osal_global->sockets_initialized = OS_FALSE;
+    osal_global->sockets_shutdown_func = OS_NULL;
 }
 
 
