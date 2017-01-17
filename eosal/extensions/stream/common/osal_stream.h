@@ -243,7 +243,7 @@ osalStreamParameterIx;
 typedef void osal_stream_func(
 	osalStream stream,
 	void *context,
-	osalStreamCallbackEnum reason);
+	osalStreamCallbackEnum reason); 
 
 /*@}*/
 
@@ -318,7 +318,7 @@ typedef struct osalStreamInterface
 		osalStreamCallbacks *callbacks,
 		void *option,
 		osalStatus *status,
-		os_short flags);
+		os_int flags);
 
 	void (*stream_close)(
 		osalStream stream);
@@ -328,40 +328,40 @@ typedef struct osalStreamInterface
 		os_char *parameters,
 		osalStreamCallbacks *callbacks,
 		osalStatus *status,
-		os_short flags);
+		os_int flags);
 
 	osalStatus (*stream_flush)(
 		osalStream stream,
-		os_short flags);
+		os_int flags);
 
 	osalStatus (*stream_seek)(
 		osalStream stream,
 		os_long *pos,
-		os_short flags);
+		os_int flags);
 
 	osalStatus (*stream_write)(
 		osalStream stream,
 		const os_uchar *buf,
 		os_memsz n,
 		os_memsz *n_written,
-		os_short flags);
+		os_int flags);
 
 	osalStatus (*stream_read)(
 		osalStream stream,
 		os_uchar *buf,
 		os_memsz n,
 		os_memsz *n_read,
-		os_short flags);
+		os_int flags);
 
 	osalStatus (*stream_write_value)(
 		osalStream stream,
 		os_ushort c,
-		os_short flags);
+		os_int flags);
 
 	osalStatus (*stream_read_value)(
 		osalStream stream,
 		os_ushort *c,
-		os_short flags);
+		os_int flags);
 
 	os_long (*stream_get_parameter)(
 		osalStream stream,
@@ -433,7 +433,7 @@ osalStream osal_stream_open(
 	void *option,
 	osalStreamCallbacks *callbacks,
 	osalStatus *status,
-	os_short flags);
+	os_int flags);
 
 void osal_stream_close(
 	osalStream stream);
@@ -443,40 +443,40 @@ osalStream osal_stream_accept(
 	os_char *parameters,
 	osalStreamCallbacks *callbacks,
 	osalStatus *status,
-	os_short flags);
+	os_int flags);
 
 osalStatus osal_stream_flush(
 	osalStream stream,
-	os_short flags);
+	os_int flags);
 
 osalStatus osal_stream_seek(
 	osalStream stream,
 	os_long *pos,
-	os_short flags);
+	os_int flags);
 
 osalStatus osal_stream_write(
 	osalStream stream,
 	const os_uchar *buf,
 	os_memsz n,
 	os_memsz *n_written,
-	os_short flags);
+	os_int flags);
 
 osalStatus osal_stream_read(
 	osalStream stream,
 	os_uchar *buf,
 	os_memsz n,
 	os_memsz *n_read,
-	os_short flags);
+	os_int flags);
 
 osalStatus osal_stream_write_value(
 	osalStream stream,
 	os_ushort c,
-	os_short flags);
+	os_int flags);
 
 osalStatus osal_stream_read_value(
 	osalStream stream,
 	os_ushort *c,
-	os_short flags);
+	os_int flags);
 
 os_long osal_stream_get_parameter(
 	osalStream stream,
@@ -509,22 +509,22 @@ osalStream osal_stream_default_accept(
 	os_char *parameters,
 	osalStreamCallbacks *callbacks,
 	osalStatus *status,
-	os_short flags);
+	os_int flags);
 
 osalStatus osal_stream_default_seek(
 	osalStream stream,
 	os_long *pos,
-	os_short flags);
+	os_int flags);
 
 osalStatus osal_stream_default_write_value(
 	osalStream stream,
 	os_ushort c,
-	os_short flags);
+	os_int flags);
 
 osalStatus osal_stream_default_read_value(
 	osalStream stream,
 	os_ushort *c,
-	os_short flags);
+	os_int flags);
 
 os_long osal_stream_default_get_parameter(
 	osalStream stream,

@@ -52,18 +52,20 @@ osalStream osal_socket_open(
 	osalStreamCallbacks *callbacks,
 	void *option,
 	osalStatus *status,
-	os_short flags);
+	os_int flags);
 
 /* Close socket.
  */
 void osal_socket_close(
 	osalStream stream);
 
-/* Accept connection from listening socket.
+/* Select what to do, when there is data to read, new data can be written, etc.
  */
-/* osalStream osal_socket_select(
-	osalStream *stream,
-    os_int n); */
+os_int osal_socket_select(
+	osalStream *streams,
+    os_int nstreams,
+    osalEvent *events,
+    os_int nevents);
 
 /* Accept connection from listening socket.
  */
@@ -72,14 +74,14 @@ osalStream osal_socket_accept(
 	os_char *parameters,
 	osalStreamCallbacks *callbacks,
 	osalStatus *status,
-	os_short flags);
+	os_int flags);
 
 
 /* Flush written data to socket.
  */
 osalStatus osal_socket_flush(
 	osalStream stream,
-	os_short flags);
+	os_int flags);
 
 /* Write data to socket.
  */
@@ -88,7 +90,7 @@ osalStatus osal_socket_write(
 	const os_uchar *buf,
 	os_memsz n,
 	os_memsz *n_written,
-	os_short flags);
+	os_int flags);
 
 /* Read data from socket.
  */
@@ -97,7 +99,7 @@ osalStatus osal_socket_read(
 	os_uchar *buf,
 	os_memsz n,
 	os_memsz *n_read,
-	os_short flags);
+	os_int flags);
 
 /* Get socket parameter.
  */
@@ -111,10 +113,6 @@ void osal_socket_set_parameter(
 	osalStream stream,
 	osalStreamParameterIx parameter_ix,
 	os_long value);
-
-void osal_socket_worker_ctrl(
-	osalSocketWorkerThreadState *sockworker,
-	osalSockWorkerAction action);
 
 /* Initialize sockets.
  */
@@ -136,8 +134,8 @@ os_char *osal_socket_get_host_name_and_port(
 	os_memsz *buf_sz);
 
 
-void osal_socket_cleanup(
-	osalSocketHeader *s);
+/* void osal_socket_cleanup(
+	osalSockeHeader *s); */
 
 
 /*@}*/

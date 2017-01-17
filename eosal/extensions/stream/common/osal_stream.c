@@ -25,7 +25,7 @@ osalStream osal_stream_open(
 	void *option,
 	osalStreamCallbacks *callbacks,
 	osalStatus *status,
-	os_short flags)
+	os_int flags)
 {
 	return iface->stream_open(parameters, option, callbacks, status, flags);
 }
@@ -44,7 +44,7 @@ osalStream osal_stream_accept(
 	os_char *parameters,
 	osalStreamCallbacks *callbacks,
 	osalStatus *status,
-	os_short flags)
+	os_int flags)
 {
 	if (stream)
 	{
@@ -56,7 +56,7 @@ osalStream osal_stream_accept(
 
 osalStatus osal_stream_flush(
 	osalStream stream,
-	os_short flags)
+	os_int flags)
 {
 	if (stream)
 	{
@@ -68,7 +68,7 @@ osalStatus osal_stream_flush(
 osalStatus osal_stream_seek(
 	osalStream stream,
 	os_long *pos,
-	os_short flags)
+	os_int flags)
 {
 	if (stream)
 	{
@@ -82,7 +82,7 @@ osalStatus osal_stream_write(
 	const os_uchar *buf,
 	os_memsz n,
 	os_memsz *n_written,
-	os_short flags)
+	os_int flags)
 {
 	os_int64 
 		start_t,
@@ -145,7 +145,7 @@ osalStatus osal_stream_read(
 	os_uchar *buf,
 	os_memsz n,
 	os_memsz *n_read,
-	os_short flags)
+	os_int flags)
 {
 	os_int64 
 		start_t,
@@ -206,7 +206,7 @@ osalStatus osal_stream_read(
 osalStatus osal_stream_write_value(
 	osalStream stream,
 	os_ushort c,
-	os_short flags)
+	os_int flags)
 {
 	os_int64 
 		start_t,
@@ -249,7 +249,7 @@ osalStatus osal_stream_write_value(
 osalStatus osal_stream_read_value(
 	osalStream stream,
 	os_ushort *c,
-	os_short flags)
+	os_int flags)
 {
 	os_int64 
 		start_t,
@@ -322,7 +322,7 @@ osalStream osal_stream_default_accept(
 	os_char *parameters,
 	osalStreamCallbacks *callbacks,
 	osalStatus *status,
-	os_short flags)
+	os_int flags)
 {
 	if (status) *status = OSAL_STATUS_FAILED;
 	return OS_NULL;
@@ -332,7 +332,7 @@ osalStream osal_stream_default_accept(
 osalStatus osal_stream_default_seek(
 	osalStream stream,
 	os_long *pos,
-	os_short flags)
+	os_int flags)
 {
 	return OSAL_STATUS_FAILED;
 }
@@ -341,7 +341,7 @@ osalStatus osal_stream_default_seek(
 osalStatus osal_stream_default_write_value(
 	osalStream stream,
 	os_ushort c,
-	os_short flags)
+	os_int flags)
 {
 	os_uchar 
 		u;
@@ -364,7 +364,7 @@ osalStatus osal_stream_default_write_value(
 osalStatus osal_stream_default_read_value(
 	osalStream stream,
 	os_ushort *c,
-	os_short flags)
+	os_int flags)
 {
 	os_uchar 
 		u = 0;

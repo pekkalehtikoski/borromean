@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "eosal/code/main/osal_main.h"
+#include "eosal/eosalx.h"
 
 
 /**
@@ -39,17 +39,16 @@ os_int osal_main(
 	os_uint
 		c;
 
-	osal_console_write("osal_console_example\npress any key... ", OSAL_SYSTEM_CONSOLE_NR);
+	osal_console_write("osal_console_example\npress any key... ");
 
-	c = osal_console_read_char(20000, OSAL_SYSTEM_CONSOLE_NR);
 
 	if (c)
 	{
-		osal_console_write("\n", OSAL_SYSTEM_CONSOLE_NR);
+		osal_console_write("\n");
 	}
 	else
 	{
-		osal_console_write("No key pressed within 20 seconds.\n", OSAL_SYSTEM_CONSOLE_NR);
+		osal_console_write("No key pressed within 20 seconds.\n");
 	}
 
     return 0;

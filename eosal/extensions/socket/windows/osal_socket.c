@@ -45,7 +45,7 @@ typedef struct osalSocket
 	/** The socket structure must start with socket header structure. This includes generic
 	    stream header, which contains parameters common to every stream. 
 	 */
-	osalSocketHeader hdr;
+	osalStreamHeader hdr;
 
 	/** Operating system's socket handle.
 	 */
@@ -74,19 +74,10 @@ osalWindowsEventInfo;
 
 /* Forward referred static functions.
  */
-static void osal_socket_select(
-	osalSocketWorkerThreadState *sockworker);
-
-static void osal_socket_set_callbacks(
+/* static void osal_socket_set_callbacks(
 	osalSocket *mysocket,
-	osalStreamCallbacks *callbacks);
+	osalStreamCallbacks *callbacks); */
 
-static os_boolean osal_socket_lock(
-	osalSocket *mysocket);
-
-static void osal_socket_unlock(
-	osalSocket *mysocket,
-	os_boolean select_halted);
 
 
 /**
@@ -122,7 +113,7 @@ osalStream osal_socket_open(
 	osalStreamCallbacks *callbacks,
 	void *option,
 	osalStatus *status,
-	os_short flags)
+	os_int flags)
 {
 	osalSocket *mysocket = OS_NULL;
 	os_memsz host_sz;
@@ -135,16 +126,10 @@ osalStream osal_socket_open(
 	struct hostent *he;
 
 	/* Get host name or numeric IP address and TCP port number from parameters.
+       The host buffer must be released by calling osal_memory_free() function.
 	 */
-	host = osal_socket_get_host_name_and_port(parameters, &port_nr,
-		&host_sz);
-
-	/* If no host name.
-	 */
-	if (host == OS_NULL)
-	{
-		host = "127.0.0.1";
-	}
+	host = osal_socket_get_host_name_and_port(parameters, &port_nr, &host_sz);
+	if (host == OS_NULL) return OS_NULL;
 
     addr = inet_addr(host);
     if (addr == INADDR_NONE) 
@@ -162,7 +147,6 @@ osalStream osal_socket_open(
         }
         addr = *((u_long*)he->h_addr_list[0]);
 	}
-
 
     handle = socket(AF_INET, SOCK_STREAM, 0);
     if (handle == INVALID_SOCKET) 
@@ -207,21 +191,21 @@ osalStream osal_socket_open(
 
 	/* Save interface pointer.
 	 */
-	mysocket->hdr.hdr.iface = &osal_socket_iface;
+	mysocket->hdr.iface = &osal_socket_iface;
 
 	/* Set infinite timeout
 	 */
-	mysocket->hdr.hdr.write_timeout_ms = mysocket->hdr.hdr.read_timeout_ms = -1;
+	mysocket->hdr.write_timeout_ms = mysocket->hdr.read_timeout_ms = -1;
 
 	/* Create mutex to synchronize socket access and start synchronization.
 	 */
 	mysocket->mutex = osal_mutex_create();
 //	osal_mutex_lock(mysocket->mutex);
 
-	if (callbacks)
+	/* if (callbacks)
 	{
 		osal_socket_set_callbacks(mysocket, callbacks);
-	}
+	} */
 
 	if (flags & OSAL_STREAM_LISTEN)
 	{
@@ -256,18 +240,6 @@ if (rval == 10035)
 	}
 try_again:
 
-	/* Join the socket worker thread's linked list.
-	 */
-	if (callbacks)
-	{
-		osal_socket_join_to_worker((osalSocketHeader*)mysocket);
-	}
-
-//	if (mysocket->mutex)
-//	{
-//		osal_mutex_unlock(mysocket->mutex);
-//	}
-
 	/* Release memory allocated for the host name or address.
 	 */
 	if (host_sz) osal_memory_free(host, host_sz);
@@ -287,10 +259,6 @@ getout:
 		closesocket(handle);
 	}
 
-	if (mysocket) 
-	{
-		osal_socket_cleanup((osalSocketHeader*)mysocket);
-	}
 
 	/* Memory allocation failed. Set status code and return null pointer.
 	 */
@@ -326,7 +294,6 @@ void osal_socket_close(
 	int n;
 
 	os_boolean
-		select_halted,
 		cleanup_now = OS_FALSE;
 
 	/* If called with NULL argument, do nothing.
@@ -336,7 +303,6 @@ void osal_socket_close(
 	/* Cast stream pointer to socket structure pointer, lock socket and get OS socket handle.
 	 */
 	mysocket = (osalSocket*)stream;
-	select_halted = osal_socket_lock(mysocket);
 	handle = mysocket->handle;
 
 	/* If socket operating system socket is not already closed, close now.
@@ -346,7 +312,6 @@ void osal_socket_close(
 		/* Mark socket closed
 		 */
 		mysocket->handle = INVALID_SOCKET;
-		mysocket->hdr.remove = OS_TRUE;
 
 		/* Disable sending data. This informs other the end of socket that it is going down now.
 		 */
@@ -382,17 +347,6 @@ void osal_socket_close(
 
 		cleanup_now = (os_boolean)(mysocket->event == OS_NULL);
 	}
-
-	/* Unlock the socket
-	 */
-	osal_socket_unlock(mysocket, select_halted);
-
-	/* If this socket is run by worker thread, just clean up resources now.
-	 */
-	if (cleanup_now)
-	{
-		osal_socket_cleanup((osalSocketHeader*)mysocket);
-	}
 }
 
 
@@ -413,9 +367,13 @@ void osal_socket_close(
 
 ****************************************************************************************************
 */
-static void osal_socket_select(
-	osalSocketWorkerThreadState *sockworker)
+os_int osal_socket_select(
+	osalStream *streams,
+    os_int nstreams,
+    osalEvent *events,
+    os_int nevents)
 {
+#if 0
 	WSAEVENT *event;
 	WSANETWORKEVENTS network_events;
 	osalWindowsEventInfo *event_info;
@@ -465,8 +423,9 @@ static void osal_socket_select(
 		osal_mutex_lock(event_info[i].mutex);
 	}
 
-	i = WSAWaitForMultipleEvents(n_events,
+/*	i = WSAWaitForMultipleEvents(n_events,
 		event, FALSE, -1, FALSE);
+*/
 
 	/* Interrupt event
 	 */
@@ -617,7 +576,8 @@ getout:
 	}
 
 #endif
-
+#endif
+    return 0;
 }
 
 
@@ -655,20 +615,18 @@ osalStream osal_socket_accept(
 	os_char *parameters,
 	osalStreamCallbacks *callbacks,
 	osalStatus *status,
-	os_short flags)
+	os_int flags)
 {
 	osalSocket *mysocket, *newsocket;
 	SOCKET handle, new_handle;
 	int addr_size;
 	struct sockaddr_in sin_remote;
-	os_boolean select_halted;
 
 	if (stream)
 	{
 	/* Cast stream pointer to socket structure pointer, lock socket and get OS socket handle.
 	 */
 		mysocket = (osalSocket*)stream;
-		select_halted = osal_socket_lock(mysocket);
 		handle = mysocket->handle;
 
 		/* If socket operating system socket is not already closed.
@@ -682,10 +640,6 @@ osalStream osal_socket_accept(
 		{
 			new_handle = INVALID_SOCKET;
 		}
-
-		/* Unlock the listening socket, no longer needed by accept.
-		 */
-		osal_socket_unlock(mysocket, select_halted);
 
 		/* If no new connection, do nothing more.
 		 */
@@ -719,22 +673,22 @@ osalStream osal_socket_accept(
 		/* Save interface pointer.
 		 */
 	#if OSAL_FUNCTION_POINTER_SUPPORT
-		newsocket->hdr.hdr.iface = &osal_socket_iface;
+		newsocket->hdr.iface = &osal_socket_iface;
 	#endif
 
 		/* Set timeouts.
 		 */
-		newsocket->hdr.hdr.write_timeout_ms = newsocket->hdr.hdr.read_timeout_ms = -1;
+		newsocket->hdr.write_timeout_ms = newsocket->hdr.read_timeout_ms = -1;
 
 		/* Create mutex to synchronize socket access and start synchronization.
 		 */
 		newsocket->mutex = osal_mutex_create();
 
-		if (callbacks)
+		/* if (callbacks)
 		{
 			osal_socket_set_callbacks(newsocket, callbacks);
 			osal_socket_join_to_worker((osalSocketHeader*)newsocket);
-		}
+		} */
 
 		/* Set event. It is at least theoretically possible that at very beginning an event
 		   belonging to the accepted socket may go to the listening socket. Creating one time
@@ -774,7 +728,7 @@ osalStream osal_socket_accept(
 */
 osalStatus osal_socket_flush(
 	osalStream stream,
-	os_short flags)
+	os_int flags)
 {
 	return OSAL_SUCCESS;
 }
@@ -806,10 +760,9 @@ osalStatus osal_socket_write(
 	const os_uchar *buf,
 	os_memsz n,
 	os_memsz *n_written,
-	os_short flags)
+	os_int flags)
 {
 	int rval;
-	os_boolean select_halted;
 	osalSocket *mysocket;
 	SOCKET handle;
 
@@ -823,25 +776,22 @@ osalStatus osal_socket_write(
 		 */
 		if (n == 0)
 		{
-			if (mysocket->hdr.hdr.callbacks.write_func)
+			/* if (mysocket->hdr.callbacks.write_func)
 			{
 				mysocket->hdr.send_now = OS_TRUE;
-				osal_socket_worker_ctrl(mysocket->hdr.worker_thread, OSAL_SOCKWORKER_INTERRUPT);
-			}
+			} */
 			*n_written = 0;
 			return OSAL_SUCCESS;
 		}
 
 		/* Lock socket and get OS socket handle.
 		 */
-		select_halted = osal_socket_lock(mysocket);
 		handle = mysocket->handle;
 
 		/* If operating system socket is already closed.
 		 */
 		if (handle == INVALID_SOCKET)
 		{
-			osal_socket_unlock(mysocket, select_halted);
 			goto getout;
 		}
 
@@ -851,13 +801,11 @@ osalStatus osal_socket_write(
 		{
 			if (WSAGetLastError() != WSAEWOULDBLOCK) 
 			{
-				osal_socket_unlock(mysocket, select_halted);
 				goto getout;
 			}
 			rval = 0;
 		}
 
-		osal_socket_unlock(mysocket, select_halted);
 		*n_written = rval;
 		return OSAL_SUCCESS;
 	}
@@ -898,10 +846,9 @@ osalStatus osal_socket_read(
 	os_uchar *buf,
 	os_memsz n,
 	os_memsz *n_read,
-	os_short flags)
+	os_int flags)
 {
 	int rval;
-	os_boolean select_halted;
 	osalSocket *mysocket;
 	SOCKET handle;
 
@@ -910,14 +857,12 @@ osalStatus osal_socket_read(
 		/* Cast stream pointer to socket structure pointer, lock socket and get OS socket handle.
 		 */
 		mysocket = (osalSocket*)stream;
-		select_halted = osal_socket_lock(mysocket);
 		handle = mysocket->handle;
 
 		/* If operating system socket is already closed.
 		 */
 		if (handle == INVALID_SOCKET)
 		{
-			osal_socket_unlock(mysocket, select_halted);
 			goto getout;
 		}
 
@@ -927,13 +872,11 @@ osalStatus osal_socket_read(
 		{
 			if (WSAGetLastError() != WSAEWOULDBLOCK) 
 			{
-				osal_socket_unlock(mysocket, select_halted);
 				goto getout;
 			}
 			rval = 0;
 		}
 
-		osal_socket_unlock(mysocket, select_halted);
 		*n_read = rval;
 		return OSAL_SUCCESS;
 	}
@@ -1124,7 +1067,7 @@ void SetupFDSets(fd_set *ReadFDs, fd_set *WriteFDs,
 #endif
 
 
-
+#if 0
 void osal_socket_cleanup(
 	osalSocketHeader *s)
 {
@@ -1149,152 +1092,7 @@ void osal_socket_cleanup(
 	 */
 	osal_memory_free(mysocket, sizeof(osalSocket));
 }
-
-
-
-/**
-****************************************************************************************************
-
-  @brief Wait for event from one of sockets.
-  @anchor osal_socket_signal_select
-
-  The osal_socket_signal_select() function blocks execution of the calling thread until something
-  happens with listed sockets, or osal_socket_signal_select() is called.
-
-  @param   stream Socket stream to signal.
-
-  @return  None.
-
-****************************************************************************************************
-*/
-void osal_socket_worker_ctrl(
-	osalSocketWorkerThreadState *sockworker,
-	osalSockWorkerAction action)
-{
-	if (sockworker) switch (action)
-	{
-		case OSAL_SOCKWORKER_SELECT:
-			osal_socket_select(sockworker);
-			break;
-
-		case OSAL_SOCKWORKER_INTERRUPT:
-			if (sockworker->interrupt_event)
-			{
-				WSASetEvent(sockworker->interrupt_event);
-			}
-			break;
-
-		case OSAL_SOCKWORKER_SETUP:
-			sockworker->interrupt_event = WSACreateEvent();
-			break;
-
-		case OSAL_SOCKWORKER_CLEANUP:
-			if (sockworker->interrupt_event)
-			{
-				WSACloseEvent(sockworker->interrupt_event);
-			}
-			break;
-	}
-}
-
-
-
-static void osal_socket_set_callbacks(
-	osalSocket *mysocket,
-	osalStreamCallbacks *callbacks)
-{
-	SOCKET handle;
-	long network_events;
-
-	/* Save callback function pointers and callback context
-	 */
-	os_memcpy(&mysocket->hdr.hdr.callbacks, callbacks, sizeof(osalStreamCallbacks));
-
-	handle = mysocket->handle;
-
-	network_events = 0; 
-	if (callbacks->read_func)
-	{
-		network_events |= FD_READ|FD_ACCEPT|FD_OOB;
-	}
-	if (callbacks->write_func)
-	{
-		network_events |= FD_WRITE;
-	}
-	if (callbacks->control_func)
-	{
-		network_events |= FD_CONNECT|FD_CLOSE;
-	}
-
-	mysocket->event = WSACreateEvent();
-	WSAEventSelect(handle, mysocket->event, network_events);
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Move select to wait state
-  @anchor osal_socket_lock
-
-  The osal_socket_lock() function...
-
-  @return  None.
-
-****************************************************************************************************
-*/
-static os_boolean osal_socket_lock(
-	osalSocket *mysocket)
-{
-	osalSocketWorkerThreadState *sockworker;
-
-	if (!osal_mutex_try_lock(mysocket->mutex))
-		return OS_FALSE;
-
-	sockworker = mysocket->hdr.worker_thread;
-
-	if (sockworker)
-	{
-		osal_mutex_lock(sockworker->deadlock);
-		osal_socket_worker_ctrl(sockworker, OSAL_SOCKWORKER_INTERRUPT);
-		osal_event_wait(sockworker->in_deadlock, OSAL_EVENT_INFINITE);
-	}
-
-	osal_mutex_lock(mysocket->mutex);
-
-	return OS_TRUE;
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Shut down sockets.
-  @anchor osal_socket_unlock
-
-  The osal_socket_unlock() shuts down the underlying sockets library.
-
-  @return  None.
-
-****************************************************************************************************
-*/
-static void osal_socket_unlock(
-	osalSocket *mysocket,
-	os_boolean select_halted)
-{
-	osalSocketWorkerThreadState *sockworker;
-
-	if (select_halted)
-	{
-		sockworker = mysocket->hdr.worker_thread;
-
-		if (sockworker)
-		{
-			osal_mutex_unlock(sockworker->deadlock);
-		}
-	}
-	osal_mutex_unlock(mysocket->mutex);
-}
+#endif
 
 
 #if OSAL_FUNCTION_POINTER_SUPPORT

@@ -37,7 +37,6 @@ OSAL_C_HEADER_BEGINS
 #include "eosal/extensions/stream/common/osal_stream.h"
 #include "eosal/extensions/stringx/common/osal_stringx.h"
 #include "eosal/extensions/typeid/common/osal_typeid.h"
-#include "eosal/extensions/socket/common/osal_socket_worker.h"
 #include "eosal/extensions/socket/common/osal_socket.h"
 #include "eosal/extensions/serialize/common/osal_serialize.h"
 
