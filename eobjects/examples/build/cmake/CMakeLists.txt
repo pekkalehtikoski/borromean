@@ -1,8 +1,12 @@
 # eobjects/examples/build/cmake/CmakeLists.txt - Cmake build for all eobjects examples.
 cmake_minimum_required(VERSION 2.8.9)
 project(eobjects-examples)
+
+# include build information common to all projects.
+include(../../../../build/cmake/e-build-defs.txt)
  
 # Build individual projects.
+add_subdirectory($ENV{E_ROOT}/eobjects/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/eobjects")
 add_subdirectory($ENV{E_ROOT}/eobjects/examples/econtainer/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/econtainer_example")
 add_subdirectory($ENV{E_ROOT}/eobjects/examples/evariables/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/evariables_example")
 add_subdirectory($ENV{E_ROOT}/eobjects/examples/enames/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/enames_example")
