@@ -47,8 +47,15 @@ set(ENV{E_BIN} "$ENV{E_ROOT}/bin/$ENV{E_OSVER}")
 # Temporary file path.
 set(ENV{E_TMP} "$ENV{E_ROOT}/tmp/$ENV{E_OSVER}_$ENV{E_COMPILER}")
 
+
+
 # Commonly used libraries for objects console application.
 set(ENV{E_COMMON_CONSOLE_APP_LIBS} "eobjects;eosal")
 
 # Commonly used libraries for eosal console application.
 set(ENV{OSAL_CONSOLE_APP_LIBS} "eosal")
+
+if(WIN32)
+  set(ENV{E_COMMON_CONSOLE_APP_LIBS} "$ENV{E_ROOT};WS2_32")
+  set(ENV{OSAL_CONSOLE_APP_LIBS} "$ENV{OSAL_CONSOLE_APP_LIBS};WS2_32")
+endif()

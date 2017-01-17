@@ -1,5 +1,5 @@
 # eobjects/examples/ethread/build/cmake/CmakeLists.txt - Cmake build for eobject thread example.
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 2.8.11)
 
 # Set project name (= project root folder name).
 set(E_PROJECT "ethread")

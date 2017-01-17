@@ -36,20 +36,12 @@ os_int osal_main(
     os_int argc,
     os_char *argv[])
 {
-	os_uint
-		c;
+    osalStream handle;
+    osalStatus *status;
 
-	osal_console_write("osal_console_example\npress any key... ");
+    handle = osal_stream_open(OSAL_SOCKET_IFACE, "127.0.0.1:21981", OS_NULL, OS_NULL, &status,
+	    OSAL_STREAM_CONNECT);
 
 
-	if (c)
-	{
-		osal_console_write("\n");
-	}
-	else
-	{
-		osal_console_write("No key pressed within 20 seconds.\n");
-	}
-
-    return 0;
+    osal_stream_close(handle);
 }

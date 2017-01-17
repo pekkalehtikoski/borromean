@@ -1,5 +1,5 @@
 # eobjects/examples/build/cmake/CmakeLists.txt - Cmake build for all eobjects examples.
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 2.8.11)
 project(eobjects-examples)
 
 # include build information common to all projects.

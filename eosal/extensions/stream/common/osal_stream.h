@@ -102,21 +102,42 @@ typedef struct osalStreamHeader *osalStream;
 #define OSAL_STREAM_PEEK 32
 
 /** Write all data or nothing. This flag tells osal_stream_write() and osal_stream_write_value() 
-    functions to write all data or noting. This will not work with all streams. This uses same 
-	flag value as OSAL_STREAM_PEEK, but used by different functions.
+    functions to write all data or noting. This will not work with all streams. 
  */
-#define OSAL_STREAM_ALL_OR_NOTHING OSAL_STREAM_PEEK
+// #define OSAL_STREAM_ALL_OR_NOTHING 64
 
 /** Do not write releated control code. The OSAL_STREAM_NO_REPEATED_CTRLS causes 
     osal_queue_write_value() function to check if the same control code is already last item
 	of the queue. If so, tre repeated control code is not written.
  */
-#define OSAL_STREAM_NO_REPEATED_CTRLS OSAL_STREAM_READ
+// #define OSAL_STREAM_NO_REPEATED_CTRLS OSAL_STREAM_READ 
 
-/** Open a socket to listen for incoming connections. This uses same flag value as OSAL_STREAM_PEEK,
-    but used by different functions.
+/** Open a socket to to connect. Connect is default socket operation, OSAL_STREAM_CONNECT
+    is zero 
  */
-#define OSAL_STREAM_LISTEN OSAL_STREAM_PEEK
+#define OSAL_STREAM_CONNECT 0
+
+/** Open a socket to listen for incoming connections. 
+ */
+#define OSAL_STREAM_LISTEN 128
+
+/** Open a socket to accept listening connection. 
+ */
+#define OSAL_STREAM_ACCEPT 256
+
+/** Open a UDP multicast socket. 
+ */
+#define OSAL_STREAM_UDP_MULTICAST 512
+
+/** Open socket in blocking mode. Another name OSAL_STREAM_SYNCHRONIZE.
+ */
+#define OSAL_STREAM_BLOCKING OSAL_STREAM_SYNCHRONIZE
+
+/** Disable Nagle's algorithm on TCP socket.
+ */
+#define OSAL_STREAM_TCP_NODELAY OSAL_STREAM_SYNCHRONIZE
+
+
 
 /*@}*/
 
@@ -394,6 +415,15 @@ typedef struct osalStreamHeader
 	/** Pointer to stream interface is always first item of the handle
 	 */
 	osalStreamInterface *iface;
+
+    /* Stream handle, Actual choice depends on stream type and operatinf system
+     */
+    union osalStreamHandleShared
+    {
+        int i;
+
+    } 
+    handle;
 
 	/** Pointers to callback functions and callback context.
 	 */

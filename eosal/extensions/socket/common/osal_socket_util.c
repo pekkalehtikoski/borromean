@@ -65,9 +65,14 @@ os_char *osal_socket_get_host_name_and_port(
 
 	/* Find newtwork address / port within parameter string. 
 	 */
+    if (parameters == OS_NULL) parameters = "127.0.0.1:21981";
 	value_pos = osal_string_get_item_value(parameters, "addr", 
 		&n_chars, OSAL_STRING_SEARCH_LINE_ONLY);
-	if (value_pos == OS_NULL) return OS_NULL;
+	if (value_pos == OS_NULL) 
+    {
+        value_pos = parameters;
+        n_chars = os_strlen(value_pos);
+    }
 
 	/* Allocate buffer and copy parameter value into it. Null terminate the string.
 	 */
