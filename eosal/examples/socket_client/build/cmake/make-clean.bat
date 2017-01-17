@@ -1,0 +1,1 @@
+git clean -d -f -x C:\coderoot\borromean\eobjects\examples\econtainer
