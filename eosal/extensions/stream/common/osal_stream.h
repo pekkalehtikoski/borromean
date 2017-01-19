@@ -149,6 +149,8 @@ typedef struct osalStreamHeader *osalStream;
 /*@}*/
 
 
+#if 0
+THESE BELONG to EObjects
 /**
 ****************************************************************************************************
 
@@ -185,31 +187,8 @@ osalStreamCtrlCode;
     possible Unicode point.
  */
 #define OSAL_STREAM_CTRL_UTF32_BASE 0x200000
+#endif
 
-/**
-****************************************************************************************************
-
-  Enumeration of Reasons for Callback
-  @anchor osalStreamCallbackEnum
-
-  The stream callback function get reason for callback as argument. 
-
-****************************************************************************************************
-*/
-/* typedef enum
-{
-	OSAL_STREAM_CALLBACK_ACCEPT,
-	OSAL_STREAM_CALLBACK_CONNECT,
-	OSAL_STREAM_CALLBACK_CLOSE,
-	OSAL_STREAM_CALLBACK_READ,
-	OSAL_STREAM_CALLBACK_WRITE,
-
-	OSAL_STREAM_CALLBACK_SHUTDOWN,
-
-	OSAL_STREAM_CALLBACK_INTERRUPT
-} 
-osalStreamCallbackEnum;
-*/
 
 
 /**
@@ -250,85 +229,15 @@ osalStreamParameterIx;
 /*@}*/
 
 
-/** 
-****************************************************************************************************
-
-  @name Stream Callback Function Type
-
-  Stream callback...
-
-****************************************************************************************************
-*/
-/*@{*/
-
-/** Stream callback function type. 
-    @anchor osal_stream_func
-
-    @param  stream Stream pointer.
-	@param  context Callback context.
-	@param  reason Reason for callback.
-	@return None.
- */
-/* typedef void osal_stream_func(
-	osalStream stream,
-	void *context,
-	osalStreamCallbackEnum reason);  */
-
-/*@}*/
 
 
 /** 
 ****************************************************************************************************
 
-  Stream callback function pointer and context pointer structure.
-
-  Structure to pass callback function pointers and callback context pointers to osal_stream_open(),
-  etc, or osal_socket_accept() function. 
+  Data returned by osal_stream_select()
 
 ****************************************************************************************************
 */
-#if 0
-typedef struct
-{
-	/** Pointer to control function. The callback function is called for control type events
-	    on the stream. These are OSAL_STREAM_CALLBACK_CONNECT, OSAL_STREAM_CALLBACK_CLOSE and 
-		OSAL_STREAM_CALLBACK_SHUTDOWN.
-	 */
-	osal_stream_func *control_func;
-
-	/** Context for control_func. The context is application defined pointer to be passed to
-	    the callback function.
-	 */
-	void *control_context;
-
-	/** Pointer to read function. The callback function is called when new data is received 
-	    and ready to be read, or a socket connection is accepted. This callback is called for 
-		OSAL_STREAM_CALLBACK_READ or OSAL_STREAM_CALLBACK_ACCEPT.
-	 */
-	osal_stream_func *read_func;
-
-	/** Context for read_func. The context is application defined pointer to be passed to
-	    the callback function.
-	 */
-	void *read_context;
-
-	/** Pointer to read function. The callback function is called when there is space for new
-	    data to be written to stream. This callback is called for OSAL_STREAM_CALLBACK_WRITE.
-	 */
-	osal_stream_func *write_func;
-
-	/** Context for write_func. The context is application defined pointer to be passed to
-	    the callback function.
-	 */
-	void *write_context;
-}
-osalStreamCallbacks;
-#endif
-
-typedef struct 
-{
-int dummy;
-} osalStreamCallbacks; // DUMMY REMOVE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 /* Bit fields for eventflags.
  */
@@ -365,11 +274,8 @@ osalSelectData;
  */
 typedef struct osalStreamInterface
 {
-	/** Ulle. Dulle.
-	 */
 	osalStream (*stream_open)(
 		os_char *parameters,
-		osalStreamCallbacks *callbacks,
 		void *option,
 		osalStatus *status,
 		os_int flags);
@@ -380,7 +286,6 @@ typedef struct osalStreamInterface
 	osalStream (*stream_accept)(
 		osalStream stream,
 		os_char *parameters,
-		osalStreamCallbacks *callbacks,
 		osalStatus *status,
 		os_int flags);
 
@@ -455,20 +360,8 @@ typedef struct osalStreamHeader
 	/** Pointer to stream interface is always first item of the handle
 	 */
 	osalStreamInterface *iface;
-
-    /* Stream handle, Actual choice depends on stream type and operatinf system
-     */
-    /* union osalStreamHandleShared
-    {
-        int i;
-
-    } 
-    handle; */
-
-	/** Pointers to callback functions and callback context.
-	 */
-//	osalStreamCallbacks callbacks;
 #endif
+
     /** Timeout for writing data, milliseconds. Value -1 indicates infinite timeout.
      */
 	os_int write_timeout_ms;
@@ -501,7 +394,6 @@ osalStream osal_stream_open(
 	osalStreamInterface *iface,
 	os_char *parameters,
 	void *option,
-	osalStreamCallbacks *callbacks,
 	osalStatus *status,
 	os_int flags);
 
@@ -511,7 +403,6 @@ void osal_stream_close(
 osalStream osal_stream_accept(
 	osalStream stream,
 	os_char *parameters,
-	osalStreamCallbacks *callbacks,
 	osalStatus *status,
 	os_int flags);
 
@@ -584,7 +475,6 @@ osalStatus osal_stream_select(
 osalStream osal_stream_default_accept(
 	osalStream stream,
 	os_char *parameters,
-	osalStreamCallbacks *callbacks,
 	osalStatus *status,
 	os_int flags);
 

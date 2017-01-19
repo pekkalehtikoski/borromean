@@ -91,7 +91,6 @@ osalQueue;
  */
 osalStream osal_queue_open(
 	os_char *parameters,
-	osalStreamCallbacks *callbacks,
 	void *option,
 	osalStatus *status,
 	os_short flags);

@@ -23,11 +23,10 @@ osalStream osal_stream_open(
 	osalStreamInterface *iface,
 	os_char *parameters,
 	void *option,
-	osalStreamCallbacks *callbacks,
 	osalStatus *status,
 	os_int flags)
 {
-	return iface->stream_open(parameters, option, callbacks, status, flags);
+	return iface->stream_open(parameters, option, status, flags);
 }
 
 void osal_stream_close(
@@ -42,13 +41,12 @@ void osal_stream_close(
 osalStream osal_stream_accept(
 	osalStream stream,
 	os_char *parameters,
-	osalStreamCallbacks *callbacks,
 	osalStatus *status,
 	os_int flags)
 {
 	if (stream)
 	{
-		return stream->iface->stream_accept(stream, parameters, callbacks, status, flags);
+		return stream->iface->stream_accept(stream, parameters, status, flags);
 	}
 	if (status) *status = OSAL_STATUS_FAILED;
 	return OS_NULL;
@@ -334,7 +332,6 @@ osalStatus osal_stream_select(
 osalStream osal_stream_default_accept(
 	osalStream stream,
 	os_char *parameters,
-	osalStreamCallbacks *callbacks,
 	osalStatus *status,
 	os_int flags)
 {

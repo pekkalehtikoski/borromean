@@ -38,7 +38,7 @@ os_int osal_main(
     osalStatus status;
 
     handle = osal_stream_open(OSAL_SOCKET_IFACE, "127.0.0.1:" OSAL_DEFAULT_SOCKET_PORT_STR,
-        OS_NULL, OS_NULL, &status, OSAL_STREAM_CONNECT);
+        OS_NULL, &status, OSAL_STREAM_CONNECT);
 
     os_sleep(1000);
 

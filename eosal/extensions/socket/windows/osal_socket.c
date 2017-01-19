@@ -56,26 +56,8 @@ typedef struct osalSocket
 		created, accepted or closed socket.
 	 */
 	WSAEVENT event;
-
-//	osalMutex mutex;
 } 
 osalSocket;
-
-
-/* typedef struct 
-{
-	osalSocket *stream;
-	osalMutex mutex;
-} 
-osalWindowsEventInfo;
-*/
-
-/* Forward referred static functions.
- */
-/* static void osal_socket_set_callbacks(
-	osalSocket *mysocket,
-	osalStreamCallbacks *callbacks); */
-
 
 
 /**
@@ -108,7 +90,6 @@ osalWindowsEventInfo;
 */
 osalStream osal_socket_open(
 	os_char *parameters,
-	osalStreamCallbacks *callbacks,
 	void *option,
 	osalStatus *status,
 	os_int flags)
@@ -456,7 +437,6 @@ void osal_socket_close(
 osalStream osal_socket_accept(
 	osalStream stream,
 	os_char *parameters,
-	osalStreamCallbacks *callbacks,
 	osalStatus *status,
 	os_int flags)
 {

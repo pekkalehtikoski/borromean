@@ -55,7 +55,6 @@ extern osalStreamInterface osal_socket_iface;
  */
 osalStream osal_socket_open(
 	os_char *parameters,
-	osalStreamCallbacks *callbacks,
 	void *option,
 	osalStatus *status,
 	os_int flags);
@@ -70,7 +69,6 @@ void osal_socket_close(
 osalStream osal_socket_accept(
 	osalStream stream,
 	os_char *parameters,
-	osalStreamCallbacks *callbacks,
 	osalStatus *status,
 	os_int flags);
 
