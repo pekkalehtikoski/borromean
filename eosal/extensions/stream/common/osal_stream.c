@@ -128,7 +128,7 @@ osalStatus osal_stream_write(
 			}
 
 			buf += n_written_now;
-			osal_thread_sleep(0);
+			os_sleep(0);
 		}
 		while (1);
 
@@ -191,7 +191,7 @@ osalStatus osal_stream_read(
 			}
 
 			buf += n_read_now;
-			osal_thread_sleep(0);
+			os_sleep(0);
 		}
 		while (1);
 
@@ -237,7 +237,7 @@ osalStatus osal_stream_write_value(
 				if (osal_timer_elapsed2(&start_t, &now_t, write_timeout_ms)) break;
 			}
 
-			osal_thread_sleep(0);
+			os_sleep(0);
 		}
 		while (1);
 
@@ -280,7 +280,7 @@ osalStatus osal_stream_read_value(
 				if (osal_timer_elapsed2(&start_t, &now_t, read_timeout_ms)) break;
 			}
 
-			osal_thread_sleep(0);
+			os_sleep(0);
 		}
 		while (1);
 
@@ -313,6 +313,20 @@ void osal_stream_set_parameter(
 	}
 }
 
+osalStatus osal_stream_select(
+	osalStream *streams,
+    os_int nstreams,
+	osalEvent evnt,
+	osalSelectData *data,
+	os_int flags)
+{
+	if (nstreams) if (streams[0])
+	{
+		return streams[0]->iface->stream_select(streams, nstreams, evnt, data, flags);
+	}
+
+	return OSAL_STATUS_FAILED;
+}
 
 #endif
 
@@ -395,4 +409,14 @@ void osal_stream_default_set_parameter(
 	osalStreamParameterIx parameter_ix,
 	os_long value)
 {
+}
+
+osalStatus osal_stream_default_select(
+	osalStream *streams,
+    os_int nstreams,
+	osalEvent evnt,
+	osalSelectData *data,
+	os_int flags)
+{
+	return OSAL_STATUS_FAILED;
 }

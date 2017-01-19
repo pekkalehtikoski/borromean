@@ -92,17 +92,17 @@ osalEvent osal_event_create(
 /* Delete an event.
  */
 void osal_event_delete(
-    osalEvent event);
+    osalEvent evnt);
 
 /* Set an event.
  */
 void osal_event_set(
-    osalEvent event);
+    osalEvent evnt);
 
 /* Wait for an event.
  */
 osalStatus osal_event_wait(
-    osalEvent event,
+    osalEvent evnt,
     os_int timeout_ms);
 
 /*@}*/

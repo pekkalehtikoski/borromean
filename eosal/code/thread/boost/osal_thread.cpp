@@ -16,7 +16,7 @@
   run at the same time, with each processor or core running a particular thread or task.
   A new thread is created by osal_thread_create() function call, and exited by osal_thread_exit()
   function. Thread priorizing and sleep are handled by osal_thread_set_priority() and
-  osal_thread_sleep() functions. Threads of execution can be identified by osal_thread_get_id()
+  os_sleep() functions. Threads of execution can be identified by osal_thread_get_id()
   function.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
@@ -332,9 +332,9 @@ static void osal_thread_intermediate_func(
 ****************************************************************************************************
 
   @brief Suspend thread execution for a specific time.
-  @anchor osal_thread_sleep
+  @anchor os_sleep
 
-  The osal_thread_sleep() function suspends the execution of the current thread for a specified
+  The os_sleep() function suspends the execution of the current thread for a specified
   interval. The function is used for both to create timed delays and to force scheduler to give
   processor time to lower priority threads. If time_ms is zero the function suspends execution
   of the thread until end of current processor time slice.
@@ -345,7 +345,7 @@ static void osal_thread_intermediate_func(
 
 ****************************************************************************************************
 */
-void osal_thread_sleep(
+void os_sleep(
     os_int time_ms)
 {
     boost::this_thread::sleep_for(boost::chrono::milliseconds{time_ms});

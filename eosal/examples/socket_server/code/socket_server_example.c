@@ -1,7 +1,7 @@
 /**
 
-  @file    examples/console/osal_console_example.c
-  @brief   Example code about using console.
+  @file    eosal/examples/socket_server/code/socket_server_example.c
+  @brief   Socket server example.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
@@ -36,20 +36,65 @@ os_int osal_main(
     os_int argc,
     os_char *argv[])
 {
-	os_uint
-		c;
+    osalStream handle[OSAL_SOCKET_SELECT_MAX];
+    osalStatus status;
+    osalSelectData selectdata;
+    os_int i;
 
-	osal_console_write("osal_console_example\npress any key... ");
+    os_memclear(handle, sizeof(handle));
 
+    handle[0] = osal_stream_open(OSAL_SOCKET_IFACE, ":" OSAL_DEFAULT_SOCKET_PORT_STR,
+        OS_NULL, OS_NULL, &status, OSAL_STREAM_LISTEN|OSAL_STREAM_SELECT);
+    if (status)
+    {
+	    osal_console_write("osal_stream_open failed\n");
+        return 0;
+    }
 
-	if (c)
-	{
-		osal_console_write("\n");
-	}
-	else
-	{
-		osal_console_write("No key pressed within 20 seconds.\n");
-	}
+    while (OS_TRUE)
+    {
+        status = osal_stream_select(handle, OSAL_SOCKET_SELECT_MAX, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (status)
+        {
+	        osal_console_write("osal_stream_select failed\n");
+            break;
+        }
+
+        if (selectdata.eventflags & OSAL_STREAM_ACCEPT_EVENT)
+        {
+            osal_console_write("accept event\n");
+            /* Find free handle
+             */
+            for (i = 1; i < OSAL_SOCKET_SELECT_MAX; i++)
+            {
+                if (handle[i] == OS_NULL)
+                {
+                    handle[i] = osal_stream_accept(handle[0], OS_NULL, OS_NULL, &status, OSAL_STREAM_SELECT);
+                    break;
+                }
+            }
+            if (i == OSAL_SOCKET_SELECT_MAX)
+            {
+	            osal_console_write("Failed: handles table full\n");
+            }
+        }
+
+        if (selectdata.eventflags & OSAL_STREAM_CLOSE_EVENT)
+            osal_console_write("close event\n");
+
+        if (selectdata.eventflags & OSAL_STREAM_CONNECT_EVENT)
+            osal_console_write("connect event\n");
+
+        if (selectdata.eventflags & OSAL_STREAM_READ_EVENT)
+            osal_console_write("read event\n");
+
+        if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
+            osal_console_write("write event\n");
+    }
+
+    osal_stream_close(handle[0]);
+
+	// osal_console_write("osal_console_example\npress any key... ");
 
     return 0;
 }

@@ -112,7 +112,7 @@ void thread_example_1()
     for (os_int i = 0; i<1000; i++)
     {
         osal_console_write("master running\n");
-        osal_thread_sleep(20);
+        os_sleep(20);
 
         txt = new eVariable(&root);
         txt->sets("message content");

@@ -21,11 +21,8 @@
 #endif
 
 #include <winsock2.h>
+#include <Ws2ipdef.h>
 
-/** Windows socket library version information.
- */
-static WSADATA 
-	osal_wsadata;
 
 
 /**
@@ -60,17 +57,18 @@ typedef struct osalSocket
 	 */
 	WSAEVENT event;
 
-	osalMutex mutex;
+//	osalMutex mutex;
 } 
 osalSocket;
 
 
-typedef struct 
+/* typedef struct 
 {
 	osalSocket *stream;
 	osalMutex mutex;
 } 
 osalWindowsEventInfo;
+*/
 
 /* Forward referred static functions.
  */
@@ -118,68 +116,80 @@ osalStream osal_socket_open(
 	osalSocket *mysocket = OS_NULL;
 	os_memsz host_sz;
 	os_int port_nr;
-	os_char *host;
+	os_char *host, *hostbuf;
 	osalStatus rval;
-	unsigned long addr, no_blocking;
+	unsigned long addr = 0;
 	SOCKET handle = INVALID_SOCKET;
-	struct sockaddr_in sin;
+	struct sockaddr_in saddr;
+    struct sockaddr_in6 saddr6;
 	struct hostent *he;
     os_boolean is_ipv6;
+    int af, udp, on = 1;
 
-    /* Initialize sockets library, if not already initialized.
+    /* Initialize sockets library, if not already initialized. 
      */
     osal_socket_initialize();
 
 	/* Get host name or numeric IP address and TCP port number from parameters.
-       The host buffer must be released by calling osal_memory_free() function.
+       The host buffer must be released by calling osal_memory_free() function,
+       unless if host is OS_NULL (unpecified).
 	 */
     port_nr = OSAL_DEFAULT_SOCKET_PORT;
-	host = osal_socket_get_host_name_and_port(parameters, &port_nr, &host_sz, &is_ipv6);
-	if (host == OS_NULL) return OS_NULL;
+	host = hostbuf = osal_socket_get_host_name_and_port(parameters, &port_nr, &host_sz, &is_ipv6);
+    udp = (flags & OSAL_STREAM_UDP_MULTICAST) ? OS_TRUE : OS_FALSE;
 
-    addr = inet_addr(host);
-    // USE inet_pton(is_ipv6 ? AF_INET6 : AF_INET, const char *src, void *dst); instead, works also for IPv6
-    if (addr == INADDR_NONE) 
-	{
-/* Set non blocking mode
- */
-// no_blocking = 1;
-// ioctlsocket (handle, FIONBIO, &no_blocking);
+    /* If host "ipv6" was specified -> no host specified, but IPv6 selected.
+     */
+    if (host) if (!os_strcmp(host, "ipv6")) 
+    {
+        is_ipv6 = OS_TRUE;
+        host = OS_NULL;
+    }
+    
+    if (host)
+    {
+        addr = inet_addr(host);
+        // USE inet_pton(is_ipv6 ? AF_INET6 : AF_INET, const char *src, void *dst); instead, works also for IPv6
+        if (addr == INADDR_NONE) 
+	    {
+            he = gethostbyname(host);
+            if (he == NULL) 
+		    {
+			    rval = OSAL_STATUS_FAILED;
+			    goto getout;
+            }
+            addr = *((u_long*)he->h_addr_list[0]);
+	    }
+    }
 
-        he = gethostbyname(host);
-        if (he == NULL) 
-		{
-			rval = OSAL_STATUS_FAILED;
-			goto getout;
-        }
-        addr = *((u_long*)he->h_addr_list[0]);
-	}
-
-    handle = socket(AF_INET, SOCK_STREAM, 0);
+    /* Create socket.
+     */
+    af = is_ipv6 ? AF_INET6 : AF_INET;
+    handle = socket(af, udp ? SOCK_DGRAM : SOCK_STREAM, udp ? IPPROTO_UDP : IPPROTO_TCP);
     if (handle == INVALID_SOCKET) 
 	{
 		rval = OSAL_STATUS_FAILED;
 		goto getout;
 	}
 
-	os_memclear(&sin, sizeof(sin));
-    sin.sin_family = AF_INET;
-    sin.sin_addr.s_addr = addr;
-    sin.sin_port = htons((unsigned short)port_nr);
-
-	if (flags & OSAL_STREAM_LISTEN)
-	{
-		if (bind(handle, (struct sockaddr*)&sin, sizeof(sin))) 
-		{
-			rval = OSAL_STATUS_FAILED;
-			goto getout;
-		}
-	}
+    /* Set socket reuse flag.
+     */
+    if ((flags & OSAL_STREAM_NO_REUSEADDR) == 0)
+    {
+        if (setsockopt(handle, SOL_SOCKET,  SO_REUSEADDR,
+            (char *)&on, sizeof(on)) < 0)
+        {
+		    rval = OSAL_STATUS_FAILED;
+		    goto getout;
+        }
+    }
 
 	/* Set non blocking mode
 	 */
-	no_blocking = 1;
-	ioctlsocket (handle, FIONBIO, &no_blocking);
+    if ((flags & OSAL_STREAM_BLOCKING) == 0)
+    {
+    	ioctlsocket(handle, FIONBIO, &on);
+    }
 
 	/* Allocate and clear socket structure.
 	 */
@@ -204,31 +214,74 @@ osalStream osal_socket_open(
 	 */
 	mysocket->hdr.write_timeout_ms = mysocket->hdr.read_timeout_ms = -1;
 
-	/* Create mutex to synchronize socket access and start synchronization.
-	 */
-	mysocket->mutex = osal_mutex_create();
-//	osal_mutex_lock(mysocket->mutex);
+    /* If we are preparing to use this with select function.
+     */
+    if (flags & OSAL_STREAM_SELECT)
+    {   
+        /* Create event
+         */
+        mysocket->event = WSACreateEvent();
+        if (mysocket->event == WSA_INVALID_EVENT)
+        {
+		    rval = OSAL_STATUS_MEMORY_ALLOCATION_FAILED;
+		    goto getout;
+        }
 
-	/* if (callbacks)
+        if (WSAEventSelect(handle, mysocket->event, FD_ACCEPT|FD_CONNECT|FD_CLOSE|FD_READ|FD_WRITE) == SOCKET_ERROR)
+        {
+		    rval = OSAL_STATUS_FAILED;
+		    goto getout;
+        }           
+    }
+
+    if (is_ipv6)
+    {
+        memset(&saddr6, 0, sizeof(saddr6));
+        saddr6.sin6_family = AF_INET6;
+        memcpy(&saddr6.sin6_addr, &in6addr_any, sizeof(in6addr_any));
+        saddr6.sin6_port = htons(port_nr);
+    }
+    else
+    {
+	    os_memclear(&saddr, sizeof(saddr));
+        saddr.sin_family = AF_INET;
+        saddr.sin_addr.s_addr = addr ? addr : htonl(INADDR_ANY); 
+        saddr.sin_port = htons((unsigned short)port_nr);
+    }
+
+	if (flags & (OSAL_STREAM_LISTEN | OSAL_STREAM_UDP_MULTICAST))
 	{
-		osal_socket_set_callbacks(mysocket, callbacks);
-	} */
+        if (is_ipv6)
+        {
+		    if (bind(handle, (struct sockaddr*)&saddr6, sizeof(saddr6))) 
+		    {
+			    rval = OSAL_STATUS_FAILED;
+			    goto getout;
+		    }
+        }
+		else 
+        {
+            if (bind(handle, (struct sockaddr*)&saddr, sizeof(saddr))) 
+		    {
+			    rval = OSAL_STATUS_FAILED;
+			    goto getout;
+		    }
+        }
 
-	if (flags & OSAL_STREAM_LISTEN)
-	{
-		if (listen(handle, 1))
-		{
-			/* Detach this socket from worker thread. 
-			 */
-			// osal_socket_remove_from_worker((osalSocketHeader*)mysocket);
-
-			rval = OSAL_STATUS_FAILED;
-			goto getout;
-		}
+        /* Set the listen back log
+         */
+	    if (flags & OSAL_STREAM_LISTEN)
+            if (listen(handle, 32) , 0)
+        {
+		        rval = OSAL_STATUS_FAILED;
+		        goto getout;
+        }
 	}
-	else
+
+	else 
 	{
-		if (connect(handle, (struct sockaddr*)&sin, sizeof(sin)))
+try_again:
+		if (connect(handle, (struct sockaddr*)&saddr, sizeof(saddr)))
 		{
 			/* Detach this socket from worker thread. 
 			 */
@@ -245,11 +298,22 @@ if (rval == 10035)
 			goto getout;
 		}
 	}
-try_again:
+
+
+	/* Create mutex to synchronize socket access and start synchronization.
+	 */
+	//mysocket->mutex = osal_mutex_create();
+//	osal_mutex_lock(mysocket->mutex);
+
+	/* if (callbacks)
+	{
+		osal_socket_set_callbacks(mysocket, callbacks);
+	} */
+
 
 	/* Release memory allocated for the host name or address.
 	 */
-	if (host_sz) osal_memory_free(host, host_sz);
+	osal_memory_free(hostbuf, host_sz);
 
 	/* Success set status code and cast socket structure pointer to stream pointer and return it.
 	 */
@@ -259,7 +323,7 @@ try_again:
 getout:
 	/* Release memory allocated for the host name or address.
 	 */
-	if (host_sz) osal_memory_free(host, host_sz);
+	osal_memory_free(hostbuf, host_sz);
 
 	if (handle != INVALID_SOCKET) 
 	{
@@ -317,6 +381,11 @@ void osal_socket_close(
 		 */
 		mysocket->handle = INVALID_SOCKET;
 
+	    if (mysocket->event) 
+	    {
+		    WSACloseEvent(mysocket->event);
+	    }
+
 		/* Disable sending data. This informs other the end of socket that it is going down now.
 		 */
 		if (shutdown(handle, SD_SEND)) 
@@ -353,234 +422,6 @@ void osal_socket_close(
 
 
 
-/**
-****************************************************************************************************
-
-  @brief Wait for an event from one of sockets.
-  @anchor osal_socket_select
-
-  The osal_socket_select() function blocks execution of the calling thread until something
-  happens with listed sockets, or interrupt select is called.
-
-  @param   streams Array of stream pointers to wait for.
-  @param   n_streams Number of stream pointers in array.
-
-  @return  None.
-
-****************************************************************************************************
-*/
-os_int osal_socket_select(
-	osalStream *streams,
-    os_int nstreams,
-    osalEvent *events,
-    os_int nevents)
-{
-#if 0
-	WSAEVENT *event;
-	WSANETWORKEVENTS network_events;
-	osalWindowsEventInfo *event_info;
-	os_memsz n_events, event_sz, event_info_sz, i;
-	osalSocket *s;
-
-	/* Synchronize, this is needed to loop trough socket list.
-	 */
-	osal_mutex_system_lock();
-
-	/* Number of events needed.
-	 */
-	n_events = sockworker->nro_sockets + 1;
-
-	event_sz = sizeof(WSAEVENT) * n_events;
-	event = osal_memory_allocate(event_sz, OS_NULL);
-
-	event_info_sz = sizeof(osalWindowsEventInfo) * n_events;
-	event_info = osal_memory_allocate(event_info_sz, OS_NULL);
-	if (event == OS_NULL || event_info == OS_NULL) goto getout;
-
-	/* Add interrupt event
-	 */
-	event[0] = sockworker->interrupt_event;
-	event_info[0].mutex = OS_NULL;
-	event_info[0].stream = OS_NULL;
-
-	/* Release socket structures which need to be removed.
-	 */
-	for (s = (osalSocket*)sockworker->socket_list, i = 1;
-		 s;
-		 s = (osalSocket*)((osalSocketHeader*)s)->next, i++)
-	{
-		event[i] = s->event;
-		event_info[i].mutex = s->mutex;
-		event_info[i].stream = s;
-	}
-
-	/* End synchronization.
-	 */
-	osal_mutex_system_unlock();
-	
-	/* Lock all sockets. It is important to do this outside system lock.
-	 */
-	for (i = 1; i < n_events; i++)
-	{
-		osal_mutex_lock(event_info[i].mutex);
-	}
-
-/*	i = WSAWaitForMultipleEvents(n_events,
-		event, FALSE, -1, FALSE);
-*/
-
-	/* Interrupt event
-	 */
-	if (!i)
-	{
-		ResetEvent(event[0]);
-
-		for (i = 1; i < n_events; i++)
-		{
-			s = event_info[i].stream;
-			if (s->hdr.send_now)
-			{
-				s->hdr.send_now = OS_FALSE;
-				s->hdr.hdr.callbacks.write_func((osalStream)s, 
-					s->hdr.hdr.callbacks.write_context, 
-					OSAL_STREAM_CALLBACK_WRITE);
-			}
-		}
-	}
-
-	else if (i >= 0 && i < n_events)
-	{	
-
-		s = event_info[i].stream;
-
-		/* Resets the event
-		 */
-		WSAEnumNetworkEvents(
-			s->handle,                           
-			event[i],
-			&network_events);
-
-		if (network_events.lNetworkEvents & FD_ACCEPT)
-		{
-			s->hdr.hdr.callbacks.read_func((osalStream)s, 
-				s->hdr.hdr.callbacks.read_context, 
-					OSAL_STREAM_CALLBACK_ACCEPT);
-		}
-
-		if (network_events.lNetworkEvents & FD_CONNECT)
-		{
-			s->hdr.hdr.callbacks.control_func((osalStream)s, 
-				s->hdr.hdr.callbacks.control_context, 
-				OSAL_STREAM_CALLBACK_CONNECT);
-
-		}
-
-		if (network_events.lNetworkEvents & FD_READ)
-		{
-			s->hdr.hdr.callbacks.read_func((osalStream)s, 
-				s->hdr.hdr.callbacks.read_context, 
-				OSAL_STREAM_CALLBACK_READ);
-		}
-
-		if (network_events.lNetworkEvents & FD_WRITE)
-		{
-			s->hdr.hdr.callbacks.write_func((osalStream)s, 
-				s->hdr.hdr.callbacks.write_context, 
-				OSAL_STREAM_CALLBACK_WRITE);
-		}
-
-
-		if (network_events.lNetworkEvents & FD_CLOSE)
-		{
-			s->hdr.hdr.callbacks.control_func((osalStream)s, 
-				s->hdr.hdr.callbacks.control_context, 
-				OSAL_STREAM_CALLBACK_CLOSE);
-		}
-	}
-
-	for (i = 1; i < n_events; i++)
-	{
-		osal_mutex_unlock(event_info[i].mutex);
-	}
-
-getout:
-	osal_memory_free(event, event_sz);
-	osal_memory_free(event_info, event_info_sz);
-
-#if 0
-    struct sockaddr_in 
-		sin_remote;
-
-	fd_set 
-		ReadFDs, WriteFDs, ExceptFDs;
-
-	while (1)
-	{
-		/* 
-		osal_socket_select(
-	osalStream stream[],
-	os_int n_streams)
-
-    int nAddrSize = sizeof(sinRemote);
-
-        SetupFDSets(&ReadFDs, &WriteFDs, &ExceptFDs, 0);
-
-        if (select(0, &ReadFDs, &WriteFDs, &ExceptFDs, 0) > 0) 
-		{
-            // Something happened on one of the sockets.
-            // Was it the listener socket?...
-            if (FD_ISSET(ListeningSocket, &ReadFDs)) 
-			{
-                SOCKET handle = accept(ListeningSocket, 
-                        (sockaddr*)&sinRemote, &nAddrSize);
-                if (handle != INVALID_SOCKET) {
-                    // Tell user we accepted the socket, and add it to
-                    // our connecition list.
-                    cout << "Accepted connection from " <<
-                            inet_ntoa(sinRemote.sin_addr) << ":" <<
-                            ntohs(sinRemote.sin_port) << 
-                            ", socket " << handle << "." << endl;
-                    gConnections.push_back(Connection(handle));
-					if ((gConnections.size() + 1) > 64) {
-						// For the background on this check, see
-						// www.tangentsoft.net/wskfaq/advanced.html#64sockets
-						// The +1 is to account for the listener socket.
-						cout << "WARNING: More than 63 client "
-								"connections accepted.  This will not "
-								"work reliably on some Winsock "
-								"stacks!" << endl;
-					}
-
-                    // Mark the socket as non-blocking, for safety.
-                    u_long nNoBlock = 1;
-                    ioctlsocket(handle, FIONBIO, &nNoBlock);
-                }
-                else {
-                    cerr << WSAGetLastErrorMessage("accept() failed") << 
-                            endl;
-                    return;
-                }
-            }
-/*             else if (FD_ISSET(ListeningSocket, &ExceptFDs)) {
-                int err;
-                int errlen = sizeof(err);
-                getsockopt(ListeningSocket, SOL_SOCKET, SO_ERROR,
-                        (char*)&err, &errlen);
-                cerr << WSAGetLastErrorMessage(
-                        "Exception on listening socket: ", err) << endl;
-                return;
-            }
-*/
-		}
-
-
-
-	}
-
-#endif
-#endif
-    return 0;
-}
 
 
 
@@ -621,8 +462,9 @@ osalStream osal_socket_accept(
 {
 	osalSocket *mysocket, *newsocket;
 	SOCKET handle, new_handle;
-	int addr_size;
+	int addr_size, on = 1;
 	struct sockaddr_in sin_remote;
+	osalStatus rval;
 
 	if (stream)
 	{
@@ -630,6 +472,7 @@ osalStream osal_socket_accept(
 	 */
 		mysocket = (osalSocket*)stream;
 		handle = mysocket->handle;
+
 
 		/* If socket operating system socket is not already closed.
 		 */
@@ -650,6 +493,26 @@ osalStream osal_socket_accept(
 			if (status) *status = OSAL_STATUS_NO_NEW_CONNECTION;
 			return OS_NULL;
 		}
+
+
+        /* Set socket reuse flag.
+         */
+        if ((flags & OSAL_STREAM_NO_REUSEADDR) == 0)
+        {
+            if (setsockopt(new_handle, SOL_SOCKET,  SO_REUSEADDR,
+                (char *)&on, sizeof(on)) < 0)
+            {
+		        rval = OSAL_STATUS_FAILED;
+		        goto getout;
+            }
+        }
+
+	    /* Set non blocking mode
+	     */
+        if ((flags & OSAL_STREAM_BLOCKING) == 0)
+        {
+    	    ioctlsocket(new_handle, FIONBIO, &on);
+        }
 
 		/* cout << "Accepted connection from " <<
            inet_ntoa(sinRemote.sin_addr) << ":" <<
@@ -682,9 +545,25 @@ osalStream osal_socket_accept(
 		 */
 		newsocket->hdr.write_timeout_ms = newsocket->hdr.read_timeout_ms = -1;
 
-		/* Create mutex to synchronize socket access and start synchronization.
-		 */
-		newsocket->mutex = osal_mutex_create();
+        /* If we are preparing to use this with select function.
+         */
+        if (flags & OSAL_STREAM_SELECT)
+        {   
+            /* Create event
+             */
+            newsocket->event = WSACreateEvent();
+            if (newsocket->event == WSA_INVALID_EVENT)
+            {
+		        rval = OSAL_STATUS_MEMORY_ALLOCATION_FAILED;
+		        goto getout;
+            }
+
+            if (WSAEventSelect(new_handle, newsocket->event, FD_ACCEPT|FD_CONNECT|FD_CLOSE|FD_READ|FD_WRITE) == SOCKET_ERROR)
+            {
+		        rval = OSAL_STATUS_FAILED;
+		        goto getout;
+            }           
+        }
 
 		/* if (callbacks)
 		{
@@ -696,7 +575,7 @@ osalStream osal_socket_accept(
 		   belonging to the accepted socket may go to the listening socket. Creating one time
 		   unnecessary event is much better than any possibility of missing an event.
 		 */
-		if (newsocket->event) WSASetEvent(newsocket->event);
+		//if (newsocket->event) WSASetEvent(newsocket->event);
 
 		/* Success set status code and cast socket structure pointer to stream pointer 
 		   and return it.
@@ -705,6 +584,7 @@ osalStream osal_socket_accept(
 		return (osalStream)newsocket;
 	}
 
+getout:
 	if (status) *status = OSAL_STATUS_FAILED;
 	return OS_NULL;
 }
@@ -944,6 +824,102 @@ void osal_socket_set_parameter(
 /**
 ****************************************************************************************************
 
+  @brief Wait for an event from one of sockets.
+  @anchor osal_socket_select
+
+  The osal_socket_select() function blocks execution of the calling thread until something
+  happens with listed sockets, or interrupt select is called.
+
+  @param   streams Array of stream pointers to wait for.
+  @param   n_streams Number of stream pointers in array.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+osalStatus osal_socket_select(
+	osalStream *streams,
+    os_int nstreams,
+	osalEvent evnt,
+	osalSelectData *data,
+	os_int flags)
+{
+	osalSocket *mysocket;
+    osalSocket *sockets[OSAL_SOCKET_SELECT_MAX+1];
+	WSAEVENT events[OSAL_SOCKET_SELECT_MAX+1];
+	os_int ixtable[OSAL_SOCKET_SELECT_MAX+1];
+	WSANETWORKEVENTS network_events;
+    os_int i, n_sockets, n_events, event_nr, eventflags;
+    DWORD rval;
+
+    if (nstreams < 1 || nstreams > OSAL_SOCKET_SELECT_MAX)
+        return OSAL_STATUS_FAILED;
+
+    n_sockets = 0;
+    for (i = 0; i < nstreams; i++)
+    {
+        mysocket = (osalSocket*)streams[i];
+        if (mysocket)
+        {
+            sockets[n_sockets] = mysocket; 
+            events[n_sockets] = mysocket->event;
+            ixtable[n_sockets++] = i;
+        }
+    }
+    n_events = n_sockets;
+
+    rval = WSAWaitForMultipleEvents(n_events,
+		events, FALSE, WSA_INFINITE, FALSE);
+    event_nr = (os_int)(rval - WSA_WAIT_EVENT_0);
+    if (event_nr < 0 || event_nr >= n_events)
+    {
+		return OSAL_STATUS_FAILED;
+    }
+
+    if (WSAEnumNetworkEvents(sockets[event_nr]->handle, events[event_nr], &network_events) == SOCKET_ERROR)
+    {
+		return OSAL_STATUS_FAILED;
+    }
+
+    eventflags = 0;
+	if (network_events.lNetworkEvents & FD_ACCEPT)
+	{
+        eventflags |= OSAL_STREAM_ACCEPT_EVENT;
+	}
+
+	if (network_events.lNetworkEvents & FD_CONNECT)
+	{
+        eventflags |= OSAL_STREAM_CONNECT_EVENT;
+	}
+
+	if (network_events.lNetworkEvents & FD_CLOSE)
+	{
+        eventflags |= OSAL_STREAM_CLOSE_EVENT;
+	}
+
+	if (network_events.lNetworkEvents & FD_READ)
+	{
+        eventflags |= OSAL_STREAM_READ_EVENT;
+	}
+
+	if (network_events.lNetworkEvents & FD_WRITE)
+	{
+        eventflags |= OSAL_STREAM_WRITE_EVENT;
+	}
+
+    data->eventflags = eventflags;
+    data->stream_nr = ixtable[event_nr];
+
+    // ResetEvent(event[event_nr]);  ??????
+
+    return OSAL_SUCCESS;
+}
+
+
+
+/**
+****************************************************************************************************
+
   @brief Initialize sockets.
   @anchor osal_socket_initialize
 
@@ -956,6 +932,10 @@ void osal_socket_set_parameter(
 void osal_socket_initialize(
 	void)
 {
+    /** Windows socket library version information.
+     */
+    WSADATA osal_wsadata;
+
 	/* If socket library is already initialized, do nothing.
 	 */
 	if (osal_global->sockets_shutdown_func) return;
@@ -1106,7 +1086,8 @@ osalStreamInterface osal_socket_iface
 	osal_stream_default_write_value,
 	osal_stream_default_read_value,
 	osal_socket_get_parameter,
-	osal_socket_set_parameter};
+	osal_socket_set_parameter,
+    osal_socket_select};
 
 #endif
 

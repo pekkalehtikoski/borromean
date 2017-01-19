@@ -66,12 +66,12 @@ typedef struct osalStreamHeader *osalStream;
 /** Open stream for reading. The OSAL_STREAM_READ flag is significant only for osal_stream_open()
     function. To open stream for both reading and writing, use OSAL_STREAM_RW.
  */
-#define OSAL_STREAM_READ 1
+#define OSAL_STREAM_READ 0x0001
 
 /** Open stream for writing. The OSAL_STREAM_WRITE flag is significant only for osal_stream_open()
     function. To open stream for both reading and writing, use OSAL_STREAM_RW. 
  */
-#define OSAL_STREAM_WRITE 2
+#define OSAL_STREAM_WRITE 0x0002
 
 /** Open stream for both reading and writing. The OSAL_STREAM_RW flag is significant only for 
     osal_stream_open() function. It simply combines OSAL_STREAM_READ and OSAL_STREAM_WRITE flags.
@@ -82,29 +82,29 @@ typedef struct osalStreamHeader *osalStream;
     osal_stream_open() function when opening a file. Current file content is preserved
 	and file pointer is set at end of file.
  */
-#define OSAL_STREAM_APPEND 4
+#define OSAL_STREAM_APPEND 0x0004
 
 /** Wait for operation to complete. The OSAL_STREAM_WAIT flag can be given to osal_stream_read(),
     osal_stream_write(), osal_stream_read_value(), osal_stream_write_value() and osal_stream_seek()
 	functions. It will cause the stream to wait until operation can be fully completed or the
 	stream times out.
  */
-#define OSAL_STREAM_WAIT 8
+#define OSAL_STREAM_WAIT 0x0008
 
 /** Synchronize stream access. The OSAL_STREAM_SYNCHRONIZE flag can be given to osal_stream_open(),
     function. It effects only to a few stream types. 
  */
-#define OSAL_STREAM_SYNCHRONIZE 16
+#define OSAL_STREAM_SYNCHRONIZE 0x0010
 
 /** Peek data stream only. This flag tells read operations not to remove data from input buffer.
     This will not work with all streams.
  */
-#define OSAL_STREAM_PEEK 32
+#define OSAL_STREAM_PEEK 0x0020
 
 /** Write all data or nothing. This flag tells osal_stream_write() and osal_stream_write_value() 
     functions to write all data or noting. This will not work with all streams. 
  */
-// #define OSAL_STREAM_ALL_OR_NOTHING 64
+// #define OSAL_STREAM_ALL_OR_NOTHING 0x0040
 
 /** Do not write releated control code. The OSAL_STREAM_NO_REPEATED_CTRLS causes 
     osal_queue_write_value() function to check if the same control code is already last item
@@ -119,24 +119,31 @@ typedef struct osalStreamHeader *osalStream;
 
 /** Open a socket to listen for incoming connections. 
  */
-#define OSAL_STREAM_LISTEN 128
+#define OSAL_STREAM_LISTEN 0x0100
 
 /** Open a socket to accept listening connection. 
  */
-#define OSAL_STREAM_ACCEPT 256
+#define OSAL_STREAM_ACCEPT 0x0200
 
 /** Open a UDP multicast socket. 
  */
-#define OSAL_STREAM_UDP_MULTICAST 512
+#define OSAL_STREAM_UDP_MULTICAST 0x0400
 
 /** Open socket in blocking mode. Another name OSAL_STREAM_SYNCHRONIZE.
  */
 #define OSAL_STREAM_BLOCKING OSAL_STREAM_SYNCHRONIZE
 
+/** Open socket with select functionality.
+ */
+#define OSAL_STREAM_SELECT 0x0800
+
 /** Disable Nagle's algorithm on TCP socket.
  */
-#define OSAL_STREAM_TCP_NODELAY OSAL_STREAM_SYNCHRONIZE
+#define OSAL_STREAM_TCP_NODELAY 0x1000
 
+/** Disable reusability of the socket descriptor.
+ */
+#define OSAL_STREAM_NO_REUSEADDR 0x2000
 
 
 /*@}*/
@@ -189,7 +196,7 @@ osalStreamCtrlCode;
 
 ****************************************************************************************************
 */
-typedef enum
+/* typedef enum
 {
 	OSAL_STREAM_CALLBACK_ACCEPT,
 	OSAL_STREAM_CALLBACK_CONNECT,
@@ -202,6 +209,7 @@ typedef enum
 	OSAL_STREAM_CALLBACK_INTERRUPT
 } 
 osalStreamCallbackEnum;
+*/
 
 
 /**
@@ -261,10 +269,10 @@ osalStreamParameterIx;
 	@param  reason Reason for callback.
 	@return None.
  */
-typedef void osal_stream_func(
+/* typedef void osal_stream_func(
 	osalStream stream,
 	void *context,
-	osalStreamCallbackEnum reason); 
+	osalStreamCallbackEnum reason);  */
 
 /*@}*/
 
@@ -279,6 +287,7 @@ typedef void osal_stream_func(
 
 ****************************************************************************************************
 */
+#if 0
 typedef struct
 {
 	/** Pointer to control function. The callback function is called for control type events
@@ -314,6 +323,30 @@ typedef struct
 	void *write_context;
 }
 osalStreamCallbacks;
+#endif
+
+typedef struct 
+{
+int dummy;
+} osalStreamCallbacks; // DUMMY REMOVE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+/* Bit fields for eventflags.
+ */
+#define OSAL_STREAM_ACCEPT_EVENT  0x0001
+#define OSAL_STREAM_CONNECT_EVENT 0x0002
+#define OSAL_STREAM_CLOSE_EVENT   0x0004
+#define OSAL_STREAM_READ_EVENT    0x0008
+#define OSAL_STREAM_WRITE_EVENT   0x0010
+
+
+/* Information back from select function
+ */
+typedef struct osalSelectData
+{
+    int stream_nr;  /* zero based stream number */
+    int eventflags; /* which events have occurred, like read possible, write possible */
+}
+osalSelectData;
 
 
 #if OSAL_FUNCTION_POINTER_SUPPORT
@@ -392,6 +425,13 @@ typedef struct osalStreamInterface
 		osalStream stream,
 		osalStreamParameterIx parameter_ix,
 		os_long value);
+
+	osalStatus (*stream_select)(
+		osalStream *streams,
+        os_int nstreams,
+		osalEvent evnt,
+		osalSelectData *data,
+		os_int flags);
 }
 osalStreamInterface;
 
@@ -418,16 +458,16 @@ typedef struct osalStreamHeader
 
     /* Stream handle, Actual choice depends on stream type and operatinf system
      */
-    union osalStreamHandleShared
+    /* union osalStreamHandleShared
     {
         int i;
 
     } 
-    handle;
+    handle; */
 
 	/** Pointers to callback functions and callback context.
 	 */
-	osalStreamCallbacks callbacks;
+//	osalStreamCallbacks callbacks;
 #endif
     /** Timeout for writing data, milliseconds. Value -1 indicates infinite timeout.
      */
@@ -517,6 +557,13 @@ void osal_stream_set_parameter(
 	osalStreamParameterIx parameter_ix,
 	os_long value);
 
+osalStatus osal_stream_select(
+	osalStream *streams,
+    os_int nstreams,
+	osalEvent evnt,
+	osalSelectData *data,
+	os_int flags);
+
 /*@}*/
 
 #endif
@@ -564,6 +611,14 @@ void osal_stream_default_set_parameter(
 	osalStream stream,
 	osalStreamParameterIx parameter_ix,
 	os_long value);
+
+osalStatus osal_stream_default_select(
+	osalStream *streams,
+    os_int nstreams,
+	osalEvent evnt,
+	osalSelectData *data,
+	os_int flags);
+
 
 /*@}*/
 

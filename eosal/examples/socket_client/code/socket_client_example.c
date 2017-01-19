@@ -1,6 +1,6 @@
 /**
 
-  @file    examples/console/osal_console_example.c
+  @file    eosal/examples/socket_client/code/socket_client_example.c
   @brief   Socket client example.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -35,10 +35,14 @@ os_int osal_main(
     os_char *argv[])
 {
     osalStream handle;
-    osalStatus *status;
+    osalStatus status;
 
     handle = osal_stream_open(OSAL_SOCKET_IFACE, "127.0.0.1:" OSAL_DEFAULT_SOCKET_PORT_STR,
         OS_NULL, OS_NULL, &status, OSAL_STREAM_CONNECT);
 
+    os_sleep(1000);
+
     osal_stream_close(handle);
+
+    return 0;
 }

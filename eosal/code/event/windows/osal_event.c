@@ -33,7 +33,7 @@
 
   Resource monitor's event count is incremented, if resource monitor is enabled.
 
-  @return  event Event pointer. If the function fails, it returns OS_NULL.
+  @return  evnt Event pointer. If the function fails, it returns OS_NULL.
 
 ****************************************************************************************************
 */
@@ -74,19 +74,19 @@ osalEvent osal_event_create(
   The osal_event_delete() function deletes an event which was created by osal_event_create()
   function. Resource monitor's event count is decremented, if resource monitor is enabled.
 
-  @param   event Pointer to event to delete. 
+  @param   evnt Pointer to event to delete. 
 
   @return  None.
 
 ****************************************************************************************************
 */
 void osal_event_delete(
-    osalEvent event)
+    osalEvent evnt)
 {
     HANDLE
         handle;
 
-    handle = (HANDLE)event;
+    handle = (HANDLE)evnt;
 
 #if OSAL_DEBUG
     if (handle == NULL)
@@ -121,20 +121,20 @@ void osal_event_delete(
   the system sets the state to nonsignaled. If no threads are waiting, the event object's state
   remains signaled, and first following osal_event_wait() call will return immediately.
 
-  @param   event Event pointer returned by osal_event_create() function.
+  @param   evnt Event pointer returned by osal_event_create() function.
   @return  None.
 
 ****************************************************************************************************
 */
 void osal_event_set(
-    osalEvent event)
+    osalEvent evnt)
 {
     HANDLE
         handle;
 
     /* Convert OSAL event pointer to Windows handle.
      */
-    handle = (HANDLE)event;
+    handle = (HANDLE)evnt;
 
 
 #if OSAL_DEBUG
@@ -165,7 +165,7 @@ void osal_event_set(
   is signaled either before the function call or during wait interval function returns
   OSAL_SUCCESS. When the function returns the event is always cleared to non signaled state.
 
-  @param   event Event pointer returned by osal_event_create() function.
+  @param   evnt Event pointer returned by osal_event_create() function.
   @param   timeout_ms Wait timeout. If event is not signaled within this time, then the
            function will return OSAL_STATUS_EVENT_TIMEOUT. To wait infinetly give
            OSAL_EVENT_INFINITE (-1) here. To check event state or to reset event to non
@@ -180,7 +180,7 @@ void osal_event_set(
 ****************************************************************************************************
 */
 osalStatus osal_event_wait(
-    osalEvent event,
+    osalEvent evnt,
     os_int timeout_ms)
 {
     HANDLE
@@ -188,7 +188,7 @@ osalStatus osal_event_wait(
 
     /* Convert OSAL event pointer to Windows handle.
      */
-    handle = (HANDLE)event;
+    handle = (HANDLE)evnt;
 
     /* Make sure that infinite timeout matshes. This is propably unnecessary, check?
      */

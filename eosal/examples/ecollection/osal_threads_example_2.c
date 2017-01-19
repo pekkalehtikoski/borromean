@@ -66,7 +66,7 @@ os_int osal_threads_example_2_main(
 
     handle = osal_thread_create(my_thread_2_func, &myprm, OSAL_THREAD_ATTACHED, 0, "mythread1");
 
-	osal_thread_sleep(2000);
+	os_sleep(2000);
 
 	osal_thread_request_exit(handle);
 	osal_thread_join(handle);
@@ -110,7 +110,7 @@ static void my_thread_2_func(
 	while (!osal_thread_exit_requested(exit_requested))
 	{
 		printf(".");
-		osal_thread_sleep(200);
+		os_sleep(200);
 	}
 }
 

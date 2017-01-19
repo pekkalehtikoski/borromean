@@ -17,7 +17,7 @@
   run at the same time, with each processor or core running a particular thread or task.
   A new thread is created by osal_thread_create() function call, and exited by osal_thread_exit()
   function. Thread priorizing and sleep are handled by osal_thread_set_priority() and
-  osal_thread_sleep() functions. Threads of execution can be identified by osal_thread_get_id()
+  os_sleep() functions. Threads of execution can be identified by osal_thread_get_id()
   function.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
@@ -172,7 +172,7 @@ osalThreadHandle;
   @name Thread Functions
 
   A new thread is created by osal_thread_create() function and terminated by osal_thread_exit()
-  function. Functions osal_thread_set_priority() and osal_thread_sleep() are used to set scheduling
+  function. Functions osal_thread_set_priority() and os_sleep() are used to set scheduling
   and control timing of the thread execution. The osal_thread_get_id() function retrieves integer
   number uniquely identifying the thread.
 
@@ -219,7 +219,7 @@ osalThreadHandle;
 
     /* Suspend thread execution for a specific time.
      */
-    void osal_thread_sleep(
+    void os_sleep(
         os_int time_ms);
 
 /*@}*/

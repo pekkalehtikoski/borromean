@@ -34,6 +34,10 @@ extern osalStreamInterface osal_socket_iface;
 #define OSAL_DEFAULT_SOCKET_PORT 21981
 #define OSAL_DEFAULT_SOCKET_PORT_STR "21981"
 
+/* Maximum number of socket streams to pass as an argument to osal_socket_select().
+ */
+#define OSAL_SOCKET_SELECT_MAX 8
+
 
 /** 
 ****************************************************************************************************
@@ -60,14 +64,6 @@ osalStream osal_socket_open(
  */
 void osal_socket_close(
 	osalStream stream);
-
-/* Select what to do, when there is data to read, new data can be written, etc.
- */
-os_int osal_socket_select(
-	osalStream *streams,
-    os_int nstreams,
-    osalEvent *events,
-    os_int nevents);
 
 /* Accept connection from listening socket.
  */
@@ -116,6 +112,15 @@ void osal_socket_set_parameter(
 	osalStreamParameterIx parameter_ix,
 	os_long value);
 
+/* Select what to do, when there is data to read, new data can be written, etc.
+ */
+osalStatus osal_socket_select(
+	osalStream *streams,
+    os_int nstreams,
+	osalEvent evnt,
+	osalSelectData *data,
+	os_int flags);
+
 /* Initialize sockets.
  */
 void osal_socket_initialize(
@@ -125,7 +130,6 @@ void osal_socket_initialize(
  */
 void osal_socket_shutdown(
 	void);
-
 
 
 /* Get host and port from network address string.
