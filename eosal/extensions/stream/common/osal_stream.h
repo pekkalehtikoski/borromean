@@ -243,6 +243,10 @@ osalStreamParameterIx;
 #define OSAL_STREAM_READ_EVENT    0x0008
 #define OSAL_STREAM_WRITE_EVENT   0x0010
 
+/* Custom event
+ */
+#define OSAL_STREAM_NR_CUSTOM_EVENT -1
+#define OSAL_STREAM_CUSTOM_EVENT  0x0100
 
 /* Information back from select function
  */
@@ -250,6 +254,7 @@ typedef struct osalSelectData
 {
     int stream_nr;  /* zero based stream number */
     int eventflags; /* which events have occurred, like read possible, write possible */
+    int errorcode; /* Error code, 0 = all fine */
 }
 osalSelectData;
 

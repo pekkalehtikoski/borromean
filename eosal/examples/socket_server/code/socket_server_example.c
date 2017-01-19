@@ -40,6 +40,8 @@ os_int osal_main(
     osalStatus status;
     osalSelectData selectdata;
     os_int i;
+    os_char mystr[] = "0.kepupas", buf[64];
+    os_memsz n_read, n_written;
 
     os_memclear(handle, sizeof(handle));
 
@@ -53,7 +55,10 @@ os_int osal_main(
 
     while (OS_TRUE)
     {
-        status = osal_stream_select(handle, OSAL_SOCKET_SELECT_MAX, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (mystr[0]++ == '9') mystr[0] = '0';
+
+        status = osal_stream_select(handle, OSAL_SOCKET_SELECT_MAX, OS_NULL, 
+            &selectdata, OSAL_STREAM_DEFAULT);
         if (status)
         {
 	        osal_console_write("osal_stream_select failed\n");
@@ -69,7 +74,8 @@ os_int osal_main(
             {
                 if (handle[i] == OS_NULL)
                 {
-                    handle[i] = osal_stream_accept(handle[0], OS_NULL, &status, OSAL_STREAM_DEFAULT);
+                    handle[i] = osal_stream_accept(handle[0], OS_NULL, 
+                        &status, OSAL_STREAM_DEFAULT);
                     break;
                 }
             }
@@ -90,7 +96,16 @@ os_int osal_main(
             osal_console_write("connect event\n");
 
         if (selectdata.eventflags & OSAL_STREAM_READ_EVENT)
+        {
             osal_console_write("read event\n");
+            os_memclear(buf, sizeof(buf));
+            status = osal_stream_read(handle[selectdata.stream_nr], 
+                buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
+            osal_console_write(buf);
+            osal_console_write("\n");
+            status = osal_stream_write(handle[selectdata.stream_nr], 
+                mystr, os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT);
+        }
 
         if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
             osal_console_write("write event\n");

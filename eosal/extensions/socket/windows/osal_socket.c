@@ -197,9 +197,9 @@ osalStream osal_socket_open(
 	 */
 	mysocket->hdr.iface = &osal_socket_iface;
 
-	/* Mark infinite timeout.
+	/* Set 0 timeouts.
 	 */
-	mysocket->hdr.write_timeout_ms = mysocket->hdr.read_timeout_ms = -1;
+	mysocket->hdr.write_timeout_ms = mysocket->hdr.read_timeout_ms = 0;
 
     /* If we are preparing to use this with select function.
      */
@@ -342,7 +342,7 @@ void osal_socket_close(
 	osalSocket *mysocket;
 	SOCKET handle;
     char buf[64];
-	int n;
+	int n, rval;
 
 	/* If called with NULL argument, do nothing.
 	 */
@@ -370,7 +370,11 @@ void osal_socket_close(
 		 */
 		if (shutdown(handle, SD_SEND)) 
 		{
-			osal_debug_error("shutdown() failed");
+            rval = WSAGetLastError();
+            if (rval != WSAENOTCONN)
+            {
+			    osal_debug_error("shutdown() failed");
+            }
 		}
 
 		/* Read data to be received until receive buffer is empty.
@@ -381,7 +385,8 @@ void osal_socket_close(
 			if (n == SOCKET_ERROR) 
 			{
 	#if OSAL_DEBUG
-				if (WSAGetLastError() != WSAEWOULDBLOCK) 
+                rval = WSAGetLastError();
+				if (rval != WSAEWOULDBLOCK && rval != WSAENOTCONN) 
 				{
 					osal_debug_error("reading end failed");
 				}
@@ -513,9 +518,9 @@ osalStream osal_socket_accept(
 		newsocket->hdr.iface = &osal_socket_iface;
 	#endif
 
-		/* Set timeouts.
-		 */
-		newsocket->hdr.write_timeout_ms = newsocket->hdr.read_timeout_ms = -1;
+	    /* Set 0 timeouts.
+	     */
+		newsocket->hdr.write_timeout_ms = newsocket->hdr.read_timeout_ms = 0;
 
         /* If we are preparing to use this with select function.
          */
@@ -638,10 +643,6 @@ osalStatus osal_socket_write(
 		 */
 		if (n == 0)
 		{
-			/* if (mysocket->hdr.callbacks.write_func)
-			{
-				mysocket->hdr.send_now = OS_TRUE;
-			} */
 			*n_written = 0;
 			return OSAL_SUCCESS;
 		}
@@ -657,7 +658,11 @@ osalStatus osal_socket_write(
 			goto getout;
 		}
 
-		rval = send(handle, buf, n, 0);
+        /* Limit number of bytes to write at one to 2^31
+         */
+        if (n > 0x7FFFFFFFFFFFFFFE) n = 0x7FFFFFFFFFFFFFFF;
+        
+		rval = send(handle, buf, (int)n, 0);
 
 		if (rval == SOCKET_ERROR)
 		{
@@ -728,7 +733,11 @@ osalStatus osal_socket_read(
 			goto getout;
 		}
 
-		rval = recv(handle, buf, n, 0);
+        /* Limit number of bytes to read at one to 2^31.
+         */
+        if (n > 0x7FFFFFFFFFFFFFFE) n = 0x7FFFFFFFFFFFFFFF;
+
+		rval = recv(handle, buf, (int)n, 0);
 
 		if (rval == SOCKET_ERROR)
 		{
@@ -829,7 +838,7 @@ osalStatus osal_socket_select(
 	WSAEVENT events[OSAL_SOCKET_SELECT_MAX+1];
 	os_int ixtable[OSAL_SOCKET_SELECT_MAX+1];
 	WSANETWORKEVENTS network_events;
-    os_int i, n_sockets, n_events, event_nr, eventflags;
+    os_int i, n_sockets, n_events, event_nr, eventflags, errorcode;
     DWORD rval;
 
     if (nstreams < 1 || nstreams > OSAL_SOCKET_SELECT_MAX)
@@ -848,10 +857,26 @@ osalStatus osal_socket_select(
     }
     n_events = n_sockets;
 
+    /* If we have event, add it to wait.
+     */
+    if (evnt)
+    {
+        events[n_events++] = evnt;
+    }
+
     rval = WSAWaitForMultipleEvents(n_events,
 		events, FALSE, WSA_INFINITE, FALSE);
+
     event_nr = (os_int)(rval - WSA_WAIT_EVENT_0);
-    if (event_nr < 0 || event_nr >= n_events)
+
+    if (evnt && event_nr == n_sockets)
+    {
+        data->eventflags = OSAL_STREAM_CUSTOM_EVENT;
+        data->stream_nr = OSAL_STREAM_NR_CUSTOM_EVENT;
+		return OSAL_SUCCESS;
+    }
+
+    if (event_nr < 0 || event_nr >= n_sockets)
     {
 		return OSAL_STATUS_FAILED;
     }
@@ -863,24 +888,41 @@ osalStatus osal_socket_select(
     }
 
     eventflags = 0;
+    errorcode = OSAL_SUCCESS;
 	if (network_events.lNetworkEvents & FD_ACCEPT)
 	{
         eventflags |= OSAL_STREAM_ACCEPT_EVENT;
+        if (network_events.iErrorCode[FD_ACCEPT_BIT])
+        {
+            errorcode = OSAL_STATUS_FAILED;
+        }
 	}
 
 	if (network_events.lNetworkEvents & FD_CONNECT)
 	{
         eventflags |= OSAL_STREAM_CONNECT_EVENT;
+        if (network_events.iErrorCode[FD_CONNECT_BIT])
+        {
+            errorcode = OSAL_STATUS_FAILED;
+        }
 	}
 
 	if (network_events.lNetworkEvents & FD_CLOSE)
 	{
         eventflags |= OSAL_STREAM_CLOSE_EVENT;
+        if (network_events.iErrorCode[FD_CLOSE_BIT])
+        {
+            errorcode = OSAL_STATUS_FAILED;
+        }
 	}
 
 	if (network_events.lNetworkEvents & FD_READ)
 	{
         eventflags |= OSAL_STREAM_READ_EVENT;
+        if (network_events.iErrorCode[FD_READ_BIT])
+        {
+            errorcode = OSAL_STATUS_FAILED;
+        }
 	}
 
 	if (network_events.lNetworkEvents & FD_WRITE)
@@ -889,6 +931,7 @@ osalStatus osal_socket_select(
 	}
 
     data->eventflags = eventflags;
+    data->errorcode = errorcode;
     data->stream_nr = ixtable[event_nr];
 
     // ResetEvent(event[event_nr]);  ??????

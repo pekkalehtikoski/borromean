@@ -220,7 +220,7 @@ osalThreadHandle;
     /* Suspend thread execution for a specific time.
      */
     void os_sleep(
-        os_int time_ms);
+        os_long time_ms);
 
 /*@}*/
 

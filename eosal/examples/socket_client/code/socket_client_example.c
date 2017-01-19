@@ -15,6 +15,29 @@
 */
 #include "eosal/eosalx.h"
 
+typedef struct MyThreadParams
+{
+    osalEvent  myevent;
+    os_boolean stopthread;
+}
+MyThreadParams;
+
+static void mythread_func(
+	void *prm,
+    osalEvent done)
+{
+    MyThreadParams *p;
+
+    p = (MyThreadParams*)prm;
+    osal_event_set(done);
+
+    while (!p->stopthread)
+    {
+        os_sleep(osal_rand(10, 300));
+        osal_event_set(p->myevent);
+    }
+}
+
 
 /**
 ****************************************************************************************************
@@ -37,8 +60,11 @@ os_int osal_main(
     osalStream handle;
     osalStatus status;
     osalSelectData selectdata;
-    os_char mystr[] = "eppu", buf[64];
+    os_char mystr[] = "0.eppu", buf[64];
     os_memsz n_read, n_written;
+    osalEvent  myevent;
+    MyThreadParams mythreadprm;
+    osalThreadHandle *mythread;
 
     handle = osal_stream_open(OSAL_SOCKET_IFACE, "127.0.0.1:" OSAL_DEFAULT_SOCKET_PORT_STR,
         OS_NULL, &status, OSAL_STREAM_CONNECT);
@@ -49,13 +75,37 @@ os_int osal_main(
         return 0;
     }
 
+    /* Create an event. Select will react to this event.
+     */
+    myevent = osal_event_create();
+
+    /* Create worker thread to set the event created above periodically.
+     */
+    os_memclear(&mythreadprm, sizeof(mythreadprm));
+    mythreadprm.myevent = myevent;
+    mythread = osal_thread_create(mythread_func, &mythreadprm,
+	    OSAL_THREAD_ATTACHED, 0, "mythread");
+
     while (OS_TRUE)
     {
-        status = osal_stream_select(&handle, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (mystr[0]++ == '9') mystr[0] = '0';
+
+        status = osal_stream_select(&handle, 1, myevent, &selectdata, OSAL_STREAM_DEFAULT);
         if (status)
         {
 	        osal_console_write("osal_stream_select failed\n");
             break;
+        }
+
+        if (selectdata.eventflags & OSAL_STREAM_CUSTOM_EVENT)
+        {
+            osal_console_write("custom event\n");
+            status = osal_stream_write(handle, mystr,
+                os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT);
+            os_memclear(buf, sizeof(buf));
+            status = osal_stream_read(handle, buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
+            osal_console_write(buf);
+            osal_console_write("\n");
         }
 
         if (selectdata.eventflags & OSAL_STREAM_ACCEPT_EVENT)
@@ -64,16 +114,29 @@ os_int osal_main(
         }
 
         if (selectdata.eventflags & OSAL_STREAM_CLOSE_EVENT)
+        {
             osal_console_write("close event\n");
+            break;
+        }
 
         if (selectdata.eventflags & OSAL_STREAM_CONNECT_EVENT)
+        {
             osal_console_write("connect event\n");
+
+            if (selectdata.errorcode)
+            {
+                osal_console_write("connect failed\n");
+                break;
+            }
+        }
 
         if (selectdata.eventflags & OSAL_STREAM_READ_EVENT)
         {
             osal_console_write("read event\n");
             os_memclear(buf, sizeof(buf));
             status = osal_stream_read(handle, buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
+            osal_console_write(buf);
+            osal_console_write("\n");
         }
 
         if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
@@ -84,6 +147,16 @@ os_int osal_main(
     }
 
     osal_stream_close(handle);
+
+    /* Join worker thread to this thread.
+     */
+    mythreadprm.stopthread = OS_TRUE;
+    osal_thread_join(mythread);
+
+    /* Delete an event.
+     */
+    osal_event_delete(myevent);
+
 
     return 0;
 }

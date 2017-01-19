@@ -352,10 +352,10 @@ void osal_thread_exit(
 ****************************************************************************************************
 */
 void os_sleep(
-    os_int time_ms)
+    os_long time_ms)
 {
     /* Call Windows to sleep.
      */
-    Sleep(time_ms);
+    Sleep((DWORD)time_ms);
 }
 
