@@ -94,12 +94,12 @@ typedef struct osalStreamHeader *osalStream;
 /** Synchronize stream access. The OSAL_STREAM_SYNCHRONIZE flag can be given to osal_stream_open(),
     function. It effects only to a few stream types. 
  */
-#define OSAL_STREAM_SYNCHRONIZE 0x0010
+// #define OSAL_STREAM_SYNCHRONIZE 0x0010
 
 /** Peek data stream only. This flag tells read operations not to remove data from input buffer.
     This will not work with all streams.
  */
-#define OSAL_STREAM_PEEK 0x0020
+// #define OSAL_STREAM_PEEK 0x0020
 
 /** Write all data or nothing. This flag tells osal_stream_write() and osal_stream_write_value() 
     functions to write all data or noting. This will not work with all streams. 
@@ -121,21 +121,13 @@ typedef struct osalStreamHeader *osalStream;
  */
 #define OSAL_STREAM_LISTEN 0x0100
 
-/** Open a socket to accept listening connection. 
- */
-#define OSAL_STREAM_ACCEPT 0x0200
-
 /** Open a UDP multicast socket. 
  */
 #define OSAL_STREAM_UDP_MULTICAST 0x0400
 
-/** Open socket in blocking mode. Another name OSAL_STREAM_SYNCHRONIZE.
+/** Open socket without select functionality.
  */
-#define OSAL_STREAM_BLOCKING OSAL_STREAM_SYNCHRONIZE
-
-/** Open socket with select functionality.
- */
-#define OSAL_STREAM_SELECT 0x0800
+#define OSAL_STREAM_NO_SELECT 0x0800
 
 /** Disable Nagle's algorithm on TCP socket.
  */
@@ -144,6 +136,10 @@ typedef struct osalStreamHeader *osalStream;
 /** Disable reusability of the socket descriptor.
  */
 #define OSAL_STREAM_NO_REUSEADDR 0x2000
+
+/** Open socket in blocking mode. Another name OSAL_STREAM_SYNCHRONIZE.
+ */
+#define OSAL_STREAM_BLOCKING 0x4000
 
 
 /*@}*/
@@ -155,7 +151,7 @@ THESE BELONG to EObjects
 ****************************************************************************************************
 
   @name Stream Control Codes
-  @anchor osalStreamFlags
+  @anchor osalStreamCtrlCodes
 
   These flags nodify how stream functions behave. Some flags are appropriate for many functions,
   and some flags are effecr only one.

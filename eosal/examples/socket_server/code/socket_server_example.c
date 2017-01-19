@@ -44,7 +44,7 @@ os_int osal_main(
     os_memclear(handle, sizeof(handle));
 
     handle[0] = osal_stream_open(OSAL_SOCKET_IFACE, ":" OSAL_DEFAULT_SOCKET_PORT_STR,
-        OS_NULL, &status, OSAL_STREAM_LISTEN|OSAL_STREAM_SELECT);
+        OS_NULL, &status, OSAL_STREAM_LISTEN);
     if (status)
     {
 	    osal_console_write("osal_stream_open failed\n");
@@ -69,7 +69,7 @@ os_int osal_main(
             {
                 if (handle[i] == OS_NULL)
                 {
-                    handle[i] = osal_stream_accept(handle[0], OS_NULL, &status, OSAL_STREAM_SELECT);
+                    handle[i] = osal_stream_accept(handle[0], OS_NULL, &status, OSAL_STREAM_DEFAULT);
                     break;
                 }
             }
@@ -80,7 +80,11 @@ os_int osal_main(
         }
 
         if (selectdata.eventflags & OSAL_STREAM_CLOSE_EVENT)
+        {
             osal_console_write("close event\n");
+            osal_stream_close(handle[selectdata.stream_nr]);
+            handle[selectdata.stream_nr] = OS_NULL;
+        }
 
         if (selectdata.eventflags & OSAL_STREAM_CONNECT_EVENT)
             osal_console_write("connect event\n");
