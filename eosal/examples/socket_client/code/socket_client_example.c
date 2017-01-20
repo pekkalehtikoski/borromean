@@ -66,7 +66,8 @@ os_int osal_main(
     MyThreadParams mythreadprm;
     osalThreadHandle *mythread;
 
-    handle = osal_stream_open(OSAL_SOCKET_IFACE, "127.0.0.1:" OSAL_DEFAULT_SOCKET_PORT_STR,
+    // handle = osal_stream_open(OSAL_SOCKET_IFACE, "localhost:" OSAL_DEFAULT_SOCKET_PORT_STR,
+    handle = osal_stream_open(OSAL_SOCKET_IFACE, "[localhost]:" OSAL_DEFAULT_SOCKET_PORT_STR,
         OS_NULL, &status, OSAL_STREAM_CONNECT);
 
     if (status)

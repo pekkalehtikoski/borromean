@@ -286,7 +286,6 @@ typedef struct osalStreamInterface
 
 	osalStream (*stream_accept)(
 		osalStream stream,
-		os_char *parameters,
 		osalStatus *status,
 		os_int flags);
 
@@ -403,7 +402,6 @@ void osal_stream_close(
 
 osalStream osal_stream_accept(
 	osalStream stream,
-	os_char *parameters,
 	osalStatus *status,
 	os_int flags);
 

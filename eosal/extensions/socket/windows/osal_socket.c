@@ -21,7 +21,7 @@
 #endif
 #include <winsock2.h>
 #include <Ws2ipdef.h>
-
+#include <Ws2tcpip.h>
 
 /**
 ****************************************************************************************************
@@ -54,6 +54,8 @@ typedef struct osalSocket
         function. 
 	 */
 	os_int open_flags;
+
+    os_boolean is_ipv6;
 } 
 osalSocket;
 
@@ -67,8 +69,16 @@ osalSocket;
   The osal_socket_open() function opens a socket. The socket can be either listening TCP 
   socket, connecting TCP socket or UDP multicast socket. 
 
-  @param   parameters Socket parameters, a list string. "addr=192.168.1.128:35565" sets IP 
-		   address and port to connect to, or interface and port to listen for.
+  @param   parameters Socket parameters, a list string or direct value.
+		   Address and port to connect to, or interface and port to listen for.
+           Socket IP address and port can be specified either as value of "addr" item
+           or directly in parameter sstring. For example "192.168.1.55:20" or "localhost:12345"
+           specify IPv4 addressed. If only port number is specified, which is often 
+           useful for listening socket, for example ":12345".
+           IPv4 address is automatically recognized from numeric address like
+           "2001:0db8:85a3:0000:0000:8a2e:0370:7334", but not when address is specified as string
+           nor for empty IP specifying only port to listen. Use brackets around IP address
+           to mark IPv6 address, for example "[localhost]:12345", or "[]:12345" for empty IP.
 
   @param   callbacks Callback functions.
 
@@ -101,17 +111,22 @@ osalStream osal_socket_open(
 	os_int flags)
 {
 	osalSocket *mysocket = OS_NULL;
-	os_memsz host_sz;
+	os_memsz host_sz, sz1, sz2;
 	os_int port_nr;
-	os_char *host, *hostbuf;
+	os_char *host, *hostbuf, nbuf[OSAL_NBUF_SZ];
+    os_ushort *host_utf16, *port_utf16;
+    ADDRINFOW *addrinfo = NULL;
+    ADDRINFOW *ptr = NULL;
+    ADDRINFOW hints;
 	osalStatus rval;
-	unsigned long addr = 0;
+//	unsigned long addr = 0;
 	SOCKET handle = INVALID_SOCKET;
 	struct sockaddr_in saddr;
     struct sockaddr_in6 saddr6;
-	struct hostent *he;
+    struct sockaddr *sa;
+//	struct hostent *he;
     os_boolean is_ipv6;
-    int af, udp, on = 1;
+    int af, udp, on = 1, s, sa_sz;
 
     /* Initialize sockets library, if not already initialized. 
      */
@@ -125,34 +140,63 @@ osalStream osal_socket_open(
 	host = hostbuf = osal_socket_get_host_name_and_port(parameters, &port_nr, &host_sz, &is_ipv6);
     udp = (flags & OSAL_STREAM_UDP_MULTICAST) ? OS_TRUE : OS_FALSE;
 
-    /* If host "ipv6" was specified -> no host specified, but IPv6 selected.
-     */
-    if (host) if (!os_strcmp(host, "ipv6")) 
-    {
-        is_ipv6 = OS_TRUE;
-        host = OS_NULL;
-    }
+    af = is_ipv6 ? AF_INET6 : AF_INET;
+    (struct sockaddr*)
+
+    os_memclear(&hints, sizeof(hints));
+    hints.ai_family = af;
+    hints.ai_socktype = udp ? SOCK_DGRAM : SOCK_STREAM;
+    hints.ai_protocol = udp ? IPPROTO_UDP : IPPROTO_TCP;
+    sa = is_ipv6 ? (struct sockaddr *)&saddr6 : (struct sockaddr *)&saddr;
+    sa_sz = is_ipv6 ? sizeof(saddr6) : sizeof(saddr);
+    os_memclear(sa, sa_sz);
     
     if (host)
     {
-        addr = inet_addr(host);
-        // USE inet_pton(is_ipv6 ? AF_INET6 : AF_INET, const char *src, void *dst); instead, works also for IPv6
-        if (addr == INADDR_NONE) 
-	    {
-            he = gethostbyname(host);
-            if (he == NULL) 
+        if (InetPton(af, host, sa) <= 0)
+        {
+
+            host_utf16 = osal_string_utf8_to_utf16_malloc(host, &sz1);
+            osal_int_to_string(nbuf, sizeof(nbuf), port_nr);
+            port_utf16 = osal_string_utf8_to_utf16_malloc(nbuf, &sz2);
+
+            s = GetAddrInfoW(host_utf16, port_utf16,
+                &hints, &addrinfo);
+
+            osal_memory_free(host_utf16, sz1);
+            osal_memory_free(port_utf16, sz2);
+
+            if (s || addrinfo == NULL) 
 		    {
+                if (addrinfo) FreeAddrInfoW(addrinfo);
 			    rval = OSAL_STATUS_FAILED;
 			    goto getout;
             }
-            addr = *((u_long*)he->h_addr_list[0]);
+
+            for (ptr = addrinfo; ptr != NULL; ptr = ptr->ai_next) 
+            {
+                if (ptr->ai_family == af) 
+                {
+                    os_memcpy(sa,  ptr->ai_addr, sa_sz);
+                    break;
+                }
+            }
+
+            FreeAddrInfoW(addrinfo);
+
+            /* If no match found
+             */
+            if (ptr == NULL)
+            {
+			    rval = OSAL_STATUS_FAILED;
+			    goto getout;
+            }
 	    }
     }
 
     /* Create socket.
      */
-    af = is_ipv6 ? AF_INET6 : AF_INET;
-    handle = socket(af, udp ? SOCK_DGRAM : SOCK_STREAM, udp ? IPPROTO_UDP : IPPROTO_TCP);
+    handle = socket(af, hints.ai_socktype, hints.ai_protocol);
     if (handle == INVALID_SOCKET) 
 	{
 		rval = OSAL_STATUS_FAILED;
@@ -192,6 +236,7 @@ osalStream osal_socket_open(
 	 */
 	mysocket->handle = handle;
 	mysocket->open_flags = flags;
+    mysocket->is_ipv6 = is_ipv6;
 
 	/* Save interface pointer.
 	 */
@@ -223,37 +268,24 @@ osalStream osal_socket_open(
 
     if (is_ipv6)
     {
-        memset(&saddr6, 0, sizeof(saddr6));
         saddr6.sin6_family = AF_INET6;
-        memcpy(&saddr6.sin6_addr, &in6addr_any, sizeof(in6addr_any));
+        if (host == OS_NULL) memcpy(&saddr6.sin6_addr, &in6addr_any, sizeof(in6addr_any));
         saddr6.sin6_port = htons(port_nr);
     }
     else
     {
-	    os_memclear(&saddr, sizeof(saddr));
         saddr.sin_family = AF_INET;
-        saddr.sin_addr.s_addr = addr ? addr : htonl(INADDR_ANY); 
-        saddr.sin_port = htons((unsigned short)port_nr);
-    }
+        if (host == OS_NULL) saddr.sin_addr.s_addr = htonl(INADDR_ANY); 
+        saddr.sin_port = htons(port_nr);
+    } 
 
 	if (flags & (OSAL_STREAM_LISTEN | OSAL_STREAM_UDP_MULTICAST))
 	{
-        if (is_ipv6)
-        {
-		    if (bind(handle, (struct sockaddr*)&saddr6, sizeof(saddr6))) 
-		    {
-			    rval = OSAL_STATUS_FAILED;
-			    goto getout;
-		    }
-        }
-		else 
-        {
-            if (bind(handle, (struct sockaddr*)&saddr, sizeof(saddr))) 
-		    {
-			    rval = OSAL_STATUS_FAILED;
-			    goto getout;
-		    }
-        }
+		if (bind(handle, sa, sa_sz)) 
+		{
+			rval = OSAL_STATUS_FAILED;
+			goto getout;
+		}
 
         /* Set the listen back log
          */
@@ -267,7 +299,7 @@ osalStream osal_socket_open(
 
 	else 
 	{
-		if (connect(handle, (struct sockaddr*)&saddr, sizeof(saddr)))
+		if (connect(handle, sa, sa_sz))
 		{
             rval = WSAGetLastError();
             if (rval != WSAEWOULDBLOCK )
@@ -416,10 +448,6 @@ void osal_socket_close(
 
   @param   stream Stream pointer representing the listening socket.
 
-  @param   parameters Socket parameters, a list string. 
-
-  @param   callbacks Callback functions.
-
   @param   status Pointer to integer into which to store the function status code. Value
 		   OSAL_SUCCESS (0) indicates that new connection was successfully accepted.
 		   The value OSAL_STATUS_NO_NEW_CONNECTION indicates that no new incoming 
@@ -436,7 +464,6 @@ void osal_socket_close(
 */
 osalStream osal_socket_accept(
 	osalStream stream,
-	os_char *parameters,
 	osalStatus *status,
 	os_int flags)
 {
@@ -444,6 +471,7 @@ osalStream osal_socket_accept(
 	SOCKET handle, new_handle;
 	int addr_size, on = 1;
 	struct sockaddr_in sin_remote;
+	struct sockaddr_in6 sin_remote6;
 	osalStatus rval;
 
 	if (stream)
@@ -457,8 +485,17 @@ osalStream osal_socket_accept(
 		 */
 		if (handle != INVALID_SOCKET)
 		{
-			addr_size = sizeof(sin_remote);
-			new_handle = accept(handle, (struct sockaddr*)&sin_remote, &addr_size);
+            if (mysocket->is_ipv6) 
+            {
+			    addr_size = sizeof(sin_remote6);
+			    new_handle = accept(handle, (struct sockaddr*)&sin_remote6, &addr_size);
+            }
+            else
+            {
+			    addr_size = sizeof(sin_remote);
+			    new_handle = accept(handle, (struct sockaddr*)&sin_remote, &addr_size);
+            }
+
 		}
 		else
 		{
@@ -511,6 +548,7 @@ osalStream osal_socket_accept(
 		 */
 		newsocket->handle = new_handle;
 		newsocket->open_flags = flags;
+        newsocket->is_ipv6 = mysocket->is_ipv6;
 
 		/* Save interface pointer.
 		 */

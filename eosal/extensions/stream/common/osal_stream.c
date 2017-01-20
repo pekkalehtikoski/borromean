@@ -40,13 +40,12 @@ void osal_stream_close(
 
 osalStream osal_stream_accept(
 	osalStream stream,
-	os_char *parameters,
 	osalStatus *status,
 	os_int flags)
 {
 	if (stream)
 	{
-		return stream->iface->stream_accept(stream, parameters, status, flags);
+		return stream->iface->stream_accept(stream, status, flags);
 	}
 	if (status) *status = OSAL_STATUS_FAILED;
 	return OS_NULL;

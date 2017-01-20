@@ -28,7 +28,7 @@
 
   @param   buf Pointer to buffer into which to store the resulting string. 
   @param   buf_sz Buffer size in bytes. The resulting string should fit into buffer, minimum 
-		   buffer size is 21 characters.
+		   buffer size is 21 characters. Common number conversion buffer size is OSAL_NBUF_SZ.
   @param   x Integer value to convert.
 
   @return  Number of bytes needed to store the resulting string, including terminating null 

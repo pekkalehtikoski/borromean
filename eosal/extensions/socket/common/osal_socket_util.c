@@ -59,8 +59,7 @@ os_char *osal_socket_get_host_name_and_port(
 	os_char
 		*value_pos,
 		*port_pos,
-		*buf,
-        *p;
+		*buf;
 
 	*port = 0;
 	*buf_sz = 0;
@@ -113,13 +112,16 @@ os_char *osal_socket_get_host_name_and_port(
 	/* If starts with bracket, skip it. If host is numeric address which contains colons ':',
        it is IPv6 address. 
 	 */
-    p = buf;
-    if (*p == '[') p++;
-    *is_ipv6 = (os_boolean)(os_strchr(p, ':') != OS_NULL);
+    *is_ipv6 = (os_boolean)(os_strchr(buf, ':') != OS_NULL);
+    if (buf[0] == '[') 
+    {
+        os_memmove(buf, buf+1,  os_strlen(buf+1));
+        *is_ipv6 = OS_TRUE;
+    }
 
 	/* If we have no host, no buffer needed
 	 */
-	if (*p == '\0')
+	if (buf[0] == '\0')
 	{
 		osal_memory_free(buf, *buf_sz);
 		buf = OS_NULL;

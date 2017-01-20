@@ -68,7 +68,6 @@ void osal_socket_close(
  */
 osalStream osal_socket_accept(
 	osalStream stream,
-	os_char *parameters,
 	osalStatus *status,
 	os_int flags);
 
