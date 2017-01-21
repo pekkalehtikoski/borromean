@@ -64,7 +64,10 @@ public:
 
 	/* Get class identifier.
 	*/
-	virtual os_int classid() { return ECLASSID_STREAM; }
+	virtual os_int classid()
+    {
+        return ECLASSID_STREAM;
+    }
 
 	/* Static constructor function.
 	*/
@@ -76,13 +79,24 @@ public:
 		return new eStream(parent, oid, flags);
 	}
 
+	eStatus select(
+		eStream *streams,
+        os_int nstreams,
+		osalEvent evnt,
+		osalSelectData *data,
+		os_int flags)
+    {
+        return ESTATUS_SUCCESS;
+    }
+
+
     /*@}*/
 
 
 	/** 
 	************************************************************************************************
 
-	  @name Stream functions for writing to stream.
+	  @name Functions for writing to and reading from stream.
 
 	  X...
 
@@ -91,59 +105,91 @@ public:
 	/*@{*/
     virtual eStatus open(
         os_char *path, 
-        os_int flags=0) {return ESTATUS_SUCCESS;}
+        os_int flags=0) 
+    {
+        return ESTATUS_SUCCESS;
+    }
 
-    virtual eStatus close() {return ESTATUS_SUCCESS;}
+    virtual eStatus close() 
+    {
+        return ESTATUS_SUCCESS;
+    }
 
-    virtual eStatus flush() {return ESTATUS_SUCCESS;}
+    virtual eStatus flush() 
+    {
+        return ESTATUS_SUCCESS;
+    }
 
-    virtual eStatus write(const os_char *buf, os_memsz buf_sz, os_memsz *nwritten = OS_NULL)
-        {if (nwritten != OS_NULL) *nwritten = 0; return ESTATUS_SUCCESS;}
+    virtual eStatus write(
+        const os_char *buf, 
+        os_memsz buf_sz, 
+        os_memsz *nwritten = OS_NULL)
+    {
+        if (nwritten != OS_NULL) *nwritten = 0; 
+        return ESTATUS_SUCCESS;
+    }
 
-    virtual eStatus read(os_char *buf, os_memsz buf_sz, os_memsz *nread = OS_NULL)
-        {if (nread != OS_NULL) *nread = 0; return ESTATUS_SUCCESS;}
+    virtual eStatus read(
+        os_char *buf, 
+        os_memsz buf_sz, 
+        os_memsz *nread = OS_NULL)
+    {
+        if (nread != OS_NULL) *nread = 0; 
+        return ESTATUS_SUCCESS;
+    }
 
 	/** Begin an object, etc. block. This is for versioning, block size may be changed.
      */
     virtual eStatus write_begin_block(
-        os_int version) {return ESTATUS_SUCCESS;}
+        os_int version) 
+    {
+        return ESTATUS_SUCCESS;
+    }
 
 	/** End an object, etc. block. This skips data added by later versions of object.
      */
-    virtual eStatus write_end_block() {return ESTATUS_SUCCESS;}
+    virtual eStatus write_end_block() 
+    {
+        return ESTATUS_SUCCESS;
+    }
 
     virtual eStatus read_begin_block(
-        os_int& version) {return ESTATUS_SUCCESS;}
+        os_int& version)
+    {
+        return ESTATUS_SUCCESS;
+    }
 
 	/** End an object, etc. block. This skips data added by later versions of object.
      */
-    virtual eStatus read_end_block() {return ESTATUS_SUCCESS;}
+    virtual eStatus read_end_block() 
+    {
+        return ESTATUS_SUCCESS;
+    }
 
-	/* Store long integer value to stream.
+	/* Write long integer value to stream.
      */
 	eStatus putl(
         os_long x);
 
-    /* Store float value to stream.
+    /* Write float value to stream.
      */
     eStatus putf(
 	    os_float x);
 
-    /* Store double value to stream.
+    /* Write double precision floating point value to stream.
      */
     eStatus putd(
 	    os_double x);
 
-    /* Set string value to variable.
+    /* Write string to stream.
      */
     eStatus puts(
 	    const os_char *x);
 
-	/* Set variable value as string.
+    /* Write string from variable to stream.
      */
     eStatus puts(
 	    eVariable *x);
-
 
 	/* Get long integer value from stream.
      */
@@ -209,7 +255,6 @@ public:
     inline eStatus operator>>(eVariable& x) { return gets(&x); }
 
     /*@}*/
-
 };
 
 #endif

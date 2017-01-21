@@ -1,1 +1,2 @@
-git clean -d -f -x C:\coderoot\borromean\eosal\examples
+git clean -d -f -x C:\coderoot\borromean\eobjects
+git clean -d -f -x C:\coderoot\borromean\eosal
