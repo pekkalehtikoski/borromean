@@ -60,6 +60,8 @@ void eobjects_shutdown();
 #include "eobjects/code/global/eprocess.h"
 #include "eobjects/code/global/eglobal.h"
 #include "eobjects/code/stream/estream.h"
+#include "eobjects/code/stream/esocket.h"
+#include "eobjects/code/stream/equeue.h"
 #include "eobjects/code/main/emain.h"
 
 #endif

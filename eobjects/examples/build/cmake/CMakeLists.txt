@@ -6,6 +6,7 @@ project(eobjects-examples)
 include(../../../../build/cmake/e-build-defs.txt)
  
 # Build individual projects.
+add_subdirectory($ENV{E_ROOT}/eosal/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/eosal")
 add_subdirectory($ENV{E_ROOT}/eobjects/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/eobjects")
 add_subdirectory($ENV{E_ROOT}/eobjects/examples/econtainer/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/econtainer_example")
 add_subdirectory($ENV{E_ROOT}/eobjects/examples/evariables/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/evariables_example")
