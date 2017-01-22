@@ -35,6 +35,10 @@ typedef enum
 	 */
 	ESTATUS_SUCCESS = 0,
 
+	/** Unidentified failyre.
+	 */
+	ESTATUS_FAILED = 1,
+
 	/** Object properties, properties not supported for the class.
 	 */
     ESTATUS_NO_CLASS_PROPERTY_SUPPORT = 90,

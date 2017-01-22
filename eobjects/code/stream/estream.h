@@ -23,16 +23,20 @@
 ****************************************************************************************************
 
   @name Stream Control Character Codes
-  @anchor eStreamCtrlCodes
+  @anchor eStreamCtrlChars
 
-  These must be 5 least significant bits zero, reserved for character repeat count.
+  For control character codes. 5 least significant bits must be zero, reserved for 
+  character repeat count or for version number.
 
 ****************************************************************************************************
 */
+/*@{*/
 
-/** Control character.
+/** Main control character, starts control sequence while any other character in data is passed
+    as is. This value is selected so that three most significant bits are 1 and rest are ramdom.
+    So the rest of available control characters are 0x20, 0x40, 0x60, 0x80, 0xA0 and 0xC0.
  */
-#define E_STREAM_CTRL_CHAR 0xD5
+#define E_STREAM_CTRL_CHAR 0xE5
 
 /** Beginning of object or other block.
  */
@@ -50,11 +54,75 @@
  */
 #define OSAL_STREAM_CTRLCH_DISCONNECT 0x80
 
-/** X...
-OSAL_STREAM_CTRLCH_RESERVED1 = 0xA0,
-OSAL_STREAM_CTRLCH_RESERVED2 = 0xC0,
-OSAL_STREAM_CTRLCH_RESERVED3 = 0xE0
-	*/
+/** Mask for separating control character from or repeat count or version number.
+ */
+#define E_STREAM_CTRLCH_MASK 0xE0
+
+/** Mask for separating repeat count or version number from control character.
+ */
+#define E_STREAM_COUNT_MASK 0x1F
+
+/*@}*/
+
+/**
+****************************************************************************************************
+
+  @name Control codes for writechar() and readchar() functions.
+
+  These are much the same as control characted codes, but above 8 bit data range. So these
+  can be given as argument to writechar() function or returned by readchar() function (if 
+  the underlying stream supports control codes).
+
+****************************************************************************************************
+*/
+/*@{*/
+
+/** Control codes start from here to be above 8 bit range
+ */
+#define E_STREAM_CTRL_BASE 512
+
+/** Begin object or other block.
+ */
+#define E_STREAM_BEGIN (E_STREAM_CTRL_BASE + E_STREAM_CTRLCH_BEGIN_BLOCK)
+
+/** End object or other block.
+ */
+#define E_STREAM_END (E_STREAM_CTRL_BASE + E_STREAM_CTRLCH_END_BLOCK)
+
+/** Stream will be disconnected now.
+ */
+#define E_STREAM_DISCONNECT (E_STREAM_CTRL_BASE + OSAL_STREAM_CTRLCH_DISCONNECT)
+
+/** Special return values for readchar() to indicate that buffer has no more data.
+ */
+#define E_STREM_END_OF_DATA E_STREAM_CTRL_BASE
+
+/*@}*/
+
+
+/**
+****************************************************************************************************
+
+  @name Flags for eStream open() and accept() Functions.
+  @anchor eStreamFlags
+
+  These flags modify how stream behaves.
+
+****************************************************************************************************
+*/
+/*@{*/
+
+/** eQueue specific flag: Encode data when writing into queue. If not set, data is written to
+    queue as is.
+ */
+#define OSAL_STREAM_ENCODE_ON_WRITE 0x01
+
+/** eQueue specific flag: Decode data when reading from queue. If not set, data is read from
+    queue as is.
+ */
+#define OSAL_STREAM_DECODE_ON_READ 0x02
+
+/*@}*/
 
 
 /**
@@ -177,28 +245,43 @@ public:
         return ESTATUS_SUCCESS;
     }
 
+	/** Write character, typically control code.
+     */
+    virtual eStatus writechar(
+        os_int c)
+    {
+        return ESTATUS_FAILED;
+    }
+
+    /* Read character or control code.
+     */    
+    virtual os_int readchar()
+    {
+        return E_STREAM_DISCONNECT;
+    }
+
 	/** Begin an object, etc. block. This is for versioning, data may be added or changed later.
      */
     inline eStatus write_begin_block() 
     {
-        return write_ctrl_char(E_STREAM_CTRLCH_BEGIN_BLOCK);
+        return writechar(E_STREAM_CTRLCH_BEGIN_BLOCK);
     }
 
 	/** End an object, etc. block. This skips data added by later versions of object.
      */
     inline eStatus write_end_block() 
     {
-        return write_ctrl_char(E_STREAM_CTRLCH_END_BLOCK);
+        return writechar(E_STREAM_CTRLCH_END_BLOCK);
     }
 
-    virtual eStatus read_begin_block()
+    eStatus read_begin_block()
     {
         return ESTATUS_SUCCESS;
     }
 
 	/** End an object, etc. block. This skips data added by later versions of object.
      */
-    virtual eStatus read_end_block() 
+    eStatus read_end_block() 
     {
         return ESTATUS_SUCCESS;
     }
@@ -292,14 +375,6 @@ public:
     inline eStatus operator>>(eVariable& x) { return gets(&x); }
 
     /*@}*/
-
-protected:
-    virtual eStatus write_ctrl_char(
-        os_int c)
-    {
-        return ESTATUS_SUCCESS;
-    }
-
 };
 
 #endif

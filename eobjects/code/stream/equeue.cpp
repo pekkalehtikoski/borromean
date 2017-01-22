@@ -8,6 +8,11 @@
 
   Queue buffers data, typically for reading from or writing to stream.
 
+  When eQueue is used within eSocket class, the queu has a few functions: 1. To buffer incoming and
+  outgoing data from/to OS socket. 2. To encode stream in such way, that control codes for 
+  begin/end object and disconnect can be embedded within data stream. 3. To do run length
+  encoding for data.
+
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
   or distribute this file you indicate that you have read the license and understand and accept 
@@ -43,9 +48,11 @@ eQueue::eQueue(
     /* Clear member variables.
      */
     m_oldest = m_newest = OS_NULL;
-    m_head = m_tail = 0;
-    m_prevc = EQUEUE_NO_PREVIOUS_CHAR;
-    m_count = 0;
+    m_wr_prevc = EQUEUE_NO_PREVIOUS_CHAR;
+    m_wr_count = 0;
+    m_rd_prev2c = m_rd_prevc = m_rd_repeat_char = EQUEUE_NO_PREVIOUS_CHAR;
+    m_rd_repeat_count = 0;
+    m_flags = 0;
 }
 
 
@@ -65,6 +72,85 @@ eQueue::~eQueue()
     {
         delblock();
     }
+}
+
+
+
+/**
+****************************************************************************************************
+
+  @brief Open the queue.
+
+  The open() function clears the queue into initial state and sets flags for encoding and
+  decoding data on read and write.
+
+  @param  path Ignored by eQueue.
+  @param  flags for eQueue, bit fields:
+          - OSAL_STREAM_ENCODE_ON_WRITE: Encode data when writing into queue. 
+            If flag not set, data is written to queue as is.
+          - OSAL_STREAM_DECODE_ON_READ: Decode data when reading from queue. 
+            If not set, data is read from queue as is.
+
+  @return  If successfull, the function returns ESTATUS_SUCCESS. Other return values
+           indicate an error. eQueue class cannot fail, so return value is always 
+           ESTATUS_SUCCESS. 
+
+****************************************************************************************************
+*/
+eStatus eQueue::open(
+    os_char *path, 
+    os_int flags) 
+{
+    /* Call close() to make sure that queue is empty and all member variables initialized.
+     */
+    close();
+
+    /* Save flags which indicate weather to 
+     */
+    m_flags = flags;
+
+    return ESTATUS_SUCCESS;
+}
+
+
+
+/**
+****************************************************************************************************
+
+  @brief Close the queue.
+
+  The close() function releases all memory blocks but one and marks queue empty.
+
+  @return  If successfull, the function returns ESTATUS_SUCCESS. Other return values
+           indicate an error. eQueue class cannot fail, so return value is always 
+           ESTATUS_SUCCESS. 
+
+****************************************************************************************************
+*/
+eStatus eQueue::close()
+{
+    /* Delete all blocks but one.
+     */
+    while (m_oldest != m_newest)
+    {
+        delblock();
+    }
+
+    /* Set head and tail poin at first byte of of only block. If no blocks, queue has never
+       been used, no need to do anything.
+     */
+    if (m_newest)
+    {
+        m_newest->head = m_newest->tail = 0;
+    }
+
+    m_wr_prevc = EQUEUE_NO_PREVIOUS_CHAR;
+    m_wr_count = 0;
+    m_rd_prev2c = m_rd_prevc = m_rd_repeat_char = EQUEUE_NO_PREVIOUS_CHAR;
+    m_rd_repeat_count = 0;
+    m_flags = 0;
+
+    return ESTATUS_SUCCESS;
 }
 
 
@@ -93,6 +179,8 @@ void eQueue::newblock()
     b->sz = (os_int)sz - sizeof(eQueueBlock);
     b->older = m_newest;
     b->newer = OS_NULL;
+    b->head = 0;
+    b->tail = 0;
     if (m_newest)
     {
         m_newest->newer = b;
@@ -142,40 +230,18 @@ void eQueue::delblock()
 /**
 ****************************************************************************************************
 
-  @brief Close the queue.
-
-  The close() function releases all memory blocks but one and marks queue empty.
-  @return  None.
-
-****************************************************************************************************
-*/
-eStatus eQueue::close()
-{
-    /* Delete all blocks but one.
-     */
-    while (m_oldest != m_newest)
-    {
-        delblock();
-    }
-
-    /* Set head and tail poin at first byte of of only block. If no blocks, queue has never
-       been used, no need to do anything.
-     */
-    if (m_newest)
-    {
-        m_head = m_tail = 0;
-    }
-    return ESTATUS_SUCCESS;
-}
-
-
-/**
-****************************************************************************************************
-
   @brief Write data to queue.
 
   The write () function releases places data into queue. The data can be coded.
-  @return  None.
+
+  @param  buf Pointer to data to write.
+  @param  buf_sz Bumber of bytes to write. 
+  @param  nwritten Pointer to integer where to store number of bytes written to queue. This is
+          always same as byte_sz. Can be set to  to OS_NULL, if not needed.
+
+  @return  If successfull, the function returns ESTATUS_SUCCESS. Other return values
+           indicate an error. eQueue class cannot fail, so return value is always 
+           ESTATUS_SUCCESS. 
 
 ****************************************************************************************************
 */
@@ -187,6 +253,10 @@ eStatus eQueue::write(
     os_char c;
     os_int i;
 
+    /* Make sure that we have at least one block.
+     */
+    if (m_newest == OS_NULL) newblock();
+
     for (i = 0; i < buf_sz; i++)
     {
         /* Get current character
@@ -196,22 +266,22 @@ eStatus eQueue::write(
         /* If c is same as previous character, and we haven reached maximum number
            of characters to combine together, just increment the count
          */
-        if (c == m_prevc && m_count < 31)
+        if (c == m_wr_prevc && m_wr_count < 31)
         {
-            m_count++;
+            m_wr_count++;
         }
 
         /* Otherwise write previous character with or without repeats
          */
         else
         {
-            if (m_count) /* with repeat count */
+            if (m_wr_count) /* with repeat count */
             {
                 complete_last_write();
             }
-            else if (m_prevc != EQUEUE_NO_PREVIOUS_CHAR) /* without repeat count */
+            else if (m_wr_prevc != EQUEUE_NO_PREVIOUS_CHAR) /* without repeat count */
             {
-                putcharacter(m_prevc);
+                putcharacter(m_wr_prevc);
             }
 
             /* If character is control character?
@@ -226,14 +296,13 @@ eStatus eQueue::write(
 
                 /* no previous character
                  */
-                m_prevc = EQUEUE_NO_PREVIOUS_CHAR;
-                m_count = 0;
+                m_wr_prevc = EQUEUE_NO_PREVIOUS_CHAR;
             }
             else
             {
-                m_prevc = c;
-                m_count = 0;
+                m_wr_prevc = (os_uchar)c;
             }
+            m_wr_count = 0;
         }
     }
 
@@ -255,51 +324,199 @@ eStatus eQueue::write(
 */
 void eQueue::complete_last_write()
 {
-    if (m_count == 0) /* without repeat count */
+    if (m_wr_count == 0) /* without repeat count */
     {
-        putcharacter(m_prevc);
+        putcharacter(m_wr_prevc);
     }
-    else if (m_count == 1) /* repeat twice */
+    else if (m_wr_count == 1) /* repeat twice */
     {
-        putcharacter(m_prevc);
-        putcharacter((os_char)m_prevc);
+        putcharacter(m_wr_prevc);
+        putcharacter((os_char)m_wr_prevc);
     }
     else  /* with repeat count */
     {
         putcharacter(E_STREAM_CTRL_CHAR);
-        putcharacter(m_count);
-        putcharacter(m_prevc);
+        putcharacter(m_wr_count);
+        putcharacter(m_wr_prevc);
     }
 
     /* no previous character
      */
-    m_prevc = EQUEUE_NO_PREVIOUS_CHAR;
-    m_count = 0;
+    m_wr_prevc = EQUEUE_NO_PREVIOUS_CHAR;
+    m_wr_count = 0;
 }
 
 
 /**
 ****************************************************************************************************
 
-  @brief Write control character to stream.
+  @brief Read data from queue.
 
-  The write_ctrl_char function writes control character given as argument to stream.
-  Control characters E_STREAM_CTRLCH_BEGIN_BLOCK and E_STREAM_CTRLCH_END_BLOCK mark 
-  beginning and end of object, needed for versioning.
-  Control character OSAL_STREAM_CTRLCH_DISCONNECT indicates that stream (typically socket) is 
-  just about to be disconnected.
+  The read function reads data from queue. This is used for actual data, not when control codes
+  are expected.
 
-  @param c  Control character to write, one of E_STREAM_CTRLCH_BEGIN_BLOCK, 
-            E_STREAM_CTRLCH_END_BLOCK or OSAL_STREAM_CTRLCH_DISCONNECT.
+  @param  buf Pointer to buffer into which to read data.
+  @param  buf_sz Size of buffer in bytes.
+  @param  nread Pointer to integer where to store number of bytes read from queue. This may be
+          less than buffer size if the function runs out of data in queue. Can be set to 
+          to OS_NULL, if not needed.
+
+  @return If successfull, the function returns ESTATUS_SUCCESS. Other return values
+          indicate an error. eQueue class cannot fail, so return value is always 
+          ESTATUS_SUCCESS. 
 
 ****************************************************************************************************
 */
-eStatus eQueue::write_ctrl_char(
-    os_int c)
+eStatus eQueue::read(
+    os_char *buf, 
+    os_memsz buf_sz, 
+    os_memsz *nread)
 {
-    if (m_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
+    os_uchar c, cc;
+    os_int n;
+
+    /* If no buffer.
+     */
+    if (m_oldest == OS_NULL) 
+    {
+        if (nread) *nread = 0;
+        return ESTATUS_SUCCESS;
+    }
+    
+    /* Make sure that all data including last character are in buffer.
+     */
+    if (m_wr_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
     {
         complete_last_write();
+    }
+
+    n = 0;
+    while (OS_TRUE)
+    {
+        /* If we are repeating character
+         */
+        if (m_rd_repeat_count)
+        {
+            buf[n++] = (os_char)m_rd_repeat_char;
+            m_rd_repeat_count--;
+            if (n >= buf_sz) break;
+            continue;
+        }
+
+        /* If we run out of data .
+         */
+        if (!hasedata()) break;
+
+        /* Get character.
+         */
+        c = getcharacter();
+
+        /* If previous character is control we are processing repeat count
+         */
+        if (m_rd_prev2c == E_STREAM_CTRL_CHAR) if ((m_rd_prevc & E_STREAM_CTRLCH_MASK) == 0)
+        {
+            m_rd_repeat_char = c;
+            m_rd_repeat_count = m_rd_prevc;
+            m_rd_prevc = m_rd_prev2c = EQUEUE_NO_PREVIOUS_CHAR;
+            buf[n++] = c;
+            if (n >= buf_sz) break;
+            continue;
+        }
+
+        if (m_rd_prevc == E_STREAM_CTRL_CHAR) 
+        {
+            /* If this is single control char
+             */
+            cc = (c & E_STREAM_CTRLCH_MASK);
+            if (cc)
+            {
+                m_rd_prevc = m_rd_prev2c = EQUEUE_NO_PREVIOUS_CHAR;
+                if (cc == EL_STREAM_CTRLCH_IN_DATA)
+                {
+                    m_rd_repeat_char = E_STREAM_CTRL_CHAR;
+                    m_rd_repeat_count = (c & E_STREAM_COUNT_MASK);
+                    buf[n++] = c;
+                    if (n >= buf_sz) break;
+                }
+                continue;
+            }
+
+            /* Otherwise this is beginnig of repeat count marking.
+             */
+            m_rd_prev2c = m_rd_prevc;
+            m_rd_prevc = c;
+            continue;
+        }
+
+        if (c == E_STREAM_CTRL_CHAR)
+        {
+            m_rd_prev2c = m_rd_prevc;
+            m_rd_prevc = c;
+            continue;
+        }
+
+        /* Plain character, nothing to di with control characters
+         */
+        buf[n++] = c;
+        if (n >= buf_sz) break;
+    }
+
+    if (nread != OS_NULL) *nread = n; 
+    return ESTATUS_SUCCESS;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Write character to stream.
+
+  The writechar function writes character or more oftentypically control code to stream.
+  Control codes E_STREAM_BEGIN and E_STREAM_END mark beginning and end of object or other block.
+  This begin/end marks are needed for versioning and implementing "eUnknown" objects.
+  Control character E_STREAM_DISCONNECT indicates that stream (typically socket) is 
+  just about to be disconnected.
+
+  @param  c Byte of data or control code to write. Possible control codes are E_STREAM_BEGIN, 
+          E_STREAM_END or OSAL_STREAM_DISCONNECT.
+
+  @return If successfull, the function returns ESTATUS_SUCCESS. Other return values
+          indicate an error. eQueue class cannot fail, so return value is always 
+          ESTATUS_SUCCESS. 
+
+****************************************************************************************************
+*/
+eStatus eQueue::writechar(
+    os_int c)
+{
+    /* Make sure that we have at least one block.
+     */
+    if (m_newest == OS_NULL) newblock();
+
+    /* Make sure that everything written is in buffer.
+     */
+    if (m_wr_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
+    {
+        complete_last_write();
+    }
+
+    switch (c)
+    {
+        case E_STREAM_BEGIN:
+            c = E_STREAM_CTRLCH_BEGIN_BLOCK;
+            break;
+
+        case E_STREAM_END:
+            c = E_STREAM_CTRLCH_END_BLOCK;
+            break;
+
+        case E_STREAM_DISCONNECT:
+            c = OSAL_STREAM_CTRLCH_DISCONNECT;
+            break;
+
+        default:
+            putcharacter(c);
+            return ESTATUS_SUCCESS;
     }
 
     putcharacter(E_STREAM_CTRL_CHAR);
@@ -311,24 +528,112 @@ eStatus eQueue::write_ctrl_char(
 /**
 ****************************************************************************************************
 
-  @brief Read data from queue.
+  @brief Read character or control code from queue.
 
-  The read function releases retrieves data from queue. 
-  @return  None.
+  The readchar function reads either one byte or one control code from queue.
+
+  @return Byte of data or control code. Possible control codes are E_STREAM_BEGIN, 
+          E_STREAM_END, OSAL_STREAM_DISCONNECT or E_STREM_END_OF_DATA.
 
 ****************************************************************************************************
 */
-eStatus eQueue::read(
-    os_char *buf, 
-    os_memsz buf_sz, 
-    os_memsz *nread)
+os_int eQueue::readchar()
 {
-    if (m_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
+    os_uchar c, cc;
+
+    /* If no buffer.
+     */
+    if (m_oldest == OS_NULL) return E_STREM_END_OF_DATA;
+    
+    /* Make sure that all data including last character are in buffer.
+     */
+    if (m_wr_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
     {
         complete_last_write();
     }
 
+    while (OS_TRUE)
+    {
+        /* If we are repeating character
+         */
+        if (m_rd_repeat_count)
+        {
+            m_rd_repeat_count--;
+            return m_rd_repeat_char;
+        }
 
-    if (nread != OS_NULL) *nread = 0; 
-    return ESTATUS_SUCCESS;
+        /* If we run out of data.
+         */
+        if (!hasedata()) return E_STREM_END_OF_DATA;
+
+        /* Get character.
+         */
+        c = getcharacter();
+
+        /* If previous character is control we are processing repeat count
+         */
+        if (m_rd_prev2c == E_STREAM_CTRL_CHAR) if ((m_rd_prevc & E_STREAM_CTRLCH_MASK) == 0)
+        {
+            m_rd_repeat_char = c;
+            m_rd_repeat_count = m_rd_prevc;
+            m_rd_prevc = m_rd_prev2c = EQUEUE_NO_PREVIOUS_CHAR;
+            return c;
+        }
+
+        if (m_rd_prevc == E_STREAM_CTRL_CHAR) 
+        {
+            /* If this is single control char
+             */
+            cc = (c & E_STREAM_CTRLCH_MASK);
+            if (cc)
+            {
+                m_rd_prevc = m_rd_prev2c = EQUEUE_NO_PREVIOUS_CHAR;
+                switch (cc)
+                {
+                    /** Beginning of object or other block.
+                     */
+                    case E_STREAM_CTRLCH_BEGIN_BLOCK:
+                        break;
+
+                    /** End of object or other block.
+                     */
+                    case E_STREAM_CTRLCH_END_BLOCK:
+                        break;
+
+                    /** Control character in data.
+                     */
+                    case EL_STREAM_CTRLCH_IN_DATA:
+                        m_rd_repeat_char = E_STREAM_CTRL_CHAR;
+                        m_rd_repeat_count = (c & E_STREAM_COUNT_MASK);
+                        return E_STREAM_CTRL_CHAR;
+        
+                    /** Stream has been disconnected. 
+                     */
+                    case OSAL_STREAM_CTRLCH_DISCONNECT:
+                    default:
+                        break;
+                }
+                continue;
+            }
+
+            /* Otherwise this is beginnig of repeat count marking.
+             */
+            m_rd_prev2c = m_rd_prevc;
+            m_rd_prevc = c;
+            continue;
+        }
+
+        if (c == E_STREAM_CTRL_CHAR)
+        {
+            m_rd_prev2c = m_rd_prevc;
+            m_rd_prevc = c;
+            continue;
+        }
+
+        /* Plain character, nothing to do with control characters.
+         */
+        return c;
+    }
+
+    return E_STREM_END_OF_DATA;
 }

@@ -30,6 +30,14 @@ typedef struct eQueueBlock
      */
     struct eQueueBlock *newer;
 
+    /** Queue head index (inside newest)
+     */
+    os_int head;
+
+    /** Queue tail index (inside oldest)
+     */
+    os_int tail;
+
     /** Size of queued block excluting the header.
      */
     os_int sz;
@@ -114,7 +122,7 @@ public:
 	/*@{*/
     virtual eStatus open(
         os_char *path, 
-        os_int flags=0) {return ESTATUS_SUCCESS;}
+        os_int flags = 0);
 
     virtual eStatus close();
 
@@ -128,12 +136,14 @@ public:
         os_memsz buf_sz, 
         os_memsz *nread = OS_NULL);
 
-    virtual eStatus read_begin_block()
-     {return ESTATUS_SUCCESS;}
-
-	/** End an object, etc. block. This skips data added by later versions of object.
+	/** Write character, typically control code.
      */
-    virtual eStatus read_end_block() {return ESTATUS_SUCCESS;}
+    virtual eStatus writechar(
+        os_int c);
+
+    /* Read character or control code.
+     */    
+    virtual os_int readchar();
 
     /*@}*/
 
@@ -146,18 +156,28 @@ private:
      */
     void delblock();
 
-    /* Put character to queue
+    /* Put character to queue.
      */
     inline void putcharacter(
         os_int c)
     {
-        if (m_head >= m_newest->sz)
+        os_int nexthead;
+
+        /* Get next head.
+         */
+        nexthead = m_newest->head + 1;
+        if (nexthead >= m_newest->sz) nexthead = 0;
+    
+        /* If this block is full, move on to next block
+         */
+        if (nexthead == m_newest->tail)
         {
             newblock();
-            m_head = 0;
+            nexthead = 1;
         }
 
-        *(((os_char*)m_newest) + sizeof(eQueueBlock) + m_head) = (os_char)c;
+        *(((os_char*)m_newest) + sizeof(eQueueBlock) + m_newest->head) = (os_char)c;
+        m_newest->head = nexthead;
     }
 
     /* Finish with last write so also previous character has been
@@ -165,10 +185,38 @@ private:
      */
     void complete_last_write();
 
-	/** Write control character.
+    /* Check if queue has data.
      */
-    virtual eStatus write_ctrl_char(
-        os_int c);
+    inline os_char hasedata()
+    {
+        if (m_newest != m_oldest) return OS_TRUE;
+        return m_oldest->head != m_oldest->tail;
+    }
+
+    /* Get character from queue.
+     */
+    inline os_char getcharacter()
+    {
+        os_char c;
+        os_int nexttail;
+
+        c = *(((os_char*)m_oldest) + sizeof(eQueueBlock) + m_oldest->tail);
+
+        /* Get next head.
+         */
+        nexttail = m_oldest->tail + 1;
+        if (nexttail >= m_oldest->sz) nexttail = 0;
+        m_oldest->tail = nexttail;
+
+        /* If this block is now empty, and it is not only block, delete it.
+         */
+        if (nexttail == m_oldest->head)
+        {
+            if (m_oldest != m_newest) delblock();
+        }
+
+        return c;
+    }
 
     /** Oldest block in the queue.
      */
@@ -178,21 +226,34 @@ private:
      */
     eQueueBlock *m_newest;
 
-    /** Queue head index (inside newest)
+    /** Flags for the queue. Flags OSAL_STREAM_ENCODE_ON_WRITE and
+        OSAL_STREAM_DECODE_ON_READ are observed.
      */
-    os_int m_head;
+    os_int m_flags;
 
-    /** Queue tail index (inside oldest)
+    /** Previous character
      */
-    os_int m_tail;
+    os_int m_wr_prevc;
 
-    /* Previous character
+    /** Number of times same has repeated afterwards (0 = character has occurred once).
      */
-    os_int m_prevc;
+    os_int m_wr_count;
 
-    /* Number of times same has repeated afterwards (0 = character has occurred once).
+    /** Repeat count when unpacking repeated character (RLE).
      */
-    os_int m_count;
+    os_int m_rd_repeat_count;
+
+    /** Repeated character.
+     */
+    os_int m_rd_repeat_char;
+
+    /** Previous character, while reading.
+     */
+    os_int m_rd_prevc;
+
+    /** The character before that one.
+     */
+    os_int m_rd_prev2c;
 };
 
 #endif

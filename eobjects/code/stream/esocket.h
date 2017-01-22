@@ -106,15 +106,6 @@ public:
     virtual eStatus read(os_char *buf, os_memsz buf_sz, os_memsz *nread = OS_NULL)
         {if (nread != OS_NULL) *nread = 0; return ESTATUS_SUCCESS;}
 
-    virtual eStatus read_begin_block() 
-    {
-        return ESTATUS_SUCCESS;
-    }
-
-	/** End an object, etc. block. This skips data added by later versions of object.
-     */
-    virtual eStatus read_end_block() {return ESTATUS_SUCCESS;}
-
     /*@}*/
 };
 
