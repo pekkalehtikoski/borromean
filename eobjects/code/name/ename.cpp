@@ -157,7 +157,8 @@ eStatus eName::writer(
 
 	/* Begin the object and write version number.
      */
-    if (stream->write_begin_block(version)) goto failed;
+    if (stream->write_begin_block()) goto failed;
+    if (*stream << version)  goto failed;
 
     /* Use base class'es function to do the work.
      */
@@ -204,9 +205,10 @@ eStatus eName::reader(
     os_int 
         version;
 
-	/* Begin the object and write version number.
+	/* Read object start mark and version number.
      */
-    if (stream->read_begin_block(version)) goto failed;
+    if (stream->read_begin_block()) goto failed;
+    if (*stream >> version) goto failed;
 
     /* Use base class'es function to do the work.
      */

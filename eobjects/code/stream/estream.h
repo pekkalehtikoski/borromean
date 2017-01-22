@@ -177,23 +177,21 @@ public:
         return ESTATUS_SUCCESS;
     }
 
-	/** Begin an object, etc. block. This is for versioning, block size may be changed.
+	/** Begin an object, etc. block. This is for versioning, data may be added or changed later.
      */
-    virtual eStatus write_begin_block(
-        os_int version) 
+    inline eStatus write_begin_block() 
     {
-        return ESTATUS_SUCCESS;
+        return write_ctrl_char(E_STREAM_CTRLCH_BEGIN_BLOCK);
     }
 
 	/** End an object, etc. block. This skips data added by later versions of object.
      */
-    virtual eStatus write_end_block() 
+    inline eStatus write_end_block() 
     {
-        return ESTATUS_SUCCESS;
+        return write_ctrl_char(E_STREAM_CTRLCH_END_BLOCK);
     }
 
-    virtual eStatus read_begin_block(
-        os_int& version)
+    virtual eStatus read_begin_block()
     {
         return ESTATUS_SUCCESS;
     }
@@ -294,6 +292,14 @@ public:
     inline eStatus operator>>(eVariable& x) { return gets(&x); }
 
     /*@}*/
+
+protected:
+    virtual eStatus write_ctrl_char(
+        os_int c)
+    {
+        return ESTATUS_SUCCESS;
+    }
+
 };
 
 #endif

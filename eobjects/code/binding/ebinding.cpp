@@ -133,7 +133,8 @@ eStatus eBinding::writer(
 
 	/* Begin the object and write version number.
      */
-    if (stream->write_begin_block(version)) goto failed;
+    if (stream->write_begin_block()) goto failed;
+    if (*stream << version)  goto failed;
 
     /* Write child count to stream (no attachments).
      */
@@ -188,11 +189,12 @@ eStatus eBinding::reader(
     os_int version;
     os_long count;
 
-	/* Begin the object and write version number.
+	/* Read object start mark and version number.
      */
-    if (stream->read_begin_block(version)) goto failed;
+    if (stream->read_begin_block()) goto failed;
+    if (*stream >> version)  goto failed;
 
-    /* Write child count to stream (no attachments).
+    /* Read child count from (no attachments).
      */
     if (*stream >> count)  goto failed;
 

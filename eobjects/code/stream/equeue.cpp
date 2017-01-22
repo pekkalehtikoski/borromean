@@ -25,14 +25,12 @@
  */
 #define EQUEUE_NO_PREVIOUS_CHAR 256
 
+
 /**
 ****************************************************************************************************
 
   @brief Constructor.
-
-  X...
-
-  @return  None.
+  Constructs and initializes an empty queue object.
 
 ****************************************************************************************************
 */
@@ -46,7 +44,6 @@ eQueue::eQueue(
      */
     m_oldest = m_newest = OS_NULL;
     m_head = m_tail = 0;
-
     m_prevc = EQUEUE_NO_PREVIOUS_CHAR;
     m_count = 0;
 }
@@ -56,9 +53,7 @@ eQueue::eQueue(
 ****************************************************************************************************
 
   @brief Virtual destructor.
-
   Releases all memory allocated for the queue.
-  @return  None.
 
 ****************************************************************************************************
 */
@@ -149,7 +144,7 @@ void eQueue::delblock()
 
   @brief Close the queue.
 
-  The close() function releases all memoty blocks but one and marks queue empty.
+  The close() function releases all memory blocks but one and marks queue empty.
   @return  None.
 
 ****************************************************************************************************
@@ -216,7 +211,7 @@ eStatus eQueue::write(
             }
             else if (m_prevc != EQUEUE_NO_PREVIOUS_CHAR) /* without repeat count */
             {
-                putcharacter((os_char)m_prevc);
+                putcharacter(m_prevc);
             }
 
             /* If character is control character?
@@ -247,22 +242,33 @@ eStatus eQueue::write(
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Finish with writes so that all data is in queue buffers.
+
+  When data is beeing written to queue, last character and it's repeat count are not necessarily
+  moved immediately to queue buffer. This is done to allow run length encoding on the 
+  fly. This function completes last write, so after this call all data is in buffer blocks. 
+
+****************************************************************************************************
+*/
 void eQueue::complete_last_write()
 {
     if (m_count == 0) /* without repeat count */
     {
-        putcharacter((os_char)m_prevc);
+        putcharacter(m_prevc);
     }
     else if (m_count == 1) /* repeat twice */
     {
-        putcharacter((os_char)m_prevc);
+        putcharacter(m_prevc);
         putcharacter((os_char)m_prevc);
     }
     else  /* with repeat count */
     {
         putcharacter(E_STREAM_CTRL_CHAR);
-        putcharacter((os_char)m_count);
-        putcharacter((os_char)m_prevc);
+        putcharacter(m_count);
+        putcharacter(m_prevc);
     }
 
     /* no previous character
@@ -271,6 +277,47 @@ void eQueue::complete_last_write()
     m_count = 0;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Write control character to stream.
+
+  The write_ctrl_char function writes control character given as argument to stream.
+  Control characters E_STREAM_CTRLCH_BEGIN_BLOCK and E_STREAM_CTRLCH_END_BLOCK mark 
+  beginning and end of object, needed for versioning.
+  Control character OSAL_STREAM_CTRLCH_DISCONNECT indicates that stream (typically socket) is 
+  just about to be disconnected.
+
+  @param c  Control character to write, one of E_STREAM_CTRLCH_BEGIN_BLOCK, 
+            E_STREAM_CTRLCH_END_BLOCK or OSAL_STREAM_CTRLCH_DISCONNECT.
+
+****************************************************************************************************
+*/
+eStatus eQueue::write_ctrl_char(
+    os_int c)
+{
+    if (m_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
+    {
+        complete_last_write();
+    }
+
+    putcharacter(E_STREAM_CTRL_CHAR);
+    putcharacter(c);
+    return ESTATUS_SUCCESS;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Read data from queue.
+
+  The read function releases retrieves data from queue. 
+  @return  None.
+
+****************************************************************************************************
+*/
 eStatus eQueue::read(
     os_char *buf, 
     os_memsz buf_sz, 

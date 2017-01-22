@@ -128,17 +128,8 @@ public:
         os_memsz buf_sz, 
         os_memsz *nread = OS_NULL);
 
-	/** Begin an object, etc. block. This is for versioning, block size may be changed.
-     */
-    virtual eStatus write_begin_block(
-        os_int version) {return ESTATUS_SUCCESS;}
-
-	/** End an object, etc. block. This skips data added by later versions of object.
-     */
-    virtual eStatus write_end_block() {return ESTATUS_SUCCESS;}
-
-    virtual eStatus read_begin_block(
-        os_int& version) {return ESTATUS_SUCCESS;}
+    virtual eStatus read_begin_block()
+     {return ESTATUS_SUCCESS;}
 
 	/** End an object, etc. block. This skips data added by later versions of object.
      */
@@ -173,6 +164,11 @@ private:
        processed.
      */
     void complete_last_write();
+
+	/** Write control character.
+     */
+    virtual eStatus write_ctrl_char(
+        os_int c);
 
     /** Oldest block in the queue.
      */

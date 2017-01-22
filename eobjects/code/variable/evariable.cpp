@@ -1410,7 +1410,8 @@ eStatus eVariable::writer(
 
 	/* Begin the object and write version number.
      */
-    if (stream->write_begin_block(version)) goto failed;
+    if (stream->write_begin_block()) goto failed;
+    if (*stream << version)  goto failed;
 
     /* Write type and number of decimal digits in flags.
      */
@@ -1501,11 +1502,12 @@ eStatus eVariable::reader(
      */
     clear();
 
-	/* Begin the object and write version number.
+	/* Read object start mark and version number.
      */
-    if (stream->read_begin_block(version)) goto failed;
+    if (stream->read_begin_block()) goto failed;
+    if (*stream >> version) goto failed;
 
-    /* Write type and number of decimal digits in flags.
+    /* Read type and number of decimal digits in flags.
      */
     if (*stream >> vflags) goto failed;
 
