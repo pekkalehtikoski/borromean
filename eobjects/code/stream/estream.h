@@ -18,6 +18,45 @@
 #ifndef ESTREAM_INCLUDED
 #define ESTREAM_INCLUDED
 
+
+/**
+****************************************************************************************************
+
+  @name Stream Control Character Codes
+  @anchor eStreamCtrlCodes
+
+  These must be 5 least significant bits zero, reserved for character repeat count.
+
+****************************************************************************************************
+*/
+
+/** Control character.
+ */
+#define E_STREAM_CTRL_CHAR 0xD5
+
+/** Beginning of object or other block.
+ */
+#define E_STREAM_CTRLCH_BEGIN_BLOCK 0x20
+
+/** End of object or other block.
+ */
+#define E_STREAM_CTRLCH_END_BLOCK 0x40
+
+/** Control character in data.
+ */
+#define EL_STREAM_CTRLCH_IN_DATA 0x60
+
+/** Stream has been disconnected. 
+ */
+#define OSAL_STREAM_CTRLCH_DISCONNECT 0x80
+
+/** X...
+OSAL_STREAM_CTRLCH_RESERVED1 = 0xA0,
+OSAL_STREAM_CTRLCH_RESERVED2 = 0xC0,
+OSAL_STREAM_CTRLCH_RESERVED3 = 0xE0
+	*/
+
+
 /**
 ****************************************************************************************************
 

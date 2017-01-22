@@ -1,12 +1,12 @@
 /**
 
   @file    equeue.h
-  @brief   Queue base class.
+  @brief   Queue buffer class.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    17.5.2016
 
-  Queue base class sets up general way to interace with different types of queues.
+  Queue buffers data, typically for reading from or writing to stream.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -17,6 +17,26 @@
 */
 #ifndef EQUEUE_INCLUDED
 #define EQUEUE_INCLUDED
+
+/** Memory is buffered as blocks within queue. Block header structure is:
+ */
+typedef struct eQueueBlock
+{
+    /** Pointer to the next older queued block.
+     */
+    struct eQueueBlock *older;
+
+    /** Pointer to the next newer queued block.
+     */
+    struct eQueueBlock *newer;
+
+    /** Size of queued block excluting the header.
+     */
+    os_int sz;
+} 
+eQueueBlock;
+
+
 
 /**
 ****************************************************************************************************
@@ -96,15 +116,17 @@ public:
         os_char *path, 
         os_int flags=0) {return ESTATUS_SUCCESS;}
 
-    virtual eStatus close() {return ESTATUS_SUCCESS;}
+    virtual eStatus close();
 
-    virtual eStatus flush() {return ESTATUS_SUCCESS;}
+    virtual eStatus write(
+        const os_char *buf, 
+        os_memsz buf_sz, 
+        os_memsz *nwritten = OS_NULL);
 
-    virtual eStatus write(const os_char *buf, os_memsz buf_sz, os_memsz *nwritten = OS_NULL)
-        {if (nwritten != OS_NULL) *nwritten = 0; return ESTATUS_SUCCESS;}
-
-    virtual eStatus read(os_char *buf, os_memsz buf_sz, os_memsz *nread = OS_NULL)
-        {if (nread != OS_NULL) *nread = 0; return ESTATUS_SUCCESS;}
+    virtual eStatus read(
+        os_char *buf, 
+        os_memsz buf_sz, 
+        os_memsz *nread = OS_NULL);
 
 	/** Begin an object, etc. block. This is for versioning, block size may be changed.
      */
@@ -123,6 +145,58 @@ public:
     virtual eStatus read_end_block() {return ESTATUS_SUCCESS;}
 
     /*@}*/
+
+private:
+    /* Allocate new block and join it to queue.
+     */
+    void newblock();
+
+    /* Detach oldest block from queue and free memory allocatd for it.
+     */
+    void delblock();
+
+    /* Put character to queue
+     */
+    inline void putcharacter(
+        os_int c)
+    {
+        if (m_head >= m_newest->sz)
+        {
+            newblock();
+            m_head = 0;
+        }
+
+        *(((os_char*)m_newest) + sizeof(eQueueBlock) + m_head) = (os_char)c;
+    }
+
+    /* Finish with last write so also previous character has been
+       processed.
+     */
+    void complete_last_write();
+
+    /** Oldest block in the queue.
+     */
+    eQueueBlock *m_oldest;
+
+    /** Latest block added to queue.
+     */
+    eQueueBlock *m_newest;
+
+    /** Queue head index (inside newest)
+     */
+    os_int m_head;
+
+    /** Queue tail index (inside oldest)
+     */
+    os_int m_tail;
+
+    /* Previous character
+     */
+    os_int m_prevc;
+
+    /* Number of times same has repeated afterwards (0 = character has occurred once).
+     */
+    os_int m_count;
 };
 
 #endif

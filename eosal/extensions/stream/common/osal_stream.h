@@ -146,7 +146,6 @@ typedef struct osalStreamHeader *osalStream;
 
 
 #if 0
-THESE BELONG to EObjects
 /**
 ****************************************************************************************************
 
