@@ -128,6 +128,26 @@
 /**
 ****************************************************************************************************
 
+  @name Flags for eStream read() Functions.
+  @anchor eStreamReadFlags
+
+  X...
+
+****************************************************************************************************
+*/
+/*@{*/
+
+/** eQueue specific flag: Read data from queue without actually removing it from queue.
+ */
+#define OSAL_STREAM_PEEK 0x01
+
+
+/*@}*/
+
+
+/**
+****************************************************************************************************
+
   @brief Object base class.
 
   The eObject is base class for all eobject library objects. It defines basic functionality for
@@ -239,7 +259,8 @@ public:
     virtual eStatus read(
         os_char *buf, 
         os_memsz buf_sz, 
-        os_memsz *nread = OS_NULL)
+        os_memsz *nread = OS_NULL,
+        os_int flags = 0)
     {
         if (nread != OS_NULL) *nread = 0; 
         return ESTATUS_SUCCESS;

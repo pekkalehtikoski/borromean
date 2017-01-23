@@ -134,7 +134,8 @@ public:
     virtual eStatus read(
         os_char *buf, 
         os_memsz buf_sz, 
-        os_memsz *nread = OS_NULL);
+        os_memsz *nread = OS_NULL,
+        os_int flags = 0);
 
 	/** Write character, typically control code.
      */
@@ -155,6 +156,18 @@ private:
     /* Detach oldest block from queue and free memory allocatd for it.
      */
     void delblock();
+
+    /* Write data to queue, encode while writing.
+     */
+    void write_encoded(
+        const os_char *buf, 
+        os_memsz buf_sz);
+
+    /* Write data to queue without modification.
+     */
+    void write_plain(
+        const os_char *buf, 
+        os_memsz buf_sz);
 
     /* Put character to queue.
      */
@@ -184,6 +197,21 @@ private:
        processed.
      */
     void complete_last_write();
+
+    /* Read and decode data.
+     */
+    void read_decoded(
+        os_char *buf, 
+        os_memsz buf_sz, 
+        os_memsz *nread);
+
+    /* Read data as is.
+     */
+    void read_plain(
+        os_char *buf, 
+        os_memsz buf_sz, 
+        os_memsz *nread,
+        os_int flags);
 
     /* Check if queue has data.
      */

@@ -100,10 +100,17 @@ public:
 
     virtual eStatus flush() {return ESTATUS_SUCCESS;}
 
-    virtual eStatus write(const os_char *buf, os_memsz buf_sz, os_memsz *nwritten = OS_NULL)
+    virtual eStatus write(
+        const os_char *buf, 
+        os_memsz buf_sz, 
+        os_memsz *nwritten = OS_NULL)
         {if (nwritten != OS_NULL) *nwritten = 0; return ESTATUS_SUCCESS;}
 
-    virtual eStatus read(os_char *buf, os_memsz buf_sz, os_memsz *nread = OS_NULL)
+    virtual eStatus read(
+        os_char *buf, 
+        os_memsz buf_sz, 
+        os_memsz *nread = OS_NULL,
+        os_int flags = 0)
         {if (nread != OS_NULL) *nread = 0; return ESTATUS_SUCCESS;}
 
     /*@}*/

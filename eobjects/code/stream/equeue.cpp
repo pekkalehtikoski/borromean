@@ -250,12 +250,32 @@ eStatus eQueue::write(
     os_memsz buf_sz, 
     os_memsz *nwritten)
 {
-    os_char c;
-    os_int i;
-
     /* Make sure that we have at least one block.
      */
     if (m_newest == OS_NULL) newblock();
+
+    /* Write data either encoded or "as is".
+     */
+    if (m_flags & OSAL_STREAM_ENCODE_ON_WRITE)
+    {
+        write_encoded(buf, buf_sz);
+    }
+    else 
+    {
+        write_plain(buf, buf_sz);
+    }
+
+    if (nwritten != OS_NULL) *nwritten = buf_sz; 
+    return ESTATUS_SUCCESS;
+}
+
+void eQueue::write_encoded(
+    const os_char *buf, 
+    os_memsz buf_sz)
+{
+    os_char c;
+    os_int i;
+
 
     for (i = 0; i < buf_sz; i++)
     {
@@ -305,9 +325,52 @@ eStatus eQueue::write(
             m_wr_count = 0;
         }
     }
+}
 
-    if (nwritten != OS_NULL) *nwritten = buf_sz; 
-    return ESTATUS_SUCCESS;
+void eQueue::write_plain(
+    const os_char *buf, 
+    os_memsz buf_sz)
+{
+    os_int n;
+
+    while (buf_sz > 0)
+    {
+        /* If we need to allocate more block (newest block is full)?
+         */
+        if (m_newest->head + 1 == m_newest->tail ||
+            (m_newest->head == m_newest->sz - 1 && m_newest->tail == 0))
+        {
+            newblock();
+        }
+        
+        /* Write to end part of current block as much as we can.
+         */
+        if (m_newest->head >= m_newest->tail)
+        {
+            n = m_newest->sz - m_newest->head;
+            if (m_newest->tail == 0) n--;
+            if (n > buf_sz) n = (os_int)buf_sz;
+            os_memcpy( ((os_char*)m_newest) + sizeof(eQueueBlock) + m_newest->head, buf, n);
+            m_newest->head += n;
+            if (m_newest->head == m_newest->sz) m_newest->head = 0;
+            buf += n;
+            buf_sz -= n;
+            if (buf_sz == 0) break;
+        }
+
+        /* Write to beginning part of current block as much as we can.
+         */
+        if (m_newest->head < m_newest->tail)
+        {
+            n = m_newest->tail - m_newest->head - 1;
+
+            if (n > buf_sz) n = (os_int)buf_sz;
+            os_memcpy( ((os_char*)m_newest) + sizeof(eQueueBlock) + m_newest->head, buf, n);
+            m_newest->head += n;
+            buf += n;
+            buf_sz -= n;
+        }
+    }
 }
 
 
@@ -324,6 +387,10 @@ eStatus eQueue::write(
 */
 void eQueue::complete_last_write()
 {
+    /* If writing without encoding, there is nothing to do.
+     */
+    if ((m_flags & OSAL_STREAM_ENCODE_ON_WRITE) == 0) return;
+
     if (m_wr_count == 0) /* without repeat count */
     {
         putcharacter(m_wr_prevc);
@@ -355,11 +422,16 @@ void eQueue::complete_last_write()
   The read function reads data from queue. This is used for actual data, not when control codes
   are expected.
 
-  @param  buf Pointer to buffer into which to read data.
+  @param  buf Pointer to buffer into which to read data. If buffer is OS_NULL, up to buf_sz
+          bytes are removed from queue but not stored anywhere. Null buffer can be used only
+          when reading plain data (no OSAL_STREAM_DECODE_ON_READ flag)
   @param  buf_sz Size of buffer in bytes.
   @param  nread Pointer to integer where to store number of bytes read from queue. This may be
           less than buffer size if the function runs out of data in queue. Can be set to 
-          to OS_NULL, if not needed.
+          OS_NULL, if not needed. 
+  @param  Zero for default operation. Flag OSAL_STREAM_PEEK causes data to be read, but not removed
+          from queue. This flag works only when reading plain data as is (no 
+          OSAL_STREAM_DECODE_ON_READ flag given to open() or accept).
 
   @return If successfull, the function returns ESTATUS_SUCCESS. Other return values
           indicate an error. eQueue class cannot fail, so return value is always 
@@ -370,10 +442,15 @@ void eQueue::complete_last_write()
 eStatus eQueue::read(
     os_char *buf, 
     os_memsz buf_sz, 
-    os_memsz *nread)
+    os_memsz *nread,
+    os_int flags)
 {
-    os_uchar c, cc;
-    os_int n;
+    /* Make sure that all data including last character are in buffer.
+     */
+    if (m_wr_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
+    {
+        complete_last_write();
+    }
 
     /* If no buffer.
      */
@@ -382,13 +459,29 @@ eStatus eQueue::read(
         if (nread) *nread = 0;
         return ESTATUS_SUCCESS;
     }
-    
-    /* Make sure that all data including last character are in buffer.
+
+    /* If reading without decoding, just read the character.
      */
-    if (m_wr_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
+    if (m_flags & OSAL_STREAM_DECODE_ON_READ)
     {
-        complete_last_write();
+        read_decoded(buf, buf_sz, nread);
     }
+    else
+    {
+        read_plain(buf, buf_sz, nread, flags);
+    }
+
+    return ESTATUS_SUCCESS;
+}
+
+
+void eQueue::read_decoded(
+    os_char *buf, 
+    os_memsz buf_sz, 
+    os_memsz *nread)
+{
+    os_uchar c, cc;
+    os_int n;
 
     n = 0;
     while (OS_TRUE)
@@ -462,7 +555,79 @@ eStatus eQueue::read(
     }
 
     if (nread != OS_NULL) *nread = n; 
-    return ESTATUS_SUCCESS;
+}
+
+
+void eQueue::read_plain(
+    os_char *buf, 
+    os_memsz buf_sz, 
+    os_memsz *nread,
+    os_int flags)
+{
+    os_int n, head, tail;
+    os_memsz buf_sz0;
+
+    eQueueBlock *oldest, *newest;
+
+    buf_sz0 = buf_sz;
+    newest = m_newest;
+    oldest = m_oldest;
+
+    while (buf_sz > 0)
+    {
+        head = oldest->head;
+        tail = oldest->tail;
+
+        /* Write to end part of current block as much as we can.
+         */
+        if (tail > head)
+        {
+            n = newest->sz - tail;
+            if (n > buf_sz) n = (os_int)buf_sz;
+            if (buf) 
+            {
+                os_memcpy(buf, ((os_char*)oldest) + sizeof(eQueueBlock) + tail, n);
+                buf += n;
+                buf_sz -= n;
+            }
+            tail += n;
+            if (tail == newest->sz) tail = 0;
+        }
+
+        /* Write to beginning part of current block as much as we can.
+         */
+        if (head > tail && buf_sz > 0)
+        {
+            n = head - tail;
+
+            if (n > buf_sz) n = (os_int)buf_sz;
+            if (buf) 
+            {
+                os_memcpy(buf, ((os_char*)oldest) + sizeof(eQueueBlock) + tail, n);
+                buf += n;
+            }
+            tail += n;
+            buf_sz -= n;
+        }
+
+        /* If we are not only peeking (reading without removing data from buffer)
+         */
+        if ((flags & OSAL_STREAM_PEEK) == 0)
+        {
+            if (head == tail) 
+            {
+                delblock();
+            }
+            else
+            {
+                m_oldest->tail = tail;
+            }
+        }
+
+        oldest = oldest->newer;
+    }
+
+    if (nread != OS_NULL) *nread = buf_sz0 - buf_sz; 
 }
 
 
@@ -493,6 +658,14 @@ eStatus eQueue::writechar(
      */
     if (m_newest == OS_NULL) newblock();
 
+    /* If writing without encoding, just write the character.
+     */
+    if ((m_flags & OSAL_STREAM_ENCODE_ON_WRITE) == 0) 
+    {
+        putcharacter(c);
+        return ESTATUS_SUCCESS;
+    }
+
     /* Make sure that everything written is in buffer.
      */
     if (m_wr_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
@@ -518,7 +691,7 @@ eStatus eQueue::writechar(
             putcharacter(c);
             return ESTATUS_SUCCESS;
     }
-
+    
     putcharacter(E_STREAM_CTRL_CHAR);
     putcharacter(c);
     return ESTATUS_SUCCESS;
@@ -541,15 +714,25 @@ os_int eQueue::readchar()
 {
     os_uchar c, cc;
 
-    /* If no buffer.
-     */
-    if (m_oldest == OS_NULL) return E_STREM_END_OF_DATA;
-    
     /* Make sure that all data including last character are in buffer.
      */
     if (m_wr_prevc != EQUEUE_NO_PREVIOUS_CHAR) 
     {
         complete_last_write();
+    }
+
+    /* If no buffer.
+     */
+    if (m_oldest == OS_NULL) return E_STREM_END_OF_DATA;
+    
+    /* If reading without decoding, just read the character.
+     */
+    if ((m_flags & OSAL_STREAM_DECODE_ON_READ) == 0) 
+    {
+        /* If we run out of data.
+         */
+        if (!hasedata()) return E_STREM_END_OF_DATA;
+        return getcharacter();
     }
 
     while (OS_TRUE)
