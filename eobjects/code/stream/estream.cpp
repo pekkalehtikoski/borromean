@@ -54,6 +54,24 @@ eStream::~eStream()
 }
 
 
+/** End an object, etc. block. This skips data added by later versions of object.
+    */
+eStatus eStream::read_end_block() 
+{
+    os_int c;
+
+    while (OS_TRUE) switch (readchar() & E_STREAM_CTRL_MASK)
+    {
+        case E_STREAM_END:
+            return ESTATUS_SUCCESS;
+        
+        case E_STREM_END_OF_DATA:
+            return ESTATUS_FAILED;
+    }
+}
+
+
+
 /**
 ****************************************************************************************************
 

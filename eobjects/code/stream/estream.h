@@ -97,6 +97,10 @@
  */
 #define E_STREM_END_OF_DATA E_STREAM_CTRL_BASE
 
+/** Mask for separating control code from version number.
+ */
+#define E_STREAM_CTRL_MASK 0xE0
+
 /*@}*/
 
 
@@ -283,29 +287,37 @@ public:
 
 	/** Begin an object, etc. block. This is for versioning, data may be added or changed later.
      */
-    inline eStatus write_begin_block() 
+    inline eStatus write_begin_block(
+        os_int version) 
     {
-        return writechar(E_STREAM_CTRLCH_BEGIN_BLOCK);
+#if OSAL_DEBUG
+        if ((os_uint)version >= 32) 
+            osal_debug_error("write_begin_block(): version must be 0...31");
+#endif
+        return writechar(E_STREAM_BEGIN | version);
     }
 
 	/** End an object, etc. block. This skips data added by later versions of object.
      */
     inline eStatus write_end_block() 
     {
-        return writechar(E_STREAM_CTRLCH_END_BLOCK);
+        return writechar(E_STREAM_END);
     }
 
-    eStatus read_begin_block()
+    eStatus read_begin_block(
+        os_int *version)
     {
-        return ESTATUS_SUCCESS;
+        os_int c;
+
+        c = readchar();
+        if (version) *version = (c & E_STREAM_COUNT_MASK);
+        return (c & E_STREAM_CTRL_MASK) == E_STREAM_BEGIN
+             ? ESTATUS_SUCCESS : ESTATUS_FAILED;
     }
 
 	/** End an object, etc. block. This skips data added by later versions of object.
      */
-    eStatus read_end_block() 
-    {
-        return ESTATUS_SUCCESS;
-    }
+    eStatus read_end_block();
 
 	/* Write long integer value to stream.
      */

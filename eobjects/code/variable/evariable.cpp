@@ -1405,13 +1405,11 @@ eStatus eVariable::writer(
     /* Version number. Increment if new serialized items are to the object,
        and check for new version's items in read() function.
      */
-    const os_int 
-        version = 1;
+    const os_int version = 0;
 
 	/* Begin the object and write version number.
      */
-    if (stream->write_begin_block()) goto failed;
-    if (*stream << version)  goto failed;
+    if (stream->write_begin_block(version)) goto failed;
 
     /* Write type and number of decimal digits in flags.
      */
@@ -1489,14 +1487,11 @@ eStatus eVariable::reader(
 {
     /* Version number. Used to check which versions item's are in serialized data.
      */
-    os_int 
-        version;
+    os_int version;
 
-    os_short 
-        vflags;
+    os_short vflags;
 
-    os_long 
-        sz;
+    os_long sz;
 
     /* Release any allocated memory.
      */
@@ -1504,8 +1499,7 @@ eStatus eVariable::reader(
 
 	/* Read object start mark and version number.
      */
-    if (stream->read_begin_block()) goto failed;
-    if (*stream >> version) goto failed;
+    if (stream->read_begin_block(&version)) goto failed;
 
     /* Read type and number of decimal digits in flags.
      */

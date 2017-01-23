@@ -192,16 +192,15 @@ eStatus eSet::writer(
        and check for new version's items in read() function.
      */
     const os_int 
-        version = 1;
+        version = 0;
 
     eObject
         *child;
 
 	/* Begin the object and write version number.
      */
-    if (stream->write_begin_block()) goto failed;
-    if (*stream << version)  goto failed;
-
+    if (stream->write_begin_block(version)) goto failed;
+    
     /* Write child count to stream (no attachments).
      */
     if (*stream << childcount())  goto failed;
@@ -260,8 +259,7 @@ eStatus eSet::reader(
 
 	/* Read object start mark and version number.
      */
-    if (stream->read_begin_block()) goto failed;
-    if (*stream >> version) goto failed;
+    if (stream->read_begin_block(&version)) goto failed;
 
     /* Read child count from stream (no attachments).
      */

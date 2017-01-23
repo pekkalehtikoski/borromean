@@ -128,13 +128,12 @@ eStatus eBinding::writer(
     /* Version number. Increment if new serialized items are added to the object,
        and check for new version's items in read() function.
      */
-    const os_int version = 1;
+    const os_int version = 0;
     eObject *child;
 
 	/* Begin the object and write version number.
      */
-    if (stream->write_begin_block()) goto failed;
-    if (*stream << version)  goto failed;
+    if (stream->write_begin_block(version)) goto failed;
 
     /* Write child count to stream (no attachments).
      */
@@ -191,8 +190,7 @@ eStatus eBinding::reader(
 
 	/* Read object start mark and version number.
      */
-    if (stream->read_begin_block()) goto failed;
-    if (*stream >> version)  goto failed;
+    if (stream->read_begin_block(&version)) goto failed;
 
     /* Read child count from (no attachments).
      */

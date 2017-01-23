@@ -706,7 +706,9 @@ eStatus eQueue::writechar(
   The readchar function reads either one byte or one control code from queue.
 
   @return Byte of data or control code. Possible control codes are E_STREAM_BEGIN, 
-          E_STREAM_END, OSAL_STREAM_DISCONNECT or E_STREM_END_OF_DATA.
+          E_STREAM_END, OSAL_STREAM_DISCONNECT or E_STREM_END_OF_DATA. 
+          Version number if returned with E_STREAM_BEGIN, use E_STREAM_CTRL_MASK to
+          get only control code.
 
 ****************************************************************************************************
 */
@@ -773,16 +775,6 @@ os_int eQueue::readchar()
                 m_rd_prevc = m_rd_prev2c = EQUEUE_NO_PREVIOUS_CHAR;
                 switch (cc)
                 {
-                    /** Beginning of object or other block.
-                     */
-                    case E_STREAM_CTRLCH_BEGIN_BLOCK:
-                        break;
-
-                    /** End of object or other block.
-                     */
-                    case E_STREAM_CTRLCH_END_BLOCK:
-                        break;
-
                     /** Control character in data.
                      */
                     case EL_STREAM_CTRLCH_IN_DATA:
@@ -790,11 +782,10 @@ os_int eQueue::readchar()
                         m_rd_repeat_count = (c & E_STREAM_COUNT_MASK);
                         return E_STREAM_CTRL_CHAR;
         
-                    /** Stream has been disconnected. 
+                    /** Beginning/end of object or stream has been disconnected. 
                      */
-                    case OSAL_STREAM_CTRLCH_DISCONNECT:
                     default:
-                        break;
+                        return E_STREAM_CTRL_BASE + c;
                 }
                 continue;
             }
