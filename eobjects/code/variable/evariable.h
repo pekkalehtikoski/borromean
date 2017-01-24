@@ -139,7 +139,7 @@ public:
 
     /* Clone object.
      */
-    eObject *clone(
+    virtual eObject *clone(
         eObject *parent, 
         e_oid oid,
         os_int aflags);
@@ -455,7 +455,9 @@ public:
         eStream *stream, 
         os_int flags);
 
-	virtual void onmessage();
+    /* Message to or trough this object.
+     */
+	/* virtual void onmessage(); */
 
     /*@}*/
 

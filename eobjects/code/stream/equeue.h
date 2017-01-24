@@ -121,7 +121,7 @@ public:
 	*/
 	/*@{*/
     virtual eStatus open(
-        os_char *path, 
+	    os_char *parameters,
         os_int flags = 0);
 
     virtual eStatus close();

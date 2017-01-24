@@ -54,12 +54,20 @@ eStream::~eStream()
 }
 
 
-/** End an object, etc. block. This skips data added by later versions of object.
-    */
+/**
+****************************************************************************************************
+
+  @brief Read until end of object or other block.
+
+  The read_end_block() function reads from the stream until end of block character code is 
+  found. This skips data added by later versions of object.
+
+  @return  None.
+
+****************************************************************************************************
+*/
 eStatus eStream::read_end_block() 
 {
-    os_int c;
-
     while (OS_TRUE) switch (readchar() & E_STREAM_CTRL_MASK)
     {
         case E_STREAM_END:

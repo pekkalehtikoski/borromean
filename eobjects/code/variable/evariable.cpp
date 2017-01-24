@@ -118,11 +118,12 @@ eObject *eVariable::clone(
 /**
 ****************************************************************************************************
 
-  @brief Add eVariable to list and properties to class'es property set.
+  @brief Add eVariable to class list and class'es properties to it's property set.
 
-  The eVariable::setupclass function adds function to class list. This enables creating 
-  new objects dynamically by class identifier, which is used for serialization reader()
-  functions.
+  The eVariable::setupclass function adds eVariable to class list and class'es properties to
+  it's property set. The class list enables creating new objects dynamically by class identifier, 
+  which is used for serialization reader functions. The property stet stores static list of
+  class'es properties and metadata for those.
 
 ****************************************************************************************************
 */
@@ -1573,9 +1574,10 @@ failed:
 }
 
 
-void eVariable::onmessage()
+/* void eVariable::onmessage()
 {
 }
+*/
 
 
 /**

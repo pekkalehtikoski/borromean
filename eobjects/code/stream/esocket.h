@@ -18,6 +18,8 @@
 #ifndef ESOCKET_INCLUDED
 #define ESOCKET_INCLUDED
 
+class eQueue;
+
 /**
 ****************************************************************************************************
 
@@ -92,11 +94,14 @@ public:
 	************************************************************************************************
 	*/
 	/*@{*/
-    virtual eStatus open(
-        os_char *path, 
-        os_int flags=0) {return ESTATUS_SUCCESS;}
 
-    virtual eStatus close() {return ESTATUS_SUCCESS;}
+    /* Open a socket.
+     */
+    virtual eStatus open(
+	    os_char *parameters,
+        os_int flags = 0);
+
+    virtual eStatus close();
 
     virtual eStatus flush() {return ESTATUS_SUCCESS;}
 
@@ -114,6 +119,19 @@ public:
         {if (nread != OS_NULL) *nread = 0; return ESTATUS_SUCCESS;}
 
     /*@}*/
+
+protected:
+        /* Input queue (buffer)
+         */
+        eQueue *m_in;
+
+        /* Output queue (buffer)
+         */
+        eQueue *m_out;
+
+        /* Osal socket handle.
+         */
+        osalStream m_socket;
 };
 
 #endif

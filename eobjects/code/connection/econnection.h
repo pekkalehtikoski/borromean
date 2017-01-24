@@ -18,14 +18,23 @@
 #ifndef ECONNECTION_INCLUDED
 #define ECONNECTION_INCLUDED
 
+
+/* Enumeration of connection properties.
+ */
+#define ECONNP_IPADDR 10
+
+/* Connection property names.
+ */
+extern os_char
+    econnp_ipaddr[];
+
+
 /**
 ****************************************************************************************************
 
-  @brief Object base class.
+  @brief Connection class.
 
-  The eObject is base class for all eobject library objects. It defines basic functionality for
-  networked objects.
-
+  The eConnection passes message to other process trough TCP/IP socket.
 
 ****************************************************************************************************
 */
@@ -34,7 +43,7 @@ class eConnection : public eObject
 	/** 
 	************************************************************************************************
 
-	  @name Constructors and destructor
+	  @name Generic object functionality.
 
 	  X...
 
@@ -69,6 +78,10 @@ public:
         return ECLASSID_CONNECTION; 
     }
 
+    /* Static function to add class to propertysets and class list.
+     */
+    static void setupclass();
+
 	/* Static constructor function.
 	*/
 	static eConnection *newobj(
@@ -79,15 +92,23 @@ public:
 		return new eConnection(parent, oid, flags);
 	}
 
-	eStatus select(
-		eConnection *connections,
-        os_int nconnections,
-		osalEvent evnt,
-		osalSelectData *data,
-		os_int flags)
-    {
-        return ESTATUS_SUCCESS;
-    }
+    /* Called when property value changes.
+     */
+    virtual void onpropertychange(
+        os_int propertynr, 
+        eVariable *x, 
+        os_int flags);
+
+    /* Get value of simple property.
+     */
+    virtual eStatus simpleproperty(
+        os_int propertynr, 
+        eVariable *x);
+
+    /* Function to process messages to this object. 
+     */
+    virtual void onmessage(
+        eEnvelope *envelope);
 
     /*@}*/
 
@@ -108,8 +129,10 @@ public:
         return ESTATUS_SUCCESS;
     }
 
-
     /*@}*/
+
+protected:
+    eVariable *m_ipaddr;
 };
 
 #endif

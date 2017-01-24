@@ -69,38 +69,38 @@ osalSocket;
   The osal_socket_open() function opens a socket. The socket can be either listening TCP 
   socket, connecting TCP socket or UDP multicast socket. 
 
-  @param   parameters Socket parameters, a list string or direct value.
-		   Address and port to connect to, or interface and port to listen for.
-           Socket IP address and port can be specified either as value of "addr" item
-           or directly in parameter sstring. For example "192.168.1.55:20" or "localhost:12345"
-           specify IPv4 addressed. If only port number is specified, which is often 
-           useful for listening socket, for example ":12345".
-           IPv4 address is automatically recognized from numeric address like
-           "2001:0db8:85a3:0000:0000:8a2e:0370:7334", but not when address is specified as string
-           nor for empty IP specifying only port to listen. Use brackets around IP address
-           to mark IPv6 address, for example "[localhost]:12345", or "[]:12345" for empty IP.
+  @param  parameters Socket parameters, a list string or direct value.
+		  Address and port to connect to, or interface and port to listen for.
+          Socket IP address and port can be specified either as value of "addr" item
+          or directly in parameter sstring. For example "192.168.1.55:20" or "localhost:12345"
+          specify IPv4 addressed. If only port number is specified, which is often 
+          useful for listening socket, for example ":12345".
+          IPv4 address is automatically recognized from numeric address like
+          "2001:0db8:85a3:0000:0000:8a2e:0370:7334", but not when address is specified as string
+          nor for empty IP specifying only port to listen. Use brackets around IP address
+          to mark IPv6 address, for example "[localhost]:12345", or "[]:12345" for empty IP.
 
-  @param   callbacks Callback functions.
+  @param  callbacks Callback functions.
 
-  @param   option Not used for sockets, set OS_NULL.
+  @param  option Not used for sockets, set OS_NULL.
 
-  @param   status Pointer to integer into which to store the function status code. Value
-		   OSAL_SUCCESS (0) indicates success and all nonzero values indicate an error.
-           See @ref osalStatus "OSAL function return codes" for full list.
-		   This parameter can be OS_NULL, if no status code is needed. 
+  @param  status Pointer to integer into which to store the function status code. Value
+		  OSAL_SUCCESS (0) indicates success and all nonzero values indicate an error.
+          See @ref osalStatus "OSAL function return codes" for full list.
+		  This parameter can be OS_NULL, if no status code is needed. 
 
-  @param   flags Flags for creating the socket. Bit fields, combination of:
-           - OSAL_STREAM_CONNECT: Connect to specified socket port at specified IP address. 
-           - OSAL_STREAM_LISTEN: Open a socket to listen for incoming connections. 
-           - OSAL_STREAM_UDP_MULTICAST: Open a UDP multicast socket. 
-           - OSAL_STREAM_NO_SELECT: Open socket without select functionality.
-           - OSAL_STREAM_TCP_NODELAY: Disable Nagle's algorithm on TCP socket.
-           - OSAL_STREAM_NO_REUSEADDR: Disable reusability of the socket descriptor.
-           - OSAL_STREAM_BLOCKING: Open socket in blocking mode.
+  @param  flags Flags for creating the socket. Bit fields, combination of:
+          - OSAL_STREAM_CONNECT: Connect to specified socket port at specified IP address. 
+          - OSAL_STREAM_LISTEN: Open a socket to listen for incoming connections. 
+          - OSAL_STREAM_UDP_MULTICAST: Open a UDP multicast socket. 
+          - OSAL_STREAM_NO_SELECT: Open socket without select functionality.
+          - OSAL_STREAM_TCP_NODELAY: Disable Nagle's algorithm on TCP socket.
+          - OSAL_STREAM_NO_REUSEADDR: Disable reusability of the socket descriptor.
+          - OSAL_STREAM_BLOCKING: Open socket in blocking mode.
 
-		   See @ref osalStreamFlags "Flags for Stream Functions" for full list of stream flags.
+		  See @ref osalStreamFlags "Flags for Stream Functions" for full list of stream flags.
 
-  @return  Stream pointer representing the socket, or OS_NULL if the function failed.
+  @return Stream pointer representing the socket, or OS_NULL if the function failed.
 
 ****************************************************************************************************
 */
@@ -119,12 +119,10 @@ osalStream osal_socket_open(
     ADDRINFOW *ptr = NULL;
     ADDRINFOW hints;
 	osalStatus rval;
-//	unsigned long addr = 0;
 	SOCKET handle = INVALID_SOCKET;
 	struct sockaddr_in saddr;
     struct sockaddr_in6 saddr6;
     struct sockaddr *sa;
-//	struct hostent *he;
     os_boolean is_ipv6;
     int af, udp, on = 1, s, sa_sz;
 

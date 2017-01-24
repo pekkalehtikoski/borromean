@@ -67,7 +67,7 @@ public:
 
     /* Clone name space
      */
-    eObject *clone(
+    virtual eObject *clone(
         eObject *parent, 
         e_oid oid,
         os_int aflags);

@@ -119,12 +119,12 @@
 /** eQueue specific flag: Encode data when writing into queue. If not set, data is written to
     queue as is.
  */
-#define OSAL_STREAM_ENCODE_ON_WRITE 0x01
+#define OSAL_STREAM_ENCODE_ON_WRITE 0x0100000
 
 /** eQueue specific flag: Decode data when reading from queue. If not set, data is read from
     queue as is.
  */
-#define OSAL_STREAM_DECODE_ON_READ 0x02
+#define OSAL_STREAM_DECODE_ON_READ 0x0200000
 
 /*@}*/
 
@@ -210,17 +210,6 @@ public:
 		return new eStream(parent, oid, flags);
 	}
 
-	eStatus select(
-		eStream *streams,
-        os_int nstreams,
-		osalEvent evnt,
-		osalSelectData *data,
-		os_int flags)
-    {
-        return ESTATUS_SUCCESS;
-    }
-
-
     /*@}*/
 
 
@@ -235,7 +224,7 @@ public:
 	*/
 	/*@{*/
     virtual eStatus open(
-        os_char *path, 
+	    os_char *parameters,
         os_int flags=0) 
     {
         return ESTATUS_SUCCESS;
@@ -284,6 +273,17 @@ public:
     {
         return E_STREAM_DISCONNECT;
     }
+
+	eStatus select(
+		eStream *streams,
+        os_int nstreams,
+		osalEvent evnt,
+		osalSelectData *data,
+		os_int flags)
+    {
+        return ESTATUS_SUCCESS;
+    }
+
 
 	/** Begin an object, etc. block. This is for versioning, data may be added or changed later.
      */

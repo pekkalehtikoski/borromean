@@ -84,7 +84,7 @@ eQueue::~eQueue()
   The open() function clears the queue into initial state and sets flags for encoding and
   decoding data on read and write.
 
-  @param  path Ignored by eQueue.
+  @param  parameters Ignored by eQueue.
   @param  flags for eQueue, bit fields:
           - OSAL_STREAM_ENCODE_ON_WRITE: Encode data when writing into queue. 
             If flag not set, data is written to queue as is.
@@ -98,7 +98,7 @@ eQueue::~eQueue()
 ****************************************************************************************************
 */
 eStatus eQueue::open(
-    os_char *path, 
+	os_char *parameters,
     os_int flags) 
 {
     /* Call close() to make sure that queue is empty and all member variables initialized.
@@ -111,7 +111,6 @@ eStatus eQueue::open(
 
     return ESTATUS_SUCCESS;
 }
-
 
 
 /**

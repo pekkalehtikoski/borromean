@@ -141,6 +141,9 @@ typedef struct osalStreamHeader *osalStream;
  */
 #define OSAL_STREAM_BLOCKING 0x4000
 
+/* Nore: bit 0x0100000 and larger are reserved to eStream
+ */
+
 
 /*@}*/
 

@@ -1,12 +1,12 @@
 /**
 
   @file    eendpoint.h
-  @brief   EndPoint base class.
+  @brief   End point class.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    17.5.2016
 
-  EndPoint base class sets up general way to interace with different types of endpoints.
+  The eEndPoint is socket end point listening to specific TCP port for new connections.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -18,29 +18,27 @@
 #ifndef EENDPOINT_INCLUDED
 #define EENDPOINT_INCLUDED
 
+/* Enumeration of end point properties.
+ */
+#define EENDPP_IPADDR 10
+
+/* End point property names.
+ */
+extern os_char
+    eendpp_ipaddr[];
+
+
 /**
 ****************************************************************************************************
 
-  @brief Object base class.
+  @brief End point class.
 
-  The eObject is base class for all eobject library objects. It defines basic functionality for
-  networked objects.
-
+  The eEndPoint is socket end point listening to specific TCP port for new connections.
 
 ****************************************************************************************************
 */
 class eEndPoint : public eObject
 {
-	/** 
-	************************************************************************************************
-
-	  @name Constructors and destructor
-
-	  X...
-
-	************************************************************************************************
-	*/
-	/*@{*/
 public:
 	/** Constructor.
      */
@@ -63,11 +61,15 @@ public:
 	}
 
 	/* Get class identifier.
-	*/
+	 */
 	virtual os_int classid() 
     { 
         return ECLASSID_ENDPOINT; 
     }
+
+    /* Static function to add class to propertysets and class list.
+     */
+    static void setupclass();
 
 	/* Static constructor function.
 	*/
@@ -79,37 +81,22 @@ public:
 		return new eEndPoint(parent, oid, flags);
 	}
 
-	eStatus select(
-		eEndPoint *endpoints,
-        os_int nendpoints,
-		osalEvent evnt,
-		osalSelectData *data,
-		os_int flags)
-    {
-        return ESTATUS_SUCCESS;
-    }
+    /* Called when property value changes.
+     */
+    virtual void onpropertychange(
+        os_int propertynr, 
+        eVariable *x, 
+        os_int flags);
 
-    /*@}*/
+    /* Get value of simple property.
+     */
+    virtual eStatus simpleproperty(
+        os_int propertynr, 
+        eVariable *x);
 
-	/** 
-	************************************************************************************************
+protected:
+    eVariable *m_ipaddr;
 
-	  @name Functions for writing to and reading from endpoint.
-
-	  X...
-
-	************************************************************************************************
-	*/
-	/*@{*/
-    virtual eStatus open(
-        os_char *path, 
-        os_int flags=0) 
-    {
-        return ESTATUS_SUCCESS;
-    }
-
-
-    /*@}*/
 };
 
 #endif
