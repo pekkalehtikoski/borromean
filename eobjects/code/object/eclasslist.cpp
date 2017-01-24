@@ -123,6 +123,13 @@ void eclasslist_initialize()
      */
     eVariable::setupclass(); 
     eSet::setupclass(); 
+    eContainer::setupclass(); 
+    eName::setupclass(); 
+    eEnvelope::setupclass(); 
+    ePropertyBinding::setupclass();
+    eQueue::setupclass(); 
+    eConnection::setupclass(); 
+    eEndPoint::setupclass(); 
 }
 
 

@@ -1,13 +1,12 @@
 /**
 
-  @file    eobjects_property_example3.cpp
-  @brief   Example code about naming objects.
+  @file    eobjects_endpoint_example1.cpp
+  @brief   Example code about connecting two processes.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    28.12.2016
 
-  This example demonstrates setting up a new class with properties, and how to react to property
-  value changes.
+  This demonstrates creating an end point which listens for socket connections.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -17,7 +16,7 @@
 ****************************************************************************************************
 */
 #include "eobjects/eobjects.h"
-#include "eobjects_property_example.h"
+#include "eobjects_endpoint_example.h"
 #include <stdio.h>
 
 /* Purpose of a message is specified by 32 bit command. Negative command identifiers are
@@ -197,16 +196,15 @@ setpropertyd(EMYCLASS2P_Y, 4.3);
 /**
 ****************************************************************************************************
 
-  @brief Property example 3.
+  @brief End point example 1.
 
-  The property_example_3() function sets up new class eMyClass and uses for Celcius
-  to Fahrenheit conversion. Purpose of this is to show how class can react to property changes.
+  The endpoint_example_1() function sets up new class eMyClass...
 
   @return  None.
 
 ****************************************************************************************************
 */
-void property_example_4()
+void endpoint_example_1()
 {
     eThread *t;
     eThreadHandle thandle1, thandle2;

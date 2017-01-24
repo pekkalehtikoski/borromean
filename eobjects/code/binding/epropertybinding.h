@@ -77,6 +77,10 @@ public:
         return ECLASSID_PROPERTY_BINDING;
     }
 
+    /* Static function to add class to propertysets and class list.
+     */
+    static void setupclass();
+
     /* Static constructor function for generating instance by class list.
      */
     static ePropertyBinding *newobj(

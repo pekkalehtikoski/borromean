@@ -1,12 +1,13 @@
 /**
 
   @file    esocket.h
-  @brief   Socket base class.
+  @brief   TCP socket class.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    17.5.2016
 
-  Socket base class sets up general way to interace with different types of sockets.
+  TCP socket class encodes and buffers data and calls OSAL's stream functions to read/write the
+  socket.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -70,6 +71,10 @@ public:
     { 
         return ECLASSID_SOCKET; 
     }
+
+    /* Static function to add class to propertysets and class list.
+     */
+    static void setupclass();
 
 	/* Static constructor function.
 	*/

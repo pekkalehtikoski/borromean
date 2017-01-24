@@ -90,13 +90,13 @@ public:
 
     /* Static constructor function for generating instance by class list.
      */
-    static eNameSpace *newobj(
+    /* static eNameSpace *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
         return new eNameSpace(parent, oid, flags);
-    }
+    } */
 
     /*@}*/
 

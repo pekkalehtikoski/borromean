@@ -77,6 +77,31 @@ eName::~eName()
 /**
 ****************************************************************************************************
 
+  @brief Add eName to class list and class'es properties to it's property set.
+
+  The eName::setupclass function adds eName to class list and class'es properties to
+  it's property set. The class list enables creating new objects dynamically by class identifier, 
+  which is used for serialization reader functions. The property stet stores static list of
+  class'es properties and metadata for those.
+
+****************************************************************************************************
+*/
+void eName::setupclass()
+{
+    const os_int cls = ECLASSID_NAME;
+
+    /* Add the class to class list.
+     */
+    osal_mutex_system_lock();
+    eclasslist_add(cls, (eNewObjFunc)newobj);
+    eVariable::setupproperties(cls);
+    osal_mutex_system_unlock();
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Clear member variables to initial state.
 
   X...

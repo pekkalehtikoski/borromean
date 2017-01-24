@@ -66,13 +66,13 @@ public:
 
 	/* Static constructor function.
 	*/
-	static ePointer *newobj(
+	/* static ePointer *newobj(
 		eObject *parent,
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
 	{
 		return new ePointer(parent, oid, flags);
-	}
+	} */
 
     /*@}*/
 

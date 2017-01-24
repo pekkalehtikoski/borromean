@@ -164,6 +164,11 @@ public:
      */
     static void setupclass();
 
+    /* Add class'es properties to property set.
+     */
+    static void setupproperties(
+        os_int cls);
+
     /* Static constructor function for generating instance by class list.
      */
     static eVariable *newobj(

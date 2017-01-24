@@ -70,13 +70,13 @@ public:
 
     /* Static constructor function for generating instance by class list.
      */
-    static eThreadHandle *newobj(
+    /* static eThreadHandle *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
         return new eThreadHandle(parent, oid, flags);
-    }
+    } */
 
     /*@}*/
 

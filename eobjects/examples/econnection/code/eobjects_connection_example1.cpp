@@ -1,13 +1,12 @@
 /**
 
-  @file    eobjects_property_example3.cpp
-  @brief   Example code about naming objects.
+  @file    eobjects_connection_example1.cpp
+  @brief   Example code for connecting two processes.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    28.12.2016
 
-  This example demonstrates setting up a new class with properties, and how to react to property
-  value changes.
+  This example demonstrates connecting two processes.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -17,7 +16,7 @@
 ****************************************************************************************************
 */
 #include "eobjects/eobjects.h"
-#include "eobjects_property_example.h"
+#include "eobjects_connection_example.h"
 #include <stdio.h>
 
 /* Purpose of a message is specified by 32 bit command. Negative command identifiers are
@@ -197,23 +196,24 @@ setpropertyd(EMYCLASS2P_Y, 4.3);
 /**
 ****************************************************************************************************
 
-  @brief Property example 3.
+  @brief Connection example 1.
 
-  The property_example_3() function sets up new class eMyClass and uses for Celcius
-  to Fahrenheit conversion. Purpose of this is to show how class can react to property changes.
+  The connection_example_1() function...
 
   @return  None.
 
 ****************************************************************************************************
 */
-void property_example_4()
+void connection_example_1()
 {
     eThread *t;
-    eThreadHandle thandle1, thandle2;
+    eThreadHandle thandle1, thandle2, endpointthreadhandle;
+    eEndPoint *ep;
     eContainer c;
 
-    /* Adds the eMyClass1 and eMyClass2 to class list and creates property set for the class.
+    /* Set up eSocket and my own classes for use.
      */
+    eSocket::setupclass(); 
     eMyClass1::setupclass(); 
     eMyClass2::setupclass(); 
 
@@ -230,6 +230,15 @@ void property_example_4()
     t->start(&thandle2); /* After this t pointer is useless */
 
     c.setpropertyd_msg("//thread1/_p/A", 11.5);
+
+    /* Create and start thread to listen for incoming socket connections, 
+       name it "endpointthread".
+     */
+    t = new eThread();
+	t->addname("endpointthread", ENAME_PROCESS_NS);
+    ep = new eEndPoint(t);
+    t->start(&endpointthreadhandle); /* After this t pointer is useless */
+    c.setpropertyd_msg("//endpointthread/_p/spaddr", 11.5);
 
     os_sleep(15000);
 

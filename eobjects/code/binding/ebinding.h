@@ -111,13 +111,13 @@ public:
 
     /* Static constructor function for generating instance by class list.
      */
-    static eBinding *newobj(
+    /* static eBinding *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
         osal_debug_error("ebinding, newobj(): Cannot create abstract class.");
-    }
+    } */
 
     /* Write binding content to stream.
      */

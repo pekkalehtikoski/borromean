@@ -97,6 +97,10 @@ public:
         return ECLASSID_QUEUE; 
     }
 
+    /* Static function to add class to propertysets and class list.
+     */
+    static void setupclass();
+
 	/* Static constructor function.
 	*/
 	static eQueue *newobj(

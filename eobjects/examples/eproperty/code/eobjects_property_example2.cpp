@@ -1,7 +1,7 @@
 /**
 
   @file    eobjects_property_example2.cpp
-  @brief   Example code about naming objects.
+  @brief   Example code object properties.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    28.12.2016

@@ -82,13 +82,13 @@ public:
 
     /* Static constructor function for generating instance by class list.
      */
-    static eThread *newobj(
+    /* static eThread *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
         return new eThread(parent, oid, flags);
-    }
+    } */
 
     virtual void onmessage(
         eEnvelope *envelope);

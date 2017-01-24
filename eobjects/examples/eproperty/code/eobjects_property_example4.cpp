@@ -1,7 +1,7 @@
 /**
 
-  @file    eobjects_property_example3.cpp
-  @brief   Example code about naming objects.
+  @file    eobjects_property_example4.cpp
+  @brief   Example code object properties.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    28.12.2016
@@ -197,9 +197,9 @@ setpropertyd(EMYCLASS2P_Y, 4.3);
 /**
 ****************************************************************************************************
 
-  @brief Property example 3.
+  @brief Property example 4.
 
-  The property_example_3() function sets up new class eMyClass and uses for Celcius
+  The property_example_4() function sets up new class eMyClass and uses for Celcius
   to Fahrenheit conversion. Purpose of this is to show how class can react to property changes.
 
   @return  None.

@@ -98,6 +98,30 @@ eObject *ePropertyBinding::clone(
 /**
 ****************************************************************************************************
 
+  @brief Add the class to class list and class'es properties to it's property set.
+
+  The eVariable::setupclass function adds the class to class list and class'es properties to
+  it's property set. The class list enables creating new objects dynamically by class identifier, 
+  which is used for serialization reader functions. The property stet stores static list of
+  class'es properties and metadata for those.
+
+****************************************************************************************************
+*/
+void ePropertyBinding::setupclass()
+{
+    const os_int cls = ECLASSID_PROPERTY_BINDING;
+
+    /* Add the class to class list.
+     */
+    osal_mutex_system_lock();
+    eclasslist_add(cls, (eNewObjFunc)newobj);
+    osal_mutex_system_unlock();
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Write propertybinding content to stream.
 
   The ePropertyBinding::writer() function serialized the propertybinding to stream. This writes only the 

@@ -12,8 +12,9 @@ include(../../../build/cmake/e-build-defs.txt)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_LIB})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $ENV{E_LIB})
 
-# Set path to source files.
+# Set paths to source files.
 set(E_SOURCE_PATH "$ENV{E_ROOT}/${E_PROJECT}/code")
+set(E_EXT_SOURCE_PATH "$ENV{E_ROOT}/${E_PROJECT}/extensions")
 
 # Set include paths.
 include_directories($ENV{E_INCLUDE})
@@ -23,9 +24,11 @@ set(MAIN_HEADER "$ENV{E_ROOT}/${E_PROJECT}/${E_PROJECT}.h")
 
 # Add header files, the file(GLOB_RECURSE...) allows for wildcards and recurses subdirs.
 file(GLOB_RECURSE HEADERS "${E_SOURCE_PATH}/*.h")
+file(GLOB_RECURSE EXT_HEADERS "${E_EXT_SOURCE_PATH}/*.h")
 
 # Add source files.
 file(GLOB_RECURSE SOURCES "${E_SOURCE_PATH}/*.cpp")
+file(GLOB_RECURSE EXT_SOURCES "${E_EXT_SOURCE_PATH}/*.cpp")
 
 # Generate the static library
-add_library(${E_PROJECT} STATIC ${MAIN_HEADER} ${HEADERS} ${SOURCES})
+add_library(${E_PROJECT} STATIC ${MAIN_HEADER} ${HEADERS} ${SOURCES} ${EXT_HEADERS} ${EXT_SOURCES})

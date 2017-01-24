@@ -109,6 +109,30 @@ eObject *eEnvelope::clone(
 /**
 ****************************************************************************************************
 
+  @brief Add the class to class list and class'es properties to it's property set.
+
+  The eVariable::setupclass function adds the class to class list and class'es properties to
+  it's property set. The class list enables creating new objects dynamically by class identifier, 
+  which is used for serialization reader functions. The property stet stores static list of
+  class'es properties and metadata for those.
+
+****************************************************************************************************
+*/
+void eEnvelope::setupclass()
+{
+    const os_int cls = ECLASSID_ENVELOPE;
+
+    /* Add the class to class list.
+     */
+    osal_mutex_system_lock();
+    eclasslist_add(cls, (eNewObjFunc)newobj);
+    osal_mutex_system_unlock();
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Set destination for the envelope.
 
   The eEnvelope::settarget() function. 

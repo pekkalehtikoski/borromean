@@ -821,7 +821,8 @@ void eObject::ns_create(
 
 	/* Create name space.
 	 */
-	ns = eNameSpace::newobj(this, EOID_NAMESPACE);
+	// ns = eNameSpace::newobj(this, EOID_NAMESPACE);
+	ns = new eNameSpace(this, EOID_NAMESPACE);
     if (namespace_id)
     {
         ns->setnamespaceid(new eVariable(ns));

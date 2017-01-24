@@ -1,12 +1,12 @@
 /**
 
-  @file    eobjects_property_example.cpp
-  @brief   Example code about naming objects.
+  @file    eobjects_endpoint_example.cpp
+  @brief   Example code about connecting two processes.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    28.12.2016
 
-  This example demonstrates how to create propertys.
+  This demonstrates creating an end point which listens for socket connections.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -16,7 +16,7 @@
 ****************************************************************************************************
 */
 #include "eobjects/eobjects.h"
-#include "eobjects_property_example.h"
+#include "eobjects_endpoint_example.h"
 
 /* Generate entry code for console application.
  */
@@ -40,7 +40,7 @@ os_int emain(
     os_int argc,
     os_char *argv[])
 {
-    property_example_4();
+    endpoint_example_1();
 
     return 0;
 }

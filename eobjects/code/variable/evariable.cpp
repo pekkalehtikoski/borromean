@@ -130,12 +130,32 @@ eObject *eVariable::clone(
 void eVariable::setupclass()
 {
     const os_int cls = ECLASSID_VARIABLE;
-    eVariable *p;
 
     /* Add the class to class list.
      */
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj);
+    setupproperties(cls);
+    osal_mutex_system_unlock();
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Add class'es properties to property set.
+
+  The eVariable::setupproperties is helper function for setupclass, it is called from both
+  eVariable class and derived classes like eName.
+
+  Process mutex must be locked when calling this function.
+
+****************************************************************************************************
+*/
+void eVariable::setupproperties(
+    os_int cls)
+{
+    eVariable *p;
 
     /* Order of these addproperty() calls is important, since eVariable itself is used to 
        describe the properties in property set. The property to set must be added to 
@@ -158,7 +178,6 @@ void eVariable::setupclass()
     addproperty (cls, EVARP_QUALITY, evarp_quality, EPRO_METADATA|EPRO_NOONPRCH, "quality");
     addproperty (cls, EVARP_TIMESTAMP, evarp_timestamp, EPRO_METADATA|EPRO_NOONPRCH, "timestamp");
     addproperty (cls, EVARP_CONF, evarp_conf, EPRO_METADATA|EPRO_NOONPRCH, "conf");
-    osal_mutex_system_unlock();
 }
 
 
