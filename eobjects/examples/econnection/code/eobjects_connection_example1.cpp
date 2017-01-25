@@ -248,4 +248,6 @@ void connection_example_1()
     thandle1.join();
     thandle2.terminate();
     thandle2.join();
+    endpointthreadhandle.terminate();
+    endpointthreadhandle.join();
 }

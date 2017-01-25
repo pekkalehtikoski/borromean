@@ -25,9 +25,9 @@
 #define ENAME_TEMPORARY 1
 #define ENAME_PROCESS_NS 2
 #define ENAME_THREAD_NS 4
-#define ENAME_PARENT_NS 0
-#define ENAME_THIS_NS 8
-#define ENAME_NO_MAP 16
+#define ENAME_PARENT_NS 8
+#define ENAME_THIS_NS 16
+#define ENAME_NO_MAP 32
 
 /* Enumeration of name space types.
  */

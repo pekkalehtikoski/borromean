@@ -224,6 +224,11 @@ public:
         if (m_target[m_target_pos] == '/') m_target_pos++;
     }
 
+    /* Prepend target with with name
+     */
+    void prependtarget(
+        const os_char *name);
+
 //    os_boolean nexttargetis(char *name);
 
 
@@ -274,6 +279,8 @@ private:
     */
     os_short m_mflags;
 
+    os_short m_target_alloc;
+
     os_short m_target_pos;
     os_short m_source_end;
     os_short m_source_alloc;
@@ -281,8 +288,6 @@ private:
     /* Target path.
      */
     os_char *m_target;
-
-    os_int m_target_alloc;
 
     /* Source path.
      */

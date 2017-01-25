@@ -40,6 +40,7 @@ eEndPoint::eEndPoint(
 	os_int flags)
     : eObject(parent, oid, flags)
 {
+    m_ipaddr = new eVariable(this);
 }
 
 
@@ -113,7 +114,16 @@ void eEndPoint::onpropertychange(
     switch (propertynr)
     {
         case EENDPP_IPADDR:
-            m_ipaddr->setv(x);
+            if (x->compare(m_ipaddr))
+            {
+                m_ipaddr->setv(x);
+                if (!m_ipaddr->isempty())
+                {
+//                    open()
+
+
+                }
+            }
             break;
 
         default:

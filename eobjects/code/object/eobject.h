@@ -558,11 +558,23 @@ public:
     void setproperty_msg(
         const os_char *remotepath,
         eObject *x,
-        os_int flags);
+        const os_char *propertyname = OS_NULL,
+        os_int flags = EMSG_KEEP_CONTENT|EMSG_NO_REPLIES);
+
+    void setpropertyl_msg(
+        const os_char *remotepath,
+        os_long x,
+        const os_char *propertyname = OS_NULL);
 
     void setpropertyd_msg(
         const os_char *remotepath,
-        os_double x);
+        os_double x,
+        const os_char *propertyname = OS_NULL);
+
+    void setpropertys_msg(
+        const os_char *remotepath,
+        const os_char *x,
+        const os_char *propertyname = OS_NULL);
 
     /*@}*/
 

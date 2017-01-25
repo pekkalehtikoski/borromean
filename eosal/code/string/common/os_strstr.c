@@ -42,7 +42,7 @@
 ****************************************************************************************************
 */
 os_char *os_strstr(
-    os_char *str,
+    const os_char *str,
 	const os_char *substr,
 	os_short flags)
 {
@@ -57,9 +57,9 @@ os_char *os_strstr(
 	/* First character of substring is
 	 */
 	c = *substr;
-	if (c == '\0') return str;
+	if (c == '\0') return (os_char*)str;
 
-	p = str;
+	p = (os_char*)str;
 	quoted = OS_FALSE;
 	do 
 	{
@@ -103,7 +103,7 @@ os_char *os_strstr(
 						if (osal_char_isaplha(d) || osal_char_isdigit(d)) 
 							goto skipthis;
 					}
-					return p;
+					return (os_char*)p;
 				}
 			} 
 			while (*u == *(++s));

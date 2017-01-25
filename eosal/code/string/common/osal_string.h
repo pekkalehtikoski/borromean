@@ -105,7 +105,7 @@ os_char *os_strechr(
 /* Find a substring within a string. Used also to find named items from list.
  */
 os_char *os_strstr(
-    os_char *str,
+    const os_char *str,
 	const os_char *substr,
 	os_short flags);
 

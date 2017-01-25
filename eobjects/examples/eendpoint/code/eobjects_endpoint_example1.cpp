@@ -207,11 +207,14 @@ setpropertyd(EMYCLASS2P_Y, 4.3);
 void endpoint_example_1()
 {
     eThread *t;
-    eThreadHandle thandle1, thandle2;
+    eThreadHandle thandle1, thandle2, endpointthreadhandle;
+    eEndPoint *ep;
     eContainer c;
 
-    /* Adds the eMyClass1 and eMyClass2 to class list and creates property set for the class.
+    /* Set up eSocket and my own classes for use.
      */
+    eSocket::setupclass(); 
+#if 0
     eMyClass1::setupclass(); 
     eMyClass2::setupclass(); 
 
@@ -228,13 +231,26 @@ void endpoint_example_1()
     t->start(&thandle2); /* After this t pointer is useless */
 
     c.setpropertyd_msg("//thread1/_p/A", 11.5);
+#endif
+    /* Create and start thread to listen for incoming socket connections, 
+       name it "endpointthread".
+     */
+    t = new eThread();
+	t->addname("//endpointthread");
+    ep = new eEndPoint(t);
+	ep->addname("//myendpoint");
+    t->start(&endpointthreadhandle); /* After this t pointer is useless */
+    c.setpropertys_msg("//myendpoint",
+         ":" OSAL_DEFAULT_SOCKET_PORT_STR, eendpp_ipaddr);
 
     os_sleep(15000);
 
     /* Wait for the threads to terminate.
      */
-    thandle1.terminate();
+/*    thandle1.terminate();
     thandle1.join();
     thandle2.terminate();
-    thandle2.join();
+    thandle2.join(); */
+    endpointthreadhandle.terminate();
+    endpointthreadhandle.join();
 }

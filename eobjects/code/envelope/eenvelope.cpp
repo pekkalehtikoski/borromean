@@ -195,6 +195,50 @@ void eEnvelope::settarget(
 }
 
 
+
+/* Prepend target with with name
+    */
+void eEnvelope::prependtarget(
+    const os_char *name)
+{
+    os_int name_sz, tgt_sz;
+    os_char *newtgt;
+    os_memsz sz;
+    
+    name_sz = (os_int)os_strlen(name);
+    tgt_sz = (os_int)os_strlen(m_target +  m_target_pos);
+    if (name_sz + tgt_sz > m_target_alloc)
+    {
+	    newtgt = (os_char*)osal_memory_allocate(name_sz + tgt_sz, &sz);
+
+        os_memcpy(newtgt, name, name_sz);
+        if (m_target[m_target_pos] != '\0') 
+        {
+            newtgt[name_sz - 1] = '/';
+            os_memcpy(newtgt + name_sz, m_target + m_target_pos, tgt_sz);
+        }
+        osal_memory_free(m_target, m_target_alloc);
+        m_target = newtgt;
+        m_target_alloc = (os_int)sz;
+        m_target_pos = 0;
+    }
+    else
+    {
+        if (name_sz > m_target_pos)
+        {
+            os_memmove(m_target + name_sz, m_target + m_target_pos, tgt_sz);
+            m_target_pos = 0;
+        }
+        else
+        {
+            m_target_pos -= name_sz;
+        }
+        os_memcpy(m_target + m_target_pos, name, name_sz);
+        if (m_target[m_target_pos + name_sz] != '\0') 
+            m_target[m_target_pos + name_sz - 1] = '/';
+    }
+}                
+
 /**
 ****************************************************************************************************
 

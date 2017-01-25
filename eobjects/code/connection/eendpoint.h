@@ -95,7 +95,14 @@ public:
         eVariable *x);
 
 protected:
+    /** IP address of the interface and port number to listen to. 
+        IP address can be empty to listen for any interface.
+     */
     eVariable *m_ipaddr;
+
+    /** Listening stream (OSAL socket) handle.
+     */
+    osalStream stream;
 
 };
 

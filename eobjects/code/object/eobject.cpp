@@ -1143,10 +1143,6 @@ eName *eObject::addname(
 	 */
 	n = new eName(this, EOID_NAME);
 
-	/* Set name string, if any.
-	 */
-	if (name) n->sets(name);
-
     /* Set flags for name, like persistancy.
      */
     if (flags & ENAME_TEMPORARY)
@@ -1170,7 +1166,48 @@ eName *eObject::addname(
         {
             namespace_id = E_THIS_NS;
         }
+        else if (flags & ENAME_PARENT_NS)
+        {
+            namespace_id = E_PARENT_NS;
+        }
+
+        /* If name starts with namespace id.
+           Notice: CUSTOM NAME SPACES MISSING!!!
+         */
+        else if (name) 
+        {
+            if (name[0] == '/') 
+            {
+                if (name[1] == '/')
+                {
+                    namespace_id = E_PROCESS_NS;
+                    name += 2;
+                }
+                else
+                {
+                    namespace_id = E_THREAD_NS;
+                    name++;
+                }
+            }
+            else if (name[0] == '.') 
+            {
+                if (name[1] == '/') 
+                {
+                    namespace_id = E_THIS_NS;
+                    name += 2;
+                }
+                else if (name[1] == '.') if (name[2] == '/') 
+                {
+                    namespace_id = E_PARENT_NS;
+                    name += 3;
+                }
+            }
+        }
     }
+
+	/* Set name string, if any.
+	 */
+	if (name) n->sets(name);
 
     /* Set name space identifier.
      */
@@ -1539,7 +1576,7 @@ void eObject::message_process_ns(
     eName *name, *nextname;
     eThread *thread;
     os_memsz sz;
-    os_char buf[E_OEXSTR_BUF_SZ];
+    os_char buf[E_OEXSTR_BUF_SZ], *oname;
     os_boolean multiplethreads;
 
     /* Get pointer to process namespace. This is never NULL (or if it is, it is programming error).
@@ -1580,7 +1617,7 @@ void eObject::message_process_ns(
          */
         objname = new eVariable();
         envelope->nexttarget(objname);
-        objname->gets(&sz);
+        oname = objname->gets(&sz);
 
         /* Synchronize.
          */
@@ -1638,10 +1675,23 @@ void eObject::message_process_ns(
          */
         if (!multiplethreads)
         {
-            /* Remove object name from envelope's target path.
+            /* If this is not message to thread itself.
              */
-            if (thread == name->parent()) 
+            if (thread != name->parent()) 
             {
+                /* If object name is not already oix, convert to one.
+                 */
+                if (*oname != '@')
+                {
+                    envelope->move_target_over_objname((os_short)sz - 1);
+                    name->parent()->oixstr(buf, sizeof(buf));
+                    envelope->prependtarget(buf);
+                }
+            }
+            else
+            {
+                /* Remove object name from envelope's target path.
+                 */
                 envelope->move_target_over_objname((os_short)sz - 1);
             }
 
@@ -1671,6 +1721,10 @@ void eObject::message_process_ns(
                 thread = name->thread();
                 
                 /* If message is not to thread itself.
+                   Here we do replace the name with oix string, even 
+                   if it is already that. We do this simply because 
+                   this is unusual case where efficiency doesn not
+                   matter much.
                  */
                 if (thread != name->parent()) 
                 {
@@ -2021,19 +2075,61 @@ getout:
 void eObject::setproperty_msg(
     const os_char *remotepath,
     eObject *x,
+    const os_char *propertyname,
     os_int flags)
 {
+    eVariable
+        path;
+
+    if (propertyname)
+    {
+        path.sets(remotepath);
+        path.appends("/_p/");
+        path.appends(propertyname);
+        remotepath = path.gets();
+    }
+    else
+    {
+        if (os_strstr(remotepath, "/_p/", OSAL_STRING_DEFAULT) == OS_NULL)
+        {
+            path.sets(remotepath);
+            path.appends("/_p/x");
+            remotepath = path.gets();
+        }
+    }
+
     message (ECMD_SETPROPERTY, remotepath, OS_NULL, x, EMSG_KEEP_CONTENT|EMSG_NO_REPLIES);
 }
 
 
+void eObject::setpropertyl_msg(
+    const os_char *remotepath,
+    os_long x,
+    const os_char *propertyname)
+{
+    eVariable v;
+    v.setl(x);
+    setproperty_msg(remotepath,  &v, propertyname);
+}
+
 void eObject::setpropertyd_msg(
     const os_char *remotepath,
-    os_double x)
+    os_double x,
+    const os_char *propertyname)
 {
     eVariable v;
     v.setd(x);
-    setproperty_msg(remotepath,  &v, 0);
+    setproperty_msg(remotepath,  &v, propertyname);
+}
+
+void eObject::setpropertys_msg(
+    const os_char *remotepath,
+    const os_char *x,
+    const os_char *propertyname)
+{
+    eVariable v;
+    v.sets(x);
+    setproperty_msg(remotepath,  &v, propertyname);
 }
 
 
