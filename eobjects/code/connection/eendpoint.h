@@ -20,12 +20,14 @@
 
 /* Enumeration of end point properties.
  */
-#define EENDPP_IPADDR 2
-#define EENDPP_ISOPEN 4
+#define EENDPP_CLASSID 2
+#define EENDPP_IPADDR  4
+#define EENDPP_ISOPEN  6
 
 /* End point property names.
  */
 extern os_char
+    eendpp_classid[],
     eendpp_ipaddr[],
     eendpp_isopen[];
 
@@ -106,6 +108,9 @@ protected:
     void open();
     void close();
 
+    /** Stream class identifier. Specifies stream class to use.
+     */
+    os_int m_stream_classid;
 
     /** IP address of the interface and port number to listen to. 
         IP address can be empty to listen for any interface.

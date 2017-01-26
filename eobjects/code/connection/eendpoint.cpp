@@ -20,6 +20,7 @@
 /* End point property names.
  */
 os_char
+    eendpp_classid[] = "classid",
     eendpp_ipaddr[] = "ipaddr",
     eendpp_isopen[] = "isopen";
 
@@ -89,8 +90,12 @@ void eEndPoint::setupclass()
      */
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj);
-    addproperty(cls, EENDPP_IPADDR, eendpp_ipaddr, EPRO_PERSISTENT|EPRO_SIMPLE, "IP");
-    p = addpropertyl(cls, EENDPP_ISOPEN, eendpp_isopen, EPRO_NOONPRCH, "is open", OS_FALSE);
+    addpropertyl(cls, EENDPP_CLASSID, eendpp_classid, 
+        EPRO_PERSISTENT|EPRO_SIMPLE, "class ID", ECLASSID_SOCKET);
+    addproperty(cls, EENDPP_IPADDR, eendpp_ipaddr, 
+        EPRO_PERSISTENT|EPRO_SIMPLE, "IP");
+    p = addpropertyl(cls, EENDPP_ISOPEN, eendpp_isopen, 
+        EPRO_NOONPRCH, "is open", OS_FALSE);
     p->setpropertys(EVARP_ATTR, "rdonly;chkbox");
     osal_mutex_system_unlock();
 }
@@ -124,6 +129,10 @@ void eEndPoint::onpropertychange(
 {
     switch (propertynr)
     {
+        case EENDPP_CLASSID:
+            m_stream_classid = (os_int)x->getl();
+            break;
+
         case EENDPP_IPADDR:
             if (x->compare(m_ipaddr))
             {
@@ -161,6 +170,10 @@ eStatus eEndPoint::simpleproperty(
 {
     switch (propertynr)
     {
+        case EENDPP_CLASSID:
+            x->setl(m_stream_classid);
+            break;
+
         case EENDPP_IPADDR:
             x->setv(m_ipaddr);
             break;
@@ -172,6 +185,20 @@ eStatus eEndPoint::simpleproperty(
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Initialize the object.
+
+  The initialize() function is called when new object is fully constructed.
+  It marks end point object initialized, and opens listening end point if ip address
+  for it is already set.
+
+  @param   params Parameters for the new thread.
+  @return  None.
+
+****************************************************************************************************
+*/
 void eEndPoint::initialize(
     eContainer *params)
 {
@@ -181,6 +208,18 @@ void eEndPoint::initialize(
     open();
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Run the connection.
+
+  The eEndPoint::run() function...
+
+  @return  None.
+
+****************************************************************************************************
+*/
 void eEndPoint::run()
 {
     eStatus s;
@@ -209,7 +248,9 @@ void eEndPoint::run()
             {
                 osal_console_write("accept event\n");
 
-                newstream = 0; // new by class if4
+                /* New by class ID.
+                 */
+                newstream = (eStream*)newchild(m_stream_classid);
             
             	s = m_stream->accept(newstream, OSAL_STREAM_DEFAULT);
 
@@ -218,7 +259,6 @@ void eEndPoint::run()
                 /* m_stream->accept();
                 newstream = osal_stream_accept(m_stream, 
                     &status, OSAL_STREAM_DEFAULT); */
-
 
                 if (s) 
                 {
@@ -244,7 +284,7 @@ void eEndPoint::run()
 
   @brief Open the end point.
 
-  The open starts listening end point.
+  The eEndPoint::open() starts listening end point.
 
   @return  None.
 
@@ -256,7 +296,9 @@ void eEndPoint::open()
 
     if (m_stream || !m_initialized || m_ipaddr->isempty()) return;
 
-    m_stream = 0; // new by class if4
+    /* New by class ID.
+     */
+    m_stream = (eStream*)newchild(m_stream_classid);
 
     s = m_stream->open(m_ipaddr->gets(), OSAL_STREAM_LISTEN);
     if (s)
@@ -277,7 +319,7 @@ void eEndPoint::open()
 
   @brief Close the end point.
 
-  The close function closes listening end point.
+  The eEndPoint::close() function closes listening end point.
 
   @return  None.
 

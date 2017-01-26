@@ -152,7 +152,18 @@ public:
 
     /* Allocate new child object by class identifier.
      */
-    eObject *newchild(
+    inline eObject *newchild( 
+        os_int cid,
+        e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT)
+    {
+        return newobject(this, cid, oid = EOID_ITEM, flags);
+    }
+
+    /* Allocate new object by class identifier.
+     */
+    static eObject *newobject(
+        eObject *parent,
         os_int cid,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);

@@ -280,9 +280,9 @@ void eObject::clonegeneric(
 /**
 ****************************************************************************************************
 
-  @brief Allocate new child object of any listed class.
+  @brief Allocate new object of any listed class.
 
-  The eObject::newchild function looks from global class list by class identifier. If static 
+  The eObject::newobject function looks from global class list by class identifier. If static 
   constructor member function corresponding to classid given as argument is found, then an
   object of that class is created as child object if this object.
 
@@ -292,7 +292,8 @@ void eObject::clonegeneric(
 
 ****************************************************************************************************
 */
-eObject *eObject::newchild(
+eObject *eObject::newobject(
+    eObject *parent,
     os_int cid,
     e_oid oid,
 	os_int flags) 
@@ -306,7 +307,7 @@ eObject *eObject::newchild(
 
     /* Create new object of the class.
      */
-    return func(this, oid, flags);
+    return func(parent, oid, flags);
 }
 
 
