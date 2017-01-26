@@ -208,7 +208,6 @@ void endpoint_example_1()
 {
     eThread *t;
     eThreadHandle thandle1, thandle2, endpointthreadhandle;
-    eEndPoint *ep;
     eContainer c;
 
     /* Set up eSocket and my own classes for use.
@@ -235,10 +234,8 @@ void endpoint_example_1()
     /* Create and start thread to listen for incoming socket connections, 
        name it "endpointthread".
      */
-    t = new eThread();
-	t->addname("//endpointthread");
-    ep = new eEndPoint(t);
-	ep->addname("//myendpoint");
+    t = new eEndPoint();
+	t->addname("//myendpoint");
     t->start(&endpointthreadhandle); /* After this t pointer is useless */
     c.setpropertys_msg("//myendpoint",
          ":" OSAL_DEFAULT_SOCKET_PORT_STR, eendpp_ipaddr);

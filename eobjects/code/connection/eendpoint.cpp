@@ -20,7 +20,8 @@
 /* End point property names.
  */
 os_char
-    eendpp_ipaddr[] = "ipaddr";
+    eendpp_ipaddr[] = "ipaddr",
+    eendpp_isopen[] = "isopen";
 
 
 /**
@@ -38,9 +39,15 @@ eEndPoint::eEndPoint(
 	eObject *parent,
 	e_oid oid,
 	os_int flags)
-    : eObject(parent, oid, flags)
+    : eThread(parent, oid, flags)
 {
+    /** Listening stream (OSAL socket) handle.
+     */
+    m_stream = OS_NULL;
+    m_initialized = OS_FALSE;
+
     m_ipaddr = new eVariable(this);
+
 }
 
 
@@ -57,6 +64,7 @@ eEndPoint::eEndPoint(
 */
 eEndPoint::~eEndPoint()
 {
+    close();
 }
 
 
@@ -75,12 +83,15 @@ eEndPoint::~eEndPoint()
 void eEndPoint::setupclass()
 {
     const os_int cls = ECLASSID_ENDPOINT;
+    eVariable *p;
 
     /* Synchwonize, add the class to class list and properties to property set.
      */
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj);
     addproperty(cls, EENDPP_IPADDR, eendpp_ipaddr, EPRO_PERSISTENT|EPRO_SIMPLE, "IP");
+    p = addpropertyl(cls, EENDPP_ISOPEN, eendpp_isopen, EPRO_NOONPRCH, "is open", OS_FALSE);
+    p->setpropertys(EVARP_ATTR, "rdonly;chkbox");
     osal_mutex_system_unlock();
 }
 
@@ -117,17 +128,13 @@ void eEndPoint::onpropertychange(
             if (x->compare(m_ipaddr))
             {
                 m_ipaddr->setv(x);
-                if (!m_ipaddr->isempty())
-                {
-//                    open()
-
-
-                }
+                close();
+                open();
             }
             break;
 
         default:
-            /* eObject::onpropertychange(propertynr, x, flags); */
+            eThread::onpropertychange(propertynr, x, flags);
             break;
     }
 }
@@ -159,8 +166,130 @@ eStatus eEndPoint::simpleproperty(
             break;
    
         default:
-            /* return eObject::simpleproperty(propertynr, x); */
-            return ESTATUS_NO_SIMPLE_PROPERTY_NR;
+            return eThread::simpleproperty(propertynr, x);
     }
     return ESTATUS_SUCCESS;
+}
+
+
+void eEndPoint::initialize(
+    eContainer *params)
+{
+    osal_console_write("initializing worker\n");
+
+    m_initialized = OS_TRUE;
+    open();
+}
+
+void eEndPoint::run()
+{
+    eStatus s;
+    osalSelectData selectdata;
+    eStream *newstream;
+
+    while (!exitnow())
+    {
+        /* If we have listening socket, wait for socket or thread event. 
+           Call alive() to process thread events.
+         */
+        if (m_stream)
+        {
+            s = m_stream->select(&m_stream, 1, trigger(), &selectdata, OSAL_STREAM_DEFAULT);
+            /* status = osal_stream_select(&m_stream, 1, OS_NULL, 
+                &selectdata, OSAL_STREAM_DEFAULT); */
+
+            alive(EALIVE_RETURN_IMMEDIATELY);
+
+            if (s) 
+            {
+	            osal_console_write("osal_stream_select failed\n");
+            }
+
+            else if (selectdata.eventflags & OSAL_STREAM_ACCEPT_EVENT)
+            {
+                osal_console_write("accept event\n");
+
+                newstream = 0; // new by class if4
+            
+            	s = m_stream->accept(newstream, OSAL_STREAM_DEFAULT);
+
+                delete newstream;
+
+                /* m_stream->accept();
+                newstream = osal_stream_accept(m_stream, 
+                    &status, OSAL_STREAM_DEFAULT); */
+
+
+                if (s) 
+                {
+	                osal_console_write("osal_stream_accept failed\n");
+                }
+            }
+        }
+
+        /* Otherwise wait for thread events and process them.
+         */
+        else
+        {
+            alive(EALIVE_WAIT_FOR_EVENT);
+        }
+
+        osal_console_write("worker running\n");
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Open the end point.
+
+  The open starts listening end point.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eEndPoint::open()
+{
+    eStatus s;
+
+    if (m_stream || !m_initialized || m_ipaddr->isempty()) return;
+
+    m_stream = 0; // new by class if4
+
+    s = m_stream->open(m_ipaddr->gets(), OSAL_STREAM_LISTEN);
+    if (s)
+    {
+	    osal_console_write("osal_stream_open failed\n");
+        delete m_stream;
+        m_stream = OS_NULL;
+    }
+    else
+    {
+        setpropertyl(EENDPP_ISOPEN, OS_TRUE);
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Close the end point.
+
+  The close function closes listening end point.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eEndPoint::close()
+{
+    if (m_stream == OS_NULL) return;
+
+    setpropertyl(EENDPP_ISOPEN, OS_FALSE);
+
+//    m_stream->close();
+    delete m_stream;
+    m_stream = OS_NULL;
 }

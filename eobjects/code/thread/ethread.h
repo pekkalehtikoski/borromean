@@ -18,6 +18,12 @@
 #ifndef ETHREAD_INCLUDED
 #define ETHREAD_INCLUDED
 
+/* Flags for alive() function.
+ */
+#define EALIVE_WAIT_FOR_EVENT 1
+#define EALIVE_RETURN_IMMEDIATELY 0
+
+
 /**
 ****************************************************************************************************
 
@@ -134,8 +140,7 @@ public:
     /* Get next message to thread to process.
      */
     void alive(
-        os_int timeout_ms = OSAL_EVENT_INFINITE);
-
+        os_int flags = EALIVE_WAIT_FOR_EVENT);
 
     /*@}*/
 

@@ -38,7 +38,7 @@ eConnection::eConnection(
 	eObject *parent,
 	e_oid oid,
 	os_int flags)
-    : eObject(parent, oid, flags)
+    : eThread(parent, oid, flags)
 {
     m_ipaddr = new eVariable(this);
 }
@@ -117,7 +117,7 @@ void eConnection::onpropertychange(
             break;
 
         default:
-            /* eObject::onpropertychange(propertynr, x, flags); */
+            eThread::onpropertychange(propertynr, x, flags); 
             break;
     }
 }
@@ -149,8 +149,7 @@ eStatus eConnection::simpleproperty(
             break;
    
         default:
-            /* return eObject::simpleproperty(propertynr, x); */
-            return ESTATUS_NO_SIMPLE_PROPERTY_NR;
+            return eThread::simpleproperty(propertynr, x);
     }
     return ESTATUS_SUCCESS;
 }

@@ -70,7 +70,7 @@ void eProcess::run()
         /* Process messages
          */
         osal_mutex_system_lock();
-        alive(0);
+        alive(EALIVE_RETURN_IMMEDIATELY);
         osal_mutex_system_unlock();
     }
 }

@@ -275,15 +275,21 @@ public:
     }
 
 	eStatus select(
-		eStream *streams,
+		eStream **streams,
         os_int nstreams,
 		osalEvent evnt,
 		osalSelectData *data,
 		os_int flags)
     {
-        return ESTATUS_SUCCESS;
+        return ESTATUS_FAILED;
     }
 
+	eStatus accept(
+        eStream *newstream,
+        os_int flags)
+    {
+        return ESTATUS_FAILED;
+    }
 
 	/** Begin an object, etc. block. This is for versioning, data may be added or changed later.
      */

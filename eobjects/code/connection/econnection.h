@@ -21,7 +21,7 @@
 
 /* Enumeration of connection properties.
  */
-#define ECONNP_IPADDR 10
+#define ECONNP_IPADDR 2
 
 /* Connection property names.
  */
@@ -38,7 +38,7 @@ extern os_char
 
 ****************************************************************************************************
 */
-class eConnection : public eObject
+class eConnection : public eThread
 {
 	/** 
 	************************************************************************************************

@@ -280,14 +280,17 @@ void eThread::queue(
 ****************************************************************************************************
 */
 void eThread::alive(
-    os_int timeout_ms)
+    os_int flags)
 {
     eEnvelope
         *envelope;
 
     /* Wait for thread to be trigged.
      */
-    if (timeout_ms) osal_event_wait(m_trigger, OSAL_EVENT_INFINITE);
+    if (flags & EALIVE_WAIT_FOR_EVENT) 
+    {
+        osal_event_wait(m_trigger, OSAL_EVENT_INFINITE);
+    }
 
     while (OS_TRUE)
     {

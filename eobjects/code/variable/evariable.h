@@ -36,20 +36,20 @@
 
 /* Enumeration of variable properties.
  */
-#define EVARP_VALUE 10
-#define EVARP_DIGS 12
-#define EVARP_TEXT 14
-#define EVARP_UNIT 16
-#define EVARP_MIN 18
-#define EVARP_MAX 20
-#define EVARP_TYPE 22
-#define EVARP_ATTR 24
-#define EVARP_DEFAULT 26
-#define EVARP_GAIN 28
-#define EVARP_OFFSET 30
-#define EVARP_QUALITY 32
-#define EVARP_TIMESTAMP 34
-#define EVARP_CONF 36
+#define EVARP_VALUE 1
+#define EVARP_QUALITY 2
+#define EVARP_TIMESTAMP 3
+#define EVARP_DIGS 4
+#define EVARP_TEXT 6
+#define EVARP_UNIT 8
+#define EVARP_MIN 10
+#define EVARP_MAX 12
+#define EVARP_TYPE 14
+#define EVARP_ATTR 16
+#define EVARP_DEFAULT 18
+#define EVARP_GAIN 20
+#define EVARP_OFFSET 22
+#define EVARP_CONF 24
 
 /* Variable property names.
  */

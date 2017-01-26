@@ -20,12 +20,14 @@
 
 /* Enumeration of end point properties.
  */
-#define EENDPP_IPADDR 10
+#define EENDPP_IPADDR 2
+#define EENDPP_ISOPEN 4
 
 /* End point property names.
  */
 extern os_char
-    eendpp_ipaddr[];
+    eendpp_ipaddr[],
+    eendpp_isopen[];
 
 
 /**
@@ -37,7 +39,7 @@ extern os_char
 
 ****************************************************************************************************
 */
-class eEndPoint : public eObject
+class eEndPoint : public eThread
 {
 public:
 	/** Constructor.
@@ -94,15 +96,30 @@ public:
         os_int propertynr, 
         eVariable *x);
 
+    virtual void initialize(
+        eContainer *params = OS_NULL);
+
+    virtual void run();
+
+
 protected:
+    void open();
+    void close();
+
+
     /** IP address of the interface and port number to listen to. 
         IP address can be empty to listen for any interface.
      */
     eVariable *m_ipaddr;
 
-    /** Listening stream (OSAL socket) handle.
+    /** Listening stream handle. OS_NULL if listening socket 
+        is not open.
      */
-    osalStream stream;
+    eStream *m_stream;
+
+    /** End point stream object is initailized flag.
+     */
+    os_boolean m_initialized;
 
 };
 
