@@ -223,6 +223,9 @@ public:
 	************************************************************************************************
 	*/
 	/*@{*/
+
+    /* Open the stream.
+     */
     virtual eStatus open(
 	    os_char *parameters,
         os_int flags=0) 
@@ -230,16 +233,23 @@ public:
         return ESTATUS_SUCCESS;
     }
 
+    /* Close the stream.
+     */
     virtual eStatus close() 
     {
         return ESTATUS_SUCCESS;
     }
 
-    virtual eStatus flush() 
+    /* Flush written data to stream.
+     */
+    virtual eStatus flush(
+        os_int flags) 
     {
         return ESTATUS_SUCCESS;
     }
 
+    /* Write data to stream.
+     */
     virtual eStatus write(
         const os_char *buf, 
         os_memsz buf_sz, 
@@ -249,6 +259,8 @@ public:
         return ESTATUS_SUCCESS;
     }
 
+    /* Read data from stream.
+     */
     virtual eStatus read(
         os_char *buf, 
         os_memsz buf_sz, 
@@ -274,6 +286,8 @@ public:
         return E_STREAM_DISCONNECT;
     }
 
+    /* Wait for stream or thread event.
+     */
 	eStatus select(
 		eStream **streams,
         os_int nstreams,
@@ -284,6 +298,8 @@ public:
         return ESTATUS_FAILED;
     }
 
+    /* Accept incoming connection.
+     */
 	eStatus accept(
         eStream *newstream,
         os_int flags)

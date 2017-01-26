@@ -100,43 +100,73 @@ public:
 	*/
 	/*@{*/
 
-    /* Open a socket.
+    /* Open socket.
      */
     virtual eStatus open(
 	    os_char *parameters,
         os_int flags = 0);
 
+    /* Close socket.
+     */
     virtual eStatus close();
 
-    virtual eStatus flush() {return ESTATUS_SUCCESS;}
+    /* Flush written data to socket.
+     */
+    virtual eStatus flush();
 
+    /* Write data to stream.
+     */
     virtual eStatus write(
         const os_char *buf, 
         os_memsz buf_sz, 
-        os_memsz *nwritten = OS_NULL)
-        {if (nwritten != OS_NULL) *nwritten = 0; return ESTATUS_SUCCESS;}
+        os_memsz *nwritten = OS_NULL);
 
+    /* Read data from stream.
+     */
     virtual eStatus read(
         os_char *buf, 
         os_memsz buf_sz, 
         os_memsz *nread = OS_NULL,
-        os_int flags = 0)
-        {if (nread != OS_NULL) *nread = 0; return ESTATUS_SUCCESS;}
+        os_int flags = 0);
+
+	/** Write character, typically control code.
+     */
+    virtual eStatus writechar(
+        os_int c);
+
+    /* Read character or control code.
+     */    
+    virtual os_int readchar();
+
+    /* Wait for socket or thread event.
+     */
+	eStatus select(
+		eStream **streams,
+        os_int nstreams,
+		osalEvent evnt,
+		osalSelectData *data,
+		os_int flags);
+
+    /* Accept incoming connection.
+     */
+	eStatus accept(
+        eStream *newstream,
+        os_int flags);
 
     /*@}*/
 
 protected:
-        /* Input queue (buffer)
-         */
-        eQueue *m_in;
+    /* Input queue (buffer)
+     */
+    eQueue *m_in;
 
-        /* Output queue (buffer)
-         */
-        eQueue *m_out;
+    /* Output queue (buffer)
+     */
+    eQueue *m_out;
 
-        /* Osal socket handle.
-         */
-        osalStream m_socket;
+    /* Osal socket handle.
+     */
+    osalStream m_socket;
 };
 
 #endif

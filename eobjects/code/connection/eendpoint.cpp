@@ -234,8 +234,6 @@ void eEndPoint::run()
         if (m_stream)
         {
             s = m_stream->select(&m_stream, 1, trigger(), &selectdata, OSAL_STREAM_DEFAULT);
-            /* status = osal_stream_select(&m_stream, 1, OS_NULL, 
-                &selectdata, OSAL_STREAM_DEFAULT); */
 
             alive(EALIVE_RETURN_IMMEDIATELY);
 
@@ -256,9 +254,6 @@ void eEndPoint::run()
 
                 delete newstream;
 
-                /* m_stream->accept();
-                newstream = osal_stream_accept(m_stream, 
-                    &status, OSAL_STREAM_DEFAULT); */
 
                 if (s) 
                 {

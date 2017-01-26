@@ -120,6 +120,8 @@ eStatus eSocket::open(
 {
     osalStatus s;
 
+    if (m_socket) return ESTATUS_FAILED;
+
     /* If we are listening, delete any queues. If connecting, create and open input and 
        output queues. This clears the queues if they were already open.
      */
@@ -147,5 +149,110 @@ eStatus eSocket::open(
 
 eStatus eSocket::close() 
 {
+    if (m_socket == OS_NULL) return ESTATUS_FAILED;
+
+    osal_socket_close(m_socket);
+
     return ESTATUS_SUCCESS;
 }
+
+
+/* Flush written data to socket.
+ */
+eStatus eSocket::flush()
+{
+    if (m_socket == OS_NULL) 
+    {
+        return ESTATUS_FAILED;
+    }
+
+    /* Try to write data to socket.
+     */
+
+    // osal_socket_flush(m_socket, ?);
+
+    return ESTATUS_SUCCESS;
+}
+
+/* Write data to stream.
+ */
+eStatus eSocket::write(
+    const os_char *buf, 
+    os_memsz buf_sz, 
+    os_memsz *nwritten)
+{
+    if (m_socket == OS_NULL) 
+    {
+        *nwritten = 0;
+        return ESTATUS_FAILED;
+    }
+
+    /* Write all data to queue.
+     */
+
+    /* If we have one frame buffered, try to write data to socket frame at a time.
+     */
+
+    return ESTATUS_SUCCESS;
+}
+
+/* Read data from stream.
+ */
+eStatus eSocket::read(
+    os_char *buf, 
+    os_memsz buf_sz, 
+    os_memsz *nread,
+    os_int flags)
+{
+    if (m_socket == OS_NULL) 
+    {
+        *nread = 0;
+        return ESTATUS_FAILED;
+    }
+
+    return ESTATUS_SUCCESS;
+}
+
+/** Write character, typically control code.
+ */
+eStatus eSocket::writechar(
+    os_int c)
+{
+    return ESTATUS_SUCCESS;
+}
+
+/* Read character or control code.
+ */    
+os_int eSocket::readchar()
+{
+    return ESTATUS_SUCCESS;
+}
+
+/* Wait for socket or thread event.
+ */
+eStatus eSocket::select(
+	eStream **streams,
+    os_int nstreams,
+	osalEvent evnt,
+	osalSelectData *data,
+	os_int flags)
+{
+            /* status = osal_stream_select(&m_stream, 1, OS_NULL, 
+                &selectdata, OSAL_STREAM_DEFAULT); */
+
+    return ESTATUS_SUCCESS;
+}
+
+/* Accept incoming connection.
+ */
+eStatus eSocket::accept(
+    eStream *newstream,
+    os_int flags)
+{
+    /* m_stream->accept();
+    newstream = osal_stream_accept(m_stream, 
+        &status, OSAL_STREAM_DEFAULT); */
+
+    return ESTATUS_SUCCESS;
+}
+
