@@ -109,7 +109,7 @@ return OS_NULL;
 
   @brief Write binding content to stream.
 
-  The eBinding::writer() function serialized the binding to stream. This writes only the 
+  The eBinding::writer() function serializes the binding to stream. This writes only the 
   content, use eObject::write() to save also class information, attachements, etc.
   
   @param  stream The stream to write to.

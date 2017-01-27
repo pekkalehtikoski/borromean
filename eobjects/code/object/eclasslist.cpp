@@ -93,7 +93,7 @@ eNewObjFunc eclasslist_newobj(
     }
     else 
     {
-        osal_debug_error("eclasslist_newobj: Class not found.");
+        osal_debug_error("eclasslist_newobj: Class not found");
     }
 
     osal_mutex_system_unlock();

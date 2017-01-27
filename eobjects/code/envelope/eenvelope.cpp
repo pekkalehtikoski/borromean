@@ -133,6 +133,218 @@ void eEnvelope::setupclass()
 /**
 ****************************************************************************************************
 
+  @brief Write envelope to stream.
+
+  The eEnvelope::writer() function serializes envelope to stream. This writes only envelope
+  specific content, use eObject::write() to save also class information, attachements, etc.
+  
+  @param  stream The stream to write to.
+  @param  flags Serialization flags.
+
+  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
+          fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
+          indicate an error.
+
+****************************************************************************************************
+*/
+eStatus eEnvelope::writer(
+    eStream *stream, 
+    os_int flags) 
+{
+    /* Version number. Increment if new serialized items are to the object,
+       and check for new version's items in read() function.
+     */
+    const os_int version = 0;
+    os_int n;
+    os_short mflags;
+    os_memsz nmoved;
+    eObject *ctnt, *ctxt;
+
+	/* Begin the object and write version number.
+     */
+    if (stream->write_begin_block(version)) goto failed;
+
+    /* Write command.
+     */
+    if (stream->putl(m_command)) goto failed;
+
+    /* Decide on flags which need to be passed.
+     */
+    mflags = m_mflags & (EMSG_NO_REPLIES | EMSG_NO_ERRORS);
+    ctnt = content();
+    ctxt = context();
+    if (ctnt) mflags |= EMSG_HAS_CONTENT;
+    if (ctxt) mflags |= EMSG_HAS_CONTEXT;
+    if (stream->putl(m_mflags & (EMSG_NO_REPLIES | EMSG_NO_ERRORS))) goto failed;
+
+    /* Write target.
+     */
+    if (m_target)
+    {
+        n = (os_int)os_strlen(m_target+m_target_pos) - 1;
+    }
+    else
+    {
+        n = 0;
+    }
+    if (stream->putl(n)) goto failed;
+    if (n>0) 
+    {
+        stream->write(m_target+m_target_pos, n, &nmoved);
+        if (nmoved != n) goto failed;
+    }
+
+    /* Write source, unless EMSG_NO_REPLIES is given.
+     */
+    if ((m_mflags & EMSG_NO_REPLIES) == 0)
+    {
+        if (m_source)
+        {
+            n = m_source_end;
+        }
+        else
+        {
+            n = 0;
+        }
+        if (stream->putl(n)) goto failed;
+        if (n>0) 
+        {
+            stream->write(m_target+m_target_pos, n, &nmoved);
+            if (nmoved != n) goto failed;
+        }
+    }
+
+    /* Write content.
+     */
+    if (ctnt) 
+    {
+        if (ctnt->write(stream, flags)) goto failed;
+    }
+
+    /* Write context.
+     */
+    if (ctxt) 
+    {
+        if (ctxt->write(stream, flags)) goto failed;
+    }
+
+	/* End the object.
+     */
+    if (stream->write_end_block()) goto failed;
+
+    /* Object succesfully written.
+     */
+    return ESTATUS_SUCCESS;
+
+    /* Writing object failed.
+     */
+failed:
+    return ESTATUS_WRITING_OBJ_FAILED;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Read envelope from stream.
+
+  The eEnvelope::reader() function reads serialized envelope from stream. This function reads 
+  only the object content. To read whole object including attachments, names, etc, 
+  use eObject::read().
+  
+  @param  stream The stream to read from.
+  @param  flags Serialization flags.
+
+  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
+          fails, value ESTATUS_READING_OBJ_FAILED is returned. Assume that all nonzero values
+          indicate an error.
+
+****************************************************************************************************
+*/
+eStatus eEnvelope::reader(
+    eStream *stream, 
+    os_int flags) 
+{
+    /* Version number. Used to check which versions item's are in serialized data.
+     */
+    os_int version;
+    os_long l, mflags;
+    os_memsz sz;
+
+	/* Read object start mark and version number.
+     */
+    if (stream->read_begin_block(&version)) goto failed;
+
+    /* Read command.
+     */
+    if (stream->getl(&l)) goto failed;
+    m_command = (os_int)l;
+
+    /* Get flags, separate flags to be passed over connection only.
+     */
+    if (stream->getl(&mflags)) goto failed;
+    m_mflags = (mflags & (EMSG_NO_REPLIES | EMSG_NO_ERRORS)) | EMSG_NO_RESOLVE;
+
+    /* Read target.
+     */
+    if (stream->getl(&l)) goto failed;
+    if (l > 0)
+    {
+	    m_target = (os_char*)osal_memory_allocate(l+1, &sz);
+        m_target_alloc = (os_short)sz;
+        m_target_pos = 0;
+        stream->read(m_target, l, &sz);
+        m_target[l] = '\0';
+    }
+
+    /* Read source, unless EMSG_NO_REPLIES is given.
+     */
+    if ((m_mflags & EMSG_NO_REPLIES) == 0)
+    {
+        if (stream->getl(&l)) goto failed;
+        if (l > 0)
+        {
+	        m_source = (os_char*)osal_memory_allocate(l + 1 + 10, &sz);
+            m_source_alloc = (os_short)sz;
+            m_source_end = (os_short)l;
+            stream->read(m_source, l, &sz);
+            m_source[l] = '\0';
+        }
+    }
+
+    /* Read content.
+     */
+    if (mflags & EMSG_HAS_CONTENT) 
+    {
+        if (read(stream, flags) == OS_NULL) goto failed;
+    }
+
+    /* Read context.
+     */
+    if (mflags & EMSG_HAS_CONTENT) 
+    {
+        if (read(stream, flags) == OS_NULL) goto failed;
+    }
+
+	/* End the object.
+     */
+    if (stream->read_end_block()) goto failed;
+
+    /* Object succesfully read.
+     */
+    return ESTATUS_SUCCESS;
+
+    /* Reading object failed.
+     */
+failed:
+    return ESTATUS_READING_OBJ_FAILED;
+}
+
+
+
+/**
+****************************************************************************************************
+
   @brief Set destination for the envelope.
 
   The eEnvelope::settarget() function. 

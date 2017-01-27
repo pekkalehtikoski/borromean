@@ -19,16 +19,11 @@
 #include "eobjects_endpoint_example.h"
 #include <stdio.h>
 
-/* Purpose of a message is specified by 32 bit command. Negative command identifiers are
-   reserved for the eobject library related, but positive ones can be used freely.
- */
-#define MY_COMMAND 10
-
 /* Every class needs to have unique class identifier (classid). Class identifier is is 32 bit
    integer. Class identifiers starting from ECLASSID_APP_BASE are reserved for the application.
  */
 #define MY_CLASS_ID_1 (ECLASSID_APP_BASE + 1)
-#define MY_CLASS_ID_2 (ECLASSID_APP_BASE + 2)
+// #define MY_CLASS_ID_2 (ECLASSID_APP_BASE + 2)
 
 /* Enumeration of eMyClass1 properties. Normally these would be in header file.
  */
@@ -38,19 +33,11 @@
 static os_char emyclass1p_a[] = "A";
 static os_char emyclass1p_b[] = "B";
 
-/* Enumeration of eMyClass2 properties. 
- */
-#define EMYCLASS2P_X 10
-#define EMYCLASS2P_Y 20
-
-static os_char emyclass2p_x[] = "X";
-static os_char emyclass2p_y[] = "Y";
-
 
 /**
 ****************************************************************************************************
 
-  @brief Example property class.
+  @brief Example class.
 
   X...
 
@@ -115,7 +102,7 @@ public:
 };
 
 
-
+#if 0
 /**
 ****************************************************************************************************
 
@@ -191,6 +178,7 @@ setpropertyd(EMYCLASS2P_Y, 4.3);
         }
     }
 };
+#endif
 
 
 /**
@@ -213,15 +201,18 @@ void endpoint_example_1()
     /* Set up eSocket and my own classes for use.
      */
     eSocket::setupclass(); 
-#if 0
     eMyClass1::setupclass(); 
-    eMyClass2::setupclass(); 
 
-    /* Create and start thread named "thread1".
+    /* Create and start class eMyClass1 as thread named "myclass1".
      */
     t = new eMyClass1();
-	t->addname("thread1", ENAME_PROCESS_NS);
+	t->addname("myclass1", ENAME_PROCESS_NS);
     t->start(&thandle1); /* After this t pointer is useless */
+
+
+#if 0
+    eMyClass2::setupclass(); 
+
 
     /* Create and start thread named "thread2".
      */
@@ -237,16 +228,16 @@ void endpoint_example_1()
     t = new eEndPoint();
 	t->addname("//myendpoint");
     t->start(&endpointthreadhandle); /* After this t pointer is useless */
-    c.setpropertys_msg("//myendpoint",
+    c.setpropertys_msg(endpointthreadhandle.uniquename(),
          ":" OSAL_DEFAULT_SOCKET_PORT_STR, eendpp_ipaddr);
 
     os_sleep(15000000);
 
     /* Wait for the threads to terminate.
      */
-/*    thandle1.terminate();
+    thandle1.terminate();
     thandle1.join();
-    thandle2.terminate();
+/*    thandle2.terminate();
     thandle2.join(); */
     endpointthreadhandle.terminate();
     endpointthreadhandle.join();

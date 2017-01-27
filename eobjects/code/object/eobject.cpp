@@ -706,7 +706,7 @@ void eObject::adopt(
      */
 	if (mm_handle == OS_NULL) 
     {
-        osal_debug_error("adopt(): parent object is not part of tree.");
+        osal_debug_error("adopt(): parent object is not part of tree");
 		return;
     }
     
@@ -1370,7 +1370,7 @@ void eObject::message(
 {
     eEnvelope *envelope;
 
-    envelope = new eEnvelope(this, EOBJ_IS_ATTACHMENT); // ?????????????????????????????????????????????????????????????????????????????????
+    envelope = new eEnvelope(this, EOBJ_IS_ATTACHMENT);
     envelope->setcommand(command);
     envelope->setmflags(mflags & ~(EMSG_DEL_CONTENT|EMSG_DEL_CONTEXT));
     envelope->settarget(target);
@@ -1547,7 +1547,7 @@ getout:
      */    
     if ((envelope->mflags() & EMSG_NO_ERRORS) == 0)
     {
-        osal_debug_error("message() failed: Name or namespace not found within thread.");
+        osal_debug_error("message() failed: Name or namespace not found within thread");
     }
 #endif
 
@@ -1597,7 +1597,7 @@ void eObject::message_process_ns(
         {
             osal_mutex_system_unlock();
 #if OSAL_DEBUG
-            osal_debug_error("message() failed: eobjects library not initialized.");
+            osal_debug_error("message() failed: eobjects library not initialized");
 #endif
             goto getout;
         }
@@ -1638,7 +1638,7 @@ void eObject::message_process_ns(
 #if OSAL_DEBUG
             if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
             {
-                osal_debug_error("message() failed: Name not found in process NS.");   
+                osal_debug_error("message() failed: Name not found in process NS");   
             }
 #endif
             delete objname;
@@ -1655,7 +1655,7 @@ void eObject::message_process_ns(
 #if OSAL_DEBUG
             if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
             {
-                osal_debug_error("message() failed: Name in process NS has no eThread as root.");
+                osal_debug_error("message() failed: Name in process NS has no eThread as root");
             }
 #endif
             goto getout;
@@ -1808,7 +1808,7 @@ void eObject::message_oix(
 #if OSAL_DEBUG
         if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
         {
-            osal_debug_error("message() failed: object index format error, not \"@11_2\" format.");
+            osal_debug_error("message() failed: object index format error, not \"@11_2\" format");
         }
 #endif
         goto getout;
@@ -1824,7 +1824,7 @@ void eObject::message_oix(
 #if OSAL_DEBUG
         if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
         {
-            osal_debug_error("message() failed: target object has been deleted.");
+            osal_debug_error("message() failed: target object has been deleted");
         }
 #endif
         goto getout;
@@ -1995,7 +1995,7 @@ getout:
      */
     if ((envelope->mflags() & EMSG_NO_ERRORS) == 0)
     {
-        osal_debug_error("onmessage() failed: target not found.");
+        osal_debug_error("onmessage() failed: target not found");
     }
 #endif
 }
@@ -2031,7 +2031,7 @@ void eObject::onmessage_oix(
 #if OSAL_DEBUG
         if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
         {
-            osal_debug_error("onmessage() failed: object index format error, not \"@11_2\" format.");
+            osal_debug_error("onmessage() failed: object index format error, not \"@11_2\" format");
         }
 #endif
         goto getout;
@@ -2045,7 +2045,7 @@ void eObject::onmessage_oix(
 #if OSAL_DEBUG
         if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
         {
-            osal_debug_error("message() failed: target object has been deleted.");
+            osal_debug_error("message() failed: target object has been deleted");
         }
 #endif
         goto getout;

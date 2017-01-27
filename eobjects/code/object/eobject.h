@@ -45,6 +45,9 @@ class eThread;
 #define EMSG_INTERTHREAD 16 /* Message has been passed from thread to another */
 #define EMSG_DEL_CONTENT 128
 #define EMSG_DEL_CONTEXT 256
+#define EMSG_HAS_CONTENT 2 /* Special flag to be passed over connection only */
+#define EMSG_HAS_CONTEXT 4 /* Special flag to be passed over connection only */
+
 
 /* Macro to debug object type casts.
  */
@@ -434,7 +437,8 @@ public:
         eStream *stream, 
         os_int sflags) 
     {
-        return ESTATUS_SUCCESS;
+        osal_debug_error("serialization failed, writer not implemented");
+        return ESTATUS_FAILED;
     }
 
     /* Called by read() to read class specific object content.
@@ -445,7 +449,8 @@ public:
         eStream *stream, 
         os_int sflags) 
     {
-        return ESTATUS_SUCCESS;
+        osal_debug_error("serialization failed, reader not implemented");
+        return ESTATUS_FAILED;
     }
 
     /*@}*/

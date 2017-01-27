@@ -77,7 +77,7 @@ class eEnvelope : public eObject
 	/** 
 	************************************************************************************************
 
-	  @name Constructor, destructor, etc.
+	  @name Generic Object Functionality.
 
 	  X...
 
@@ -129,6 +129,18 @@ public:
     {
         return new eEnvelope(parent, oid, flags);
     }
+
+    /* Write envelope to stream.
+     */
+    virtual eStatus writer(
+        eStream *stream, 
+        os_int flags);
+
+    /* Read envelope from stream.
+     */
+    virtual eStatus reader(
+        eStream *stream, 
+        os_int flags);
 
     /*@}*/
 

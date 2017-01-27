@@ -116,7 +116,7 @@ public:
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        osal_debug_error("ebinding, newobj(): Cannot create abstract class.");
+        osal_debug_error("ebinding, newobj(): Cannot create abstract class");
     } */
 
     /* Write binding content to stream.

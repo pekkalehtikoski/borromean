@@ -143,7 +143,7 @@ eContainer *eContainer::nextc(
 
   @brief Write container content to stream.
 
-  The eContainer::writer() function serialized the container to stream. This writes only the 
+  The eContainer::writer() function serializes the container to stream. This writes only the 
   content, use eObject::write() to save also class information, attachements, etc.
   
   @param  stream The stream to write to.

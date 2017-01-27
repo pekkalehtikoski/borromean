@@ -240,9 +240,11 @@ void connection_example_1()
     t->start(&conthreadhandle); /* After this t pointer is useless */
     c.setpropertys_msg(conthreadhandle.uniquename(), // "//myconnection",
          "localhost:" OSAL_DEFAULT_SOCKET_PORT_STR, econnp_ipaddr);
-//    conthreadhandle.terminate();
 
-    os_sleep(15000);
+    c.setpropertys_msg("//myconnection/myclass1",
+         "message from commection_example1", "A");
+
+    os_sleep(1500000);
 
     /* Wait for the threads to terminate.
      */

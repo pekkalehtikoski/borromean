@@ -159,6 +159,9 @@ protected:
     void setup(
         os_int flags);
 
+    eStatus write_frames(
+        os_boolean flushnow);
+
     /* Input queue (buffer)
      */
     eQueue *m_in;

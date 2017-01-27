@@ -124,8 +124,8 @@ void ePropertyBinding::setupclass()
 
   @brief Write propertybinding content to stream.
 
-  The ePropertyBinding::writer() function serialized the propertybinding to stream. This writes only the 
-  content, use eObject::write() to save also class information, attachements, etc.
+  The ePropertyBinding::writer() function serializes the property binding to stream. This writes
+  only the content, use eObject::write() to save also class information, attachements, etc.
   
   @param  stream The stream to write to.
   @param  flags Serialization flags.
@@ -181,9 +181,9 @@ failed:
 
   @brief Read conatiner content from stream.
 
-  The ePropertyBinding::reader() function reads serialized propertybinding from stream. This function 
-  reads only the object content. To read whole object including attachments, names, etc, 
-  use eObject::read().
+  The ePropertyBinding::reader() function reads serialized propertybinding from stream. 
+  This function reads only the object content. To read whole object including attachments, 
+  names, etc, use eObject::read().
   
   @param  stream The stream to read from.
   @param  flags Serialization flags.
@@ -350,7 +350,7 @@ void ePropertyBinding::bind(
         if (!binding_getproperty(&x))
         {
 #if OSAL_DEBUG
-            osal_debug_error("bind(): Unknown property number.");
+            osal_debug_error("bind(): Unknown property number");
 #endif
             return;
         }
@@ -386,7 +386,7 @@ void ePropertyBinding::srvbind(
     if (parameters == OS_NULL)
     {
 #if OSAL_DEBUG
-        osal_debug_error("srvbind() failed: no content.");
+        osal_debug_error("srvbind() failed: no content");
 #endif
         goto notarget;
     }
@@ -396,7 +396,7 @@ void ePropertyBinding::srvbind(
     if (!parameters->get(E_BINDPRM_PROPERTYNAME, &v)) 
     {
 #if OSAL_DEBUG
-        osal_debug_error("srvbind() failed: Property name missing.");
+        osal_debug_error("srvbind() failed: Property name missing");
 #endif
         goto notarget;
     }
@@ -407,7 +407,7 @@ void ePropertyBinding::srvbind(
     if (m_localpropertynr < 0)
     {
 #if OSAL_DEBUG
-        osal_debug_error("srvbind() failed: Property name unknwon.");
+        osal_debug_error("srvbind() failed: Property name unknwon");
         osal_debug_error(v.gets());
 #endif
         goto notarget;
@@ -483,7 +483,7 @@ void ePropertyBinding::cbindok(
     if (parameters == OS_NULL)
     {
 #if OSAL_DEBUG
-        osal_debug_error("cbindok() failed: no content.");
+        osal_debug_error("cbindok() failed: no content");
 #endif
         goto notarget;
     }

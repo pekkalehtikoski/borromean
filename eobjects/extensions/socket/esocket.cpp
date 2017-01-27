@@ -199,12 +199,13 @@ eStatus eSocket::write(
 
     /* Write all data to queue.
      */
+    m_out->write(buf, buf_sz, nwritten);
 
     /* If we have one frame buffered, try to write data to socket frame at a time.
      */
-
-    return ESTATUS_SUCCESS;
+    return write_frames(OS_FALSE);
 }
+
 
 /* Read data from stream.
  */
@@ -305,3 +306,10 @@ eStatus eSocket::accept(
     return s == OSAL_STATUS_NO_NEW_CONNECTION ? ESTATUS_NO_NEW_CONNECTION : ESTATUS_FAILED;
 }
 
+/* Accept incoming connection.
+ */
+eStatus eSocket::write_frames(
+    os_boolean flushnow)
+{
+return ESTATUS_SUCCESS;
+}
