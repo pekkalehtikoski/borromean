@@ -339,15 +339,15 @@ eName *eNameSpace::findname(
 eName *eNameSpace::ixgrandparent(
     eName *n) 
 {
-    edebug_assert(n != OS_NULL);
+    osal_debug_assert(n != OS_NULL);
 
 	/* Not the root node.
 	 */
-    edebug_assert(n->m_iup != OS_NULL); 
+    osal_debug_assert(n->m_iup != OS_NULL); 
 
 	/* Not child of root.
 	 */
-    edebug_assert(n->m_iup->m_iup != OS_NULL); 
+    osal_debug_assert(n->m_iup->m_iup != OS_NULL); 
     return n->m_iup->m_iup;
 }
 
@@ -369,11 +369,11 @@ eName *eNameSpace::ixgrandparent(
 eName *eNameSpace::ixsibling(
     eName *n) 
 {
-    edebug_assert(n != OS_NULL);
+    osal_debug_assert(n != OS_NULL);
 
 	/* Root node has no ixsibling.
 	 */
-    edebug_assert(n->m_iup != OS_NULL); 
+    osal_debug_assert(n->m_iup != OS_NULL); 
 
     if (n == n->m_iup->m_ileft)
         return n->m_iup->m_iright;
@@ -399,15 +399,15 @@ eName *eNameSpace::ixsibling(
 eName *eNameSpace::ixuncle(
     eName *n) 
 {
-    edebug_assert(n != OS_NULL);
+    osal_debug_assert(n != OS_NULL);
 
 	/* Root node has no ixuncle.
 	 */
-    edebug_assert(n->m_iup != OS_NULL); 
+    osal_debug_assert(n->m_iup != OS_NULL); 
 
 	/* Children of root have no ixuncle.
 	 */
-    edebug_assert(n->m_iup->m_iup != OS_NULL); 
+    osal_debug_assert(n->m_iup->m_iup != OS_NULL); 
 
     return ixsibling(n->m_iup);
 }
@@ -419,7 +419,7 @@ eName *eNameSpace::ixuncle(
   @brief Red/Black tree: Verify tree integrity.
 
   The eNameSpace::ixverify_properties() function is for red/black tree implementation debugging only.
-  The function checks integrity of the tree and calls edebug_assert() if an error is detected.
+  The function checks integrity of the tree and calls osal_debug_assert() if an error is detected.
 
   We will at all times enforce the following five properties, which provide a theoretical 
   guarantee that the tree remains balanced. We will have a helper function ixverify_properties() 
@@ -459,7 +459,7 @@ void eNameSpace::ixverify_properties()
 */
 void eNameSpace::ixverify_property_2() 
 {
-    edebug_assert(ixisblack(m_ixroot));
+    osal_debug_assert(ixisblack(m_ixroot));
 }
 
 
@@ -481,9 +481,9 @@ void eNameSpace::ixverify_property_4(
 {
     if (ixisred(n)) 
     {
-        edebug_assert(ixisblack(n->m_ileft));
-        edebug_assert(ixisblack(n->m_iright));
-        edebug_assert(ixisblack(n->m_iup));
+        osal_debug_assert(ixisblack(n->m_ileft));
+        osal_debug_assert(ixisblack(n->m_iright));
+        osal_debug_assert(ixisblack(n->m_iup));
     }
     if (n == OS_NULL) return;
     ixverify_property_4(n->m_ileft);
@@ -546,7 +546,7 @@ void eNameSpace::ixverify_property_5_helper(
         } 
         else 
         {
-            edebug_assert (black_count == *path_black_count);
+            osal_debug_assert (black_count == *path_black_count);
         }
         return;
     }
@@ -852,7 +852,7 @@ void eNameSpace::ixinsert_case4(
     else 
     {
 #if EINDEX_DBTREE_DEBUG
-        edebug_assert (n == n->m_iup->m_iright &&
+        osal_debug_assert (n == n->m_iup->m_iright &&
             n->m_iup == ixgrandparent(n)->m_iright);
 #endif
         ixrotate_left(ixgrandparent(n));
@@ -942,7 +942,7 @@ void eNameSpace::ixrbtree_remove(
     }
 
 #if EINDEX_DBTREE_DEBUG
-    edebug_assert(n->m_ileft == OS_NULL || n->m_iright == OS_NULL);
+    osal_debug_assert(n->m_ileft == OS_NULL || n->m_iright == OS_NULL);
 #endif
 
     child = (n->m_iright == OS_NULL) ? n->m_ileft : n->m_iright;
@@ -1142,7 +1142,7 @@ void eNameSpace::ixdelete_case6(
     if (n == n->m_iup->m_ileft) 
     {
 #if EINDEX_DBTREE_DEBUG
-        edebug_assert(ixisred(ixsibling(n)->m_iright));
+        osal_debug_assert(ixisred(ixsibling(n)->m_iright));
 #endif
         ixsibling(n)->m_iright->ixsetblack();
         ixrotate_left(n->m_iup);
@@ -1150,7 +1150,7 @@ void eNameSpace::ixdelete_case6(
     else
     {
 #if EINDEX_DBTREE_DEBUG
-        edebug_assert(ixisred(ixsibling(n)->m_ileft));
+        osal_debug_assert(ixisred(ixsibling(n)->m_ileft));
 #endif
         ixsibling(n)->m_ileft->ixsetblack();
         ixrotate_right(n->m_iup);

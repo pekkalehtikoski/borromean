@@ -64,10 +64,15 @@ class eThread;
 #define EPRO_NOPACK EOBJ_CUST_FLAG5
 
 /* Flags for adopt(), clone() and clonegeeric() functions.
-    */
+ */
 #define EOBJ_BEFORE_THIS 1
 #define EOBJ_NO_MAP 2
 #define EOBJ_CLONE_ALL_CHILDREN 4
+
+/* Serialization flags eObject::write(), eObject::read() and clonegeeric() functions.
+ */
+#define EOBJ_SERIALIZE_DEFAULT 0
+
 
 /**
 ****************************************************************************************************

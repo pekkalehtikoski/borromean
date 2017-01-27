@@ -127,6 +127,9 @@ public:
 protected:
     void open();
     void close();
+    void write(
+        eEnvelope *envelope);
+    void read();
 
     /** Stream class identifier. Specifies stream class to use.
      */

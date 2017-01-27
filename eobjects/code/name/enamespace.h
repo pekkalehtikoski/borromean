@@ -18,6 +18,10 @@
 #ifndef ENAMESPACE_INCLUDED
 #define ENAMESPACE_INCLUDED
 
+/* Set to 1 to debug red/black tree for the name space.
+ */
+#define EINDEX_DBTREE_DEBUG 0
+
 /* Name space identifiers. These are followed by '/', thus for example path to thread looks like 
    "/myobject..." or process "//myobject".
  */
@@ -25,7 +29,6 @@
 #define E_THREAD_NS ""
 #define E_PARENT_NS ".."
 #define E_THIS_NS "."
-
 
 /**
 ****************************************************************************************************

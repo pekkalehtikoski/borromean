@@ -39,6 +39,8 @@ eName::eName(
     /* Clear member variables to initial state.
      */
     clear_members();
+    m_ns_type = E_PARENT_NS_TYPE;
+    m_namespace_id = OS_NULL;
 
 	/* If this is name space.
 	 */
@@ -114,9 +116,8 @@ void eName::clear_members()
 {
 	m_ileft = m_iright = m_iup = OS_NULL;
 	m_namespace = OS_NULL;
-    m_ns_type = E_PARENT_NS_TYPE;
-    m_namespace_id = OS_NULL;
     m_is_process_ns = OS_FALSE;
+    ixsetred();
 }
 
 

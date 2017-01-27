@@ -1326,9 +1326,10 @@ void eObject::mapone(
 
     ns = handle->m_object->findnamespace(name->namespaceid(), &info, this);
 
-    if (mflags & E_ATTACH_NAMES)
+    if ((mflags & E_ATTACH_NAMES))
     {
-        name->mapname2(ns, info);
+        osal_debug_assert(ns);
+        if (ns) name->mapname2(ns, info);
     }
 
     if (mflags & E_DETACH_FROM_NAMESPACES_ABOVE)
@@ -2863,7 +2864,7 @@ void eObject::bind(
   the stream.
   
   @param  stream The stream to write to.
-  @param  sflags Serialization flags.
+  @param  sflags Serialization flags. EOBJ_SERIALIZE_DEFAULT
 
   @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
           fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
@@ -2927,7 +2928,7 @@ failed:
   child object and reads child object content and attachments.
   
   @param  stream The stream to write to.
-  @param  sflags Serialization flags.
+  @param  sflags Serialization flags. EOBJ_SERIALIZE_DEFAULT
 
   @return If successfull the function returns pointer to te new child object. 
           If reading object from stream fails, value OS_NULL is returned. 

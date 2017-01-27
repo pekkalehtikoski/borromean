@@ -218,6 +218,7 @@ void eConnection::onmessage(
         /* If socket connection has not failed (either connected or connecting for first time),
            write serialized data to the socket.
          */
+        write(envelope);
         
         /* Otherwise reply with notarget
          */
@@ -306,6 +307,10 @@ void eConnection::run()
             if (selectdata.eventflags & OSAL_STREAM_READ_EVENT)
             {
                 osal_console_write("read event\n");
+                
+                /* Read object */
+                read();
+
                 /* os_memclear(buf, sizeof(buf));
                 s = osal_stream_read(handle, buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
                 osal_console_write(buf);
@@ -334,7 +339,7 @@ void eConnection::run()
 /**
 ****************************************************************************************************
 
-  @brief Incloming connection has been accepted.
+  @brief Incoming connection has been accepted.
 
   The eEndPoint::accepted() function adopts connected incoming stream and starts communicating
   through it.
@@ -409,3 +414,54 @@ void eConnection::close()
     delete m_stream;
     m_stream = OS_NULL;
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Close the connection.
+
+  The eEndPoint::close() function closes underlying stream.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eConnection::write(
+    eEnvelope *envelope)
+{
+    eStatus s;
+
+    if (m_stream == OS_NULL) return;
+
+    s = envelope->writer(m_stream, EOBJ_SERIALIZE_DEFAULT);
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Close the connection.
+
+  The eEndPoint::close() function closes underlying stream.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+void eConnection::read()
+{
+    eStatus s;
+    eEnvelope *envelope;
+
+    if (m_stream == OS_NULL) return;
+
+/* If nothing to read, return
+ */
+
+    envelope = new eEnvelope(this);
+    s = envelope->reader(m_stream, EOBJ_SERIALIZE_DEFAULT);
+    
+    message(envelope);
+}
+
