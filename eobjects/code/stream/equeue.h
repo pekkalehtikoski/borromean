@@ -150,6 +150,8 @@ public:
      */    
     virtual os_int readchar();
 
+    os_memsz bytes();
+
     /*@}*/
 
 private:
@@ -257,6 +259,10 @@ private:
     /** Latest block added to queue.
      */
     eQueueBlock *m_newest;
+
+    /** Number of bytes in the queue.
+     */
+    os_memsz m_bytes;
 
     /** Flags for the queue. Flags OSAL_STREAM_ENCODE_ON_WRITE and
         OSAL_STREAM_DECODE_ON_READ are observed.

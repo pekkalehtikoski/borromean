@@ -458,6 +458,7 @@ void eConnection::read()
 
 /* If nothing to read, return
  */
+return;
 
     envelope = new eEnvelope(this);
     s = envelope->reader(m_stream, EOBJ_SERIALIZE_DEFAULT);

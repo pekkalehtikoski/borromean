@@ -173,6 +173,10 @@ protected:
     /* Osal socket handle.
      */
     osalStream m_socket;
+
+    /* Frame size in bytes
+     */
+    os_int m_frame_sz;
 };
 
 #endif

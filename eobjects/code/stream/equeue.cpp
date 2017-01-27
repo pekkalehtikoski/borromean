@@ -53,6 +53,7 @@ eQueue::eQueue(
     m_rd_prev2c = m_rd_prevc = m_rd_repeat_char = EQUEUE_NO_PREVIOUS_CHAR;
     m_rd_repeat_count = 0;
     m_flags = 0;
+    m_bytes = 0;
 }
 
 
@@ -170,6 +171,7 @@ eStatus eQueue::close()
     m_rd_prev2c = m_rd_prevc = m_rd_repeat_char = EQUEUE_NO_PREVIOUS_CHAR;
     m_rd_repeat_count = 0;
     m_flags = 0;
+    m_bytes = 0;
 
     return ESTATUS_SUCCESS;
 }
@@ -323,6 +325,7 @@ void eQueue::write_encoded(
             else if (m_wr_prevc != EQUEUE_NO_PREVIOUS_CHAR) /* without repeat count */
             {
                 putcharacter(m_wr_prevc);
+                m_bytes++;
             }
 
             /* If character is control character?
@@ -334,6 +337,7 @@ void eQueue::write_encoded(
                  */
                 putcharacter(E_STREAM_CTRL_CHAR);
                 putcharacter(EL_STREAM_CTRLCH_IN_DATA);
+                m_bytes += 2;
 
                 /* no previous character
                  */
@@ -353,6 +357,8 @@ void eQueue::write_plain(
     os_memsz buf_sz)
 {
     os_int n;
+
+    m_bytes += buf_sz;
 
     while (buf_sz > 0)
     {
@@ -415,17 +421,20 @@ void eQueue::complete_last_write()
     if (m_wr_count == 0) /* without repeat count */
     {
         putcharacter(m_wr_prevc);
+        m_bytes++;
     }
     else if (m_wr_count == 1) /* repeat twice */
     {
         putcharacter(m_wr_prevc);
         putcharacter((os_char)m_wr_prevc);
+        m_bytes+=2;
     }
     else  /* with repeat count */
     {
         putcharacter(E_STREAM_CTRL_CHAR);
         putcharacter(m_wr_count);
         putcharacter(m_wr_prevc);
+        m_bytes+=3;
     }
 
     /* no previous character
@@ -524,6 +533,7 @@ void eQueue::read_decoded(
         /* Get character.
          */
         c = getcharacter();
+        m_bytes--;
 
         /* If previous character is control we are processing repeat count
          */
@@ -588,14 +598,15 @@ void eQueue::read_plain(
     os_int n, head, tail;
     os_memsz buf_sz0;
 
-    eQueueBlock *oldest, *newest;
+    eQueueBlock *oldest, *newest, *oldest2;
 
     buf_sz0 = buf_sz;
     newest = m_newest;
     oldest = m_oldest;
 
-    while (buf_sz > 0)
+    while (buf_sz > 0 && oldest)
     {
+        oldest2 = oldest->newer;
         head = oldest->head;
         tail = oldest->tail;
 
@@ -645,10 +656,11 @@ void eQueue::read_plain(
             }
         }
 
-        oldest = oldest->newer;
+        oldest = oldest2;
     }
 
     if (nread != OS_NULL) *nread = buf_sz0 - buf_sz; 
+    m_bytes -= buf_sz0 - buf_sz;
 }
 
 
@@ -684,6 +696,7 @@ eStatus eQueue::writechar(
     if ((m_flags & OSAL_STREAM_ENCODE_ON_WRITE) == 0) 
     {
         putcharacter(c);
+        m_bytes++;
         return ESTATUS_SUCCESS;
     }
 
@@ -710,11 +723,13 @@ eStatus eQueue::writechar(
 
         default:
             putcharacter(c);
+            m_bytes++;
             return ESTATUS_SUCCESS;
     }
     
     putcharacter(E_STREAM_CTRL_CHAR);
     putcharacter(c);
+    m_bytes += 2;
     return ESTATUS_SUCCESS;
 }
 
@@ -755,6 +770,7 @@ os_int eQueue::readchar()
         /* If we run out of data.
          */
         if (!hasedata()) return E_STREM_END_OF_DATA;
+        m_bytes--;
         return getcharacter();
     }
 
@@ -775,6 +791,7 @@ os_int eQueue::readchar()
         /* Get character.
          */
         c = getcharacter();
+        m_bytes--;
 
         /* If previous character is control we are processing repeat count
          */
@@ -831,4 +848,27 @@ os_int eQueue::readchar()
     }
 
     return E_STREM_END_OF_DATA;
+}
+
+
+os_memsz eQueue::bytes()
+{
+    os_int missing;
+    if (m_wr_prevc == EQUEUE_NO_PREVIOUS_CHAR) 
+    {
+        missing = 0;
+    }
+    else if (m_wr_count == 0) /* without repeat count */
+    {
+        missing = 1;
+    }
+    else if (m_wr_count == 1) /* repeat twice */
+    {
+        missing = 2;
+    }
+    else  /* with repeat count */
+    {
+        missing = 3;
+    }
+    return m_bytes + missing;
 }

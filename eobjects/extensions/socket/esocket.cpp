@@ -40,6 +40,7 @@ eSocket::eSocket(
      */
     m_in = m_out = OS_NULL;
     m_socket = OS_NULL;
+    m_frame_sz = 1400;
 }
 
 
@@ -203,7 +204,7 @@ eStatus eSocket::write(
 
     /* If we have one frame buffered, try to write data to socket frame at a time.
      */
-    return write_frames(OS_FALSE);
+    return write_frames(OS_TRUE); // OS_FALSE); ??????????????????????????????????????????????????
 }
 
 
@@ -229,7 +230,13 @@ eStatus eSocket::read(
 eStatus eSocket::writechar(
     os_int c)
 {
-    return ESTATUS_SUCCESS;
+    /* Write all data to queue.
+     */
+    m_out->writechar(c);
+
+    /* If we have one frame buffered, try to write data to socket frame at a time.
+     */
+    return write_frames(OS_FALSE);
 }
 
 /* Read character or control code.
@@ -306,10 +313,42 @@ eStatus eSocket::accept(
     return s == OSAL_STATUS_NO_NEW_CONNECTION ? ESTATUS_NO_NEW_CONNECTION : ESTATUS_FAILED;
 }
 
-/* Accept incoming connection.
+/* Write frames. If flushnow is OS_TRUE, even single buffered byte is written.
  */
 eStatus eSocket::write_frames(
     os_boolean flushnow)
 {
-return ESTATUS_SUCCESS;
+    os_memsz n, nread, nwritten;
+    os_char *buf = OS_NULL;
+    eStatus s = ESTATUS_SUCCESS;
+    osalStatus os;
+
+    /* */
+    while (OS_TRUE)
+    {
+        n = m_out->bytes();
+        if ((n < m_frame_sz && !flushnow) || n < 1) 
+        {
+            break;
+        }
+
+        if (buf == OS_NULL)
+        {
+            buf = (os_char*)osal_memory_allocate(m_frame_sz, OS_NULL);
+        }
+   
+        m_out->read(buf, m_frame_sz, &nread, OSAL_STREAM_PEEK);
+
+        os = osal_stream_write(m_socket, (os_uchar*)buf, nread, &nwritten, OSAL_STREAM_DEFAULT);
+        if (os)
+        {
+            s = ESTATUS_FAILED;
+            break;
+        }
+        if (nwritten <= 0) break;
+
+        m_out->read(OS_NULL, nwritten, &nread);
+    }
+
+    return s;
 }
