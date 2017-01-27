@@ -589,8 +589,6 @@ void eVariable::setv(
                 n = x->m_value.strbuf.used;
                 os_memcpy(m_value.strbuf.buf, x->m_value.strbuf.buf, n);
                 m_value.strbuf.used = (os_uchar)n;
-
-                sets(x->m_value.strbuf.buf);
             }
             break;
 

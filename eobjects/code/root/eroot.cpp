@@ -134,6 +134,7 @@ void eRoot::freehandle(
     handle->m_right = m_first_free_handle;
     handle->m_root = OS_NULL;
     handle->m_object = OS_NULL;
+    handle->ucnt_mark_unused();
 
     m_first_free_handle = handle;
     m_free_handle_count++;

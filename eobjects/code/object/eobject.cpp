@@ -1845,6 +1845,7 @@ void eObject::message_oix(
 
     /* Otherwise different threads.
      */
+    osal_debug_assert(handle->m_root);
     thread = eThread::cast(handle->m_root->parent());
     if (thread == handle->m_object) envelope->move_target_over_objname(count);
    

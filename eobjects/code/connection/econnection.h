@@ -49,7 +49,7 @@ public:
      */
 	eConnection(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+		e_oid oid = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.

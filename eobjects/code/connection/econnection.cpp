@@ -67,6 +67,7 @@ eConnection::~eConnection()
     close();
 }
 
+
 /**
 ****************************************************************************************************
 
@@ -201,12 +202,29 @@ eStatus eConnection::simpleproperty(
 void eConnection::onmessage(
     eEnvelope *envelope)
 {
+    os_char c;
+    
 
  //      if (*envelope->target()=='\0' && envelope->command() == MY_COMMAND)
- 
-    eObject::onmessage(envelope);
-}
 
+    /* If this is envelope to be routed trough connection
+     */
+    c = *envelope->target();
+    if (c != '_' && c != '\0') 
+    {
+        /* Check for binding related messages, memorize bindings through this connection.
+         */
+
+        /* If socket connection has not failed (either connected or connecting for first time),
+           write serialized data to the socket.
+         */
+        
+        /* Otherwise reply with notarget
+         */
+    }
+ 
+    eThread::onmessage(envelope);
+}
 
 
 /**
@@ -248,8 +266,6 @@ void eConnection::run()
 {
     eStatus s;
     osalSelectData selectdata;
-    eStream *newstream;
-    eConnection *c;
 
     while (!exitnow())
     {
@@ -260,35 +276,46 @@ void eConnection::run()
         {
             s = m_stream->select(&m_stream, 1, trigger(), &selectdata, OSAL_STREAM_DEFAULT);
 
-            alive(EALIVE_RETURN_IMMEDIATELY);
-
             if (s) 
             {
 	            osal_console_write("osal_stream_select failed\n");
             }
 
-            else if (selectdata.eventflags & OSAL_STREAM_ACCEPT_EVENT)
+            if (selectdata.eventflags & OSAL_STREAM_CUSTOM_EVENT)
             {
-                osal_console_write("accept event\n");
+                alive(EALIVE_RETURN_IMMEDIATELY);
+            }
 
-                /* New by class ID.
-                 */
-                newstream = (eStream*)newchild(m_stream_classid);
-            
-            	s = m_stream->accept(newstream, OSAL_STREAM_DEFAULT);
+            if (selectdata.eventflags & OSAL_STREAM_CLOSE_EVENT)
+            {
+                osal_console_write("close event\n");
+//                break;
+            }
 
-                if (s == ESTATUS_SUCCESS)
+            if (selectdata.eventflags & OSAL_STREAM_CONNECT_EVENT)
+            {
+                osal_console_write("connect event\n");
+
+                if (selectdata.errorcode)
                 {
-                    c = new eConnection();
-	                c->addname("//connection");
-                    c->accepted(newstream);
-                    c->start(); /* After this c pointer is useless */
+                    osal_console_write("connect failed\n");
+//                    break;
                 }
-                else
-                {
-                    delete newstream;
-	                osal_console_write("osal_stream_accept failed\n");
-                }
+            }
+
+            if (selectdata.eventflags & OSAL_STREAM_READ_EVENT)
+            {
+                osal_console_write("read event\n");
+                /* os_memclear(buf, sizeof(buf));
+                s = osal_stream_read(handle, buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
+                osal_console_write(buf);
+                osal_console_write("\n"); */
+            }
+
+            if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
+            {
+                osal_console_write("write event\n");
+                /* s = osal_stream_write(handle, mystr, os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT); */
             }
         }
 

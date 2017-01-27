@@ -238,8 +238,9 @@ void connection_example_1()
     t = new eConnection();
 	t->addname("//myconnection");
     t->start(&conthreadhandle); /* After this t pointer is useless */
-    c.setpropertys_msg("//myconnection",
+    c.setpropertys_msg(conthreadhandle.uniquename(), // "//myconnection",
          "localhost:" OSAL_DEFAULT_SOCKET_PORT_STR, econnp_ipaddr);
+//    conthreadhandle.terminate();
 
     os_sleep(15000);
 

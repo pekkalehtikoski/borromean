@@ -99,6 +99,11 @@ public:
      */
     void join();
 
+    inline os_char *uniquename() 
+    {
+        return m_unique_thread_name;
+    }
+
     /*@}*/
 
 private:
