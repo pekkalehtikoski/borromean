@@ -314,12 +314,12 @@ osalStatus osal_stream_select(
 	osalStream *streams,
     os_int nstreams,
 	osalEvent evnt,
-	osalSelectData *data,
+	osalSelectData *selectdata,
 	os_int flags)
 {
 	if (nstreams) if (streams[0])
 	{
-		return streams[0]->iface->stream_select(streams, nstreams, evnt, data, flags);
+		return streams[0]->iface->stream_select(streams, nstreams, evnt, selectdata, flags);
 	}
 
 	return OSAL_STATUS_FAILED;
@@ -411,7 +411,7 @@ osalStatus osal_stream_default_select(
 	osalStream *streams,
     os_int nstreams,
 	osalEvent evnt,
-	osalSelectData *data,
+	osalSelectData *selectdata,
 	os_int flags)
 {
 	return OSAL_STATUS_FAILED;

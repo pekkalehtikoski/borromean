@@ -287,11 +287,11 @@ void osal_thread_join(
 	 */
 	if (handle == OS_NULL)
 	{
-		osal_debug_error("osal_thread,osal_thread_join NULL handle");
+		osal_debug_error("osal_thread,osal_thread_join: NULL handle");
 		return;
 	}
 
-	/* Join the booast thread.
+	/* Join the thread.
 	 */
 	WaitForSingleObject(((osalWindowsThreadHandle*)handle)->thread_handle, INFINITE);
 
@@ -301,6 +301,41 @@ void osal_thread_join(
 	osal_memory_free(handle, sizeof(osalWindowsThreadHandle));
 }
 #endif
+
+#if OSAL_MULTITHREAD_SUPPORT
+/**
+****************************************************************************************************
+
+  @brief Release operating system thread handle
+  @anchor osal_thread_release_handle
+
+  The osal_thread_release_handle() function is alternative to osal_thread_join() to release
+  resources allocated for operating system handle. Difference to join is that this function
+  will not wait for thead to exit.
+
+  @param   handle Thread handle as returned by osal_thread_create.
+  @return  None.
+
+****************************************************************************************************
+*/
+void osal_thread_release_handle(
+	osalThreadHandle *handle)
+{
+	/* Check for programming errors.
+	 */
+	if (handle == OS_NULL)
+	{
+		osal_debug_error("osal_thread,osal_thread_release_handle: NULL handle");
+		return;
+	}
+
+	/* Delete the handle structure.
+	 */
+	CloseHandle(((osalWindowsThreadHandle*)handle)->thread_handle);
+	osal_memory_free(handle, sizeof(osalWindowsThreadHandle));
+}
+#endif
+
 
 
 /**

@@ -45,8 +45,8 @@ os_int osal_main(
 
     os_memclear(handle, sizeof(handle));
 
-//    handle[0] = osal_stream_open(OSAL_SOCKET_IFACE, ":" OSAL_DEFAULT_SOCKET_PORT_STR,
-    handle[0] = osal_stream_open(OSAL_SOCKET_IFACE, "[]:" OSAL_DEFAULT_SOCKET_PORT_STR,
+    handle[0] = osal_stream_open(OSAL_SOCKET_IFACE, ":" OSAL_DEFAULT_SOCKET_PORT_STR,
+//    handle[0] = osal_stream_open(OSAL_SOCKET_IFACE, "[]:" OSAL_DEFAULT_SOCKET_PORT_STR,
         OS_NULL, &status, OSAL_STREAM_LISTEN);
     if (status)
     {

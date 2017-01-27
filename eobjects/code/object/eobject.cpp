@@ -2487,9 +2487,8 @@ void eObject::setproperty(
     pflags = p->flags();
 
     /* Finished with synchronization.
-        */
+     */
     osal_mutex_system_unlock();
-
 
     /* Empty x and x as null pointer are thes ame thing, handle these in 
        the same way. 

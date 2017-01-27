@@ -42,13 +42,12 @@ eEndPoint::eEndPoint(
 	os_int flags)
     : eThread(parent, oid, flags)
 {
-    /** Listening stream (OSAL socket) handle.
+    /** Ckear member variables and allocate eVariable for IP address.
      */
     m_stream = OS_NULL;
     m_initialized = OS_FALSE;
-
+    m_stream_classid = ECLASSID_SOCKET;
     m_ipaddr = new eVariable(this);
-
 }
 
 
@@ -90,8 +89,8 @@ void eEndPoint::setupclass()
      */
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj);
-    addpropertyl(cls, EENDPP_CLASSID, eendpp_classid, 
-        EPRO_PERSISTENT|EPRO_SIMPLE, "class ID", ECLASSID_SOCKET);
+    addproperty(cls, EENDPP_CLASSID, eendpp_classid, 
+        EPRO_PERSISTENT|EPRO_SIMPLE, "class ID");
     addproperty(cls, EENDPP_IPADDR, eendpp_ipaddr, 
         EPRO_PERSISTENT|EPRO_SIMPLE, "IP");
     p = addpropertyl(cls, EENDPP_ISOPEN, eendpp_isopen, 
@@ -131,6 +130,8 @@ void eEndPoint::onpropertychange(
     {
         case EENDPP_CLASSID:
             m_stream_classid = (os_int)x->getl();
+            close();
+            open();
             break;
 
         case EENDPP_IPADDR:
@@ -225,6 +226,7 @@ void eEndPoint::run()
     eStatus s;
     osalSelectData selectdata;
     eStream *newstream;
+    eConnection *c;
 
     while (!exitnow())
     {
@@ -252,11 +254,16 @@ void eEndPoint::run()
             
             	s = m_stream->accept(newstream, OSAL_STREAM_DEFAULT);
 
-                delete newstream;
-
-
-                if (s) 
+                if (s == ESTATUS_SUCCESS)
                 {
+                    c = new eConnection();
+	                c->addname("//connection");
+                    c->accepted(newstream);
+                    c->start(); /* After this c pointer is useless */
+                }
+                else
+                {
+                    delete newstream;
 	                osal_console_write("osal_stream_accept failed\n");
                 }
             }

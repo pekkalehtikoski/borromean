@@ -65,7 +65,12 @@ typedef enum
 
     /** Reading float from stream failed
      */
-    ESTATUS_STREAM_FLOAT_ERROR = 400
+    ESTATUS_STREAM_FLOAT_ERROR = 400,
+
+	/** No new incoming connection. The stream function eStream::accept() returns this 
+	    code to indicate that no new connection was accepted. 
+	 */
+    ESTATUS_NO_NEW_CONNECTION = 401
 
 } 
 eStatus;

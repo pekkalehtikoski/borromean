@@ -140,22 +140,25 @@ public:
 
     /* Wait for socket or thread event.
      */
-	eStatus select(
+	virtual eStatus select(
 		eStream **streams,
         os_int nstreams,
 		osalEvent evnt,
-		osalSelectData *data,
+		osalSelectData *selectdata,
 		os_int flags);
 
     /* Accept incoming connection.
      */
-	eStatus accept(
+	virtual eStatus accept(
         eStream *newstream,
         os_int flags);
 
     /*@}*/
 
 protected:
+    void setup(
+        os_int flags);
+
     /* Input queue (buffer)
      */
     eQueue *m_in;

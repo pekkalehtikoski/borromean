@@ -866,7 +866,7 @@ osalStatus osal_socket_select(
 	osalStream *streams,
     os_int nstreams,
 	osalEvent evnt,
-	osalSelectData *data,
+	osalSelectData *selectdata,
 	os_int flags)
 {
 	osalSocket *mysocket;
@@ -907,8 +907,8 @@ osalStatus osal_socket_select(
 
     if (evnt && event_nr == n_sockets)
     {
-        data->eventflags = OSAL_STREAM_CUSTOM_EVENT;
-        data->stream_nr = OSAL_STREAM_NR_CUSTOM_EVENT;
+        selectdata->eventflags = OSAL_STREAM_CUSTOM_EVENT;
+        selectdata->stream_nr = OSAL_STREAM_NR_CUSTOM_EVENT;
 		return OSAL_SUCCESS;
     }
 
@@ -966,9 +966,9 @@ osalStatus osal_socket_select(
         eventflags |= OSAL_STREAM_WRITE_EVENT;
 	}
 
-    data->eventflags = eventflags;
-    data->errorcode = errorcode;
-    data->stream_nr = ixtable[event_nr];
+    selectdata->eventflags = eventflags;
+    selectdata->errorcode = errorcode;
+    selectdata->stream_nr = ixtable[event_nr];
 
     // ResetEvent(event[event_nr]);  ??????
 

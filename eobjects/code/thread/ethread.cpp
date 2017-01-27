@@ -147,7 +147,10 @@ void eThread::start(
 
     /* Save unique name into handle for controlling thread trough handle.
      */
-    thandle->save_unique_thread_name(this);
+    if (thandle)
+    {
+        thandle->save_unique_thread_name(this);
+    }
 
     os_memclear(&prmstruct, sizeof(prmstruct));
     prmstruct.thread = this;
@@ -157,7 +160,14 @@ void eThread::start(
     }
     
     handle = osal_thread_create(ethread_func, &prmstruct, OSAL_THREAD_ATTACHED, 0, "threadnamehere");
-    thandle->set_osal_handle(handle);
+    if (thandle)
+    {
+        thandle->set_osal_handle(handle);
+    }
+    else
+    {
+        osal_thread_release_handle(handle);
+    }
 }
 
 

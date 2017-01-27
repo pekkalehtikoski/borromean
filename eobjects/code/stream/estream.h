@@ -288,11 +288,11 @@ public:
 
     /* Wait for stream or thread event.
      */
-	eStatus select(
+	virtual eStatus select(
 		eStream **streams,
         os_int nstreams,
 		osalEvent evnt,
-		osalSelectData *data,
+		osalSelectData *selectdata,
 		os_int flags)
     {
         return ESTATUS_FAILED;
@@ -300,7 +300,7 @@ public:
 
     /* Accept incoming connection.
      */
-	eStatus accept(
+	virtual eStatus accept(
         eStream *newstream,
         os_int flags)
     {

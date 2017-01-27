@@ -189,10 +189,17 @@ osalThreadHandle;
         os_memsz stack_size,
         const os_char *name);
 
+
     /* Join worker thread to this thread (one which created the worker)
        Releases thread handle.
      */
     void osal_thread_join(
+	    osalThreadHandle *handle);
+
+    /* Alternative for osal_thread_join(). Just closes thread handle without waiting for
+       thread to stop.
+     */
+    void osal_thread_release_handle(
 	    osalThreadHandle *handle);
 
     /* Set thread priority.

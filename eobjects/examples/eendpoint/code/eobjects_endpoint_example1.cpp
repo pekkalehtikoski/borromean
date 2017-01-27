@@ -240,7 +240,7 @@ void endpoint_example_1()
     c.setpropertys_msg("//myendpoint",
          ":" OSAL_DEFAULT_SOCKET_PORT_STR, eendpp_ipaddr);
 
-    os_sleep(15000);
+    os_sleep(15000000);
 
     /* Wait for the threads to terminate.
      */

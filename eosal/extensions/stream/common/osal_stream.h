@@ -254,9 +254,9 @@ osalStreamParameterIx;
  */
 typedef struct osalSelectData
 {
-    int stream_nr;  /* zero based stream number */
-    int eventflags; /* which events have occurred, like read possible, write possible */
-    int errorcode; /* Error code, 0 = all fine */
+    os_int stream_nr;  /* zero based stream number */
+    os_int eventflags; /* which events have occurred, like read possible, write possible */
+    os_int errorcode; /* Error code, 0 = all fine */
 }
 osalSelectData;
 
@@ -337,7 +337,7 @@ typedef struct osalStreamInterface
 		osalStream *streams,
         os_int nstreams,
 		osalEvent evnt,
-		osalSelectData *data,
+		osalSelectData *selectdata,
 		os_int flags);
 }
 osalStreamInterface;
@@ -453,7 +453,7 @@ osalStatus osal_stream_select(
 	osalStream *streams,
     os_int nstreams,
 	osalEvent evnt,
-	osalSelectData *data,
+	osalSelectData *selectdata,
 	os_int flags);
 
 /*@}*/
@@ -507,7 +507,7 @@ osalStatus osal_stream_default_select(
 	osalStream *streams,
     os_int nstreams,
 	osalEvent evnt,
-	osalSelectData *data,
+	osalSelectData *selectdata,
 	os_int flags);
 
 

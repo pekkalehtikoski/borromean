@@ -207,13 +207,13 @@ setpropertyd(EMYCLASS2P_Y, 4.3);
 void connection_example_1()
 {
     eThread *t;
-    eThreadHandle thandle1, thandle2, endpointthreadhandle;
-    eEndPoint *ep;
+    eThreadHandle thandle1, thandle2, conthreadhandle;
     eContainer c;
 
     /* Set up eSocket and my own classes for use.
      */
     eSocket::setupclass(); 
+#if 0
     eMyClass1::setupclass(); 
     eMyClass2::setupclass(); 
 
@@ -230,24 +230,25 @@ void connection_example_1()
     t->start(&thandle2); /* After this t pointer is useless */
 
     c.setpropertyd_msg("//thread1/_p/A", 11.5);
+#endif
 
     /* Create and start thread to listen for incoming socket connections, 
        name it "endpointthread".
      */
-    t = new eThread();
-	t->addname("endpointthread", ENAME_PROCESS_NS);
-    ep = new eEndPoint(t);
-    t->start(&endpointthreadhandle); /* After this t pointer is useless */
-    c.setpropertyd_msg("//endpointthread/_p/spaddr", 11.5);
+    t = new eConnection();
+	t->addname("//myconnection");
+    t->start(&conthreadhandle); /* After this t pointer is useless */
+    c.setpropertys_msg("//myconnection",
+         "localhost:" OSAL_DEFAULT_SOCKET_PORT_STR, econnp_ipaddr);
 
     os_sleep(15000);
 
     /* Wait for the threads to terminate.
      */
-    thandle1.terminate();
+    /* thandle1.terminate();
     thandle1.join();
     thandle2.terminate();
-    thandle2.join();
-    endpointthreadhandle.terminate();
-    endpointthreadhandle.join();
+    thandle2.join(); */
+    conthreadhandle.terminate();
+    conthreadhandle.join();
 }

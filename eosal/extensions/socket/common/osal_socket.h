@@ -115,7 +115,7 @@ osalStatus osal_socket_select(
 	osalStream *streams,
     os_int nstreams,
 	osalEvent evnt,
-	osalSelectData *data,
+	osalSelectData *selectdata,
 	os_int flags);
 
 /* Initialize sockets.

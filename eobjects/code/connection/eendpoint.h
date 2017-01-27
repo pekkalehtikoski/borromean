@@ -98,11 +98,14 @@ public:
         os_int propertynr, 
         eVariable *x);
 
+    /* Initialize the object.
+     */
     virtual void initialize(
         eContainer *params = OS_NULL);
 
+    /* Run the connection.
+     */
     virtual void run();
-
 
 protected:
     void open();
@@ -122,10 +125,9 @@ protected:
      */
     eStream *m_stream;
 
-    /** End point stream object is initailized flag.
+    /** End point object initailized flag.
      */
     os_boolean m_initialized;
-
 };
 
 #endif

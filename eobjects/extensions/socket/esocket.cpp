@@ -125,6 +125,22 @@ eStatus eSocket::open(
     /* If we are listening, delete any queues. If connecting, create and open input and 
        output queues. This clears the queues if they were already open.
      */
+    setup(flags);
+
+    /* Open socket
+     */
+    m_socket = osal_socket_open(parameters, OS_NULL, &s, flags);
+    
+    return s ? ESTATUS_FAILED : ESTATUS_SUCCESS;
+}
+
+
+void eSocket::setup(
+    os_int flags)
+{
+    /* If we are listening, delete any queues. If connecting, create and open input and 
+       output queues. This clears the queues if they were already open.
+     */
     if (flags & OSAL_STREAM_LISTEN)
     {
         delete m_in;
@@ -138,12 +154,6 @@ eStatus eSocket::open(
         m_in->open(OS_NULL, OSAL_STREAM_DECODE_ON_READ);
         m_out->open(OS_NULL, OSAL_STREAM_ENCODE_ON_WRITE);
     }
-
-    /* Open socket
-     */
-    m_socket = osal_socket_open(parameters, OS_NULL, &s, flags);
-    
-    return ESTATUS_SUCCESS;
 }
 
 
@@ -234,13 +244,33 @@ eStatus eSocket::select(
 	eStream **streams,
     os_int nstreams,
 	osalEvent evnt,
-	osalSelectData *data,
+	osalSelectData *selectdata,
 	os_int flags)
 {
-            /* status = osal_stream_select(&m_stream, 1, OS_NULL, 
-                &selectdata, OSAL_STREAM_DEFAULT); */
+    osalStatus s;
+	eSocket **sockets;
 
-    return ESTATUS_SUCCESS;
+    sockets = (eSocket**)streams;
+
+    if (nstreams == 1)
+    {
+        s = osal_stream_select(&sockets[0]->m_socket, 1, evnt, 
+            selectdata, OSAL_STREAM_DEFAULT); 
+    }
+    else
+    {
+        osalStream osalsock[OSAL_SOCKET_SELECT_MAX];
+        os_int i;
+
+        for (i = 0; i<nstreams; i++)
+        {
+            osalsock[i] = sockets[i]->m_socket;
+        }
+        s = osal_stream_select(osalsock, nstreams, evnt, 
+            selectdata, OSAL_STREAM_DEFAULT); 
+    }
+
+    return s ? ESTATUS_FAILED : ESTATUS_SUCCESS;
 }
 
 /* Accept incoming connection.
@@ -249,10 +279,29 @@ eStatus eSocket::accept(
     eStream *newstream,
     os_int flags)
 {
-    /* m_stream->accept();
-    newstream = osal_stream_accept(m_stream, 
-        &status, OSAL_STREAM_DEFAULT); */
+    osalStatus s;
+    osalStream newosalsocket;
+    eSocket *sck;
 
-    return ESTATUS_SUCCESS;
+    newosalsocket = osal_stream_accept(m_socket, 
+        &s, OSAL_STREAM_DEFAULT); 
+
+    if (newosalsocket)
+    {
+        sck = eSocket::cast(newstream);
+        
+        /* Create and open input and output queues. 
+         */
+        sck->setup(OSAL_STREAM_DEFAULT);
+
+        /* Save OSAL socket handle
+         */
+        sck->m_socket = newosalsocket;
+
+        return ESTATUS_SUCCESS;
+    }
+
+
+    return s == OSAL_STATUS_NO_NEW_CONNECTION ? ESTATUS_NO_NEW_CONNECTION : ESTATUS_FAILED;
 }
 

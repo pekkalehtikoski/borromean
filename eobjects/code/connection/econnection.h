@@ -21,12 +21,16 @@
 
 /* Enumeration of connection properties.
  */
-#define ECONNP_IPADDR 2
+#define ECONNP_CLASSID 2
+#define ECONNP_IPADDR 4
+#define ECONNP_ISOPEN 6
 
 /* Connection property names.
  */
 extern os_char
-    econnp_ipaddr[];
+    econnp_classid[],
+    econnp_ipaddr[],
+    econnp_isopen[];
 
 
 /**
@@ -40,16 +44,6 @@ extern os_char
 */
 class eConnection : public eThread
 {
-	/** 
-	************************************************************************************************
-
-	  @name Generic object functionality.
-
-	  X...
-
-	************************************************************************************************
-	*/
-	/*@{*/
 public:
 	/** Constructor.
      */
@@ -110,29 +104,46 @@ public:
     virtual void onmessage(
         eEnvelope *envelope);
 
-    /*@}*/
+    /* Initialize the object.
+     */
+    virtual void initialize(
+        eContainer *params = OS_NULL);
 
-	/** 
-	************************************************************************************************
+    /* Run the connection.
+     */
+    virtual void run();
 
-	  @name Functions for writing to and reading from connection.
-
-	  X...
-
-	************************************************************************************************
-	*/
-	/*@{*/
-    virtual eStatus open(
+    /*  virtual eStatus open(
         os_char *path, 
         os_int flags=0) 
     {
         return ESTATUS_SUCCESS;
-    }
+    } */
 
-    /*@}*/
+    virtual void accepted(
+        eStream *stream);
+
 
 protected:
+    void open();
+    void close();
+
+    /** Stream class identifier. Specifies stream class to use.
+     */
+    os_int m_stream_classid;
+
+    /** IP address and optionally port number to connect to.
+     */
     eVariable *m_ipaddr;
+
+    /** stream handle. OS_NULL if socket is not open.
+     */
+    eStream *m_stream;
+
+    /** Connection initailized flag.
+     */
+    os_boolean m_initialized;
+
 };
 
 #endif
