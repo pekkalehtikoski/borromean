@@ -284,13 +284,21 @@ void eConnection::run()
 
             if (selectdata.eventflags & OSAL_STREAM_CUSTOM_EVENT)
             {
+                /* Process messages.
+                 */
                 alive(EALIVE_RETURN_IMMEDIATELY);
+
+                /* If message queue for incoming messages is empty, flush writes.
+                 */
+                if (m_message_queue->first() == OS_NULL)
+                {
+                    m_stream->flush();
+                }
             }
 
             if (selectdata.eventflags & OSAL_STREAM_CLOSE_EVENT)
             {
                 osal_console_write("close event\n");
-//                break;
             }
 
             if (selectdata.eventflags & OSAL_STREAM_CONNECT_EVENT)
@@ -300,7 +308,6 @@ void eConnection::run()
                 if (selectdata.errorcode)
                 {
                     osal_console_write("connect failed\n");
-//                    break;
                 }
             }
 

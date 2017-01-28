@@ -243,7 +243,7 @@ public:
     /* Flush written data to stream.
      */
     virtual eStatus flush(
-        os_int flags) 
+        os_int flags = 0) 
     {
         return ESTATUS_SUCCESS;
     }

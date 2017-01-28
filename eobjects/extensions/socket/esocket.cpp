@@ -170,18 +170,34 @@ eStatus eSocket::close()
 
 /* Flush written data to socket.
  */
-eStatus eSocket::flush()
+eStatus eSocket::flush(
+    os_int flags)
 {
+    osalSelectData selectdata;
+    eStream *strm;
+    eStatus s;
+
     if (m_socket == OS_NULL) 
     {
         return ESTATUS_FAILED;
     }
 
-    /* Try to write data to socket.
-     */
+    while (m_out->bytes())
+    {
+        /* Try to write data to socket.
+         */
+        s = write_socket(OS_TRUE);
+        if (s) return s;
+        if (!m_out->bytes()) break;
 
-    // osal_socket_flush(m_socket, ?);
+        /* Let select handle data transfers
+         */
+        strm = this;
+        s = select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (s) return s;
+    }
 
+    osal_stream_flush(m_socket, OSAL_STREAM_DEFAULT);
     return ESTATUS_SUCCESS;
 }
 
@@ -204,7 +220,7 @@ eStatus eSocket::write(
 
     /* If we have one frame buffered, try to write data to socket frame at a time.
      */
-    return write_frames(OS_TRUE); // OS_FALSE); ??????????????????????????????????????????????????
+    return write_socket(OS_FALSE);
 }
 
 
@@ -216,10 +232,43 @@ eStatus eSocket::read(
     os_memsz *nread,
     os_int flags)
 {
+    eStatus s;
+    osalSelectData selectdata;
+    eStream *strm;
+    os_memsz nrd;
+
+    *nread = 0;
     if (m_socket == OS_NULL) 
     {
-        *nread = 0;
         return ESTATUS_FAILED;
+    }
+
+    while (OS_TRUE)
+    {
+        /* Try to get from queue.
+         */
+        m_in->read(buf, buf_sz, &nrd);
+        buf_sz -= nrd;
+        *nread  += nrd;
+        if (buf_sz <= 0) return ESTATUS_SUCCESS;
+
+        /* Try to read socket.
+         */
+        s = read_socket();
+        if (s) return s;
+
+        /* Try to get from queue
+         */
+        m_in->read(buf, buf_sz, &nrd);
+        buf_sz -= nrd;
+        *nread  += nrd;
+        if (buf_sz <= 0) return ESTATUS_SUCCESS;
+
+        /* Let select handle data transfers
+         */
+        strm = this;
+        s = select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (s) return s;
     }
 
     return ESTATUS_SUCCESS;
@@ -236,18 +285,71 @@ eStatus eSocket::writechar(
 
     /* If we have one frame buffered, try to write data to socket frame at a time.
      */
-    return write_frames(OS_FALSE);
+    return write_socket(OS_FALSE);
 }
 
 /* Read character or control code.
  */    
 os_int eSocket::readchar()
 {
-    return ESTATUS_SUCCESS;
-}
+    os_int c;
+    eStatus s;
+    osalSelectData selectdata;
+    eStream *strm;
 
-/* Wait for socket or thread event.
- */
+    if (m_socket == OS_NULL) 
+    {
+        return E_STREM_END_OF_DATA;
+    }
+
+    while (OS_TRUE)
+    {
+        /* Try to get from queue.
+         */
+        c = m_in->readchar();
+        if (c != E_STREM_END_OF_DATA) return c;
+
+        /* Try to read socket.
+         */
+        s = read_socket();
+        if (s) return E_STREM_END_OF_DATA;
+
+        /* Try to get from queue.
+         */
+        c = m_in->readchar();
+        if (c != E_STREM_END_OF_DATA) return c;
+
+        /* Let select handle data transfers.
+         */
+        strm = this;
+        s = select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (s) return E_STREM_END_OF_DATA;
+    }
+}
+    
+
+/**
+****************************************************************************************************
+
+  @brief Wait for socket or thread event.
+
+  The eSocket::select() function waits for socket or thread events. Socket evens are typically
+  lilke "read": data can be read from socket, "write": data can be written to socket,
+  "connect": Socket connected, "close": Socket closed.
+  Thread evens indicate that there are messages to the thread to be processed.
+
+  @param  streams Array of socket stream pointers. This function waits for socket events from
+          all these streams.
+  @oaram  nstreams Number of items in streams array.
+  @param  evnt Operating system event to wait for.
+  @param  selectdata Pointer to structure in which to fill information about the event.
+  @param  flags Reserved, set 0 for now.
+  
+  @return If no error detected, the function returns ESTATUS_SUCCESS. 
+          Other return values indicate an error and that socket is to be disconnected.
+
+****************************************************************************************************
+*/
 eStatus eSocket::select(
 	eStream **streams,
     os_int nstreams,
@@ -276,11 +378,57 @@ eStatus eSocket::select(
         }
         s = osal_stream_select(osalsock, nstreams, evnt, 
             selectdata, OSAL_STREAM_DEFAULT); 
+
+        if (s == OSAL_SUCCESS) 
+        {
+            if (selectdata->eventflags & OSAL_STREAM_CLOSE_EVENT)
+            {
+                osal_console_write("close event 2\n");
+            }
+
+            if (selectdata->eventflags & OSAL_STREAM_CONNECT_EVENT)
+            {
+                osal_console_write("connect event 2\n");
+
+                if (selectdata->errorcode)
+                {
+                    osal_console_write("connect failed 2\n");
+                }
+            }
+
+            if (selectdata->eventflags & OSAL_STREAM_READ_EVENT)
+            {
+                osal_console_write("read event 2\n");
+                read_socket();
+            }
+
+            if (selectdata->eventflags & OSAL_STREAM_WRITE_EVENT)
+            {
+                osal_console_write("write event\n");
+                write_socket(OS_TRUE);
+            }
+        }
     }
 
     return s ? ESTATUS_FAILED : ESTATUS_SUCCESS;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Accept incoming connection.
+
+  The eSocket::accept() function accepts an incoming connection.
+
+  @param  newstrem Pointer to newly allocated eSocket to set up for this accepted connection.
+  @param  flags Reserved, set 0 for now.
+  @return ESTATUS_SUCCESS indicates that connection has succesfully been accepted. 
+          ESTATUS_NO_NEW_CONNECTION indicates that there were no new connections.
+          Other return values indicate an error.
+
+****************************************************************************************************
+*/
 /* Accept incoming connection.
  */
 eStatus eSocket::accept(
@@ -309,13 +457,29 @@ eStatus eSocket::accept(
         return ESTATUS_SUCCESS;
     }
 
-
-    return s == OSAL_STATUS_NO_NEW_CONNECTION ? ESTATUS_NO_NEW_CONNECTION : ESTATUS_FAILED;
+    return s == OSAL_STATUS_NO_NEW_CONNECTION 
+        ? ESTATUS_NO_NEW_CONNECTION : ESTATUS_FAILED;
 }
 
-/* Write frames. If flushnow is OS_TRUE, even single buffered byte is written.
- */
-eStatus eSocket::write_frames(
+
+/**
+****************************************************************************************************
+
+  @brief Write to socket.
+
+  The eSocket::write_socket() function writes data from m_out queue to socket.
+  Unless flushnow is set, the function does nothing until m_out holds enough data for at least
+  one ethernet frame. All data from m_out queue which can be sent immediately without wait,
+  is written to socket. 
+
+  @param  flushnow If  OS_TRUE, even single buffered byte is written. Otherwise waits until 
+          enough bytes for ethernet frame are buffered before writing.
+  @return If no error detected, the function returns ESTATUS_SUCCESS. 
+          Other return values indicate an error and that socket is to be disconnected.
+
+****************************************************************************************************
+*/
+eStatus eSocket::write_socket(
     os_boolean flushnow)
 {
     os_memsz n, nread, nwritten;
@@ -323,7 +487,6 @@ eStatus eSocket::write_frames(
     eStatus s = ESTATUS_SUCCESS;
     osalStatus os;
 
-    /* */
     while (OS_TRUE)
     {
         n = m_out->bytes();
@@ -339,7 +502,8 @@ eStatus eSocket::write_frames(
    
         m_out->read(buf, m_frame_sz, &nread, OSAL_STREAM_PEEK);
 
-        os = osal_stream_write(m_socket, (os_uchar*)buf, nread, &nwritten, OSAL_STREAM_DEFAULT);
+        os = osal_stream_write(m_socket, (os_uchar*)buf, 
+            nread, &nwritten, OSAL_STREAM_DEFAULT);
         if (os)
         {
             s = ESTATUS_FAILED;
@@ -348,6 +512,51 @@ eStatus eSocket::write_frames(
         if (nwritten <= 0) break;
 
         m_out->read(OS_NULL, nwritten, &nread);
+    }
+
+    if (buf)
+    {
+        osal_memory_free(buf, m_frame_sz);
+    }
+
+    return s;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Read from socket.
+
+  The eSocket::read_socket() function reads data from socket and places it to m_in queue.
+  All data from socket buffers is read.
+
+  @return If no error detected, the function returns ESTATUS_SUCCESS. 
+          Other return values indicate an error and that socket is to be disconnected.
+
+****************************************************************************************************
+*/
+eStatus eSocket::read_socket()
+{
+    os_memsz nread, nwritten;
+    os_char buf[740];
+    eStatus s = ESTATUS_SUCCESS;
+    osalStatus os;
+
+    while (OS_TRUE)
+    {
+        os = osal_socket_read(m_socket, (os_uchar*)buf, sizeof(buf), &nread, OSAL_STREAM_DEFAULT);
+        if (os)
+        {
+            s = ESTATUS_FAILED;
+            break;
+        }
+        if (nread == 0) 
+        {
+            break;
+        }
+
+        m_in->write(buf, nread, &nwritten);
     }
 
     return s;

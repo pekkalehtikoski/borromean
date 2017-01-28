@@ -144,7 +144,7 @@ public:
 
     /*@}*/
 
-private:
+protected:
     /* Thread triggger. 
      */
     osalEvent m_trigger;

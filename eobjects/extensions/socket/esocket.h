@@ -112,8 +112,9 @@ public:
 
     /* Flush written data to socket.
      */
-    virtual eStatus flush();
-
+    virtual eStatus flush(
+        os_int flags = 0);
+        
     /* Write data to stream.
      */
     virtual eStatus write(
@@ -159,8 +160,10 @@ protected:
     void setup(
         os_int flags);
 
-    eStatus write_frames(
+    eStatus write_socket(
         os_boolean flushnow);
+
+    eStatus read_socket();
 
     /* Input queue (buffer)
      */
