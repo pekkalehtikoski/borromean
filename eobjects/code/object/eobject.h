@@ -45,6 +45,7 @@ class eThread;
 #define EMSG_INTERTHREAD 16 /* Message has been passed from thread to another */
 #define EMSG_DEL_CONTENT 128
 #define EMSG_DEL_CONTEXT 256
+#define EMSG_CAN_BE_ADOPTED 512 /* Internal: True if envelope or message can be adopted */
 #define EMSG_HAS_CONTENT 2 /* Special flag to be passed over connection only */
 #define EMSG_HAS_CONTEXT 4 /* Special flag to be passed over connection only */
 

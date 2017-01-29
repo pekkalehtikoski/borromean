@@ -57,6 +57,7 @@ eSocket::eSocket(
 */
 eSocket::~eSocket()
 {
+    close();
 }
 
 
@@ -152,6 +153,8 @@ void eSocket::setup(
     {
         if (m_in == OS_NULL) m_in = new eQueue(this);
         if (m_out == OS_NULL) m_out = new eQueue(this);
+        m_in->close();
+        m_out->close();
         m_in->open(OS_NULL, OSAL_STREAM_DECODE_ON_READ);
         m_out->open(OS_NULL, OSAL_STREAM_ENCODE_ON_WRITE);
     }

@@ -31,16 +31,6 @@
 */
 class eContainer : public eObject
 {
-	/** 
-	************************************************************************************************
-
-	  @name Constructors and destructor
-
-	  X...
-
-	************************************************************************************************
-	*/
-	/*@{*/
 public:
     /** Constructor.
 	 */
@@ -95,18 +85,6 @@ public:
     eContainer *nextc(
 	    e_oid oid);
 
-    /*@}*/
-
-	/** 
-	************************************************************************************************
-
-	  @name eObject virtual function implementations
-
-	  X... 
-
-	************************************************************************************************
-	*/
-	/*@{*/
     /* Write container content to stream.
      */
     virtual eStatus writer(
@@ -119,8 +97,9 @@ public:
         eStream *stream, 
         os_int flags);
 
-    /*@}*/
-
+    /* Empty the container.
+     */
+    void clear();
 };
 
 #endif

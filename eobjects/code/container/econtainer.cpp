@@ -251,3 +251,24 @@ failed:
     return ESTATUS_READING_OBJ_FAILED;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Delete all children except attachments.
+
+  The eContainer::clear() function deletes all object's children, excluding attachments.
+  @return None.
+
+****************************************************************************************************
+*/
+void eContainer::clear()
+{
+    eObject *o;
+
+    while (o = first())
+    {
+        delete(o);
+    }
+}
+

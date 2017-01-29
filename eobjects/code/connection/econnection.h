@@ -127,9 +127,25 @@ public:
 protected:
     void open();
     void close();
-    void write(
+
+    /* Connection established event detected, act on it.
+     */
+    eStatus connected();
+
+    /* Closing connection (connection failed, disconnected event, etc), act on it.
+     */
+    void disconnected();
+
+
+    eStatus write(
         eEnvelope *envelope);
-    void read();
+    eStatus read();
+
+    /* Not connected and connection has failed once, reply with notarget.
+     */
+    void notarget(
+        eEnvelope *envelope);
+
 
     /** Stream class identifier. Specifies stream class to use.
      */
@@ -143,10 +159,21 @@ protected:
      */
     eStream *m_stream;
 
+    /** Buffer for messages when attempting connection for the first time.
+     */
+    eContainer *m_initbuffer;
+
     /** Connection initailized flag.
      */
     os_boolean m_initialized;
 
+    /** Connected at this moment flag.
+     */
+    os_boolean m_connected;
+
+    /** Connecttion has been attempted and it has failed at least once.
+     */
+    os_boolean m_connectetion_failed_once;
 };
 
 #endif

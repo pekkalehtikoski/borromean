@@ -30,7 +30,8 @@ os_char
 
   @brief Constructor.
 
-  X...
+  Clear member variables and allocate eVariable for IP address and container for first
+  initialization bufffer.
 
   @return  None.
 
@@ -42,12 +43,13 @@ eConnection::eConnection(
 	os_int flags)
     : eThread(parent, oid, flags)
 {
-    /** Ckear member variables and allocate eVariable for IP address.
-     */
-    m_stream = OS_NULL;
-    m_initialized = OS_FALSE;
     m_stream_classid = ECLASSID_SOCKET;
     m_ipaddr = new eVariable(this);
+    m_stream = OS_NULL;
+    m_initbuffer = new eContainer(this);;
+    m_initialized = OS_FALSE;
+    m_connected = OS_FALSE;
+    m_connectetion_failed_once = OS_FALSE;
 }
 
 
@@ -131,7 +133,6 @@ void eConnection::onpropertychange(
         case ECONNP_CLASSID:
             m_stream_classid = (os_int)x->getl();
             close();
-            open();
             break;
 
         case ECONNP_IPADDR:
@@ -139,7 +140,6 @@ void eConnection::onpropertychange(
             {
                 m_ipaddr->setv(x);
                 close();
-                open();
             }
             break;
 
@@ -203,9 +203,6 @@ void eConnection::onmessage(
     eEnvelope *envelope)
 {
     os_char c;
-    
-
- //      if (*envelope->target()=='\0' && envelope->command() == MY_COMMAND)
 
     /* If this is envelope to be routed trough connection
      */
@@ -215,13 +212,41 @@ void eConnection::onmessage(
         /* Check for binding related messages, memorize bindings through this connection.
          */
 
-        /* If socket connection has not failed (either connected or connecting for first time),
-           write serialized data to the socket.
+        /* If currently connected, write envelope immediately.
          */
-        write(envelope);
-        
-        /* Otherwise reply with notarget
+        if (m_connected)
+        {
+            if (write(envelope)) close();
+        }
+
+        /* Not connected.
          */
+        else
+        {
+            /* If connection has not failed yet, buffer messages.
+             */
+            if (!m_connectetion_failed_once)
+            {
+                if (envelope->flags() & EMSG_CAN_BE_ADOPTED)
+                {
+                    m_initbuffer->adopt(envelope);
+                }
+                else
+                {
+                    envelope->clone(m_initbuffer);
+                }
+            }
+
+            /* Otherwise connection has failed already, reply with 
+               notarget.
+             */
+            else
+            {
+                notarget(envelope);
+            }
+        }
+
+        return;
     }
  
     eThread::onmessage(envelope);
@@ -248,7 +273,6 @@ void eConnection::initialize(
     osal_console_write("initializing worker\n");
 
     m_initialized = OS_TRUE;
-    open();
 }
 
 
@@ -257,7 +281,7 @@ void eConnection::initialize(
 
   @brief Run the connection.
 
-  The eEndPoint::run() function...
+  The eConnection::run() function...
 
   @return  None.
 
@@ -267,6 +291,10 @@ void eConnection::run()
 {
     eStatus s;
     osalSelectData selectdata;
+    os_int64 start_t = 0;
+    os_long try_again_ms = osal_rand(3000, 4000);
+
+    osal_timer_get(&start_t);
 
     while (!exitnow())
     {
@@ -299,15 +327,27 @@ void eConnection::run()
             if (selectdata.eventflags & OSAL_STREAM_CLOSE_EVENT)
             {
                 osal_console_write("close event\n");
+                close();
+                continue;
             }
 
             if (selectdata.eventflags & OSAL_STREAM_CONNECT_EVENT)
             {
-                osal_console_write("connect event\n");
 
                 if (selectdata.errorcode)
                 {
                     osal_console_write("connect failed\n");
+                    close();
+                    continue;
+                }
+                else
+                {
+                    osal_console_write("connect event\n");
+                    if (connected()) 
+                    {
+                        close();
+                        continue;
+                    }
                 }
             }
 
@@ -317,25 +357,33 @@ void eConnection::run()
                 
                 /* Read object */
                 read();
-
-                /* os_memclear(buf, sizeof(buf));
-                s = osal_stream_read(handle, buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
-                osal_console_write(buf);
-                osal_console_write("\n"); */
             }
 
-            if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
+            /* if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
             {
                 osal_console_write("write event\n");
-                /* s = osal_stream_write(handle, mystr, os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT); */
-            }
+            } */
         }
 
         /* Otherwise wait for thread events and process them.
          */
         else
         {
-            alive(EALIVE_WAIT_FOR_EVENT);
+            /* WE SHOULD USE EALIVE_WAIT_FOR_EVENT, but EALIVE_RETURN_IMMEDIATELY is used
+               until timers are implemented in eobjects.
+             */
+            /* alive(EALIVE_WAIT_FOR_EVENT); */
+
+            alive(EALIVE_RETURN_IMMEDIATELY);
+            os_sleep(100);
+
+            /* If we need to open connection. THIS SHOULD BE DONE BY TIMER EVENT, NOT BY POLLING
+             */
+            if (start_t == 0 || osal_timer_elapsed(&start_t, try_again_ms))
+            {
+                open();
+                osal_timer_get(&start_t);
+            }
         }
 
         osal_console_write("worker running\n");
@@ -348,7 +396,7 @@ void eConnection::run()
 
   @brief Incoming connection has been accepted.
 
-  The eEndPoint::accepted() function adopts connected incoming stream and starts communicating
+  The eConnection::accepted() function adopts connected incoming stream and starts communicating
   through it.
 
   @return  None.
@@ -370,7 +418,7 @@ void eConnection::accepted(
 
   @brief Open the connechtion.
 
-  The eEndPoint::open() connects underlying stream.
+  The eConnection::open() connects underlying stream.
 
   @return  None.
 
@@ -393,10 +441,6 @@ void eConnection::open()
         delete m_stream;
         m_stream = OS_NULL;
     }
-    else
-    {
-        setpropertyl(EENDPP_ISOPEN, OS_TRUE);
-    }
 }
 
 
@@ -405,7 +449,9 @@ void eConnection::open()
 
   @brief Close the connection.
 
-  The eEndPoint::close() function closes underlying stream.
+  The eConnection::close() function calls disconnected() to inform bindings and set
+  connection state, then closes underlying stream and clears all member veriables
+  for current connection state.
 
   @return  None.
 
@@ -415,61 +461,167 @@ void eConnection::close()
 {
     if (m_stream == OS_NULL) return;
 
+    disconnected();
+
     setpropertyl(EENDPP_ISOPEN, OS_FALSE);
 
-//    m_stream->close();
-    delete m_stream;
-    m_stream = OS_NULL;
+    if (m_stream)
+    {
+        m_stream->close();
+        delete m_stream;
+        m_stream = OS_NULL;
+    }
 }
 
 
 /**
 ****************************************************************************************************
 
-  @brief Close the connection.
+  @brief Connection established event detected, act on it.
 
-  The eEndPoint::close() function closes underlying stream.
+  The eConnection::connected() function:
+  - Writes all queued data forward to connection.
+  - Inform client bindings that theu can be reestablished.
+  - Marks connection connected.
+
+  @return If successfull, the function returns ESTATUS_SUCCESS. Other return values indicate
+          an error and stream is to be closed.
+
+****************************************************************************************************
+*/
+eStatus eConnection::connected()
+{
+    eEnvelope *envelope;
+
+    while ((envelope = eEnvelope::cast(m_initbuffer->first())))
+    {
+        if (write(envelope)) return ESTATUS_FAILED;
+        delete envelope;
+    }
+
+    /* Inform client bindings that the binding can be reestablished.
+     */
+
+    m_connected = OS_TRUE;
+    setpropertyl(ECONNP_ISOPEN, OS_TRUE);
+   return ESTATUS_SUCCESS;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Closing connection (connection failed, disconnected event, etc), act on it.
+
+  The eConnection::connected() function:
+  - Send notarget to all items in initialization queue?
+  - Inform all bindings that that there is no connection.
+  - Marks connection disconnected and that connection has failed once.
 
   @return  None.
 
 ****************************************************************************************************
 */
-void eConnection::write(
+void eConnection::disconnected()
+{
+    eEnvelope *envelope;
+
+    while ((envelope = eEnvelope::cast(m_initbuffer->first())))
+    {
+        notarget(envelope);
+        delete envelope;
+    }
+
+    /* Inform all bindings that the connection is lost.
+     */
+
+
+    m_connected = OS_FALSE;
+    setpropertyl(ECONNP_ISOPEN, OS_FALSE);
+    m_connectetion_failed_once = OS_TRUE;
+    m_initbuffer->clear();
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Write data to connection.
+
+  The eConnection::write() function...
+
+  @return If successfull, the function returns ESTATUS_SUCCESS. Other return values indicate
+          an error and stream is to be closed.
+
+****************************************************************************************************
+*/
+eStatus eConnection::write(
     eEnvelope *envelope)
 {
     eStatus s;
 
-    if (m_stream == OS_NULL) return;
+    if (m_stream == OS_NULL) return ESTATUS_FAILED;
 
     s = envelope->writer(m_stream, EOBJ_SERIALIZE_DEFAULT);
+    return s;
 }
 
 
 /**
 ****************************************************************************************************
 
-  @brief Close the connection.
+  @brief Read data from connection.
 
-  The eEndPoint::close() function closes underlying stream.
+  The eConnection::read() function...
+
+  @return If successfull, the function returns ESTATUS_SUCCESS. Other return values indicate
+          an error and stream is to be closed.
+
+****************************************************************************************************
+*/
+eStatus eConnection::read()
+{
+    eStatus s;
+    eEnvelope *envelope;
+
+    if (m_stream == OS_NULL) return ESTATUS_FAILED;;
+
+/* If nothing to read, return
+ */
+return ESTATUS_SUCCESS;
+
+    envelope = new eEnvelope(this);
+    s = envelope->reader(m_stream, EOBJ_SERIALIZE_DEFAULT);
+    if (s) 
+    {
+        delete(envelope);
+        return s;
+    }
+    
+    message(envelope);
+    return ESTATUS_SUCCESS;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Not connected and connection has failed once, reply with notarget.
+
+  The eConnection::notarget() function sends notarget message
 
   @return  None.
 
 ****************************************************************************************************
 */
-void eConnection::read()
+void eConnection::notarget(
+    eEnvelope *envelope)
 {
-    eStatus s;
-    eEnvelope *envelope;
-
-    if (m_stream == OS_NULL) return;
-
-/* If nothing to read, return
- */
-return;
-
-    envelope = new eEnvelope(this);
-    s = envelope->reader(m_stream, EOBJ_SERIALIZE_DEFAULT);
-    
-    message(envelope);
+    if ((envelope->flags() & EMSG_NO_REPLIES) == 0)
+    {
+        message(ECMD_NO_TARGET, envelope->source(), OS_NULL,
+            OS_NULL, EMSG_NO_REPLIES, envelope->context());
+    }
 }
+
 
