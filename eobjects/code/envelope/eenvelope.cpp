@@ -90,6 +90,11 @@ eObject *eEnvelope::clone(
     os_int aflags)
 {
     eEnvelope *clonedobj;
+
+    /* Clone must have parent object.
+     */
+    osal_debug_assert(parent);
+
     clonedobj = new eEnvelope(parent, oid, flags());
   
     /** Clone envelope specific stuff.

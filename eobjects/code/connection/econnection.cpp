@@ -409,7 +409,7 @@ void eConnection::accepted(
     if (m_stream) delete m_stream;
 
     m_stream = stream;
-    stream->adopt(this);
+    adopt(stream);
 }
 
 
@@ -585,10 +585,6 @@ eStatus eConnection::read()
     eEnvelope *envelope;
 
     if (m_stream == OS_NULL) return ESTATUS_FAILED;;
-
-/* If nothing to read, return
- */
-return ESTATUS_SUCCESS;
 
     envelope = new eEnvelope(this);
     s = envelope->reader(m_stream, EOBJ_SERIALIZE_DEFAULT);

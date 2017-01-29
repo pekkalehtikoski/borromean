@@ -89,6 +89,7 @@ eObject::eObject(
     eRoot *root;
 
     mm_handle = OS_NULL;
+    flags &= EOBJ_CLONE_MASK;
 
 	/* If this if not primitive object? 
 	 */

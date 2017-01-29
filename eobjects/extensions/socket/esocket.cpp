@@ -238,22 +238,23 @@ eStatus eSocket::read(
     eStatus s;
     osalSelectData selectdata;
     eStream *strm;
-    os_memsz nrd;
+    os_memsz nrd, n;
 
-    *nread = 0;
     if (m_socket == OS_NULL) 
     {
+        if (nread) *nread = 0;
         return ESTATUS_FAILED;
     }
 
+    n = 0;
     while (OS_TRUE)
     {
         /* Try to get from queue.
          */
         m_in->read(buf, buf_sz, &nrd);
         buf_sz -= nrd;
-        *nread  += nrd;
-        if (buf_sz <= 0) return ESTATUS_SUCCESS;
+        n  += nrd;
+        if (buf_sz <= 0) break;
 
         /* Try to read socket.
          */
@@ -264,16 +265,21 @@ eStatus eSocket::read(
          */
         m_in->read(buf, buf_sz, &nrd);
         buf_sz -= nrd;
-        *nread  += nrd;
-        if (buf_sz <= 0) return ESTATUS_SUCCESS;
+        n  += nrd;
+        if (buf_sz <= 0) break;
 
         /* Let select handle data transfers
          */
         strm = this;
         s = select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
-        if (s) return s;
+        if (s) 
+        {
+            if (nread) *nread = n;
+            return s;
+        }
     }
 
+    if (nread) *nread = n;
     return ESTATUS_SUCCESS;
 }
 
@@ -513,6 +519,8 @@ eStatus eSocket::write_socket(
             break;
         }
         if (nwritten <= 0) break;
+
+osal_console_write("writing socket\n");
 
         m_out->read(OS_NULL, nwritten, &nread);
     }

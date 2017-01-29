@@ -64,16 +64,20 @@ X...
 there is no need to detach it's children from red/black of the object. The EOBJ_FAST_DELETE
 flag is set by delete_children() to child object, so child object doesn't need to preserve
 the treee structure after deletion. This changes deleting object trees from NlogN to N algorithm.
-*/
+ */
 #define EOBJ_FAST_DELETE   0x20000000
 
 /** Red/black tree's red or black node bit.
-*/
+ */
 #define EOBJ_IS_RED        0x40000000
 
 /** Serialization mask, which bits to save.
-*/
+ */
 #define EOBJ_SERIALIZATION_MASK 0x0000FFFF
+
+/** Clone mask, which bits to clone.
+ */
+#define EOBJ_CLONE_MASK EOBJ_SERIALIZATION_MASK
 
 /*@}*/
 

@@ -99,7 +99,7 @@
 
 /** Mask for separating control code from version number.
  */
-#define E_STREAM_CTRL_MASK 0xE0
+#define E_STREAM_CTRL_MASK 0xFFE0
 
 /*@}*/
 
