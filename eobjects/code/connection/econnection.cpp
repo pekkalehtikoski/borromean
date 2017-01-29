@@ -594,6 +594,7 @@ eStatus eConnection::read()
         return s;
     }
     
+    envelope->prependtarget("/");
     message(envelope);
     return ESTATUS_SUCCESS;
 }

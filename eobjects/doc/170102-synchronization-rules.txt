@@ -1,7 +1,7 @@
 Handle access (eHandle) 
 
 - Only thread which owns handle can modify the handle. When m_root or m_object member is modified, process mutext must be locked.
-- Any thread can access m_root and m_object fiels, but process mutex myust be locked.
+- Any thread can access m_root and m_object fiels, but process mutex must be locked (unless handle is owned by the tread, then no lock is needed).
 
 Accesssing to thread's objects 
 - Only thread itself can access it's own memory. No synchronization is used.
