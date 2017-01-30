@@ -83,13 +83,12 @@ public:
         eVariable *x, 
         os_int flags)
     {
-        os_double a, b;
+        os_double b;
 
         switch (propertynr)
         {
             case EMYCLASS1P_A:
-                a = x->getd();
-                printf ("1: GOT A %f\n", a);
+                printf ("1: GOT A \'%s\'\n", x->gets());
                 break;
 
             case EMYCLASS1P_B:

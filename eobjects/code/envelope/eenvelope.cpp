@@ -19,6 +19,72 @@
 #include "eobjects/eobjects.h"
 
 
+/* Place name in front of the path.
+ */
+void eenvelope_prepend_name(
+    eEnvelopePath *path,
+    const os_char *name)
+{
+    os_char *newstr, *p;
+    os_memsz sz;
+    os_int name_sz, newpos;
+    os_boolean hasoldpath;
+    
+
+    name_sz = (os_int)os_strlen(name);
+    hasoldpath = (os_boolean)(path->str_pos + 1 < path->str_alloc);
+
+    /* If name doesn't fit, we need to allocate more space.
+     */
+    if (name_sz > path->str_pos)
+    {
+	    newstr = (os_char*)osal_memory_allocate(path->str_alloc + name_sz - path->str_pos + 14, &sz);
+        newpos = (os_int)(sz - (path->str_alloc - path->str_pos) - name_sz);
+        p = newstr + newpos;
+        os_memcpy(p, name, name_sz);
+        if (path->str)
+        {
+            if (hasoldpath)
+            {
+                p[name_sz - 1] = '/';
+                os_memcpy(p + name_sz, path->str + path->str_pos, path->str_alloc - path->str_pos);
+            }
+            osal_memory_free(path->str, path->str_alloc);
+        }
+        path->str = newstr;
+        path->str_alloc = (os_short)sz;
+        path->str_pos = newpos;
+    }
+
+    /* Name fits, place it in.
+     */
+    else
+    {
+        path->str_pos -= name_sz;
+        p = path->str + path->str_pos;
+        os_memcpy(p, name, name_sz);
+        if (hasoldpath) p[name_sz - 1] = '/';
+    }
+}
+
+
+
+/* Clear the path and release memory allocated for it.
+ */
+void eenvelope_clear_path(
+    eEnvelopePath *path)
+{
+    if (path->str) 
+    {
+        osal_memory_free(path->str, path->str_alloc);
+        path->str = OS_NULL;
+    }
+    path->str_alloc = 0;
+    path->str_pos = 0;
+}
+
+
+
 /**
 ****************************************************************************************************
 
@@ -39,9 +105,13 @@ eEnvelope::eEnvelope(
     /** Clear member variables.
      */
     m_command = 0;
-    m_mflags = m_target_pos = m_source_end = m_source_alloc = 0;
+    m_mflags = 0;
 
-    m_target = m_source = OS_NULL;
+    /* m_target_pos = m_source_end = m_source_alloc = 0;
+    m_target = m_source = OS_NULL; */
+
+    os_memclear(&m_target, sizeof(eEnvelopePath));
+    os_memclear(&m_source, sizeof(eEnvelopePath));
 }
 
 
@@ -58,13 +128,13 @@ eEnvelope::eEnvelope(
 */
 eEnvelope::~eEnvelope()
 {
-    if (m_target)
+    if (m_target.str)
     {
-        osal_memory_free(m_target, m_target_alloc);
+        eenvelope_clear_path(&m_target);
     }
-    if (m_source)
+    if (m_source.str)
     {
-        osal_memory_free(m_source, m_source_alloc);
+        eenvelope_clear_path(&m_source);
     }
 }
 
@@ -102,7 +172,7 @@ eObject *eEnvelope::clone(
     clonedobj->m_command = m_command;
     clonedobj->m_mflags = m_command;
     clonedobj->settarget(target());
-    clonedobj->appendsource(source());
+    clonedobj->prependsource(source());
 
     /* Copy all clonable children.
      */
@@ -180,13 +250,13 @@ eStatus eEnvelope::writer(
     ctxt = context();
     if (ctnt) mflags |= EMSG_HAS_CONTENT;
     if (ctxt) mflags |= EMSG_HAS_CONTEXT;
-    if (stream->putl(m_mflags & (EMSG_NO_REPLIES | EMSG_NO_ERRORS))) goto failed;
+    if (stream->putl(mflags)) goto failed;
 
     /* Write target.
      */
-    if (m_target)
+    if (m_target.str)
     {
-        n = (os_int)os_strlen(m_target+m_target_pos) - 1;
+        n = (os_int)(m_target.str_alloc - m_target.str_pos) - 1;
     }
     else
     {
@@ -195,7 +265,7 @@ eStatus eEnvelope::writer(
     if (stream->putl(n)) goto failed;
     if (n>0) 
     {
-        stream->write(m_target+m_target_pos, n, &nmoved);
+        stream->write(m_target.str + m_target.str_pos, n, &nmoved);
         if (nmoved != n) goto failed;
     }
 
@@ -203,9 +273,9 @@ eStatus eEnvelope::writer(
      */
     if ((m_mflags & EMSG_NO_REPLIES) == 0)
     {
-        if (m_source)
+        if (m_source.str)
         {
-            n = m_source_end;
+            n = (os_int)(m_source.str_alloc - m_source.str_pos) - 1;
         }
         else
         {
@@ -214,7 +284,7 @@ eStatus eEnvelope::writer(
         if (stream->putl(n)) goto failed;
         if (n>0) 
         {
-            stream->write(m_target+m_target_pos, n, &nmoved);
+            stream->write(m_source.str + m_source.str_pos, n, &nmoved);
             if (nmoved != n) goto failed;
         }
     }
@@ -295,11 +365,11 @@ eStatus eEnvelope::reader(
     if (stream->getl(&l)) goto failed;
     if (l > 0)
     {
-	    m_target = (os_char*)osal_memory_allocate(l+1, &sz);
-        m_target_alloc = (os_short)sz;
-        m_target_pos = 0;
-        stream->read(m_target, l, &sz);
-        m_target[l] = '\0';
+	    m_target.str = (os_char*)osal_memory_allocate(l + 1 + 14, &sz);
+        m_target.str_alloc = (os_short)sz;
+        m_target.str_pos = (os_short)(sz - l - 1);
+        stream->read(m_target.str + m_target.str_pos, l, &sz);
+        m_target.str[sz-1] = '\0';
     }
 
     /* Read source, unless EMSG_NO_REPLIES is given.
@@ -309,11 +379,11 @@ eStatus eEnvelope::reader(
         if (stream->getl(&l)) goto failed;
         if (l > 0)
         {
-	        m_source = (os_char*)osal_memory_allocate(l + 1 + 10, &sz);
-            m_source_alloc = (os_short)sz;
-            m_source_end = (os_short)l;
-            stream->read(m_source, l, &sz);
-            m_source[l] = '\0';
+	        m_source.str = (os_char*)osal_memory_allocate(l + 1 + 14, &sz);
+            m_source.str_alloc = (os_short)sz;
+            m_source.str_pos = (os_short)(sz - l - 1);
+            stream->read(m_source.str + m_source.str_pos, l, &sz);
+            m_source.str[sz-1] = '\0';
         }
     }
 
@@ -326,7 +396,7 @@ eStatus eEnvelope::reader(
 
     /* Read context.
      */
-    if (mflags & EMSG_HAS_CONTENT) 
+    if (mflags & EMSG_HAS_CONTEXT) 
     {
         if (read(stream, flags) == OS_NULL) goto failed;
     }
@@ -358,7 +428,7 @@ failed:
 
 ****************************************************************************************************
 */
-void eEnvelope::settarget(
+/* void eEnvelope::settarget(
     const os_char *target)
 {
     os_memsz
@@ -375,7 +445,7 @@ void eEnvelope::settarget(
     m_target_alloc = (os_short)sz;
     m_target_pos = 0;
     os_memcpy(m_target, target, len);
-}
+} */
 
 
 /**
@@ -396,26 +466,17 @@ void eEnvelope::settarget(
         *p;
 
     os_memsz
-        sz,
         len;
-
-    if (m_target)
-    {
-        osal_memory_free(m_target, m_target_alloc);
-    }
-    
+  
     p = target->gets(&len);
-	m_target = (os_char*)osal_memory_allocate(len, &sz);
-    m_target_alloc = (os_short)sz;
-    m_target_pos = 0;
-    os_memcpy(m_target, p, len);
+    settarget(p);
 }
 
 
 
 /* Prepend target with with name
     */
-void eEnvelope::prependtarget(
+/* void eEnvelope::prependtarget(
     const os_char *name)
 {
     os_int name_sz, tgt_sz;
@@ -454,7 +515,8 @@ void eEnvelope::prependtarget(
         if (m_target[m_target_pos + name_sz] != '\0') 
             m_target[m_target_pos + name_sz - 1] = '/';
     }
-}                
+}  */
+
 
 /**
 ****************************************************************************************************
@@ -467,6 +529,7 @@ void eEnvelope::prependtarget(
 
 ****************************************************************************************************
 */
+/* 
 void eEnvelope::appendsource(
     const os_char *source)
 {
@@ -482,8 +545,7 @@ void eEnvelope::appendsource(
     {
         len = os_strlen(source);
 
-        /* If this does not fit in currect buffer allocation
-         */
+        If this does not fit in currect buffer allocation
         if (m_source_end + len >= m_source_alloc)
         {
 	        new_source = p = (os_char*)osal_memory_allocate(m_source_end + len + 10, &sz);
@@ -512,6 +574,7 @@ void eEnvelope::appendsource(
         }
     }
 }
+*/
 
 
 /**
@@ -621,9 +684,9 @@ void eEnvelope::nexttarget(
 
   @brief Append object index and use counter.
 
-  The eEnvelope::appendsourceoix function...
+  The eEnvelope::prependsourceoix function...
 
-  Example appended string:
+  Example prepended string:
   - "@17_3" oix=15, ucnt = 3
   - "@15" oix=15, ucnt = 0
 
@@ -632,7 +695,7 @@ void eEnvelope::nexttarget(
 
 ****************************************************************************************************
 */
-void eEnvelope::appendsourceoix(
+void eEnvelope::prependsourceoix(
     eObject *o)
 {
     os_char 
@@ -641,5 +704,5 @@ void eEnvelope::appendsourceoix(
     /** Get oix and ucnt as string.
      */
     o->oixstr(buf, sizeof(buf));
-    appendsource(buf);
+    prependsource(buf);
 }

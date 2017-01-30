@@ -1375,7 +1375,7 @@ void eObject::message(
     envelope->setcommand(command);
     envelope->setmflags(mflags & ~(EMSG_DEL_CONTENT|EMSG_DEL_CONTEXT));
     envelope->settarget(target);
-    envelope->appendsource(source);
+    if (source) envelope->prependsource(source);
     envelope->setcontent(content, mflags);
     envelope->setcontext(context, mflags);
     message(envelope);
@@ -1414,7 +1414,7 @@ void eObject::message(
      */
     if ((envelope->mflags() & (EMSG_NO_REPLIES|EMSG_NO_NEW_SOURCE_OIX)) == 0)
     {
-        envelope->appendsourceoix(this);
+        envelope->prependsourceoix(this);
         envelope->addmflags(EMSG_NO_NEW_SOURCE_OIX);
     }
 

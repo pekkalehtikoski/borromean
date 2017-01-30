@@ -60,6 +60,27 @@
 
 /*@}*/
 
+/* Source and target string presentations
+ */
+typedef struct 
+{
+    os_char *str;
+    os_short str_pos;
+    os_short str_alloc;
+}
+eEnvelopePath;
+
+/* Place name in front of the path.
+ */
+void eenvelope_prepend_name(
+    eEnvelopePath *path,
+    const os_char *name);
+
+/* Clear the path and release memory allocated for it.
+ */
+void eenvelope_clear_path(
+    eEnvelopePath *path);
+
 
 /**
 ****************************************************************************************************
@@ -202,8 +223,12 @@ public:
 
 /* TARGET **************************************************************************************** */
 
-    void settarget(
-        const os_char *target);
+    inline void settarget(
+        const os_char *target)
+    {
+        osal_debug_assert(m_target.str == OS_NULL);
+        eenvelope_prepend_name(&m_target, target);
+    }
 
     void settarget(
         eVariable *target);
@@ -214,8 +239,8 @@ public:
      */
     inline os_char *target()
     {
-        if (m_target == OS_NULL) return (os_char*)"";
-        return m_target + m_target_pos;
+        if (m_target.str == OS_NULL) return (os_char*)"";
+        return m_target.str + m_target.str_pos;
     }
 
     /* Get next name from target string.
@@ -226,36 +251,47 @@ public:
     inline void move_target_pos(
         os_short nchars) 
     {
-        m_target_pos += nchars;
+        m_target.str_pos += nchars;
     }
 
     inline void move_target_over_objname(
         os_short objname_nchars) 
     {
-        m_target_pos += objname_nchars; 
-        if (m_target[m_target_pos] == '/') m_target_pos++;
+        m_target.str_pos += objname_nchars; 
+        if (m_target.str[m_target.str_pos] == '/') m_target.str_pos++;
     }
 
     /* Prepend target with with name
      */
-    void prependtarget(
-        const os_char *name);
+    inline void prependtarget(
+        const os_char *name)
+    {
+        eenvelope_prepend_name(&m_target, name);
+    }
 
 //    os_boolean nexttargetis(char *name);
 
 
 /* SOURCE **************************************************************************************** */
 
-    void appendsource(
-        const os_char *source);
+    /* Prepend target with with name
+     */
+    inline void prependsource(
+        const os_char *name)
+    {
+        eenvelope_prepend_name(&m_source, name);
+    }
 
-    void appendsourceoix(
+    /* void appendsource(
+        const os_char *source); */
+
+    void prependsourceoix(
         eObject *o);
 
     inline os_char *source()
     {
-        if (m_source == OS_NULL) return (os_char*)"";
-        return m_source;
+        if (m_source.str == OS_NULL) return (os_char*)"";
+        return m_source.str + m_source.str_pos;
     }
 
  
@@ -291,6 +327,12 @@ private:
     */
     os_short m_mflags;
 
+
+    eEnvelopePath m_target;
+
+    eEnvelopePath m_source;
+
+#if 0
     os_short m_target_alloc;
 
     os_short m_target_pos;
@@ -304,6 +346,7 @@ private:
     /* Source path.
      */
     os_char *m_source;
+#endif
 };
 
 #endif
