@@ -241,10 +241,10 @@ void eThread::run()
 
 ****************************************************************************************************
 */
-os_boolean eThread::exitnow()
+/* os_boolean eThread::exitnow()
 {
     return m_exit_requested;
-}
+} */
 
 
 /**

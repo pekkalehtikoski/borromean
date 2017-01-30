@@ -89,7 +89,7 @@ return OS_NULL;
         *clonedobj,
         *child;
 
-    clonedobj = new eBinding(parent, oid, flags());
+    clonedobj = new eBinding(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
 
     for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
     {

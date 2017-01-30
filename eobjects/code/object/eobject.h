@@ -166,7 +166,7 @@ public:
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return newobject(this, cid, oid = EOID_ITEM, flags);
+        return newobject(this, cid, oid, flags);
     }
 
     /* Allocate new object by class identifier.

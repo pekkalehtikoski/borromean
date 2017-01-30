@@ -129,7 +129,10 @@ public:
 
     /* Check if thread exit is requested.
      */
-    os_boolean exitnow();
+    inline os_boolean exitnow() 
+    {
+        return m_exit_requested;
+    }
 
     /* Get next message to thread to process.
      */

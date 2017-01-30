@@ -81,7 +81,7 @@ eObject *ePropertyBinding::clone(
         *clonedobj,
         *child;
 
-    clonedobj = new ePropertyBinding(parent, oid, flags());
+    clonedobj = new ePropertyBinding(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
 
     for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
     {

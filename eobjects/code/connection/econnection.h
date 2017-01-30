@@ -159,6 +159,10 @@ protected:
      */
     eStream *m_stream;
 
+    /* Connection timer.
+     */
+    os_int64 m_connect_t;
+
     /** Buffer for messages when attempting connection for the first time.
      */
     eContainer *m_initbuffer;

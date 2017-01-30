@@ -113,7 +113,7 @@ eObject *eSet::clone(
     os_int strsz;
     os_memsz sz;
 
-    clonedobj = new eSet(parent, oid, flags());
+    clonedobj = new eSet(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
 
     if (m_items)
     {

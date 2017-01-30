@@ -244,7 +244,7 @@ void connection_example_1()
     c.setpropertys_msg("//myconnection/myclass1",
          "message from commection_example1", "A");
 
-    os_sleep(1500000);
+    os_sleep(5500);
 
     /* Wait for the threads to terminate.
      */

@@ -168,7 +168,7 @@ eObject *eNameSpace::clone(
     os_int aflags)
 {
     eNameSpace *clonedobj;
-    clonedobj = new eNameSpace(parent, oid, flags());
+    clonedobj = new eNameSpace(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
 
     if (m_namespace_id)
     {

@@ -75,7 +75,7 @@ eObject *eContainer::clone(
     os_int aflags)
 {
     eObject *clonedobj;
-    clonedobj = new eContainer(parent, oid, flags());
+    clonedobj = new eContainer(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
     clonegeneric(clonedobj, aflags|EOBJ_CLONE_ALL_CHILDREN);
     return clonedobj;
 }

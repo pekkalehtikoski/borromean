@@ -71,7 +71,6 @@ typedef enum
 	    code to indicate that no new connection was accepted. 
 	 */
     ESTATUS_NO_NEW_CONNECTION = 401
-
 } 
 eStatus;
 

@@ -101,7 +101,7 @@ eObject *eVariable::clone(
     os_int aflags)
 {
     eVariable *clonedobj;
-    clonedobj = new eVariable(parent, oid, flags());
+    clonedobj = new eVariable(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
   
     /** Copy variable value. 
      */

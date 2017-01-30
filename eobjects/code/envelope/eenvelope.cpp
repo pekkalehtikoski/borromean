@@ -165,7 +165,7 @@ eObject *eEnvelope::clone(
      */
     osal_debug_assert(parent);
 
-    clonedobj = new eEnvelope(parent, oid, flags());
+    clonedobj = new eEnvelope(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
   
     /** Clone envelope specific stuff.
      */

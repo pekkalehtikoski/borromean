@@ -50,6 +50,7 @@ eConnection::eConnection(
     m_initialized = OS_FALSE;
     m_connected = OS_FALSE;
     m_connectetion_failed_once = OS_FALSE;
+    m_connect_t = 0;
 }
 
 
@@ -291,10 +292,7 @@ void eConnection::run()
 {
     eStatus s;
     osalSelectData selectdata;
-    os_int64 start_t = 0;
     os_long try_again_ms = osal_rand(3000, 4000);
-
-    osal_timer_get(&start_t);
 
     while (!exitnow())
     {
@@ -379,10 +377,9 @@ void eConnection::run()
 
             /* If we need to open connection. THIS SHOULD BE DONE BY TIMER EVENT, NOT BY POLLING
              */
-            if (start_t == 0 || osal_timer_elapsed(&start_t, try_again_ms))
+            if (osal_timer_elapsed(&m_connect_t, try_again_ms))
             {
                 open();
-                osal_timer_get(&start_t);
             }
         }
 
@@ -428,7 +425,11 @@ void eConnection::open()
 {
     eStatus s;
 
-    if (m_stream || !m_initialized || m_ipaddr->isempty()) return;
+    if (m_stream || !m_initialized || m_ipaddr->isempty()) 
+    {
+        m_connect_t = 0;
+        return;
+    }
 
     /* New by class ID.
      */
@@ -440,7 +441,11 @@ void eConnection::open()
 	    osal_console_write("osal_stream_open failed\n");
         delete m_stream;
         m_stream = OS_NULL;
+        osal_timer_get(&m_connect_t);
+        return;
     }
+
+    m_connect_t = 0;
 }
 
 
@@ -461,10 +466,20 @@ void eConnection::close()
 {
     if (m_stream == OS_NULL) return;
 
+    /* Write disconnect character.
+     */
+    if (m_connected)
+    {
+        m_stream->writechar(E_STREAM_DISCONNECT);
+        m_stream->flush();
+    }
+
+    /* Inform bindings, set connection state to disconnected.
+     */
     disconnected();
 
-    setpropertyl(EENDPP_ISOPEN, OS_FALSE);
-
+    /* Close thre stream
+     */
     if (m_stream)
     {
         m_stream->close();
@@ -534,7 +549,6 @@ void eConnection::disconnected()
 
     /* Inform all bindings that the connection is lost.
      */
-
 
     m_connected = OS_FALSE;
     setpropertyl(ECONNP_ISOPEN, OS_FALSE);

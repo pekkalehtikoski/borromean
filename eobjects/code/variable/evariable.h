@@ -141,8 +141,8 @@ public:
      */
     virtual eObject *clone(
         eObject *parent, 
-        e_oid oid,
-        os_int aflags);
+        e_oid oid = EOID_CHILD,
+		os_int aflags = 0);
 
     /* Casting eObject pointer to eVariable pointer.
      */
