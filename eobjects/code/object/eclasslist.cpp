@@ -124,6 +124,7 @@ void eclasslist_initialize()
     eVariable::setupclass(); 
     eSet::setupclass(); 
     eContainer::setupclass(); 
+    eConsole::setupclass();
     eName::setupclass(); 
     eEnvelope::setupclass(); 
     ePropertyBinding::setupclass();
