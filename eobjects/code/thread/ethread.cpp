@@ -220,7 +220,6 @@ static void ethread_func(
 }
 
 
-
 void eThread::run()
 {
     while (!exitnow())

@@ -456,6 +456,25 @@ public:
 
     /*@}*/
 
+#if E_SUPPROT_JSON
+    /** 
+    ************************************************************************************************
+
+      @name Sopport JSON format object serialization. 
+
+      This includes reading and writing object as from/to stream as JSON. Object can be desccribed
+      as valus of it's properties and it's children.
+
+    ************************************************************************************************
+    */
+    /*@{*/
+
+    /* Write object to stream as JSON.
+     */
+    eStatus json_write(
+        eStream *stream, 
+        os_int flags);
+#endif
 
     /** 
     ************************************************************************************************

@@ -36,6 +36,37 @@ typedef os_uint e_oix;
 	*/
 typedef os_int e_oid;
 
+
+/**
+****************************************************************************************************
+
+  @name Default build defines.
+
+  This file contains platform defaults for defines of optional eobject features. These can
+  be changed for yupir build in global makefile, etc. For initial cmake build this place would
+  be build/cmake/e-build-defs.txt, for other build tools the file to edit will be different.
+
+  These defines must be the same for compiling whole eobjects library and any software which 
+  makes use of the eobjects library.
+
+****************************************************************************************************
+*/
+/*@{*/
+
+/** Sopport JSON format object serialization. Enables reading and writing object trees as JSON.
+ */
+#ifndef E_SUPPROT_JSON
+#define E_SUPPROT_JSON 0
+#if OSAL_WINDOWS
+#undef E_SUPPROT_JSON
+#define E_SUPPROT_JSON 1
+#endif
+#if OSAL_LINUX
+#undef E_SUPPROT_JSON
+#define E_SUPPROT_JSON 1
+#endif
+#endif
+
 /*@}*/
 
 #endif
