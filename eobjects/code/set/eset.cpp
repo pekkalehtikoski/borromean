@@ -83,8 +83,8 @@ void eSet::setupclass()
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj);
     osal_mutex_system_unlock();
-
 }
+
 
 /**
 ****************************************************************************************************
@@ -191,26 +191,65 @@ eStatus eSet::writer(
     /* Version number. Increment if new serialized items are added to the object,
        and check for new version's items in read() function.
      */
-    const os_int 
-        version = 0;
-
-    eObject
-        *child;
+    const os_int version = 0;
+    os_int strsz;
+    os_memsz nwritten;
+    eObject *objptr;
+    os_char *p, *e, *strptr;
+    os_uchar iid, ibytes;
+    os_schar itype;
 
 	/* Begin the object and write version number.
      */
     if (stream->write_begin_block(version)) goto failed;
-    
-    /* Write child count to stream (no attachments).
-     */
-    if (*stream << childcount())  goto failed;
 
-    /* Write childern (no attachments).
+    /* Buffer used, bytes.
      */
-    for (child = first(); child; child = child->next())
+    if (stream->putl(m_used)) goto failed;
+
+    /* Prepare to go trough items.
+     */
+    p = m_items;
+    e = p + m_used;
+
+    /* Search id from items untim match found.
+     */
+    while (p < e)
     {
-        child->write(stream, flags);
-    }
+        iid = *(os_uchar*)(p++);
+        ibytes = *(os_uchar*)(p++);
+        if (stream->putl(iid)) goto failed;
+        if (stream->putl(ibytes)) goto failed;
+
+        if (ibytes)
+        {
+            itype = *(os_schar*)(p++);
+            if (stream->putl(itype)) goto failed;
+
+            switch (itype)
+            {
+                case -OS_STRING:
+                    strptr = *(os_char**)p;
+                    strsz = *(os_int*)(p + sizeof(char*)) - 1;
+                    if (stream->putl(strsz)) goto failed;
+                    stream->write(strptr, strsz, &nwritten);
+                    if (nwritten != strsz) goto failed;
+                    break;
+
+                case OS_OBJECT:
+                    objptr = *(eObject**)p;
+                    if (objptr->write(stream, flags)) goto failed;
+                    break;
+
+                default:
+                    stream->write(p, ibytes, &nwritten);
+                    if (nwritten != ibytes) goto failed;
+                    break;
+            }
+            
+            p += ibytes;       
+        }
+    }        
 
 	/* End the object.
      */
@@ -251,27 +290,93 @@ eStatus eSet::reader(
 {
     /* Version number. Used to check which versions item's are in serialized data.
      */
-    os_int 
-        version;
+    os_int version;
+    os_long lval;
+    os_memsz nread;
+    os_int strsz;
+    eObject *objptr;
+    os_char *p, *e, *strptr;
+    os_uchar iid, ibytes;
+    os_schar itype;
 
-    os_long
-        count;
+    /* If we have old data, delete it.
+     */
+    if (m_items)
+    {
+        osal_memory_free(m_items, m_alloc);
+        m_items = OS_NULL;
+        m_alloc = m_used = 0;
+    }
 
 	/* Read object start mark and version number.
      */
     if (stream->read_begin_block(&version)) goto failed;
 
-    /* Read child count from stream (no attachments).
+    /* Buffer used, bytes.
      */
-    if (*stream >> count)  goto failed;
+    if (stream->getl(&lval)) goto failed;
+    m_used = (os_int)lval;
+    if (m_used == 0) goto skipit;
 
-    /* Read children.
+    /* Allocate buffer containing items
      */
-    while (count-- > 0)
+    m_items = (os_char*)osal_memory_allocate(m_used, &nread);
+    m_alloc = (os_int)nread;
+
+    /* Prepare to go trough items.
+     */
+    p = m_items;
+    e = p + m_used;
+
+    /* Search id from items untim match found.
+     */
+    while (p < e)
     {
-        read(stream, flags);
-    }
+        if (stream->getl(&lval)) goto failed;
+        iid = (os_uchar)lval;
+        if (stream->getl(&lval)) goto failed;
+        ibytes = (os_uchar)lval;
+        
+        *(os_uchar*)(p++) = iid;
+        *(os_uchar*)(p++) = ibytes;
 
+        if (ibytes)
+        {
+            if (stream->getl(&lval)) goto failed;
+            itype = (os_schar)lval;
+            *(os_schar*)(p++) = itype;
+
+            switch (itype)
+            {
+                case -OS_STRING:
+                    if (stream->getl(&lval)) goto failed;
+                    strsz = (os_int)(lval+1);
+                    strptr = (os_char*)osal_memory_allocate(strsz, OS_NULL);
+                    stream->read(strptr, (os_memsz)lval, &nread);
+                    if (nread != lval) goto failed;
+                    strptr[lval] = '\0';
+
+                    *(os_char**)p = strptr;
+                    *(os_int*)(p + sizeof(char*)) = strsz;
+                    break;
+
+                case OS_OBJECT:
+                    objptr = read(stream, flags);
+                    *(eObject**)p = objptr;
+                    break;
+
+                default:
+                    stream->read(p, ibytes, &nread);
+                    if (nread != ibytes) goto failed;
+                    break;
+            }
+            
+            p += ibytes;       
+        }
+    }        
+
+
+skipit:
 	/* End the object.
      */
     if (stream->read_end_block()) goto failed;
@@ -283,6 +388,10 @@ eStatus eSet::reader(
     /* Reading object failed.
      */
 failed:
+    osal_memory_free(m_items, m_alloc);
+    m_items = OS_NULL;
+    m_alloc = m_used = 0;
+
     return ESTATUS_READING_OBJ_FAILED;
 }
 
@@ -655,7 +764,7 @@ os_boolean eSet::get(
             return OS_TRUE;
         }
 
-        if (ibytes) p += ibytes + 1;       
+        if (ibytes) p += ibytes + 1;
     }        
 
     /* comtinues ...

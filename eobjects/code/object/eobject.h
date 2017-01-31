@@ -294,7 +294,7 @@ public:
 
     /* Recommended size for oixstr() buffer.
      */
-    #define E_OEXSTR_BUF_SZ (2 * OSAL_NBUF_SZ+2)
+    #define E_OIXSTR_BUF_SZ (2 * OSAL_NBUF_SZ+2)
 
     /** Convert oix and ucnt to string.
      */

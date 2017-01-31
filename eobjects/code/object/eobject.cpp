@@ -402,7 +402,7 @@ void eObject::operator delete(
   - "@17_3" oix=15, ucnt = 3
   - "@15" oix=15, ucnt = 0
 
-  @param  buf Buffer for resulting string. Recommended size is E_OEXSTR_BUF_SZ.
+  @param  buf Buffer for resulting string. Recommended size is E_OIXSTR_BUF_SZ.
   @return Size of buffer in bytes. 
 
 ****************************************************************************************************
@@ -439,7 +439,7 @@ void eObject::oixstr(
   eObject::oixstr() function.
 
   @param  str Pointer to string to parse. 
-   buf Buffer for resulting string. Recommended size is E_OEXSTR_BUF_SZ.
+   buf Buffer for resulting string. Recommended size is E_OIXSTR_BUF_SZ.
   @return Number of characters parsed to skip over. Zero if the function failed.
 
 ****************************************************************************************************
@@ -1579,7 +1579,7 @@ void eObject::message_process_ns(
     eName *name, *nextname;
     eThread *thread;
     os_memsz sz;
-    os_char buf[E_OEXSTR_BUF_SZ], *oname;
+    os_char buf[E_OIXSTR_BUF_SZ], *oname;
     os_boolean multiplethreads;
 
     /* Get pointer to process namespace. This is never NULL (or if it is, it is programming error).
@@ -2887,6 +2887,7 @@ eStatus eObject::write(
     if (*stream << flags() & (EOBJ_SERIALIZATION_MASK)) goto failed;
 
     /* Calculate and write number of attachments.
+       HERE WE SHOULD USE HANDLES FOR SPEED
      */
     n_attachements = 0;
     for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
@@ -2900,6 +2901,7 @@ eStatus eObject::write(
     if (writer(stream, sflags)) goto failed;
 
     /* Write attachments.
+       HERE WE SHOULD USE HANDLES FOR SPEED
      */
     for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
     {

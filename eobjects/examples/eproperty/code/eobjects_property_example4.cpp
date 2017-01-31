@@ -20,11 +20,6 @@
 #include "eobjects_property_example.h"
 #include <stdio.h>
 
-/* Purpose of a message is specified by 32 bit command. Negative command identifiers are
-   reserved for the eobject library related, but positive ones can be used freely.
- */
-#define MY_COMMAND 10
-
 /* Every class needs to have unique class identifier (classid). Class identifier is is 32 bit
    integer. Class identifiers starting from ECLASSID_APP_BASE are reserved for the application.
  */

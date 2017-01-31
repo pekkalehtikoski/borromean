@@ -699,7 +699,7 @@ void eEnvelope::prependsourceoix(
     eObject *o)
 {
     os_char 
-        buf[E_OEXSTR_BUF_SZ];
+        buf[E_OIXSTR_BUF_SZ];
 
     /** Get oix and ucnt as string.
      */

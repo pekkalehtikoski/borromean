@@ -597,6 +597,7 @@ eStatus eConnection::read()
 {
     eStatus s;
     eEnvelope *envelope;
+    os_char buf[E_OIXSTR_BUF_SZ];
 
     if (m_stream == OS_NULL) return ESTATUS_FAILED;;
 
@@ -609,6 +610,8 @@ eStatus eConnection::read()
     }
     
     envelope->prependtarget("/");
+    oixstr(buf, sizeof(buf));
+    envelope->prependsource(buf);
     message(envelope);
     return ESTATUS_SUCCESS;
 }

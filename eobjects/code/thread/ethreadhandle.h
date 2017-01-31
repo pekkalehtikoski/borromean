@@ -118,7 +118,7 @@ private:
 
 	osalThreadHandle *m_osal_handle;
 
-    os_char m_unique_thread_name[E_OEXSTR_BUF_SZ];
+    os_char m_unique_thread_name[E_OIXSTR_BUF_SZ];
 };
 
 #endif
