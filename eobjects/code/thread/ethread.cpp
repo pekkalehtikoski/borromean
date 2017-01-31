@@ -70,6 +70,50 @@ eThread::eThread(
 }
 
 
+
+
+/**
+****************************************************************************************************
+
+  @brief Virtual destructor.
+
+  X...
+
+  @return  None.
+
+****************************************************************************************************
+*/
+eThread::~eThread()
+{
+    /* Release thread triggger. 
+     */
+    osal_event_delete(m_trigger);
+}
+
+/**
+****************************************************************************************************
+
+  @brief Add eVariable to class list and class'es properties to it's property set.
+
+  The eVariable::setupclass function adds eVariable to class list and class'es properties to
+  it's property set. The class list enables creating new objects dynamically by class identifier, 
+  which is used for serialization reader functions. The property stet stores static list of
+  class'es properties and metadata for those.
+
+****************************************************************************************************
+*/
+void eThread::setupclass()
+{
+    const os_int cls = ECLASSID_THREAD;
+
+    /* Add the class to class list.
+     */
+    osal_mutex_system_lock();
+    eclasslist_add(cls, (eNewObjFunc)newobj, "eThread");
+    osal_mutex_system_unlock();
+}
+
+
 /**
 ****************************************************************************************************
 
@@ -102,25 +146,6 @@ void eThread::onmessage(
     }
 
     eObject::onmessage(envelope);
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Virtual destructor.
-
-  X...
-
-  @return  None.
-
-****************************************************************************************************
-*/
-eThread::~eThread()
-{
-    /* Release thread triggger. 
-     */
-    osal_event_delete(m_trigger);
 }
 
 

@@ -80,7 +80,7 @@ void eSocket::setupclass()
     /* Add the class to class list.
      */
     osal_mutex_system_lock();
-    eclasslist_add(cls, (eNewObjFunc)newobj);
+    eclasslist_add(cls, (eNewObjFunc)newobj, "eSocket");
     osal_mutex_system_unlock();
 }
 

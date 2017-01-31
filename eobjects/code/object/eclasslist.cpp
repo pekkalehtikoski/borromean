@@ -33,7 +33,8 @@
 */
 void eclasslist_add(
     os_int cid, 
-    eNewObjFunc nfunc)
+    eNewObjFunc nfunc,
+    const os_char *classname)
 {
     eVariable *pointer;
 
@@ -51,10 +52,11 @@ void eclasslist_add(
         goto getout;
     }
 #endif
-    /* Store pointer to class'es newobj() function.
+    /* Store pointer to class'es newobj() function and name it.
      */
     pointer = new eVariable(eglobal->classlist, cid);
     pointer->setp((os_pointer)nfunc);
+    pointer->addname(classname);
 
 getout:
     /* Finished with synchronization.
@@ -84,8 +86,6 @@ eNewObjFunc eclasslist_newobj(
     nfunc = OS_NULL;
     osal_mutex_system_lock();
 
-    /* Check for duplicated calls with same cid.
-     */
     pointer = eglobal->classlist->firstv(cid);
     if (pointer)
     {
@@ -100,6 +100,40 @@ eNewObjFunc eclasslist_newobj(
     return nfunc;
 }
 
+/**
+****************************************************************************************************
+
+  @brief Get class name.
+
+  The eclasslist_classname function...
+
+  @param   cid Class ifentifier to look for.
+  @return  Class name, or OS_NULL if none found.
+
+****************************************************************************************************
+*/
+os_char *eclasslist_classname(
+    os_int cid)
+{
+    eVariable *pointer;
+    eName *name;
+    os_char *namestr = OS_NULL;
+
+    osal_mutex_system_lock();
+    pointer = eglobal->classlist->firstv(cid);
+    if (pointer)
+    {
+        name = pointer->firstn(EOID_NAME);
+        if (name) namestr = name->gets();
+    }
+    else 
+    {
+        osal_debug_error("eclasslist_newobj: Class not found");
+    }
+
+    osal_mutex_system_unlock();
+    return namestr;
+}
 
 /**
 ****************************************************************************************************
@@ -114,6 +148,8 @@ void eclasslist_initialize()
 {
     eglobal->root = new eContainer();
     eglobal->classlist = new eContainer(eglobal->root);
+    eglobal->classlist->ns_create();
+    
     eglobal->propertysets = new eContainer(eglobal->root);
     eglobal->empty = new eVariable();
 
@@ -131,6 +167,7 @@ void eclasslist_initialize()
     eQueue::setupclass(); 
     eConnection::setupclass(); 
     eEndPoint::setupclass(); 
+    eThread::setupclass(); 
 }
 
 

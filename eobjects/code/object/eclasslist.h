@@ -27,11 +27,17 @@ typedef eObject *(*eNewObjFunc)(
  */
 void eclasslist_add(
     os_int cid, 
-    eNewObjFunc nfunc);
+    eNewObjFunc nfunc,
+    const os_char *classname);
 
 /* Get static object constuctor function pointer by class ID.
  */
 eNewObjFunc eclasslist_newobj(
+    os_int cid);
+
+/* Get class name.
+ */
+os_char *eclasslist_classname(
     os_int cid);
 
 /* Initialize class list.

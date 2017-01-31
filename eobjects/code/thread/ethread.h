@@ -79,6 +79,11 @@ public:
         return ECLASSID_THREAD;
     }
 
+    /* Static function to add class to propertysets and class list.
+     */
+    static void setupclass();
+
+
     /* Return OS_TRUE if object is thread (derived). 
      */
     virtual os_boolean isthread() 
@@ -88,13 +93,13 @@ public:
 
     /* Static constructor function for generating instance by class list.
      */
-    /* static eThread *newobj(
+    static eThread *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
         return new eThread(parent, oid, flags);
-    } */
+    } 
 
     virtual void onmessage(
         eEnvelope *envelope);

@@ -91,7 +91,7 @@ void eConnection::setupclass()
     /* Synchwonize, add the class to class list and properties to property set.
      */
     osal_mutex_system_lock();
-    eclasslist_add(cls, (eNewObjFunc)newobj);
+    eclasslist_add(cls, (eNewObjFunc)newobj, "eConnection");
     addproperty(cls, ECONNP_CLASSID, econnp_classid, 
         EPRO_PERSISTENT|EPRO_SIMPLE, "class ID");
     addproperty(cls, ECONNP_IPADDR, econnp_ipaddr, 

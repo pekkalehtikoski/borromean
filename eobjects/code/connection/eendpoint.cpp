@@ -88,7 +88,7 @@ void eEndPoint::setupclass()
     /* Synchwonize, add the class to class list and properties to property set.
      */
     osal_mutex_system_lock();
-    eclasslist_add(cls, (eNewObjFunc)newobj);
+    eclasslist_add(cls, (eNewObjFunc)newobj, "eEndPoint");
     addproperty(cls, EENDPP_CLASSID, eendpp_classid, 
         EPRO_PERSISTENT|EPRO_SIMPLE, "class ID");
     addproperty(cls, EENDPP_IPADDR, eendpp_ipaddr, 

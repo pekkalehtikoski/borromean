@@ -42,12 +42,22 @@ eStatus eObject::json_write(
 {
     eObject *child;
     os_long n_attachements;
+    os_char *str;
 
     /* Write starting '{'
      */
     if (json_indent(stream, indent++, EJSON_NO_NEW_LINE)) goto failed;
     if (json_puts(stream, "{")) goto failed;
 
+    /* Class 
+     */
+    str = eclasslist_classname(classid());
+    if (str)
+    {
+        if (json_indent(stream, indent)) goto failed;
+        if (json_puts(stream, "class: ")) goto failed;
+        if (json_puts(stream, str)) goto failed;
+    }
 
 #if 0
 

@@ -129,12 +129,14 @@ void endpoint_example_1()
 t->json_write(&econsole);
     t->start(&thandle1); /* After this t pointer is useless */
 
-
     /* Create and start thread to listen for incoming socket connections, 
        name it "endpointthread".
      */
     t = new eEndPoint();
 	t->addname("//myendpoint");
+
+t->json_write(&econsole);
+
     t->start(&endpointthreadhandle); /* After this t pointer is useless */
     c.setpropertys_msg(endpointthreadhandle.uniquename(),
          ":" OSAL_DEFAULT_SOCKET_PORT_STR, eendpp_ipaddr);
