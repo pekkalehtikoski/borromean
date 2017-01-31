@@ -242,7 +242,7 @@ void connection_example_1()
          "localhost:" OSAL_DEFAULT_SOCKET_PORT_STR, econnp_ipaddr);
 
     c.setpropertys_msg("//myconnection/myclass1",
-         "message from commection_example1", "A");
+         "message from connection_example1", "A");
 
     os_sleep(5500);
 

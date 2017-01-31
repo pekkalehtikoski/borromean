@@ -660,7 +660,7 @@ void eQueue::read_plain(
     }
 
     if (nread != OS_NULL) *nread = buf_sz0 - buf_sz; 
-    m_bytes -= buf_sz0 - buf_sz;
+    if ((flags & OSAL_STREAM_PEEK) == 0) m_bytes -= buf_sz0 - buf_sz;
 }
 
 

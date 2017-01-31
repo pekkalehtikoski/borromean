@@ -383,7 +383,7 @@ void eConnection::run()
             }
         }
 
-        osal_console_write("worker running\n");
+//        osal_console_write("worker running\n");
     }
 }
 
