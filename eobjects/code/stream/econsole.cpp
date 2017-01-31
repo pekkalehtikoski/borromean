@@ -149,9 +149,9 @@ eStatus eConsole::write(
     {
         /* Allocate copy just to terminate with NULL character.
          */
-        text = (os_char*)osal_memory_allocate(buf_sz+1);
+        text = (os_char*)osal_memory_allocate(buf_sz+1, OS_NULL);
         os_memcpy(text, buf, buf_sz);
-        text{buf_sz} = '\0';
+        text[buf_sz] = '\0';
 
         /* Write string to console, and be done.
          */
@@ -161,42 +161,6 @@ eStatus eConsole::write(
 
     if (nwritten != OS_NULL) *nwritten = buf_sz; 
     return ESTATUS_SUCCESS;
-}
-
-
-
-/**
-****************************************************************************************************
-
-  @brief Read data from console.
-
-  The read function reads data from console. This is used for actual data, not when control codes
-  are expected.
-
-  @param  buf Pointer to buffer into which to read data. If buffer is OS_NULL, up to buf_sz
-          bytes are removed from console but not stored anywhere. Null buffer can be used only
-          when reading plain data (no OSAL_STREAM_DECODE_ON_READ flag)
-  @param  buf_sz Size of buffer in bytes.
-  @param  nread Pointer to integer where to store number of bytes read from console. This may be
-          less than buffer size if the function runs out of data in console. Can be set to 
-          OS_NULL, if not needed. 
-  @param  Zero for default operation. Flag OSAL_STREAM_PEEK causes data to be read, but not removed
-          from console. This flag works only when reading plain data as is (no 
-          OSAL_STREAM_DECODE_ON_READ flag given to open() or accept).
-
-  @return If successfull, the function returns ESTATUS_SUCCESS. Other return values
-          indicate an error. eConsole class cannot fail, so return value is always 
-          ESTATUS_SUCCESS. 
-
-****************************************************************************************************
-*/
-eStatus eConsole::read(
-    os_char *buf, 
-    os_memsz buf_sz, 
-    os_memsz *nread,
-    os_int flags)
-{
-    return ESTATUS_FAILED;
 }
 
 
@@ -223,66 +187,20 @@ eStatus eConsole::read(
 eStatus eConsole::writechar(
     os_int c)
 {
+    os_char text[2];
+
     /* If writing without encoding, just write the character.
      */
     if ((m_flags & OSAL_STREAM_ENCODE_ON_WRITE) == 0) 
     {
-        putcharacter(c);
-        m_bytes++;
+        text[0] = (os_char)c;
+        text[1] = '\0';
+
+        /* Write string to console, and be done.
+         */
+        osal_console_write(text);        
         return ESTATUS_SUCCESS;
     }
 
-    /* Make sure that everything written is in buffer.
-     */
-    if (m_wr_prevc != ECONSOLE_NO_PREVIOUS_CHAR) 
-    {
-        complete_last_write();
-    }
-
-    switch (c)
-    {
-        case E_STREAM_BEGIN:
-            c = E_STREAM_CTRLCH_BEGIN_BLOCK;
-            break;
-
-        case E_STREAM_END:
-            c = E_STREAM_CTRLCH_END_BLOCK;
-            break;
-
-        case E_STREAM_DISCONNECT:
-            c = OSAL_STREAM_CTRLCH_DISCONNECT;
-            break;
-
-        default:
-            putcharacter(c);
-            m_bytes++;
-            return ESTATUS_SUCCESS;
-    }
-    
-    putcharacter(E_STREAM_CTRL_CHAR);
-    putcharacter(c);
-    m_bytes += 2;
     return ESTATUS_SUCCESS;
 }
-
-
-/**
-****************************************************************************************************
-
-  @brief Read character or control code from console.
-
-  The readchar function reads either one byte or one control code from console.
-
-  @return Byte of data or control code. Possible control codes are E_STREAM_BEGIN, 
-          E_STREAM_END, OSAL_STREAM_DISCONNECT or E_STREM_END_OF_DATA. 
-          Version number if returned with E_STREAM_BEGIN, use E_STREAM_CTRL_MASK to
-          get only control code.
-
-****************************************************************************************************
-*/
-os_int eConsole::readchar()
-{
-    return E_STREM_END_OF_DATA;
-}
-
-

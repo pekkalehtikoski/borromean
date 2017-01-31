@@ -99,31 +99,28 @@ public:
 	************************************************************************************************
 	*/
 	/*@{*/
+
+    /* Open the console. 
+     */
     virtual eStatus open(
 	    os_char *parameters,
         os_int flags = 0);
 
+    /* Close the console. 
+     */
     virtual eStatus close();
 
+    /* Write data to console.
+     */
     virtual eStatus write(
         const os_char *buf, 
         os_memsz buf_sz, 
         os_memsz *nwritten = OS_NULL);
 
-    /* virtual eStatus read(
-        os_char *buf, 
-        os_memsz buf_sz, 
-        os_memsz *nread = OS_NULL,
-        os_int flags = 0); */
-
-	/** Write character, typically control code.
+	/** Write character.
      */
     virtual eStatus writechar(
         os_int c);
-
-    /* Read character or control code.
-     */    
-    /* virtual os_int readchar(); */
 
     /*@}*/
 

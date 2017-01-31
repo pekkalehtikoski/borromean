@@ -35,12 +35,21 @@
 
 ****************************************************************************************************
 */
-eStatus json_write(
+eStatus eObject::json_write(
     eStream *stream, 
-    os_int sflags) 
+    os_int sflags,
+    os_int indent) 
 {
     eObject *child;
     os_long n_attachements;
+
+    /* Write starting '{'
+     */
+    if (json_indent(stream, indent++, EJSON_NO_NEW_LINE)) goto failed;
+    if (json_puts(stream, "{")) goto failed;
+
+
+#if 0
 
     /* Write class identifier, object identifier and persistant object flags.
      */
@@ -72,6 +81,13 @@ eStatus json_write(
             if (child->write(stream, sflags)) goto failed;
         }
     }
+#endif
+
+    /* Write terminating '}'
+     */
+    if (json_indent(stream, --indent)) goto failed;
+    if (json_puts(stream, "}")) goto failed;
+    if (json_indent(stream, 0, EJSON_NEW_LINE_ONLY)) goto failed;
     
     /* Object succesfully written.
      */
@@ -100,7 +116,7 @@ failed:
 
 ****************************************************************************************************
 */
-eObject *eObject::json_write(
+eObject *eObject::json_read(
     eStream *stream, 
     os_int sflags)
 {
@@ -144,6 +160,49 @@ eObject *eObject::json_write(
      */
 failed:
     return OS_NULL;
+}
+
+/* 
+  @param  indent Indentation depth, 0, 1... Writes 2x this spaces before the line.
+  @param  iflags EJSON_NO_NEW_LINE, EJSON_NEW_LINE_BEFORE, EJSON_NEW_LINE_ONLY
+  @return If successfull, the function returns ESTATUS_SUCCESS. Other return
+          values indicate an error.
+ */
+eStatus eObject::json_indent(
+    eStream *stream, 
+    os_int indent,
+    os_int iflags) 
+{
+    os_int i;
+
+    if (iflags & (EJSON_NEW_LINE_BEFORE|EJSON_NEW_LINE_ONLY))
+    {
+        if (json_puts(stream, "\n")) return ESTATUS_FAILED;
+    }   
+
+    if ((iflags & EJSON_NEW_LINE_ONLY)==0)
+    {
+        for (i = 0; i<indent; i++)
+        {
+            if (json_puts(stream, "  ")) return ESTATUS_FAILED;
+        }
+    }
+
+    return ESTATUS_SUCCESS;
+}
+
+/* 
+  @return If successfull, the function returns ESTATUS_SUCCESS. Other return
+          values indicate an error.
+ */
+eStatus eObject::json_puts(
+    eStream *stream, 
+    os_char *str)
+{
+    os_memsz len;
+    len = os_strlen(str);
+
+    return stream->write(str, len);
 }
 
 #endif

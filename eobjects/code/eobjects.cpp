@@ -59,6 +59,10 @@ void eobjects_initialize(
     /* Initialize class list
      */
     eclasslist_initialize();
+
+    /* Add console stream for debugging.
+     */
+    eglobal->console = new eConsole();
 }
 
 
@@ -79,6 +83,10 @@ void eobjects_shutdown()
     /* Do nothing if the library has not been initialized.
      */
     if (!eglobal->initialized) return;
+
+    /* Delete debugging console stream.
+     */
+    delete eglobal->console;
 
     /* Release resources allocated for the class list.
      */

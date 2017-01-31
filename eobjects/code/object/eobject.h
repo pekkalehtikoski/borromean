@@ -77,6 +77,14 @@ class eThread;
  */
 #define EOBJ_SERIALIZE_DEFAULT 0
 
+/** Flags for json_indent()
+ */
+#if E_SUPPROT_JSON
+#define EJSON_NO_NEW_LINE 0
+#define EJSON_NEW_LINE_BEFORE 1
+#define EJSON_NEW_LINE_ONLY 2 
+#endif
+
 
 /**
 ****************************************************************************************************
@@ -473,7 +481,14 @@ public:
      */
     eStatus json_write(
         eStream *stream, 
-        os_int flags);
+        os_int flags = EOBJ_SERIALIZE_DEFAULT,
+        os_int indent = 0);
+
+    /* Read object from JSON stream.
+     */
+    eObject *eObject::json_read(
+        eStream *stream, 
+        os_int sflags = EOBJ_SERIALIZE_DEFAULT);
 #endif
 
     /** 
@@ -830,6 +845,17 @@ protected:
     void mapone(
         eHandle *handle, 
         os_int mflags);
+
+#if E_SUPPROT_JSON
+    eStatus json_indent(
+        eStream *stream, 
+        os_int indent,
+        os_int iflags = EJSON_NEW_LINE_BEFORE);
+
+    eStatus json_puts(
+        eStream *stream, 
+        os_char *str);
+#endif
 
 	/* Pointer to object's handle.
      */

@@ -20,7 +20,7 @@
 #define EGLOBAL_INCLUDED
 
 class eThreadHandle;
-class eThreadHandle;
+class eConsole;
 
 
 /**
@@ -68,6 +68,10 @@ typedef struct eGlobal
     /* Process name space
      */
     eNameSpace *process_ns;
+
+    /* Console stream for debug output.
+     */
+    eConsole *console;
 }
 eGlobal;
 
@@ -88,5 +92,10 @@ inline eHandle *eget_handle(
 {
     return eglobal->hroot.m_table[oix >> EHANDLE_HANDLE_BITS]->m_handle + (oix & EHANDLE_TABLE_MAX);
 }
+
+/* Nicer name for console stream as debug output
+ */
+#define econsole (*(eglobal->console))
+
 
 #endif

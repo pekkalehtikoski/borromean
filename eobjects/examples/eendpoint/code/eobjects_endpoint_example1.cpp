@@ -23,7 +23,6 @@
    integer. Class identifiers starting from ECLASSID_APP_BASE are reserved for the application.
  */
 #define MY_CLASS_ID_1 (ECLASSID_APP_BASE + 1)
-// #define MY_CLASS_ID_2 (ECLASSID_APP_BASE + 2)
 
 /* Enumeration of eMyClass1 properties. Normally these would be in header file.
  */
@@ -101,85 +100,6 @@ public:
 };
 
 
-#if 0
-/**
-****************************************************************************************************
-
-  @brief Example property class.
-
-  X...
-
-****************************************************************************************************
-*/
-class eMyClass2 : public eThread
-{
-public:
-	/** Constructor. It is here just to initialize properties to default values.s
-     */
-    eMyClass2(
-		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
-		os_int flags = EOBJ_DEFAULT)
-	    : eThread(parent, oid, flags)
-    {
-        initproperties();
-    }
-
-    /* Add eMyClass'es properties to class'es property set.
-    */
-    static void setupclass()
-    {
-        const os_int cls = MY_CLASS_ID_2;
-
-        osal_mutex_system_lock();
-        addproperty(cls, EMYCLASS2P_X, emyclass2p_x, EPRO_PERSISTENT, "X");
-        addproperty(cls, EMYCLASS2P_Y, emyclass2p_y, EPRO_PERSISTENT, "Y");
-        osal_mutex_system_unlock();
-    }
-
-    /* Get class identifier.
-     */
-    virtual os_int classid() 
-    {
-        return MY_CLASS_ID_2;
-    }
-
-    virtual void initialize(
-        eContainer *params = OS_NULL)
-    {
-        bind(EMYCLASS2P_X, "//thread1/_p/A", EBIND_DEFAULT);
-setpropertyd(EMYCLASS2P_Y, 3.3);
-        bind(EMYCLASS2P_Y, "//thread1/_p/B", EBIND_CLIENTINIT);
-setpropertyd(EMYCLASS2P_Y, 4.3);
-    }
-
-    /* This gets called when property value changes
-     */
-    virtual void onpropertychange(
-        os_int propertynr, 
-        eVariable *x, 
-        os_int flags)
-    {
-        os_double a, b;
-
-        switch (propertynr)
-        {
-            case EMYCLASS2P_X:
-                a = x->getd();
-                printf ("2: GOT X %f\n", a);
-                setpropertyd(EMYCLASS2P_Y, a * 0.99);
-                break;
-
-            case EMYCLASS2P_Y:
-                b = x->getd();
-                printf ("1: GOT Y %f\n", b);
-                break;
-        }
-    }
-};
-#endif
-
-
 /**
 ****************************************************************************************************
 
@@ -206,21 +126,10 @@ void endpoint_example_1()
      */
     t = new eMyClass1();
 	t->addname("myclass1", ENAME_PROCESS_NS);
+t->json_write(&econsole);
     t->start(&thandle1); /* After this t pointer is useless */
 
 
-#if 0
-    eMyClass2::setupclass(); 
-
-
-    /* Create and start thread named "thread2".
-     */
-    t = new eMyClass2();
-	t->addname("thread2", ENAME_PROCESS_NS);
-    t->start(&thandle2); /* After this t pointer is useless */
-
-    c.setpropertyd_msg("//thread1/_p/A", 11.5);
-#endif
     /* Create and start thread to listen for incoming socket connections, 
        name it "endpointthread".
      */
@@ -236,8 +145,6 @@ void endpoint_example_1()
      */
     thandle1.terminate();
     thandle1.join();
-/*    thandle2.terminate();
-    thandle2.join(); */
     endpointthreadhandle.terminate();
     endpointthreadhandle.join();
 }
