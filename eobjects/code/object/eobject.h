@@ -874,6 +874,15 @@ protected:
         eStream *stream, 
         os_long x);
 
+    /* Write variable value to JSON output.
+     */
+    eStatus json_putv(
+        eStream *stream, 
+        eVariable *p,
+        eVariable *value,
+        os_int sflags,
+        os_int indent);
+
     /* Append list item string to variable if bit is set in flags.
      */
     void json_append_list_item(

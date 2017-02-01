@@ -28,6 +28,7 @@
   
   @param  stream The stream to write to.
   @param  sflags Serialization flags. EOBJ_SERIALIZE_DEFAULT
+  @param  indent Indentation depth, 0, 1... Writes 2x this spaces at beginning of a line.
 
   @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
           fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
@@ -44,7 +45,7 @@ eStatus eObject::json_write(
     os_long n_attachements;
     os_char *str;
     os_int i;
-    eVariable flaglist, *p, value;
+    eVariable namelist, flaglist, *p, value;
     eName *name;
     eContainer *propertyset;
     os_boolean comma = OS_FALSE, comma2 = OS_FALSE, property_listed;
@@ -62,6 +63,31 @@ eStatus eObject::json_write(
         if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma)) goto failed;
         if (json_puts(stream, "\"class\": ")) goto failed;
         if (json_putqs(stream, str)) goto failed;
+    }
+
+    /* Names 
+     */
+    for (name = firstn(EOID_NAME); name; name = name->nextn(EOID_NAME))
+    {
+        str = name->namespaceid();
+        if (str)
+        {
+            value = str;
+            value += "/";
+        }
+        else
+        {
+            value = "";
+        }
+        value += *name;
+        json_append_list_item(&namelist, value.gets(), 0, 0);
+    }
+    if (!namelist.isempty())
+    {
+        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma)) goto failed;
+        if (json_puts(stream, "\"names\": [")) goto failed;
+        if (json_puts(stream, namelist.gets())) goto failed;
+        if (json_puts(stream, "]")) goto failed;
     }
 
     /* Object identifier, oid.
@@ -121,7 +147,7 @@ eStatus eObject::json_write(
             if (json_indent(stream, indent+1, EJSON_NEW_LINE_BEFORE, &comma2)) goto failed;
             if (json_putqs(stream, name->gets())) goto failed;
             if (json_puts(stream, ": ")) goto failed;
-            if (json_puts(stream, value.gets())) goto failed;
+            if (json_putv(stream, p, &value, sflags, indent+1)) goto failed;
         }
 
         if (property_listed)
@@ -359,6 +385,76 @@ eStatus eObject::json_putl(
     return json_puts(stream, nbuf);
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Write variable value to JSON output.
+
+  The eObject::json_putv() function writes variable value to JSON stream.
+  
+  @param  stream The stream to write JSON to.
+  @param  p Property in property set.
+  @param  value Value to write. May be modified by this function.
+  @param  sflags Serialization flags. EOBJ_SERIALIZE_DEFAULT
+  @param  indent Indentation depth, 0, 1... Writes 2x this spaces at beginning of a line.
+
+  @return If successfull the function returns pointer to te new child object. 
+          If reading object from stream fails, value OS_NULL is returned. 
+
+****************************************************************************************************
+*/
+eStatus eObject::json_putv(
+    eStream *stream, 
+    eVariable *p,
+    eVariable *value,
+    os_int sflags,
+    os_int indent) 
+{
+    eObject *obj;
+    os_boolean quote;
+
+    /* If the value contains object, write it
+     */
+    obj = value->geto();
+    if (obj) 
+    {
+        return obj->json_write(stream, sflags, indent+1);
+    }
+
+    /* Copy number of decimal digits
+     */
+    value->setdigs(p->digs());
+
+    /* Select weather to qute the value
+     */
+    quote = OS_TRUE;
+    switch (p->propertyl(EVARP_TYPE))
+    {
+        case OS_LONG:
+        case OS_DOUBLE:
+            if (value->isempty()) 
+            {
+                value->sets("null");
+                quote = OS_FALSE;
+            }
+            else
+            {
+                value->autotype(OS_TRUE);
+                if (value->type() == OS_LONG || value->type() == OS_DOUBLE)
+                {
+                    quote = OS_FALSE;
+                }
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    return quote ? json_putqs(stream, value->gets()) : json_puts(stream, value->gets());
+}
+
 /**
 ****************************************************************************************************
 
@@ -382,7 +478,7 @@ void eObject::json_append_list_item(
     os_int flags,
     os_int bit)
 {
-    if (flags & bit)
+    if ((flags & bit) || bit == 0)
     {
         if (!list->isempty()) list->appends(", ");
         list->appends("\"");
