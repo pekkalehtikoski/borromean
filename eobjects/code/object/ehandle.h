@@ -75,6 +75,10 @@ the treee structure after deletion. This changes deleting object trees from Nlog
  */
 #define EOBJ_SERIALIZATION_MASK 0x0000FFFF
 
+/** Custom flags mask.
+ */
+#define EOBJ_CUST_FLAGS_MASK 0x0001F0
+
 /** Clone mask, which bits to clone.
  */
 #define EOBJ_CLONE_MASK EOBJ_SERIALIZATION_MASK

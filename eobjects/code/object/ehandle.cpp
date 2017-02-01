@@ -343,6 +343,7 @@ try_again:
         if (oid == EOID_CHILD)
         {
             if (!m->isattachment()) return m;
+            n = m; // PEKKA 2.1.2017
             goto try_again;
         }
         
@@ -409,6 +410,7 @@ try_again:
         if (oid == EOID_CHILD)
         {
             if (!m->isattachment()) return m;
+            n = m; // PEKKA 2.1.2017
             goto try_again;
         }
         

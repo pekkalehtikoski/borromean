@@ -375,7 +375,7 @@ public:
 	/* Get the first child name identified by oid.
      */
     eName *firstn(
-	    e_oid oid = EOID_CHILD);
+	    e_oid oid = EOID_NAME);
 
 	/* Get last child object identified by oid.
      */
@@ -847,14 +847,40 @@ protected:
         os_int mflags);
 
 #if E_SUPPROT_JSON
+    /* Write optional comma and new line to terminate the 
+       line and optional intendation for next line to JSON output.
+     */
     eStatus json_indent(
         eStream *stream, 
         os_int indent,
-        os_int iflags = EJSON_NEW_LINE_BEFORE);
+        os_int iflags = EJSON_NEW_LINE_BEFORE,
+        os_boolean *comma = OS_NULL);
 
+    /* Write string to JSON output.
+     */
     eStatus json_puts(
         eStream *stream, 
         os_char *str);
+
+    /* Write quoted string to JSON output.
+     */
+    eStatus eObject::json_putqs(
+        eStream *stream, 
+        os_char *str);
+
+    /* Write long integer to JSON output.
+     */
+    eStatus json_putl(
+        eStream *stream, 
+        os_long x);
+
+    /* Append list item string to variable if bit is set in flags.
+     */
+    void json_append_list_item(
+        eVariable *list, 
+        os_char *item,
+        os_int flags,
+        os_int bit);
 #endif
 
 	/* Pointer to object's handle.

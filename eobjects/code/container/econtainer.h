@@ -83,7 +83,7 @@ public:
     /* Get next child container identified by oid.
      */
     eContainer *nextc(
-	    e_oid oid);
+	    e_oid oid = EOID_CHILD);
 
     /* Write container content to stream.
      */

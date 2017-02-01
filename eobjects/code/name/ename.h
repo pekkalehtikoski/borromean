@@ -107,7 +107,7 @@ public:
     /* Get next child name identified by oid.
      */
     eName *nextn(
-	    e_oid oid);
+	    e_oid oid = EOID_NAME);
 
 	/* Get next name in namespace.
      */
