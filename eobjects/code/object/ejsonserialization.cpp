@@ -29,6 +29,7 @@
   @param  stream The stream to write to.
   @param  sflags Serialization flags. EOBJ_SERIALIZE_DEFAULT
   @param  indent Indentation depth, 0, 1... Writes 2x this spaces at beginning of a line.
+          -1 is same as 0, but with extra new line at the end.
 
   @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
           fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
@@ -39,20 +40,38 @@
 eStatus eObject::json_write(
     eStream *stream, 
     os_int sflags,
-    os_int indent) 
+    os_int indent,
+    os_boolean *comma) 
 {
-    eObject *child;
-    os_long n_attachements;
     os_char *str;
     os_int i;
-    eVariable namelist, flaglist, *p, value;
+    eVariable list, *p, value;
     eName *name;
-    eContainer *propertyset;
-    os_boolean comma = OS_FALSE, comma2 = OS_FALSE, property_listed;
+    eContainer *propertyset, *bindings;
+    eBinding *b;
+    os_boolean comma1 = OS_FALSE, comma2 = OS_FALSE, property_listed;
+    os_boolean end_with_nl = OS_FALSE;
+    
+    if (indent < 0)
+    {
+        indent = 0;
+        end_with_nl = OS_TRUE;
+    }
+
+    if (comma)
+    {
+        if (*comma) 
+        {
+            if (json_puts(stream, ",")) return ESTATUS_FAILED;
+        }
+        if (json_puts(stream, "\n")) goto failed;
+        *comma = OS_TRUE;
+    }
 
     /* Write starting '{'
      */
-    if (json_indent(stream, indent++, EJSON_NO_NEW_LINE)) goto failed;
+    if (comma) if (json_indent(stream, indent, EJSON_NO_NEW_LINE)) goto failed;
+    indent++;
     if (json_puts(stream, "{")) goto failed;
 
     /* Class name.
@@ -60,13 +79,14 @@ eStatus eObject::json_write(
     str = eclasslist_classname(classid());
     if (str)
     {
-        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma)) goto failed;
+        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma1)) goto failed;
         if (json_puts(stream, "\"class\": ")) goto failed;
         if (json_putqs(stream, str)) goto failed;
     }
 
     /* Names 
      */
+    list.clear();
     for (name = firstn(EOID_NAME); name; name = name->nextn(EOID_NAME))
     {
         str = name->namespaceid();
@@ -80,13 +100,13 @@ eStatus eObject::json_write(
             value = "";
         }
         value += *name;
-        json_append_list_item(&namelist, value.gets(), 0, 0);
+        json_append_list_item(&list, value.gets(), 0, 0);
     }
-    if (!namelist.isempty())
+    if (!list.isempty())
     {
-        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma)) goto failed;
+        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma1)) goto failed;
         if (json_puts(stream, "\"names\": [")) goto failed;
-        if (json_puts(stream, namelist.gets())) goto failed;
+        if (json_puts(stream, list.gets())) goto failed;
         if (json_puts(stream, "]")) goto failed;
     }
 
@@ -94,26 +114,27 @@ eStatus eObject::json_write(
      */
     if (oid() != EOID_ITEM)
     {
-        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma)) goto failed;
+        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma1)) goto failed;
         if (json_puts(stream, "\"oid\": ")) goto failed;
         if (json_putl(stream, oid())) goto failed;
     }
 
     /* Write flags.
      */
+    list.clear();
     i = flags();
-    json_append_list_item(&flaglist, "attachment", i, EOBJ_IS_ATTACHMENT);
-    json_append_list_item(&flaglist, "namespace", i, EOBJ_HAS_NAMESPACE);
-    json_append_list_item(&flaglist, "cf_1", i, EOBJ_CUST_FLAG1);
-    json_append_list_item(&flaglist, "cf_2", i, EOBJ_CUST_FLAG2);
-    json_append_list_item(&flaglist, "cf_3", i, EOBJ_CUST_FLAG3);
-    json_append_list_item(&flaglist, "cf_4", i, EOBJ_CUST_FLAG4);
-    json_append_list_item(&flaglist, "cf_5", i, EOBJ_CUST_FLAG5);
-    if (!flaglist.isempty())
+    json_append_list_item(&list, "attachment", i, EOBJ_IS_ATTACHMENT);
+    json_append_list_item(&list, "namespace", i, EOBJ_HAS_NAMESPACE);
+    json_append_list_item(&list, "cf_1", i, EOBJ_CUST_FLAG1);
+    json_append_list_item(&list, "cf_2", i, EOBJ_CUST_FLAG2);
+    json_append_list_item(&list, "cf_3", i, EOBJ_CUST_FLAG3);
+    json_append_list_item(&list, "cf_4", i, EOBJ_CUST_FLAG4);
+    json_append_list_item(&list, "cf_5", i, EOBJ_CUST_FLAG5);
+    if (!list.isempty())
     {
-        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma)) goto failed;
+        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma1)) goto failed;
         if (json_puts(stream, "\"flags\": [")) goto failed;
-        if (json_puts(stream, flaglist.gets())) goto failed;
+        if (json_puts(stream, list.gets())) goto failed;
         if (json_puts(stream, "]")) goto failed;
     }
 
@@ -130,16 +151,15 @@ eStatus eObject::json_write(
             /* Get property value and property name. Skip if same as default value or no name.
              */
             property((os_int)p->oid(), &value);
-            // if (!value.compare(p)) continue;
+            if (!value.compare(p)) continue;
             name = p->firstn(EOID_NAME);
             if (name == OS_NULL) continue;
-
 
             /* If property list not started, start now.
              */
             if (!property_listed)
             {
-                if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma)) goto failed;
+                if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma1)) goto failed;
                 if (json_puts(stream, "\"properties\": {")) goto failed;
                 property_listed = OS_TRUE;
             }
@@ -157,46 +177,26 @@ eStatus eObject::json_write(
         }
     }
 
-
-#if 0
-
-    /* Write class identifier, object identifier and persistant object flags.
+    /* Write bindings.
      */
-    if (*stream << classid()) goto failed;
-    if (*stream << oid()) goto failed;
-    if (*stream << flags() & (EOBJ_SERIALIZATION_MASK)) goto failed;
-
-    /* Calculate and write number of attachments.
-       HERE WE SHOULD USE HANDLES FOR SPEED
-     */
-    n_attachements = 0;
-    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
+    bindings = firstc(EOID_BINDINGS);
+    if (bindings) 
     {
-        if (child->isserattachment()) n_attachements++;
-    }
-    if (*stream << n_attachements) goto failed;
-    
-    /* Write the object content.
-     */
-    if (writer(stream, sflags)) goto failed;
-
-    /* Write attachments.
-       HERE WE SHOULD USE HANDLES FOR SPEED
-     */
-    for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
-    {
-        if (child->isserattachment()) 
+        for (b = eBinding::cast(first()); b; b = eBinding::cast(b->next()))
         {
-            if (child->write(stream, sflags)) goto failed;
+            b->json_write(stream, sflags, indent);
         }
     }
-#endif
+    
+    /* Write content (children, etc)
+     */
+    if (json_writer(stream, sflags, indent)) goto failed;
 
     /* Write terminating '}'
      */
     if (json_indent(stream, --indent)) goto failed;
     if (json_puts(stream, "}")) goto failed;
-    if (json_indent(stream, 0, EJSON_NEW_LINE_ONLY)) goto failed;
+    if (comma || end_with_nl) if (json_indent(stream, 0, EJSON_NEW_LINE_ONLY)) goto failed;
     
     /* Object succesfully written.
      */
@@ -208,6 +208,60 @@ failed:
     return ESTATUS_WRITING_OBJ_FAILED;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Write class specific content to stream as JSON.
+
+  The eObject::json_writer() is default implementation for writing class specific object 
+  content to stream as JSON.
+  
+  @param  stream The stream to write to.
+  @param  sflags Serialization flags. EOBJ_SERIALIZE_DEFAULT
+  @param  indent Indentation depth, 0, 1... Writes 2x this spaces at beginning of a line.
+
+  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
+          fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
+          indicate an error.
+
+****************************************************************************************************
+*/
+#if 0
+eStatus eObject::json_writer(
+    eStream *stream, 
+    os_int sflags,
+    os_int indent)
+{
+    eObject *child;
+    os_boolean comma = OS_FALSE, started = OS_FALSE;
+
+    /* Write childern (no attachments).
+     */
+    for (child = first(); child; child = child->next())
+    {
+        if (!started)
+        {
+            if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE /* , &comma */)) goto failed;
+            if (json_puts(stream, "\"children\": [")) goto failed;
+            started = OS_TRUE;
+        }
+
+        if (child->json_write(stream, sflags, indent+1, &comma)) goto failed;
+    }
+
+    if (started)
+    {
+        if (json_indent(stream, indent, EJSON_NO_NEW_LINE)) goto failed;
+        if (json_puts(stream, "]")) goto failed;
+    }
+
+    return ESTATUS_SUCCESS;
+
+failed:
+    return ESTATUS_FAILED;
+}
+#endif
 
 /**
 ****************************************************************************************************
@@ -413,13 +467,13 @@ eStatus eObject::json_putv(
 {
     eObject *obj;
     os_boolean quote;
-
+    
     /* If the value contains object, write it
      */
     obj = value->geto();
     if (obj) 
     {
-        return obj->json_write(stream, sflags, indent+1);
+        return obj->json_write(stream, sflags, indent);
     }
 
     /* Copy number of decimal digits

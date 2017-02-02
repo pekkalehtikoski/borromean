@@ -33,16 +33,13 @@
 */
 /*@{*/
 
-/** Reply to attemp to sens message to invalid path.
- */
-
 /* Messaging, no target.
  */
 #define ECMD_NO_TARGET -1
 
 /* Set property by message
  */
-#define ECMD_SETPROPERTY 19
+#define ECMD_SETPROPERTY -19
 
 /* Binding related commands. 
  */
@@ -59,6 +56,24 @@
 #define ECMD_EXIT_THREAD -30
 
 /*@}*/
+
+
+/* Enumeration of envelope properties.
+ */
+#define EENVP_COMMAND 2
+#define EENVP_TARGET 8
+#define EENVP_SOURCE 10
+#define EENVP_CONTENT 12
+#define EENVP_CONTEXT 14
+
+/* Variable envelope names.
+ */
+extern os_char
+    eenvp_command[],
+    eenvp_target[],
+    eenvp_source[],
+    eenvp_content[],
+    eenvp_context[];
 
 /* Source and target string presentations
  */
@@ -150,6 +165,19 @@ public:
     {
         return new eEnvelope(parent, oid, flags);
     }
+
+    /* Called when property value changes.
+     */
+    virtual void onpropertychange(
+        os_int propertynr, 
+        eVariable *x, 
+        os_int flags);
+
+    /* Get value of simple property.
+     */
+    virtual eStatus simpleproperty(
+        os_int propertynr, 
+        eVariable *x);
 
     /* Write envelope to stream.
      */
@@ -327,26 +355,9 @@ private:
     */
     os_short m_mflags;
 
-
     eEnvelopePath m_target;
 
     eEnvelopePath m_source;
-
-#if 0
-    os_short m_target_alloc;
-
-    os_short m_target_pos;
-    os_short m_source_end;
-    os_short m_source_alloc;
-
-    /* Target path.
-     */
-    os_char *m_target;
-
-    /* Source path.
-     */
-    os_char *m_source;
-#endif
 };
 
 #endif

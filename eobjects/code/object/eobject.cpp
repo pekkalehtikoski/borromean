@@ -89,8 +89,6 @@ eObject::eObject(
 
 			root = parent->mm_handle->m_root;
 			root->newhandle(this, parent, oid, flags);
-
-// verify_whole_tree();
 		}
 	}
 }

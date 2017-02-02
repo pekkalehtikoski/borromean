@@ -198,7 +198,7 @@ failed:
 /**
 ****************************************************************************************************
 
-  @brief Read conatiner content from stream.
+  @brief Read container content from stream.
 
   The eContainer::reader() function reads serialized container from stream. This function 
   reads only the object content. To read whole object including attachments, names, etc, 
@@ -250,6 +250,60 @@ eStatus eContainer::reader(
 failed:
     return ESTATUS_READING_OBJ_FAILED;
 }
+
+
+#if E_SUPPROT_JSON
+/**
+****************************************************************************************************
+
+  @brief Write container specific content to stream as JSON.
+
+  The eContainer::json_writer() function writes class specific object content to stream as JSON.
+  
+  @param  stream The stream to write to.
+  @param  sflags Serialization flags. Typically EOBJ_SERIALIZE_DEFAULT.
+  @param  indent Indentation depth, 0, 1... Writes 2x this spaces at beginning of a line.
+
+  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
+          fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
+          indicate an error.
+
+****************************************************************************************************
+*/
+eStatus eContainer::json_writer(
+    eStream *stream, 
+    os_int sflags,
+    os_int indent)
+{
+    eObject *child;
+    os_boolean comma = OS_FALSE, started = OS_FALSE;
+
+    /* Write childern (no attachments).
+     */
+    for (child = first(); child; child = child->next())
+    {
+        if (!started)
+        {
+            if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE /* , &comma */)) goto failed;
+            if (json_puts(stream, "\"children\": [")) goto failed;
+            started = OS_TRUE;
+        }
+
+        if (child->json_write(stream, sflags, indent+1, &comma)) goto failed;
+    }
+
+    if (started)
+    {
+        if (json_indent(stream, indent, EJSON_NO_NEW_LINE)) goto failed;
+        if (json_puts(stream, "]")) goto failed;
+    }
+
+    return ESTATUS_SUCCESS;
+
+failed:
+    return ESTATUS_FAILED;
+}
+#endif
 
 
 /**

@@ -164,7 +164,7 @@ failed:
 /**
 ****************************************************************************************************
 
-  @brief Read conatiner content from stream.
+  @brief Read binding content from stream.
 
   The eBinding::reader() function reads serialized binding from stream. This function 
   reads only the object content. To read whole object including attachments, names, etc, 
@@ -470,10 +470,12 @@ void eBinding::disconnect(
         case E_BINDING_NOW:
             message(ECMD_UNBIND,
                  m_objpath, OS_NULL, OS_NULL, EMSG_NO_ERRORS);
+            break;
         
         case E_BINDING_OK:
             message((m_bflags & EBIND_CLIENT) ? ECMD_UNBIND : ECMD_SRV_UNBIND,
                  m_bindpath, OS_NULL, OS_NULL, EMSG_NO_ERRORS|EMSG_NO_RESOLVE);
+            break;
     }
 
     if (m_objpath && !keep_objpath)

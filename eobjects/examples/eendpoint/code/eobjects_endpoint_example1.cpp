@@ -63,9 +63,20 @@ public:
         const os_int cls = MY_CLASS_ID_1;
 
         osal_mutex_system_lock();
+        eclasslist_add(cls, (eNewObjFunc)newobj, "eMyClass1");
         addproperty(cls, EMYCLASS1P_A, emyclass1p_a, EPRO_PERSISTENT, "A");
         addproperty(cls, EMYCLASS1P_B, emyclass1p_b, EPRO_PERSISTENT, "B");
         osal_mutex_system_unlock();
+    }
+
+    /* Static constructor function for generating instance by class list.
+     */
+    static eMyClass1 *newobj(
+        eObject *parent,
+        e_oid oid = EOID_ITEM,
+		os_int flags = EOBJ_DEFAULT)
+    {
+        return new eMyClass1(parent, oid, flags);
     }
 
     /* Get class identifier.
@@ -93,7 +104,7 @@ public:
             case EMYCLASS1P_B:
                 b = x->getd();
                 printf ("1: GOT B %f\n", b);
-                setpropertyd(EMYCLASS1P_A, b * 1.01);
+                setpropertyd(EMYCLASS1P_A, b * 2.01);
                 break;
         }
     }
@@ -126,7 +137,7 @@ void endpoint_example_1()
      */
     t = new eMyClass1();
 	t->addname("myclass1", ENAME_PROCESS_NS);
-t->json_write(&econsole);
+// t->json_write(&econsole);
     t->start(&thandle1); /* After this t pointer is useless */
 
     /* Create and start thread to listen for incoming socket connections, 
@@ -134,9 +145,7 @@ t->json_write(&econsole);
      */
     t = new eEndPoint();
 	t->addname("//myendpoint");
-
-t->json_write(&econsole);
-
+// t->json_write(&econsole);
     t->start(&endpointthreadhandle); /* After this t pointer is useless */
     c.setpropertys_msg(endpointthreadhandle.uniquename(),
          ":" OSAL_DEFAULT_SOCKET_PORT_STR, eendpp_ipaddr);

@@ -18,6 +18,15 @@
 */
 #include "eobjects/eobjects.h"
 
+/* Variable property names.
+ */
+os_char
+    eenvp_command[] = "command",
+    eenvp_target[] = "target",
+    eenvp_source[] = "source",
+    eenvp_content[] = "content",
+    eenvp_context[] = "context";
+
 
 /* Place name in front of the path.
  */
@@ -29,7 +38,6 @@ void eenvelope_prepend_name(
     os_memsz sz;
     os_int name_sz, newpos;
     os_boolean hasoldpath;
-    
 
     name_sz = (os_int)os_strlen(name);
     hasoldpath = (os_boolean)(path->str_pos + 1 < path->str_alloc);
@@ -201,7 +209,147 @@ void eEnvelope::setupclass()
      */
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eEnvelope");
+
+    addpropertyl(cls, EENVP_COMMAND, eenvp_command, EPRO_PERSISTENT|EPRO_SIMPLE, "command");
+    addpropertys(cls, EENVP_TARGET, eenvp_target, EPRO_PERSISTENT|EPRO_SIMPLE, "target");
+    addpropertys(cls, EENVP_SOURCE, eenvp_source, EPRO_PERSISTENT|EPRO_SIMPLE, "source");
+    addproperty (cls, EENVP_CONTENT, eenvp_content, EPRO_PERSISTENT|EPRO_SIMPLE, "content");
+    addproperty (cls, EENVP_CONTEXT, eenvp_context, EPRO_PERSISTENT|EPRO_SIMPLE, "context");
     osal_mutex_system_unlock();
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Called to inform the class about property value change (override).
+
+  The onpropertychange() function is called when class'es property changes, unless the
+  property is flagged with EPRO_NOONPRCH. 
+  If property is flagged as EPRO_SIMPLE, this function shuold save the property value
+  in class members and and return it when simpleproperty() is called.
+
+  Notice for change logging: Previous value is still valid when this function is called.
+  You can get the old value by calling property() function inside onpropertychange()
+  function.
+
+  @param   propertynr Property number of changed property.
+  @param   x Variable containing the new value.
+  @param   flags
+  @return  None.
+
+****************************************************************************************************
+*/
+void eEnvelope::onpropertychange(
+    os_int propertynr, 
+    eVariable *x, 
+    os_int flags)
+{
+    eObject *obj;
+    eVariable *var;
+
+    switch (propertynr)
+    {
+        case EENVP_COMMAND:
+            m_command = (os_int)x->getl();
+            break;
+
+        case EENVP_TARGET:
+            eenvelope_clear_path(&m_target);
+            eenvelope_prepend_name(&m_target, x->gets());
+            break;
+
+        case EENVP_SOURCE:
+            eenvelope_clear_path(&m_source);
+            eenvelope_prepend_name(&m_source, x->gets());
+            break;
+
+        case EENVP_CONTENT:
+            delete content();
+            obj = x->geto();
+            if (obj)
+            {
+                obj->clone(this, EOID_CONTENT);
+            }
+            else
+            {
+                var = new eVariable(this, EOID_CONTENT);
+                var->setv(x);
+            }
+            break;
+
+        case EENVP_CONTEXT:
+            delete context();
+            obj = x->geto();
+            if (obj)
+            {
+                obj->clone(this, EOID_CONTEXT);
+            }
+            else
+            {
+                var = new eVariable(this, EOID_CONTEXT);
+                var->setv(x);
+            }
+            break;
+
+        default:
+            /* eObject::onpropertychange(propertynr, x, flags); */
+            break;
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get value of simple property (override).
+
+  The simpleproperty() function stores current value of simple property into variable x.
+
+  @param   propertynr Property number to get.
+  @param   x Variable info which to store the property value.
+  @return  If fproperty with property number was stored in x, the function returns 
+           ESTATUS_SUCCESS (0). Nonzero return values indicate that property with
+           given number was not among simple properties.
+
+****************************************************************************************************
+*/
+eStatus eEnvelope::simpleproperty(
+    os_int propertynr, 
+    eVariable *x)
+{
+    eObject *obj;
+
+    switch (propertynr)
+    {
+        case EENVP_COMMAND:
+            x->setl(m_command);
+            break;
+
+        case EENVP_TARGET:
+            x->sets(target());
+            break;
+
+        case EENVP_SOURCE:
+            x->sets(source());
+            break;
+
+        case EENVP_CONTENT:
+            obj = content();
+            x->seto(obj);
+            break;
+
+        case EENVP_CONTEXT:
+            obj = context();
+            x->seto(obj);
+            break;
+   
+        default:
+            x->clear();
+            /* return eObject::simpleproperty(propertynr, x); */
+            return ESTATUS_NO_SIMPLE_PROPERTY_NR;
+    }
+    return ESTATUS_SUCCESS;
 }
 
 
@@ -416,38 +564,6 @@ failed:
 }
 
 
-
-/**
-****************************************************************************************************
-
-  @brief Set destination for the envelope.
-
-  The eEnvelope::settarget() function. 
-
-  @return  None.
-
-****************************************************************************************************
-*/
-/* void eEnvelope::settarget(
-    const os_char *target)
-{
-    os_memsz
-        sz,
-        len;
-
-    if (m_target)
-    {
-        osal_memory_free(m_target, m_target_alloc);
-    }
-    
-    len = os_strlen(target);
-	m_target = (os_char*)osal_memory_allocate(len, &sz);
-    m_target_alloc = (os_short)sz;
-    m_target_pos = 0;
-    os_memcpy(m_target, target, len);
-} */
-
-
 /**
 ****************************************************************************************************
 
@@ -471,110 +587,6 @@ void eEnvelope::settarget(
     p = target->gets(&len);
     settarget(p);
 }
-
-
-
-/* Prepend target with with name
-    */
-/* void eEnvelope::prependtarget(
-    const os_char *name)
-{
-    os_int name_sz, tgt_sz;
-    os_char *newtgt;
-    os_memsz sz;
-    
-    name_sz = (os_int)os_strlen(name);
-    tgt_sz = (os_int)os_strlen(m_target +  m_target_pos);
-    if (name_sz + tgt_sz > m_target_alloc)
-    {
-	    newtgt = (os_char*)osal_memory_allocate(name_sz + tgt_sz, &sz);
-
-        os_memcpy(newtgt, name, name_sz);
-        if (m_target[m_target_pos] != '\0') 
-        {
-            newtgt[name_sz - 1] = '/';
-            os_memcpy(newtgt + name_sz, m_target + m_target_pos, tgt_sz);
-        }
-        osal_memory_free(m_target, m_target_alloc);
-        m_target = newtgt;
-        m_target_alloc = (os_int)sz;
-        m_target_pos = 0;
-    }
-    else
-    {
-        if (name_sz > m_target_pos)
-        {
-            os_memmove(m_target + name_sz, m_target + m_target_pos, tgt_sz);
-            m_target_pos = 0;
-        }
-        else
-        {
-            m_target_pos -= name_sz;
-        }
-        os_memcpy(m_target + m_target_pos, name, name_sz);
-        if (m_target[m_target_pos + name_sz] != '\0') 
-            m_target[m_target_pos + name_sz - 1] = '/';
-    }
-}  */
-
-
-/**
-****************************************************************************************************
-
-  @brief Append to destination path.
-
-  The eEnvelope::appendsource() function....
-
-  @return  None.
-
-****************************************************************************************************
-*/
-/* 
-void eEnvelope::appendsource(
-    const os_char *source)
-{
-    os_memsz
-        sz,
-        len;
-
-    os_char
-        *new_source,
-        *p;
-
-    if (source)
-    {
-        len = os_strlen(source);
-
-        If this does not fit in currect buffer allocation
-        if (m_source_end + len >= m_source_alloc)
-        {
-	        new_source = p = (os_char*)osal_memory_allocate(m_source_end + len + 10, &sz);
-            if (m_source)
-            {            
-                os_memcpy(p, m_source, m_source_end);
-                p += m_source_end;
-                *(p++) = '/';
-            }
-
-            os_memcpy(p, source, len);
-            p += len-1;
-
-            m_source_end = (os_short)(p-new_source);
-            if (m_source)
-            {
-                osal_memory_free(m_source, m_source_alloc);
-            }
-            m_source_alloc = (os_short)sz;
-            m_source = new_source;
-        }
-        else
-        {
-           os_memcpy(m_source + m_source_end, source, len);
-           m_source_end += (os_short)len-1;
-        }
-    }
-}
-*/
 
 
 /**

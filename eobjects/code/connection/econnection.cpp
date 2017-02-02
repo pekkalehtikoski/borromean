@@ -354,6 +354,7 @@ void eConnection::run()
                 osal_console_write("read event\n");
                 
                 /* Read object */
+                while (!read()); 
                 read();
             }
 
@@ -576,6 +577,8 @@ eStatus eConnection::write(
 
     if (m_stream == OS_NULL) return ESTATUS_FAILED;
 
+envelope->json_write(&econsole);
+
     s = envelope->writer(m_stream, EOBJ_SERIALIZE_DEFAULT);
     return s;
 }
@@ -608,7 +611,9 @@ eStatus eConnection::read()
         delete(envelope);
         return s;
     }
-    
+
+envelope->json_write(&econsole);
+   
     envelope->prependtarget("/");
     oixstr(buf, sizeof(buf));
     envelope->prependsource(buf);

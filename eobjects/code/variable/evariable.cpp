@@ -287,6 +287,7 @@ eStatus eVariable::simpleproperty(
             break;
     
         default:
+            x->clear();
             /* return eObject::simpleproperty(propertynr, x); */
             return ESTATUS_NO_SIMPLE_PROPERTY_NR;
     }
@@ -652,6 +653,10 @@ void eVariable::seto(
 	{
 		m_value.valbuf.v.o = x->clone(this, 0 /* Id value */);
 	}
+
+    /* Set data type.
+     */
+	settype(OS_OBJECT);
 }
 
   

@@ -481,14 +481,26 @@ public:
      */
     eStatus json_write(
         eStream *stream, 
-        os_int flags = EOBJ_SERIALIZE_DEFAULT,
-        os_int indent = 0);
+        os_int sflags = EOBJ_SERIALIZE_DEFAULT,
+        os_int indent = -1,
+        os_boolean *comma = OS_NULL);
 
     /* Read object from JSON stream.
      */
     eObject *eObject::json_read(
         eStream *stream, 
         os_int sflags = EOBJ_SERIALIZE_DEFAULT);
+
+    /* Class specific part of JSON writer.
+     */
+    virtual eStatus json_writer(
+        eStream *stream, 
+        os_int sflags = EOBJ_SERIALIZE_DEFAULT,
+        os_int indent = 0)
+    {
+        return ESTATUS_SUCCESS;
+    }
+
 #endif
 
     /** 

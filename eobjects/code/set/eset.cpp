@@ -269,7 +269,7 @@ failed:
 /**
 ****************************************************************************************************
 
-  @brief Read conatiner content from stream.
+  @brief Read set content from stream.
 
   The eSet::reader() function reads serialized set from stream. This function 
   reads only the object content. To read whole object including attachments, names, etc, 

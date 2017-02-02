@@ -97,6 +97,15 @@ public:
         eStream *stream, 
         os_int flags);
 
+#if E_SUPPROT_JSON
+    /* Write container specific content to stream as JSON.
+     */
+    virtual eStatus json_writer(
+        eStream *stream, 
+        os_int sflags,
+        os_int indent);
+#endif
+
     /* Empty the container.
      */
     void clear();

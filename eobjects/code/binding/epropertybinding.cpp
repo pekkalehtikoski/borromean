@@ -122,7 +122,7 @@ void ePropertyBinding::setupclass()
 /**
 ****************************************************************************************************
 
-  @brief Write propertybinding content to stream.
+  @brief Write property binding content to stream.
 
   The ePropertyBinding::writer() function serializes the property binding to stream. This writes
   only the content, use eObject::write() to save also class information, attachements, etc.
@@ -179,7 +179,7 @@ failed:
 /**
 ****************************************************************************************************
 
-  @brief Read conatiner content from stream.
+  @brief Read property binding content from stream.
 
   The ePropertyBinding::reader() function reads serialized propertybinding from stream. 
   This function reads only the object content. To read whole object including attachments, 
