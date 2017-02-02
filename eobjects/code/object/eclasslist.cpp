@@ -164,6 +164,7 @@ void eclasslist_initialize()
     eName::setupclass(); 
     eEnvelope::setupclass(); 
     ePropertyBinding::setupclass();
+    eTimer::setupclass(); 
     eQueue::setupclass(); 
     eConnection::setupclass(); 
     eEndPoint::setupclass(); 

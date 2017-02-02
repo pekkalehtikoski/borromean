@@ -57,6 +57,7 @@ void eobjects_shutdown();
 #include "eobjects/code/envelope/eenvelope.h"
 #include "eobjects/code/thread/ethreadhandle.h"
 #include "eobjects/code/thread/ethread.h"
+#include "eobjects/code/timer/etimer.h"
 #include "eobjects/code/global/eprocess.h"
 #include "eobjects/code/global/eglobal.h"
 #include "eobjects/code/stream/estream.h"
