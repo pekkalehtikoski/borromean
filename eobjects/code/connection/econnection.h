@@ -161,7 +161,7 @@ protected:
 
     /* Connection timer.
      */
-    os_int64 m_connect_t;
+//    os_int64 m_connect_t;
 
     /** Buffer for messages when attempting connection for the first time.
      */
@@ -178,6 +178,10 @@ protected:
     /** Connecttion has been attempted and it has failed at least once.
      */
     os_boolean m_connectetion_failed_once;
+
+    /** Reconnect timer enabled.
+     */
+    os_boolean  m_timer_enabled;
 
     /** New data has been written to stream, but the stream has not been
         flushed yet.

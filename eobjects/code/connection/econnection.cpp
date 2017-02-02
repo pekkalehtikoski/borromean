@@ -50,8 +50,9 @@ eConnection::eConnection(
     m_initialized = OS_FALSE;
     m_connected = OS_FALSE;
     m_connectetion_failed_once = OS_FALSE;
-    m_connect_t = 0;
+//    m_connect_t = 0;
     m_new_writes = OS_FALSE;
+    m_timer_enabled = OS_FALSE;
 }
 
 
@@ -75,9 +76,9 @@ eConnection::~eConnection()
 /**
 ****************************************************************************************************
 
-  @brief Add eVariable to class list and class'es properties to it's property set.
+  @brief Add eConnection to class list and class'es properties to it's property set.
 
-  The eVariable::setupclass function adds eVariable to class list and class'es properties to
+  The eConnection::setupclass function adds eConnection to class list and class'es properties to
   it's property set. The class list enables creating new objects dynamically by class identifier, 
   which is used for serialization reader functions. The property stet stores static list of
   class'es properties and metadata for those.
@@ -89,7 +90,7 @@ void eConnection::setupclass()
     const os_int cls = ECLASSID_CONNECTION;
     eVariable *p;
 
-    /* Synchwonize, add the class to class list and properties to property set.
+    /* Synchronize, add the class to class list and properties to property set.
      */
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eConnection");
@@ -250,6 +251,14 @@ void eConnection::onmessage(
 
         return;
     }
+
+    /* If timer message to try to open connection
+     */
+    if (c == '\0') if (envelope->command() == ECMD_TIMER)
+    {
+        open();
+        return;
+    }
  
     eThread::onmessage(envelope);
 }
@@ -304,6 +313,14 @@ void eConnection::run()
          */
         if (m_stream)
         {
+            /* Disable timer 
+             */
+            if (m_timer_enabled)
+            {
+                timer(0);
+                m_timer_enabled = OS_FALSE;
+            }
+
             /* Wait for socket or thread event. The function will return error if
                socket is disconnected. Structure "selectdata" is set regardless of
                return code, for example read and close can be returned at same time,
@@ -378,10 +395,20 @@ osal_console_write("osal_stream_select failed\n");
          */
         else
         {
+            /* Enable timer 
+             */
+            if (!m_timer_enabled)
+            {
+                timer(try_again_ms);
+                m_timer_enabled = OS_TRUE;
+            }
+            
+            alive(EALIVE_WAIT_FOR_EVENT); 
+
+   #if 0
             /* WE SHOULD USE EALIVE_WAIT_FOR_EVENT, but EALIVE_RETURN_IMMEDIATELY is used
                until timers are implemented in eobjects.
              */
-            /* alive(EALIVE_WAIT_FOR_EVENT); */
 
             alive(EALIVE_RETURN_IMMEDIATELY);
             os_sleep(100);
@@ -392,6 +419,7 @@ osal_console_write("osal_stream_select failed\n");
             {
                 open();
             }
+#endif
         }
     }
 }
@@ -436,7 +464,7 @@ void eConnection::open()
 
     if (m_stream || !m_initialized || m_ipaddr->isempty()) 
     {
-        m_connect_t = 0;
+//        m_connect_t = 0;
         return;
     }
 
@@ -450,11 +478,11 @@ void eConnection::open()
 	    osal_console_write("osal_stream_open failed\n");
         delete m_stream;
         m_stream = OS_NULL;
-        osal_timer_get(&m_connect_t);
+//        osal_timer_get(&m_connect_t);
         return;
     }
 
-    m_connect_t = 0;
+//    m_connect_t = 0;
     m_new_writes = OS_FALSE;
 }
 

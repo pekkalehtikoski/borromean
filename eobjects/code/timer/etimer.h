@@ -75,23 +75,16 @@ public:
 		return new eTimer(parent, oid, flags);
 	}
 
-    /* Called when property value changes.
+    /* Function to process incoming messages. 
      */
-    virtual void onpropertychange(
-        os_int propertynr, 
-        eVariable *x, 
-        os_int flags);
+    void onmessage(
+        eEnvelope *envelope);
 
-    /* Get value of simple property.
+    /* Enable/disable timer.
      */
-    virtual eStatus simpleproperty(
-        os_int propertynr, 
-        eVariable *x);
-
-    /* Initialize the object.
-     */
-    virtual void initialize(
-        eContainer *params = OS_NULL);
+    void settimer(
+        os_long period_ms,
+        os_char *name);
 
     /* Run the connection.
      */

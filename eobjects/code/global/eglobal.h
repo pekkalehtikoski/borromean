@@ -57,7 +57,7 @@ typedef struct eGlobal
      */
     eContainer *propertysets;
 
-    /** Pointer to process handle
+    /** Pointer to process thread handle.
      */
     eThreadHandle *processhandle;
 
@@ -68,6 +68,10 @@ typedef struct eGlobal
     /* Process name space
      */
     eNameSpace *process_ns;
+
+    /** Pointer to timer thread handle
+     */
+    eThreadHandle *timerhandle;
 
     /* Console stream for debug output.
      */

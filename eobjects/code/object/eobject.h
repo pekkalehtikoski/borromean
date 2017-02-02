@@ -192,7 +192,7 @@ public:
 
     /* Enable or disable timer for this object.
      */
-    eStatus timer(
+    void timer(
         os_long period_ms);
 
     /*@}*/

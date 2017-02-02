@@ -99,8 +99,12 @@ void eprocess_create()
     eProcess 
         *process;
 
+    eTimer
+        *tim;
+
     eThreadHandle
-        *processhandle;
+        *processhandle,
+        *timerhandle;
 
     if (eglobal->processhandle == OS_NULL)
     {
@@ -108,13 +112,20 @@ void eprocess_create()
          */
         process = new eProcess();
         processhandle = new eThreadHandle();
-        process->start(processhandle);         /* After this t pointer is useless */
+        process->start(processhandle);         /* After this process pointer is useless */
+
+        /* Create thread which runs timers.
+         */
+        tim = new eTimer();
+        timerhandle = new eThreadHandle();
+        tim->start(timerhandle); /* After this tim pointer is useless */
 
         /* Add as global process only when process has been created.
          */
         osal_mutex_system_lock();
         eglobal->process = process;
         eglobal->processhandle = processhandle;
+        eglobal->timerhandle = timerhandle;
         osal_mutex_system_unlock();
     }
 }
@@ -135,7 +146,12 @@ void eprocess_close()
 {
     if (eglobal->processhandle)
     {
-       /* Request to process to exit and wait for thread to terminate.
+        /* Request timer thread to exit and wait for thread to terminate.
+         */
+        eglobal->timerhandle->terminate();
+        eglobal->timerhandle->join();
+
+        /* Request process thread to exit and wait for thread to terminate.
          */
         eglobal->processhandle->terminate();
         eglobal->processhandle->join();

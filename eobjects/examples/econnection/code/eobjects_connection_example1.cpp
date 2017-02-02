@@ -22,16 +22,7 @@
 /* Every class needs to have unique class identifier (classid). Class identifier is is 32 bit
    integer. Class identifiers starting from ECLASSID_APP_BASE are reserved for the application.
  */
-// #define MY_CLASS_ID_1 (ECLASSID_APP_BASE + 1)
 #define MY_CLASS_ID_2 (ECLASSID_APP_BASE + 2)
-
-/* Enumeration of eMyClass1 properties. Normally these would be in header file.
- */
-//#define EMYCLASS1P_A 10
-//#define EMYCLASS1P_B 20
-
-//static os_char emyclass1p_a[] = "A";
-//static os_char emyclass1p_b[] = "B";
 
 /* Enumeration of eMyClass2 properties. 
  */
@@ -40,9 +31,6 @@
 
 static os_char emyclass2p_x[] = "X";
 static os_char emyclass2p_y[] = "Y";
-
-
-
 
 
 /**

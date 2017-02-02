@@ -55,9 +55,10 @@
  */
 #define ECMD_EXIT_THREAD -30
 
-/* Timer message.
+/* Timer commands (timer hit and set timer period).
  */
 #define ECMD_TIMER -50
+#define ECMD_SETTIMER -51
 
 
 /*@}*/

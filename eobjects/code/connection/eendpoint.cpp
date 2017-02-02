@@ -71,11 +71,11 @@ eEndPoint::~eEndPoint()
 /**
 ****************************************************************************************************
 
-  @brief Add eVariable to class list and class'es properties to it's property set.
+  @brief Add eEndPoint to class list and class'es properties to it's property set.
 
-  The eVariable::setupclass function adds eVariable to class list and class'es properties to
+  The eEndPoint::setupclass function adds eEndPoint to class list and class'es properties to
   it's property set. The class list enables creating new objects dynamically by class identifier, 
-  which is used for serialization reader functions. The property stet stores static list of
+  which is used for serialization functions. The property stet stores static list of
   class'es properties and metadata for those.
 
 ****************************************************************************************************
@@ -85,7 +85,7 @@ void eEndPoint::setupclass()
     const os_int cls = ECLASSID_ENDPOINT;
     eVariable *p;
 
-    /* Synchwonize, add the class to class list and properties to property set.
+    /* Synchronize, add the class to class list and properties to property set.
      */
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eEndPoint");
