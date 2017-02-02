@@ -876,6 +876,8 @@ osalStatus osal_socket_select(
 	WSANETWORKEVENTS network_events;
     os_int i, n_sockets, n_events, event_nr, eventflags, errorcode;
     DWORD rval;
+    
+    os_memclear(selectdata, sizeof(osalSelectData));
 
     if (nstreams < 1 || nstreams > OSAL_SOCKET_SELECT_MAX)
         return OSAL_STATUS_FAILED;

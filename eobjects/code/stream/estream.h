@@ -48,11 +48,15 @@
 
 /** Control character in data.
  */
-#define EL_STREAM_CTRLCH_IN_DATA 0x60
+#define E_STREAM_CTRLCH_IN_DATA 0x60
 
 /** Stream has been disconnected. 
  */
-#define OSAL_STREAM_CTRLCH_DISCONNECT 0x80
+#define E_STREAM_CTRLCH_DISCONNECT 0x80
+
+/** Stream flushed, contains whole objects. 
+ */
+#define E_STREAM_CTRLCH_FLUSH 0xA0
 
 /** Mask for separating control character from or repeat count or version number.
  */
@@ -91,7 +95,11 @@
 
 /** Stream will be disconnected now.
  */
-#define E_STREAM_DISCONNECT (E_STREAM_CTRL_BASE + OSAL_STREAM_CTRLCH_DISCONNECT)
+#define E_STREAM_DISCONNECT (E_STREAM_CTRL_BASE + E_STREAM_CTRLCH_DISCONNECT)
+
+/** Stream flushed, contains whole objects. 
+ */
+#define E_STREAM_FLUSH (E_STREAM_CTRL_BASE + E_STREAM_CTRLCH_FLUSH)
 
 /** Special return values for readchar() to indicate that buffer has no more data.
  */
@@ -125,6 +133,12 @@
     queue as is.
  */
 #define OSAL_STREAM_DECODE_ON_READ 0x0200000
+
+/** eQueue specific flag: Maintain flush contfol count within queue when reading input 
+    from socket, etc.
+ */
+#define OSAL_FLUSH_CTRL_COUNT 0x0400000
+
 
 /*@}*/
 
@@ -284,6 +298,13 @@ public:
     virtual os_int readchar()
     {
         return E_STREAM_DISCONNECT;
+    }
+
+    /** Number of incoming flush controls in queue at the moment. 
+     */
+    virtual os_int flushcount() 
+    {
+        return -1;
     }
 
     /* Wait for stream or thread event.

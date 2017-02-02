@@ -51,6 +51,7 @@ eConnection::eConnection(
     m_connected = OS_FALSE;
     m_connectetion_failed_once = OS_FALSE;
     m_connect_t = 0;
+    m_new_writes = OS_FALSE;
 }
 
 
@@ -294,6 +295,8 @@ void eConnection::run()
     osalSelectData selectdata;
     os_long try_again_ms = osal_rand(3000, 4000);
 
+    /* Run as long as thread is not requested to exit.
+     */
     while (!exitnow())
     {
         /* If we have listening socket, wait for socket or thread event. 
@@ -301,13 +304,16 @@ void eConnection::run()
          */
         if (m_stream)
         {
+            /* Wait for socket or thread event. The function will return error if
+               socket is disconnected. Structure "selectdata" is set regardless of
+               return code, for example read and close can be returned at same time,
+               and thread event with anything else.
+             */
             s = m_stream->select(&m_stream, 1, trigger(), &selectdata, OSAL_STREAM_DEFAULT);
 
-            if (s) 
-            {
-	            osal_console_write("osal_stream_select failed\n");
-            }
-
+            /* Handle thread events. If thread's message queue is becomes empty, we
+               flush the socket writes.
+             */
             if (selectdata.eventflags & OSAL_STREAM_CUSTOM_EVENT)
             {
                 /* Process messages.
@@ -316,31 +322,21 @@ void eConnection::run()
 
                 /* If message queue for incoming messages is empty, flush writes.
                  */
-                if (m_message_queue->first() == OS_NULL)
+                if (m_message_queue->first() == OS_NULL && m_new_writes)
                 {
+                    m_stream->writechar(E_STREAM_FLUSH);
                     m_stream->flush();
+                    m_new_writes = OS_FALSE;
                 }
             }
 
-            if (selectdata.eventflags & OSAL_STREAM_CLOSE_EVENT)
-            {
-                osal_console_write("close event\n");
-                close();
-                continue;
-            }
-
+            /* Stream connected.
+             */
             if (selectdata.eventflags & OSAL_STREAM_CONNECT_EVENT)
             {
-
-                if (selectdata.errorcode)
+                if (!selectdata.errorcode)
                 {
-                    osal_console_write("connect failed\n");
-                    close();
-                    continue;
-                }
-                else
-                {
-                    osal_console_write("connect event\n");
+osal_console_write("connect event\n");
                     if (connected()) 
                     {
                         close();
@@ -349,22 +345,36 @@ void eConnection::run()
                 }
             }
 
+            /* Data received, send objects though messaging once full message is received
+               (see flush count).
+             */
             if (selectdata.eventflags & OSAL_STREAM_READ_EVENT)
             {
-                osal_console_write("read event\n");
+osal_console_write("read event\n");
                 
-                /* Read object */
-                while (!read()); 
-                read();
+                /* Read objects, as long we have whole objects to read.
+                 */
+                while (m_stream->flushcount())
+                { 
+                    if (read())
+                    {
+                        close(); 
+                        break;
+                    }
+                }
             }
 
-            /* if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
+            /* Opening stream has failed or stream has been disconnected.
+             */
+            if (s) 
             {
-                osal_console_write("write event\n");
-            } */
+osal_console_write("osal_stream_select failed\n");
+                close();
+            }
         }
 
-        /* Otherwise wait for thread events and process them.
+        /* No socket, wait for thread events and process them. Try periodically to open
+           socket.
          */
         else
         {
@@ -383,8 +393,6 @@ void eConnection::run()
                 open();
             }
         }
-
-//        osal_console_write("worker running\n");
     }
 }
 
@@ -447,6 +455,7 @@ void eConnection::open()
     }
 
     m_connect_t = 0;
+    m_new_writes = OS_FALSE;
 }
 
 
@@ -472,6 +481,7 @@ void eConnection::close()
     if (m_connected)
     {
         m_stream->writechar(E_STREAM_DISCONNECT);
+        m_stream->writechar(E_STREAM_FLUSH);
         m_stream->flush();
     }
 
@@ -580,6 +590,7 @@ eStatus eConnection::write(
 envelope->json_write(&econsole);
 
     s = envelope->writer(m_stream, EOBJ_SERIALIZE_DEFAULT);
+    if (!s) m_new_writes = OS_TRUE;
     return s;
 }
 

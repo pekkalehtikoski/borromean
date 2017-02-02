@@ -178,6 +178,11 @@ protected:
     /** Connecttion has been attempted and it has failed at least once.
      */
     os_boolean m_connectetion_failed_once;
+
+    /** New data has been written to stream, but the stream has not been
+        flushed yet.
+     */
+    os_boolean m_new_writes;
 };
 
 #endif

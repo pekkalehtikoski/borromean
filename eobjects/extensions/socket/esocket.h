@@ -139,6 +139,15 @@ public:
      */    
     virtual os_int readchar();
 
+    /** Number of incoming flush controls in queue at the moment. 
+     */
+    virtual os_int flushcount() 
+    {
+        if (m_in) return m_in->flushcount();
+        return -1;
+    }
+
+
     /* Wait for socket or thread event.
      */
 	virtual eStatus select(

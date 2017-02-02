@@ -155,7 +155,7 @@ void eSocket::setup(
         if (m_out == OS_NULL) m_out = new eQueue(this);
         m_in->close();
         m_out->close();
-        m_in->open(OS_NULL, OSAL_STREAM_DECODE_ON_READ);
+        m_in->open(OS_NULL, OSAL_STREAM_DECODE_ON_READ|OSAL_FLUSH_CTRL_COUNT);
         m_out->open(OS_NULL, OSAL_STREAM_ENCODE_ON_WRITE);
     }
 }
@@ -387,35 +387,35 @@ eStatus eSocket::select(
         }
         s = osal_stream_select(osalsock, nstreams, evnt, 
             selectdata, OSAL_STREAM_DEFAULT); 
+    }
 
-        if (s == OSAL_SUCCESS) 
+    if (s == OSAL_SUCCESS) 
+    {
+        if (selectdata->eventflags & OSAL_STREAM_READ_EVENT)
         {
-            if (selectdata->eventflags & OSAL_STREAM_CLOSE_EVENT)
-            {
-                osal_console_write("close event 2\n");
-            }
+osal_console_write("read event 2\n");
+            read_socket();
+        }
 
-            if (selectdata->eventflags & OSAL_STREAM_CONNECT_EVENT)
-            {
-                osal_console_write("connect event 2\n");
+        if (selectdata->eventflags & OSAL_STREAM_CLOSE_EVENT)
+        {
+osal_console_write("close event 2\n");
+            return ESTATUS_FAILED;
+        }
 
-                if (selectdata->errorcode)
-                {
-                    osal_console_write("connect failed 2\n");
-                }
-            }
-
-            if (selectdata->eventflags & OSAL_STREAM_READ_EVENT)
+        if (selectdata->eventflags & OSAL_STREAM_CONNECT_EVENT)
+        {
+            if (selectdata->errorcode)
             {
-                osal_console_write("read event 2\n");
-                read_socket();
+osal_console_write("connect failed 2\n");
+                return ESTATUS_FAILED;
             }
+        } 
 
-            if (selectdata->eventflags & OSAL_STREAM_WRITE_EVENT)
-            {
-                osal_console_write("write event\n");
-                write_socket(OS_TRUE);
-            }
+        if (selectdata->eventflags & OSAL_STREAM_WRITE_EVENT)
+        {
+osal_console_write("write event\n");
+            write_socket(OS_TRUE);
         }
     }
 

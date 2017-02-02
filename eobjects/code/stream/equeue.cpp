@@ -54,6 +54,8 @@ eQueue::eQueue(
     m_rd_repeat_count = 0;
     m_flags = 0;
     m_bytes = 0;
+    m_flushctrl_last_c = 0;
+    m_flush_count = 0;
 }
 
 
@@ -172,6 +174,8 @@ eStatus eQueue::close()
     m_rd_repeat_count = 0;
     m_flags = 0;
     m_bytes = 0;
+    m_flushctrl_last_c = 0;
+    m_flush_count = 0;
 
     return ESTATUS_SUCCESS;
 }
@@ -336,7 +340,7 @@ void eQueue::write_encoded(
                    by ctrl in data mark.
                  */
                 putcharacter(E_STREAM_CTRL_CHAR);
-                putcharacter(EL_STREAM_CTRLCH_IN_DATA);
+                putcharacter(E_STREAM_CTRLCH_IN_DATA);
                 m_bytes += 2;
 
                 /* no previous character
@@ -357,8 +361,40 @@ void eQueue::write_plain(
     os_memsz buf_sz)
 {
     os_int n;
+    os_memsz count;
+    os_uchar *u;
 
     m_bytes += buf_sz;
+
+    /* If we need to calculate incoming flush controls
+     */
+    if (buf_sz > 0 && (m_flags & OSAL_FLUSH_CTRL_COUNT))
+    {
+        u = (os_uchar*)buf;
+
+        if (m_flushctrl_last_c == E_STREAM_CTRL_CHAR)
+        {
+            if (*u == E_STREAM_CTRLCH_FLUSH)
+            {
+                m_flush_count++;
+            }
+        }
+
+        count = buf_sz - 1;
+        while (count--)
+        {
+            if (*(u++) == E_STREAM_CTRL_CHAR)
+            {
+                if (*u == E_STREAM_CTRLCH_FLUSH)
+                {
+                    m_flush_count++;
+                }
+            }
+        }
+
+        m_flushctrl_last_c = (os_uchar)buf[buf_sz - 1];
+    }
+
 
     while (buf_sz > 0)
     {
@@ -555,7 +591,7 @@ void eQueue::read_decoded(
             if (cc)
             {
                 m_rd_prevc = m_rd_prev2c = EQUEUE_NO_PREVIOUS_CHAR;
-                if (cc == EL_STREAM_CTRLCH_IN_DATA)
+                if (cc == E_STREAM_CTRLCH_IN_DATA)
                 {
                     m_rd_repeat_char = E_STREAM_CTRL_CHAR;
                     m_rd_repeat_count = (c & E_STREAM_COUNT_MASK);
@@ -718,7 +754,11 @@ eStatus eQueue::writechar(
             break;
 
         case E_STREAM_DISCONNECT:
-            c = OSAL_STREAM_CTRLCH_DISCONNECT;
+            c = E_STREAM_CTRLCH_DISCONNECT;
+            break;
+
+        case E_STREAM_FLUSH:
+            c = E_STREAM_CTRLCH_FLUSH;
             break;
 
         default:
@@ -815,10 +855,16 @@ os_int eQueue::readchar()
                 {
                     /** Control character in data.
                      */
-                    case EL_STREAM_CTRLCH_IN_DATA:
+                    case E_STREAM_CTRLCH_IN_DATA:
                         m_rd_repeat_char = E_STREAM_CTRL_CHAR;
                         m_rd_repeat_count = (c & E_STREAM_COUNT_MASK);
                         return E_STREAM_CTRL_CHAR;
+
+                    /* Flush count character.
+                     */
+                    case E_STREAM_CTRLCH_FLUSH:
+                        m_flush_count--;
+                        continue;
         
                     /** Beginning/end of object or stream has been disconnected. 
                      */

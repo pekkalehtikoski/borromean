@@ -152,6 +152,14 @@ public:
 
     os_memsz bytes();
 
+    /** Number of incoming flush controls in queue at the moment. Requires OSAL_FLUSH_CTRL_COUNT 
+        and OSAL_STREAM_DECODE_ON_READ flags for open().
+     */
+    virtual os_int flushcount() 
+    {
+        return m_flush_count;
+    }
+
     /*@}*/
 
 private:
@@ -292,6 +300,14 @@ private:
     /** The character before that one.
      */
     os_int m_rd_prev2c;
+
+    /** Number of incoming flush controls in queue at the moment. 
+     */
+    os_int m_flush_count;
+
+    /* Last character of previous write_plain() call.
+     */
+    os_uchar m_flushctrl_last_c;
 };
 
 #endif
