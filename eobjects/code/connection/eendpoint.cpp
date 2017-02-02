@@ -42,7 +42,7 @@ eEndPoint::eEndPoint(
 	os_int flags)
     : eThread(parent, oid, flags)
 {
-    /** Ckear member variables and allocate eVariable for IP address.
+    /** Clear member variables and allocate eVariable for IP address.
      */
     m_stream = OS_NULL;
     m_initialized = OS_FALSE;

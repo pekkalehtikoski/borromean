@@ -190,6 +190,11 @@ public:
         return mm_handle;
     }
 
+    /* Enable or disable timer for this object.
+     */
+    eStatus timer(
+        os_long period_ms);
+
     /*@}*/
 
 
