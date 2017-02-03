@@ -647,11 +647,11 @@ void eVariable::seto(
 	if (adopt_x)
 	{
 		m_value.valbuf.v.o = x;
-		adopt(x, 0 /* Id value */);
+		adopt(x, EOID_ITEM /* OID value */);
 	}
 	else
 	{
-		m_value.valbuf.v.o = x->clone(this, 0 /* Id value */);
+		m_value.valbuf.v.o = x->clone(this, EOID_ITEM /* OID value */);
 	}
 
     /* Set data type.

@@ -79,10 +79,39 @@ public:
         eContainer *params = OS_NULL)
     {
         bind(EMYCLASS2P_X, "//myconnection/myclass1/_p/A", EBIND_DEFAULT);
-setpropertyd(EMYCLASS2P_Y, 3.3);
+// setpropertyd(EMYCLASS2P_Y, 3.3);
         bind(EMYCLASS2P_Y, "//myconnection/myclass1/_p/B", EBIND_CLIENTINIT);
-setpropertyd(EMYCLASS2P_Y, 4.3);
+// setpropertyd(EMYCLASS2P_Y, 4.3);
     }
+
+    /* Process incoming messages. 
+     */
+    virtual void onmessage(
+        eEnvelope *envelope)
+    {
+        /* If this is message to me, not to my children?
+         */
+        if (*envelope->target() == '\0')
+        {
+            /* If timer message, then increment A?
+             */
+            if (envelope->command() == ECMD_TIMER)
+            {
+                setpropertyl(EMYCLASS2P_X, -2 * propertyl(EMYCLASS2P_X));
+                setpropertyl(EMYCLASS2P_Y, propertyl(EMYCLASS2P_Y)+1);
+
+    setpropertys_msg("//myconnection/myclass1",
+         "message from connection_example1", "A");
+
+                return;
+            }
+        }
+
+        /* Default message procesing.
+         */
+        eThread::onmessage(envelope);
+    }
+
 
     /* This gets called when property value changes
      */
@@ -91,18 +120,14 @@ setpropertyd(EMYCLASS2P_Y, 4.3);
         eVariable *x, 
         os_int flags)
     {
-        os_double a;
-
         switch (propertynr)
         {
             case EMYCLASS2P_X:
-                a = x->getd();
-                printf ("2: GOT X %s\n", x->gets());
-                setpropertyd(EMYCLASS2P_Y, a * 0.99);
+                printf ("GOT X \'%s\'\n", x->gets());
                 break;
 
             case EMYCLASS2P_Y:
-                printf ("1: GOT Y %s\n", x->gets());
+                printf ("GOT Y \'%s\'\n", x->gets());
                 break;
         }
     }
@@ -147,11 +172,12 @@ void connection_example_1()
      */
     t = new eMyClass2();
 	t->addname("thread2", ENAME_PROCESS_NS);
+    t->timer(12000);
     t->start(&thandle2); /* After this t pointer is useless */
 
     c.setpropertyd_msg("//thread2/_p/Y", 11.5);
 
-    os_sleep(1500);
+    os_sleep(150000);
 
     /* Wait for the threads to terminate.
      */

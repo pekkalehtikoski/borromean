@@ -303,7 +303,7 @@ public:
     inline os_int oid() 
     {
 		if (mm_handle) return mm_handle->oid();
-		return 0;
+		return EOID_ITEM;
     }
 
     /* Recommended size for oixstr() buffer.

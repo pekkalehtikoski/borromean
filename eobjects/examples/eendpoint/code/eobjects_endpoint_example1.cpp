@@ -86,6 +86,29 @@ public:
         return MY_CLASS_ID_1;
     }
 
+    /* Process incoming messages. 
+     */
+    virtual void onmessage(
+        eEnvelope *envelope)
+    {
+        /* If this is message to me, not to my children?
+         */
+        if (*envelope->target() == '\0')
+        {
+            /* If timer message, then increment A?
+             */
+            if (envelope->command() == ECMD_TIMER)
+            {
+                setpropertyl(EMYCLASS1P_A, propertyl(EMYCLASS1P_A) + 1);
+                return;
+            }
+        }
+
+        /* Default message procesing.
+         */
+        eThread::onmessage(envelope);
+    }
+
     /* This gets called when property value changes
      */
     virtual void onpropertychange(
@@ -93,8 +116,6 @@ public:
         eVariable *x, 
         os_int flags)
     {
-        os_double b;
-
         switch (propertynr)
         {
             case EMYCLASS1P_A:
@@ -102,9 +123,7 @@ public:
                 break;
 
             case EMYCLASS1P_B:
-                b = x->getd();
-                printf ("1: GOT B %f\n", b);
-                setpropertyd(EMYCLASS1P_A, b * 2.01);
+                printf ("1: GOT B \'%s\'\n", x->gets());
                 break;
         }
     }
@@ -137,6 +156,7 @@ void endpoint_example_1()
      */
     t = new eMyClass1();
 	t->addname("myclass1", ENAME_PROCESS_NS);
+    t->timer(4500);
 // t->json_write(&econsole);
     t->start(&thandle1); /* After this t pointer is useless */
 
