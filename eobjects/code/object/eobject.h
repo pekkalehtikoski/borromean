@@ -39,6 +39,7 @@ class eThread;
 #define EMSG_DEFAULT 0
 #define EMSG_NO_REPLIES 1
 #define EMSG_KEEP_CONTENT 0
+#define EMSG_KEEP_CONTEXT 0
 #define EMSG_NO_RESOLVE 2
 #define EMSG_NO_NEW_SOURCE_OIX 4
 #define EMSG_NO_ERRORS 8

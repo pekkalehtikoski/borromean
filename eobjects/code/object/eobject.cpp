@@ -463,6 +463,7 @@ eThread *eObject::thread()
 	if (mm_handle) 
     {
         eObject *o = mm_handle->m_root->parent();
+        osal_debug_assert(o);
         
         /* If this is thread, return pointer.
          */

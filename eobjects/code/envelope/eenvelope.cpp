@@ -178,7 +178,7 @@ eObject *eEnvelope::clone(
     /** Clone envelope specific stuff.
      */
     clonedobj->m_command = m_command;
-    clonedobj->m_mflags = m_command;
+    clonedobj->m_mflags = m_mflags;
     clonedobj->settarget(target());
     clonedobj->prependsource(source());
 

@@ -146,7 +146,6 @@ protected:
     void notarget(
         eEnvelope *envelope);
 
-
     /** Stream class identifier. Specifies stream class to use.
      */
     os_int m_stream_classid;
@@ -187,6 +186,10 @@ protected:
         flushed yet.
      */
     os_boolean m_new_writes;
+
+    /** Delete the connection if case socket fails.
+     */
+    os_boolean m_delete_on_error;
 };
 
 #endif

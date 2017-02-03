@@ -53,6 +53,7 @@ eConnection::eConnection(
 //    m_connect_t = 0;
     m_new_writes = OS_FALSE;
     m_timer_enabled = OS_FALSE;
+    m_delete_on_error = OS_FALSE;
 }
 
 
@@ -143,6 +144,7 @@ void eConnection::onpropertychange(
             {
                 m_ipaddr->setv(x);
                 close();
+                open();
             }
             break;
 
@@ -180,6 +182,8 @@ eStatus eConnection::simpleproperty(
 
         case ECONNP_IPADDR:
             x->setv(m_ipaddr);
+            close();
+            open();
             break;
    
         default:
@@ -284,6 +288,7 @@ void eConnection::initialize(
     osal_console_write("initializing worker\n");
 
     m_initialized = OS_TRUE;
+    open();
 }
 
 
@@ -402,24 +407,13 @@ osal_console_write("osal_stream_select failed\n");
                 timer(try_again_ms);
                 m_timer_enabled = OS_TRUE;
             }
+
+            if (m_connectetion_failed_once && m_delete_on_error)
+            {
+                break;
+            } 
             
             alive(EALIVE_WAIT_FOR_EVENT); 
-
-   #if 0
-            /* WE SHOULD USE EALIVE_WAIT_FOR_EVENT, but EALIVE_RETURN_IMMEDIATELY is used
-               until timers are implemented in eobjects.
-             */
-
-            alive(EALIVE_RETURN_IMMEDIATELY);
-            os_sleep(100);
-
-            /* If we need to open connection. THIS SHOULD BE DONE BY TIMER EVENT, NOT BY POLLING
-             */
-            if (osal_timer_elapsed(&m_connect_t, try_again_ms))
-            {
-                open();
-            }
-#endif
         }
     }
 }
@@ -444,6 +438,8 @@ void eConnection::accepted(
 
     m_stream = stream;
     adopt(stream);
+
+    m_delete_on_error = OS_TRUE;
 }
 
 
@@ -588,7 +584,6 @@ void eConnection::disconnected()
 
     /* Inform all bindings that the connection is lost.
      */
-
     m_connected = OS_FALSE;
     setpropertyl(ECONNP_ISOPEN, OS_FALSE);
     m_connectetion_failed_once = OS_TRUE;

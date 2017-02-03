@@ -328,6 +328,14 @@ public:
         return m_source.str + m_source.str_pos;
     }
 
+    /* os_char *lastsource()
+    {
+        os_char *p, *e;
+        p = source();
+        e = os_strechr(p, '/');
+        return e ? e + 1 : p;
+    } */
+
  
 /* CONTENT AND CONTEXT ************************************************************************** */
 

@@ -129,7 +129,7 @@ void eTimer::setupclass()
 void eTimer::onmessage(
     eEnvelope *envelope)
 {
-    eVariable *v;
+    eVariable *v, *n;
 
     /* If this timer setting command to this object.
      */
@@ -143,8 +143,12 @@ void eTimer::onmessage(
                 return;
 
             case ECMD_NO_TARGET:
-                v = ns_getv(envelope->source(), E_PARENT_NS);
-                delete v;
+                n = eVariable::cast(envelope->context());
+                if (n)
+                {
+                    v = ns_getv(n->gets(), E_THIS_NS);
+                    delete v;
+                }
                 return;
         }
     }
@@ -235,7 +239,7 @@ void eTimer::settimer(
 */
 void eTimer::run()
 {
-    eVariable *t;
+    eVariable *t, *nextt, context;
     eName *name;
     os_long step = 1;
     e_oid oid;
@@ -244,15 +248,17 @@ void eTimer::run()
     {
         alive(EALIVE_RETURN_IMMEDIATELY);
 
-        for (t = firstv(); t; t = t->nextv())
+        for (t = firstv(); t; t = nextt)
         {
+            nextt = t->nextv();
             oid = t->oid();
             if (oid < 1) continue;
 
             if ((step % oid) == 0) 
             {
                 name = t->firstn(EOID_NAME);
-                message(ECMD_TIMER, name->gets());
+                context = *name;
+                message(ECMD_TIMER, name->gets(), OS_NULL, OS_NULL, EMSG_KEEP_CONTEXT, &context);
             }
         }
 
