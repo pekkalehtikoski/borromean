@@ -175,7 +175,8 @@ void eTimer::settimer(
     os_char *name)
 {
     e_oid step;
-    eVariable *t;
+    eVariable *t = OS_NULL;
+    eName *n;
 
     /* Convert period to 40ms steps.
      */
@@ -184,7 +185,8 @@ void eTimer::settimer(
 
     /* If we have variable for this timer.
      */
-    t = firstv(step);
+    n = ns_first(name, E_THIS_NS);
+    if (n) t = eVariable::cast(n->parent());
     if (t)
     {
         /* If we are to delete this.

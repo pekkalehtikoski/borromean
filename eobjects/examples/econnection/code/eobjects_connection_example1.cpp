@@ -100,8 +100,8 @@ public:
                 setpropertyl(EMYCLASS2P_X, -2 * propertyl(EMYCLASS2P_X));
                 setpropertyl(EMYCLASS2P_Y, propertyl(EMYCLASS2P_Y)+1);
 
-    setpropertys_msg("//myconnection/myclass1",
-         "message from connection_example1", "A");
+/*    setpropertys_msg("//myconnection/myclass1",
+         "message from connection_example1", "A"); */
 
                 return;
             }
@@ -165,8 +165,8 @@ void connection_example_1()
     c.setpropertys_msg(conthreadhandle.uniquename(), // "//myconnection",
          "localhost:" OSAL_DEFAULT_SOCKET_PORT_STR, econnp_ipaddr);
 
-    c.setpropertys_msg("//myconnection/myclass1",
-         "message from connection_example1", "A");
+//    c.setpropertys_msg("//myconnection/myclass1",
+//         "message from connection_example1", "A");
 
     /* Create and start thread named "thread2".
      */
@@ -175,7 +175,7 @@ void connection_example_1()
     t->timer(12000);
     t->start(&thandle2); /* After this t pointer is useless */
 
-    c.setpropertyd_msg("//thread2/_p/Y", 11.5);
+//    c.setpropertyd_msg("//thread2/_p/Y", 11.5);
 
     os_sleep(150000);
 
