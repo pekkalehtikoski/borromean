@@ -307,6 +307,7 @@ eStatus eSet::reader(
         m_items = OS_NULL;
         m_alloc = m_used = 0;
     }
+    while ((objptr = first())) delete objptr;
 
 	/* Read object start mark and version number.
      */
@@ -328,7 +329,7 @@ eStatus eSet::reader(
     p = m_items;
     e = p + m_used;
 
-    /* Search id from items untim match found.
+    /* Search id from items until match found.
      */
     while (p < e)
     {
@@ -394,6 +395,152 @@ failed:
 
     return ESTATUS_READING_OBJ_FAILED;
 }
+
+
+#if E_SUPPROT_JSON
+/**
+****************************************************************************************************
+
+  @brief Write set to stream as JSON.
+
+  The eSet::json_writer() function writes class specific object content to stream as JSON.
+  
+  @param  stream The stream to write to.
+  @param  sflags Serialization flags. Typically EOBJ_SERIALIZE_DEFAULT.
+  @param  indent Indentation depth, 0, 1... Writes 2x this spaces at beginning of a line.
+
+  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
+          fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
+          indicate an error.
+
+****************************************************************************************************
+*/
+eStatus eSet::json_writer(
+    eStream *stream, 
+    os_int sflags,
+    os_int indent)
+{
+    eVariable x, *v;
+    eObject *objptr;
+    os_char *p, *e, *strptr, nbuf[OSAL_NBUF_SZ];
+    os_uchar iid, ibytes;
+    os_schar itype;
+    os_boolean comma = OS_TRUE;
+
+#if 0
+    /* Try first if this value is stored in separate variable.
+     */
+     v = firstv(id);
+    if (v)
+    {
+        x->setv(v);
+        return OS_TRUE;
+    }
+
+
+    /* If this ID cannot be presented as unsigned char.
+     */
+    if (id < 0 || id > 255) goto getout;
+#endif
+
+    /* Prepare to go trough items.
+     */
+    p = m_items;
+    if (p == OS_NULL) return ESTATUS_SUCCESS;
+    e = p + m_used;
+
+    /* Search id from items untim match found.
+     */
+    while (p < e)
+    {
+        iid = *(os_uchar*)(p++);
+        ibytes = *(os_uchar*)(p++);
+
+        if (ibytes == 0)
+        {
+            x.clear();
+        }
+        else
+        {
+            itype = *(os_schar*)(p++);
+
+            switch (itype)
+            {
+                case OS_CHAR:
+                    x.setl(*(os_schar*)p);
+                    break;
+
+                case OS_SHORT:
+                    x.setl(*(os_short*)p);
+                    break;
+
+                case OS_INT:
+                    x.setl(*(os_int*)p);
+                    break;
+
+                case OS_LONG:
+                    x.setl(*(os_long*)p);
+                    break;
+
+                case OS_DOUBLE:
+                    if (ibytes == 1)
+                        x.setd(*(os_schar*)p);
+                    else
+                        x.setd(*(os_double*)p);
+                    break;
+
+                case OS_STRING:
+                    x.sets(p, ibytes);
+                    break;
+
+                case -OS_STRING:
+                    strptr = *(os_char**)p;
+                    x.sets(strptr);
+                    break;
+
+                case OS_OBJECT:
+                    objptr = *(eObject**)p;
+                    x.seto(objptr);
+                    break;
+
+                default:
+                    x.clear();
+                    break;
+            }
+        }
+
+        // if (json_puts(stream, ",\n")) goto failed;
+        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma)) goto failed;
+
+        if (json_puts(stream, "\"i")) goto failed;
+        osal_int_to_string(nbuf, sizeof(nbuf), iid);
+        if (json_puts(stream, nbuf)) goto failed;
+        if (json_puts(stream, "\": ")) goto failed;
+
+        if (json_putv(stream, OS_NULL, &x, sflags, indent + 1)) goto failed;
+
+        p += ibytes;
+    }
+
+    for (v = firstv(); v; v = v->nextv())
+    {
+        if (v->oid() < 0) continue;
+    
+        if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE, &comma)) goto failed;
+
+        if (json_puts(stream, "\"v")) goto failed;
+        osal_int_to_string(nbuf, sizeof(nbuf), v->oid());
+        if (json_puts(stream, nbuf)) goto failed;
+        if (json_puts(stream, "\": ")) goto failed;
+        if (json_putv(stream, OS_NULL, v, sflags, indent + 1)) goto failed;
+    }        
+
+    return ESTATUS_SUCCESS;
+
+failed:
+    return ESTATUS_FAILED;
+}
+#endif
 
 
 /**
@@ -508,7 +655,7 @@ void eSet::set(
             itype = OS_OBJECT;
             ibytes = sizeof(eObject *);
             o = x->geto();
-            optr = o->clone(this);
+            optr = o->clone(this, EOID_ITEM);
             iptr = &optr;
             break;
 

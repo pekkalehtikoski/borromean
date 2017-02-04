@@ -70,7 +70,13 @@ typedef enum
 	/** No new incoming connection. The stream function eStream::accept() returns this 
 	    code to indicate that no new connection was accepted. 
 	 */
-    ESTATUS_NO_NEW_CONNECTION = 401
+    ESTATUS_NO_NEW_CONNECTION = 401,
+
+    /** Special case, we received invisible flush count character which changed
+        the flush count to zero (no more whole objects buffered in stream). 
+        Only returned by eEnvelope::reader().
+     */
+    ESTATUS_NO_WHOLE_MESSAGES_TO_READ = 402
 } 
 eStatus;
 

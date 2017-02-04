@@ -621,7 +621,7 @@ public:
         const os_char *target,
         const os_char *source = OS_NULL,
         eObject *content = OS_NULL,
-        os_int mflags = EMSG_DEL_CONTENT,
+        os_int mflags = EMSG_DEFAULT,
         eObject *context = OS_NULL);
 
     virtual void onmessage(

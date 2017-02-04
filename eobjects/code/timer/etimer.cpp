@@ -48,7 +48,7 @@ void eObject::timer(
     eVariable period;
 
     period = period_ms;
-    message(ECMD_SETTIMER, "//_timer", OS_NULL, &period, EMSG_KEEP_CONTENT);
+    message(ECMD_SETTIMER, "//_timer", OS_NULL, &period);
 }
 
 

@@ -864,7 +864,7 @@ os_int eQueue::readchar()
                      */
                     case E_STREAM_CTRLCH_FLUSH:
                         m_flush_count--;
-                        continue;
+                        return E_STREAM_CTRL_BASE + c;
         
                     /** Beginning/end of object or stream has been disconnected. 
                      */

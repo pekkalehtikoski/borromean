@@ -158,9 +158,9 @@ protected:
      */
     eStream *m_stream;
 
-    /* Connection timer.
+    /** Empty envelope beging read or reserved for next read.
      */
-//    os_int64 m_connect_t;
+    eEnvelope *m_envelope;
 
     /** Buffer for messages when attempting connection for the first time.
      */

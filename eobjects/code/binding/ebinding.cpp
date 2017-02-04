@@ -354,7 +354,7 @@ void eBinding::sendack_base(
      */
     if (m_bflags & EBIND_INTERTHREAD)
     {
-        message(ECMD_ACK, m_bindpath, OS_NULL, OS_NULL, 0 /* EMSG_DEL_CONTENT :  EMSG_NO_ERROR_MSGS */);
+        message(ECMD_ACK, m_bindpath);
     }
 }
 

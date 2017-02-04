@@ -1548,16 +1548,24 @@ void eObject::message_process_ns(
     eName *name, *nextname;
     eThread *thread;
     os_memsz sz;
-    os_char buf[E_OIXSTR_BUF_SZ], *oname;
+    os_char buf[E_OIXSTR_BUF_SZ], *oname, c;
     os_boolean multiplethreads;
+
+    /* If this is message to process ?
+     */
+    c = *envelope->target();
+
+    if (c == '@')
+    {
+        message_oix(envelope);
+        return;
+    }
 
     /* Get pointer to process namespace. This is never NULL (or if it is, it is programming error).
      */
     process_ns = eglobal_process_ns();
 
-    /* If this is message to process ?
-     */
-    if (*envelope->target() == '\0')
+    if (c == '\0')
     {
         /* Synchronize.
          */
@@ -2785,6 +2793,7 @@ void eObject::srvbind(
      */
     if (binding) 
     {
+// envelope->json_write(&econsole); // ??????????????????????????????????????????????????????????????????????????????????????
         binding->srvbind(this,  envelope);
     }
 }

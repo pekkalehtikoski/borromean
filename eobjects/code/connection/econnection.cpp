@@ -50,10 +50,10 @@ eConnection::eConnection(
     m_initialized = OS_FALSE;
     m_connected = OS_FALSE;
     m_connectetion_failed_once = OS_FALSE;
-//    m_connect_t = 0;
     m_new_writes = OS_FALSE;
     m_timer_enabled = OS_FALSE;
     m_delete_on_error = OS_FALSE;
+    m_envelope = OS_NULL;
 }
 
 
@@ -372,18 +372,22 @@ osal_console_write("connect event\n");
              */
             if (selectdata.eventflags & OSAL_STREAM_READ_EVENT)
             {
-osal_console_write("read event\n");
+//osal_console_write("read event\n");
                 
                 /* Read objects, as long we have whole objects to read.
                  */
-                while (m_stream->flushcount())
+                while (m_stream->flushcount() > 0)
                 { 
+//osal_console_write("r\n");
                     if (read())
                     {
                         close(); 
                         break;
                     }
+//osal_console_write("r done\n");
                 }
+
+//osal_console_write("read done\n");
             }
 
             /* Opening stream has failed or stream has been disconnected.
@@ -438,6 +442,8 @@ void eConnection::accepted(
 
     m_stream = stream;
     adopt(stream);
+
+    connected();
 
     m_delete_on_error = OS_TRUE;
 }
@@ -610,7 +616,7 @@ eStatus eConnection::write(
 
     if (m_stream == OS_NULL) return ESTATUS_FAILED;
 
-envelope->json_write(&econsole);
+// envelope->json_write(&econsole);
 
     s = envelope->writer(m_stream, EOBJ_SERIALIZE_DEFAULT);
     if (!s) m_new_writes = OS_TRUE;
@@ -633,25 +639,36 @@ envelope->json_write(&econsole);
 eStatus eConnection::read()
 {
     eStatus s;
-    eEnvelope *envelope;
-    os_char buf[E_OIXSTR_BUF_SZ];
 
     if (m_stream == OS_NULL) return ESTATUS_FAILED;;
 
-    envelope = new eEnvelope(this);
-    s = envelope->reader(m_stream, EOBJ_SERIALIZE_DEFAULT);
+    if (m_envelope == OS_NULL)
+    {
+        m_envelope = new eEnvelope(this);
+    }
+
+    s = m_envelope->reader(m_stream, EOBJ_SERIALIZE_DEFAULT);
+    if (s == ESTATUS_NO_WHOLE_MESSAGES_TO_READ)
+    {
+        return ESTATUS_SUCCESS;
+    }
     if (s) 
     {
-        delete(envelope);
+        delete(m_envelope);
         return s;
     }
 
-envelope->json_write(&econsole);
+// m_envelope->json_write(&econsole);
    
-    envelope->prependtarget("/");
-    oixstr(buf, sizeof(buf));
-    envelope->prependsource(buf);
-    message(envelope);
+    m_envelope->prependtarget("/");
+
+    if ((m_envelope->mflags() & EMSG_NO_REPLIES) == 0)
+    {
+        m_envelope->prependsourceoix(this);
+    }
+    m_envelope->addmflags(EMSG_NO_NEW_SOURCE_OIX);
+    message(m_envelope);
+    m_envelope = OS_NULL;
     return ESTATUS_SUCCESS;
 }
 

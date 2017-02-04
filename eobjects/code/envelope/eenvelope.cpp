@@ -493,10 +493,25 @@ eStatus eEnvelope::reader(
     os_int version;
     os_long l, mflags;
     os_memsz sz;
+    os_int c;
 
 	/* Read object start mark and version number.
+       Special case, check if we received invisible flush count character which changed
+       the flush count to zero (no more whole objects buffered in stream). If so, 
+       return ESTATUS_NO_WHOLE_MESSAGES_TO_READ.
      */
-    if (stream->read_begin_block(&version)) goto failed;
+    c = stream->readchar();
+    if (c == E_STREAM_FLUSH)
+    {        
+        if (stream->flushcount() <= 0)
+        {
+            return ESTATUS_NO_WHOLE_MESSAGES_TO_READ;
+        }
+            
+        c = stream->readchar();
+    }
+    version = (c & E_STREAM_COUNT_MASK);
+    if ((c & E_STREAM_CTRL_MASK) != E_STREAM_BEGIN) goto failed;
 
     /* Read command.
      */

@@ -112,6 +112,15 @@ public:
         eStream *stream, 
         os_int flags);
 
+#if E_SUPPROT_JSON
+    /* Write set to stream as JSON.
+     */
+    eStatus json_writer(
+        eStream *stream, 
+        os_int sflags,
+        os_int indent);
+#endif
+
     /*@}*/
 
 	/** 

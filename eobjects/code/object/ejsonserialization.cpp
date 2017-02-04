@@ -212,60 +212,6 @@ failed:
 /**
 ****************************************************************************************************
 
-  @brief Write class specific content to stream as JSON.
-
-  The eObject::json_writer() is default implementation for writing class specific object 
-  content to stream as JSON.
-  
-  @param  stream The stream to write to.
-  @param  sflags Serialization flags. EOBJ_SERIALIZE_DEFAULT
-  @param  indent Indentation depth, 0, 1... Writes 2x this spaces at beginning of a line.
-
-  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
-          fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
-          indicate an error.
-
-****************************************************************************************************
-*/
-#if 0
-eStatus eObject::json_writer(
-    eStream *stream, 
-    os_int sflags,
-    os_int indent)
-{
-    eObject *child;
-    os_boolean comma = OS_FALSE, started = OS_FALSE;
-
-    /* Write childern (no attachments).
-     */
-    for (child = first(); child; child = child->next())
-    {
-        if (!started)
-        {
-            if (json_indent(stream, indent, EJSON_NEW_LINE_BEFORE /* , &comma */)) goto failed;
-            if (json_puts(stream, "\"children\": [")) goto failed;
-            started = OS_TRUE;
-        }
-
-        if (child->json_write(stream, sflags, indent+1, &comma)) goto failed;
-    }
-
-    if (started)
-    {
-        if (json_indent(stream, indent, EJSON_NO_NEW_LINE)) goto failed;
-        if (json_puts(stream, "]")) goto failed;
-    }
-
-    return ESTATUS_SUCCESS;
-
-failed:
-    return ESTATUS_FAILED;
-}
-#endif
-
-/**
-****************************************************************************************************
-
   @brief Read object from stream.
 
   The eObject::read() function reads class information, etc from the stream, creates new 
@@ -467,6 +413,7 @@ eStatus eObject::json_putv(
 {
     eObject *obj;
     os_boolean quote;
+    os_long typ;
     
     /* If the value contains object, write it
      */
@@ -478,15 +425,23 @@ eStatus eObject::json_putv(
 
     /* Copy number of decimal digits
      */
-    value->setdigs(p->digs());
+    if (p) value->setdigs(p->digs());
 
     /* Select weather to qute the value
      */
     quote = OS_TRUE;
-    switch (p->propertyl(EVARP_TYPE))
+    if (p) 
     {
-        case OS_LONG:
-        case OS_DOUBLE:
+        typ = p->propertyl(EVARP_TYPE);
+    }
+    else
+    {
+        typ = OS_UNDEFINED_TYPE;
+    }
+
+    switch (typ)
+    {
+        default:
             if (value->isempty()) 
             {
                 value->sets("null");
@@ -494,7 +449,7 @@ eStatus eObject::json_putv(
             }
             else
             {
-                value->autotype(OS_TRUE);
+                if (p) value->autotype(OS_TRUE);
                 if (value->type() == OS_LONG || value->type() == OS_DOUBLE)
                 {
                     quote = OS_FALSE;
@@ -502,7 +457,7 @@ eStatus eObject::json_putv(
             }
             break;
 
-        default:
+        case OS_STRING:
             break;
     }
 
