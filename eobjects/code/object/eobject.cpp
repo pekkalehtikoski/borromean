@@ -1339,8 +1339,21 @@ void eObject::message(
     eObject *context)
 {
     eEnvelope *envelope;
+    eObject *parent;
 
-    envelope = new eEnvelope(this, EOBJ_IS_ATTACHMENT);
+    /* We use eRoot as pasent, in case object receiving message gets deleted.
+       parent = this is just fallback mechanim.
+     */
+	if (mm_handle) 
+    {
+        parent = mm_handle->m_root;
+    }
+    else
+    {
+        parent = this;
+    }
+
+    envelope = new eEnvelope(parent, EOBJ_IS_ATTACHMENT);
     envelope->setcommand(command);
     envelope->setmflags(mflags & ~(EMSG_DEL_CONTENT|EMSG_DEL_CONTEXT));
     envelope->settarget(target);
@@ -1617,6 +1630,7 @@ void eObject::message_process_ns(
             if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
             {
                 osal_debug_error("message() failed: Name not found in process NS");   
+                osal_debug_error(objname->gets());   
             }
 #endif
             delete objname;
@@ -2564,15 +2578,16 @@ void eObject::forwardproperty(
     os_int flags)
 {
     eContainer *bindings;
-    eObject *b;
+    eObject *b, *nextb;
 
     /* Get bindings container.
      */
     bindings = firstc(EOID_BINDINGS);
     if (bindings == OS_NULL) return;
 
-    for (b = bindings->first(); b; b = b->next())
+    for (b = bindings->first(); b; b = nextb)
     {
+        nextb = b->next();
         if (b->classid() == ECLASSID_PROPERTY_BINDING && b != source)
         {
             ePropertyBinding::cast(b)->changed(propertynr, x, OS_FALSE);
