@@ -89,6 +89,8 @@ public:
     virtual void onmessage(
         eEnvelope *envelope)
     {
+        eVariable v;
+
         /* If this is message to me, not to my children?
          */
         if (*envelope->target() == '\0')
@@ -97,8 +99,10 @@ public:
              */
             if (envelope->command() == ECMD_TIMER)
             {
-                setpropertyl(EMYCLASS2P_X, -2 * propertyl(EMYCLASS2P_X));
-                setpropertyl(EMYCLASS2P_Y, propertyl(EMYCLASS2P_Y)+1);
+//                setpropertyl(EMYCLASS2P_X, -2 * propertyl(EMYCLASS2P_X));
+//                setpropertyl(EMYCLASS2P_Y, propertyl(EMYCLASS2P_Y)+1);
+                property(EMYCLASS2P_X, &v);
+                setproperty(EMYCLASS2P_Y, &v);
 
 /*    setpropertys_msg("//myconnection/myclass1",
          "message from connection_example1", "A"); */
@@ -177,7 +181,7 @@ void connection_example_1()
 
 //    c.setpropertyd_msg("//thread2/_p/Y", 11.5);
 
-    os_sleep(1500);
+    os_sleep(150000);
 
     /* Wait for the threads to terminate.
      */

@@ -125,7 +125,12 @@ public:
 
 
 protected:
+    /* Open the connection (connect)
+     */
     void open();
+
+    /* Stop and close the connection.
+     */
     void close();
 
     /* Connection established event detected, act on it.
@@ -136,9 +141,18 @@ protected:
      */
     void disconnected();
 
+    /* Monitor messages for bind and unbind.
+     */
+    void monitor_binds(
+        eEnvelope *envelope);
 
+    /* Write an envelope to the connection.
+     */
     eStatus write(
         eEnvelope *envelope);
+
+    /* Read an envelope from connection.
+     */
     eStatus read();
 
     /* Not connected and connection has failed once, reply with notarget.
@@ -161,6 +175,14 @@ protected:
     /** Empty envelope beging read or reserved for next read.
      */
     eEnvelope *m_envelope;
+
+    /** Memorized client bindings.
+     */
+    eContainer *m_client_bindings;
+
+    /** Memorized server bindings.
+     */
+    eContainer *m_server_bindings;
 
     /** Buffer for messages when attempting connection for the first time.
      */

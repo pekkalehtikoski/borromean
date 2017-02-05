@@ -28,10 +28,11 @@ os_char
 /**
 ****************************************************************************************************
 
-  @brief Constructor.
+  @brief eConnection constructor.
 
-  Clear member variables and allocate eVariable for IP address and container for first
-  initialization bufffer.
+  Creates empty unconnected connection. Clears member variables and allocates eVariable for IP
+  address, and eContainer for first initialization bufffer and eContainers for memorised client
+  and server bindings.
 
   @return  None.
 
@@ -46,7 +47,7 @@ eConnection::eConnection(
     m_stream_classid = ECLASSID_SOCKET;
     m_ipaddr = new eVariable(this);
     m_stream = OS_NULL;
-    m_initbuffer = new eContainer(this);;
+    m_initbuffer = new eContainer(this);
     m_initialized = OS_FALSE;
     m_connected = OS_FALSE;
     m_connectetion_failed_once = OS_FALSE;
@@ -54,6 +55,10 @@ eConnection::eConnection(
     m_timer_enabled = OS_FALSE;
     m_delete_on_error = OS_FALSE;
     m_envelope = OS_NULL;
+    m_client_bindings = new eContainer(this);
+    m_client_bindings->ns_create();
+    m_server_bindings = new eContainer(this);
+    m_server_bindings->ns_create();
 }
 
 
@@ -216,13 +221,14 @@ void eConnection::onmessage(
     c = *envelope->target();
     if (c != '_' && c != '\0') 
     {
-        /* Check for binding related messages, memorize bindings through this connection.
-         */
-
         /* If currently connected, write envelope immediately.
          */
         if (m_connected)
         {
+            /* Check for binding related messages, memorize bindings through this connection.
+             */
+            monitor_binds(envelope);
+
             if (write(envelope)) close();
         }
 
@@ -249,6 +255,10 @@ void eConnection::onmessage(
              */
             else
             {
+                /* Check for binding related messages, memorize bindings through this connection.
+                 */
+                monitor_binds(envelope);
+
                 notarget(envelope);
             }
         }
@@ -466,7 +476,6 @@ void eConnection::open()
 
     if (m_stream || !m_initialized || m_ipaddr->isempty()) 
     {
-//        m_connect_t = 0;
         return;
     }
 
@@ -480,11 +489,9 @@ void eConnection::open()
 	    osal_console_write("osal_stream_open failed\n");
         delete m_stream;
         m_stream = OS_NULL;
-//        osal_timer_get(&m_connect_t);
         return;
     }
 
-//    m_connect_t = 0;
     m_new_writes = OS_FALSE;
 }
 
@@ -548,19 +555,30 @@ void eConnection::close()
 eStatus eConnection::connected()
 {
     eEnvelope *envelope;
+    eObject *mark;
+    eName *name;
+
+    /* Inform client bindings that the binding can be reestablished.
+     */
+    for (mark = m_client_bindings->first(); mark; mark = mark->next())
+    {
+        name = mark->firstn();
+        message(ECMD_REBIND, name->gets());
+    }
 
     while ((envelope = eEnvelope::cast(m_initbuffer->first())))
     {
+        /* Check for binding related messages, memorize bindings through this connection.
+         */
+        monitor_binds(envelope);
+
         if (write(envelope)) return ESTATUS_FAILED;
         delete envelope;
     }
 
-    /* Inform client bindings that the binding can be reestablished.
-     */
-
     m_connected = OS_TRUE;
     setpropertyl(ECONNP_ISOPEN, OS_TRUE);
-   return ESTATUS_SUCCESS;
+    return ESTATUS_SUCCESS;
 }
 
 
@@ -581,15 +599,32 @@ eStatus eConnection::connected()
 void eConnection::disconnected()
 {
     eEnvelope *envelope;
+    eObject *mark;
+    eName *name;
 
     while ((envelope = eEnvelope::cast(m_initbuffer->first())))
     {
+        /* Check for binding related messages, memorize bindings through this connection.
+         */
+        monitor_binds(envelope);
+
         notarget(envelope);
         delete envelope;
     }
 
     /* Inform all bindings that the connection is lost.
      */
+    for (mark = m_client_bindings->first(); mark; mark = mark->next())
+    {
+        name = mark->firstn();
+        message(ECMD_SRV_UNBIND, name->gets());
+    }
+    for (mark = m_server_bindings->first(); mark; mark = mark->next())
+    {
+        name = mark->firstn();
+        message(ECMD_UNBIND, name->gets());
+    }
+
     m_connected = OS_FALSE;
     setpropertyl(ECONNP_ISOPEN, OS_FALSE);
     m_connectetion_failed_once = OS_TRUE;
@@ -600,10 +635,70 @@ void eConnection::disconnected()
 /**
 ****************************************************************************************************
 
-  @brief Write data to connection.
+  @brief Monitor messages for bind and unbind.
+
+  The eConnection::monitor_binds() function maintains memorized client and server bindings.
+
+  @param  envelope Envelope to write to connection.
+  @return None.
+
+****************************************************************************************************
+*/
+void eConnection::monitor_binds(
+    eEnvelope *envelope)
+{
+    eContainer *bindings;
+    eObject *mark;
+    os_int command;
+    os_char *source;
+    eName *name;
+
+    command = envelope->command();
+    switch (command)
+    {
+        /* Bind request sent by Client binding, or client binding deleted.
+         */
+        case ECMD_BIND:
+        case ECMD_UNBIND:
+            bindings = m_client_bindings;
+            break;
+
+        /* Server binding reply to ECMD_BIND, or server binding deleted.
+         */
+        case ECMD_BIND_REPLY:
+        case ECMD_SRV_UNBIND:
+            bindings = m_server_bindings;
+            break;
+
+        default:
+            return;
+    }
+
+    source = envelope->source();
+    name = bindings->ns_first(source, E_THIS_NS);
+    if (name)
+    {
+        if (command == ECMD_BIND || command == ECMD_BIND_REPLY) return;
+        delete name->parent();
+    }
+    else
+    {
+        if (command == ECMD_UNBIND || command == ECMD_SRV_UNBIND) return;
+        mark = new eContainer(bindings);
+        mark->addname(source);
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Write an envelope to the connection.
 
   The eConnection::write() function...
+  .... maintains memorized client and server bindings.
 
+  @param  envelope Envelope to write to connection.
   @return If successfull, the function returns ESTATUS_SUCCESS. Other return values indicate
           an error and stream is to be closed.
 
@@ -614,9 +709,9 @@ eStatus eConnection::write(
 {
     eStatus s;
 
-    if (m_stream == OS_NULL) return ESTATUS_FAILED;
-
 // envelope->json_write(&econsole);
+
+    if (m_stream == OS_NULL) return ESTATUS_FAILED;
 
     s = envelope->writer(m_stream, EOBJ_SERIALIZE_DEFAULT);
     if (!s) m_new_writes = OS_TRUE;
@@ -624,10 +719,13 @@ eStatus eConnection::write(
 }
 
 
+
+
+
 /**
 ****************************************************************************************************
 
-  @brief Read data from connection.
+  @brief Read an envelope from connection and pass it as messages.
 
   The eConnection::read() function...
 
