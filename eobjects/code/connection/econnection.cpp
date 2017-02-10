@@ -755,7 +755,7 @@ eStatus eConnection::read()
         return s;
     }
 
-m_envelope->json_write(&econsole);
+// m_envelope->json_write(&econsole);
    
     m_envelope->prependtarget("/");
 

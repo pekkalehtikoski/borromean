@@ -177,7 +177,7 @@ void connection_example_1()
      */
     t = new eMyClass2();
 	t->addname("thread2", ENAME_PROCESS_NS);
-    t->timer(12000);
+//    t->timer(12000);
     t->start(&thandle2); /* After this t pointer is useless */
 
 //    c.setpropertyd_msg("//thread2/_p/Y", 11.5);
