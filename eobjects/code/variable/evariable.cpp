@@ -1461,7 +1461,7 @@ eStatus eVariable::writer(
 			}
 			else
 			{
-                if (*stream << m_value.strptr.used - 1) goto failed;
+                if (*stream << m_value.strbuf.used - 1) goto failed;
                 if (stream->write(m_value.strbuf.buf, m_value.strbuf.used - 1)) goto failed;
 			}
             break;
