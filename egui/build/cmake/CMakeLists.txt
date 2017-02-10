@@ -1,8 +1,8 @@
-# eobjects/build/cmake/CmakeLists.txt - Cmake build for eobjects library.
+# eobjects/build/cmake/CmakeLists.txt - Cmake build for egui library.
 cmake_minimum_required(VERSION 2.8.11)
 
 # Set project name (= project root folder name).
-set(E_PROJECT "eobjects")
+set(E_PROJECT "egui")
 project(${E_PROJECT})
 
 # include build information common to all projects.
