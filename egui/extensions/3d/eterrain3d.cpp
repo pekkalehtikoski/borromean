@@ -13,7 +13,7 @@
 
 ****************************************************************************************************
 */
-#include "eobjects/eobjects.h"
+#include "egui/egui.h"
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
@@ -87,7 +87,7 @@ void eTerrain3D::connect_to_world()
      */
     while ((world->flags() & EOBJ3D_WORLD) == 0)
     {
-        world = eObject3D::cast(world->getparent());
+        world = eObject3D::cast(world->parent());
         if (world == OS_NULL)
         {
             delete m_world_connection;
@@ -98,8 +98,8 @@ void eTerrain3D::connect_to_world()
 
     if (m_world_connection == OS_NULL) 
     {
-        m_world_connection = ePointer::newobj(this);
-        m_world_connection->setflags(EOBJ_IS_ATTACHMENT);
+        m_world_connection = new ePointer(this, EOID_ITEM, EOBJ_IS_ATTACHMENT);
+//        m_world_connection->setflags(EOBJ_IS_ATTACHMENT);
     }
 
     m_world_connection->set(eWorld3D::cast(world)->m_terrains);

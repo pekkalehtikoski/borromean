@@ -7,9 +7,7 @@
   @date    9.11.2011
 
   This eobject library base main header file. If further includes rest of eobjects base 
-  headers. When directory "/open-en" is in compiler's include path (either in project 
-  settings of in compiler options), then "#include "eobjects/eobjects.h" will 
-  include all eobjects base headers.
+  headers. 
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,

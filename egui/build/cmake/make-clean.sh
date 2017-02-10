@@ -1,1 +1,1 @@
-git clean -d -f -x /coderoot/borromean/eobjects
+git clean -d -f -x /coderoot/borromean/egui
