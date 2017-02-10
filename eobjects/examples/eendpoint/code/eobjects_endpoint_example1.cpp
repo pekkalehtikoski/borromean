@@ -157,7 +157,7 @@ void endpoint_example_1()
     t = new eMyClass1();
 	t->addname("myclass1", ENAME_PROCESS_NS);
 t->setpropertys(EMYCLASS1P_A, "Nasse");
-    t->timer(4500);
+//    t->timer(4500);
 // t->json_write(&econsole);
     t->start(&thandle1); /* After this t pointer is useless */
 

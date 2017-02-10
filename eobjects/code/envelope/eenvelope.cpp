@@ -532,7 +532,8 @@ eStatus eEnvelope::reader(
         m_target.str_alloc = (os_short)sz;
         m_target.str_pos = (os_short)(sz - l - 1);
         stream->read(m_target.str + m_target.str_pos, l, &sz);
-        m_target.str[sz-1] = '\0';
+        if (sz != l) goto failed;
+        m_target.str[m_target.str_pos + l] = '\0';
     }
 
     /* Read source, unless EMSG_NO_REPLIES is given.
@@ -546,7 +547,8 @@ eStatus eEnvelope::reader(
             m_source.str_alloc = (os_short)sz;
             m_source.str_pos = (os_short)(sz - l - 1);
             stream->read(m_source.str + m_source.str_pos, l, &sz);
-            m_source.str[sz-1] = '\0';
+            if (sz != l) goto failed;
+            m_source.str[m_source.str_pos + l] = '\0';
         }
     }
 

@@ -594,6 +594,12 @@ public:
      */
     void map(os_int mflags);
 
+    /* Get object by name.
+     */
+	eObject *byname(
+        const os_char *name);
+
+
     /*@}*/
 
 
@@ -704,6 +710,11 @@ public:
         os_int pflags = EPRO_DEFAULT,
         const os_char *text = OS_NULL,
         const os_char *x = OS_NULL);
+
+    /* Property set for class done, complete it.
+     */
+    static void propertysetdone(
+        os_int cid);
 
     /* Initialize properties to default values.
      */

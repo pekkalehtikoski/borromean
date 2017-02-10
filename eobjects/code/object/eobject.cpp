@@ -228,7 +228,6 @@ void eObject::clonegeneric(
          handle;
          handle = handle->next())
     {
-
         if (((handle->m_oflags & EOBJ_IS_ATTACHMENT) || 
              (aflags & EOBJ_CLONE_ALL_CHILDREN)) &&
              (handle->m_oflags & EOBJ_NOT_CLONABLE) == 0)
@@ -1315,6 +1314,36 @@ void eObject::mapone(
 /**
 ****************************************************************************************************
 
+  @brief Get object by name.
+
+  The eObject::message() function looks for name in this object's name space.
+
+  @param  name Name to look for.  
+  @return If name is found, returns pointer to namef object. Otherwise the function returns OS_NULL.
+
+****************************************************************************************************
+*/
+eObject *eObject::byname(
+    const os_char *name)
+{
+    eVariable namev;
+    eName *nobj;
+    eNameSpace *nspace;
+    
+    nspace = eNameSpace::cast(first(EOID_NAMESPACE));
+    if (nspace)
+    {
+        namev.sets(name);
+        nobj = nspace->findname(&namev);
+        if (nobj) return nobj->parent();
+    }
+    return OS_NULL;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Send message.
 
   The eObject::message() function sends message. The message will be recieved as onmessage call 
@@ -2184,6 +2213,57 @@ eVariable *eObject::addproperty(
     if (text) p->setpropertys(EVARP_TEXT, text);
 
     return p;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Property set for class done, complete it.
+
+  The propertysetdone function lists attributes (subproperties) for each base property.
+  
+  @param  classid Specifies to which classes property set the property is being added.
+  @return None.
+
+****************************************************************************************************
+*/
+void eObject::propertysetdone(
+    os_int cid)
+{
+    eContainer *propertyset;
+    eVariable *p, *mp;
+    eName *name;
+    os_char *propertyname, *e;
+
+    /* Get pointer to class'es property set. If not found, create one. Property set always
+       has name space
+     */
+    propertyset = eglobal->propertysets->firstc(cid);
+    if (propertyset == OS_NULL) return;
+
+    for (p = propertyset->firstv(); p; p = p->nextv())
+    {
+        name = p->firstn();
+        if (name == OS_NULL) continue;
+        propertyname = name->gets();
+
+        /* If this is subproperty, like "x.min", add to main propertie's list of subproperties.
+         */
+        e = os_strchr((os_char*)propertyname, '.');
+        if (e) 
+        {
+            eVariable v;
+            v.sets(propertyname, e - propertyname);
+            mp = eVariable::cast(propertyset->byname(v.gets()));
+            if (mp)
+            {
+                p->property(EVARP_CONF, &v);
+                v.appends(e);
+                p->setproperty(EVARP_CONF, &v);
+            }
+        }
+    }
 }
 
 

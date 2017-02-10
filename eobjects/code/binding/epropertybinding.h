@@ -130,6 +130,9 @@ public:
         const os_char *remoteproperty,
         os_int bflags);
 
+    void bind2(
+        const os_char *remotepath);
+
     /* Bind the server end.
      */
     void srvbind(
@@ -179,12 +182,18 @@ protected:
     os_boolean binding_getproperty(
         eVariable *x);
 
-    /*@}*/
+    /* List attributes (subproperties like "x.min") for the property.
+     */
+    os_boolean listattr(
+        os_int propertynr,
+        eVariable *x);
 
     /* Save property name.
      */
     void set_propertyname(
         const os_char *propertyname);
+
+    /*@}*/
 
     /** 
 	************************************************************************************************
@@ -198,7 +207,7 @@ protected:
 	*/
 	/*@{*/
 
-    /** Client: Path to peropery name on remotr object to bind to.
+    /** Client: Path to peropery name on remote object to bind to.
         Server: Always OS_NULL.
      */
     os_char *m_propertyname;
@@ -211,6 +220,7 @@ protected:
      */
     os_int m_localpropertynr;
 
+    
     /*@}*/
 
 };

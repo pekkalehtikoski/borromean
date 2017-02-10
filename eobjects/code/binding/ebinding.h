@@ -22,6 +22,7 @@
 /* Binding flags.
  */
 #define EBIND_DEFAULT 0
+#define EBIND_ATTR 2
 #define EBIND_CLIENTINIT 8
 #define EBIND_NOFLOWCLT 16
 #define EBIND_METADATA 32
@@ -31,7 +32,7 @@
 #define EBIND_INTERTHREAD 4096  /* do not give as argument */
 
 #define EBIND_TYPE_MASK 7
-#define EBIND_SER_MASK (EBIND_TYPE_MASK|EBIND_CLIENTINIT|EBIND_NOFLOWCLT|EBIND_METADATA)
+#define EBIND_SER_MASK (EBIND_TYPE_MASK|EBIND_CLIENTINIT|EBIND_NOFLOWCLT|EBIND_METADATA|EBIND_ATTR)
 
 /* Binding states.
  */
@@ -44,6 +45,7 @@
 #define E_BINDPRM_FLAGS 1
 #define E_BINDPRM_PROPERTYNAME 2
 #define E_BINDPRM_VALUE 3
+#define E_BINDPRM_ATTRLIST 4
 
 /* Maximum number of forwards befoew waiting for acknowledge.
  */

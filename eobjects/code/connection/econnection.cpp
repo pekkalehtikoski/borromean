@@ -651,7 +651,6 @@ void eConnection::monitor_binds(
     eObject *mark;
     os_int command;
     os_char *source;
-    eName *name;
 
     command = envelope->command();
     switch (command)
@@ -675,11 +674,11 @@ void eConnection::monitor_binds(
     }
 
     source = envelope->source();
-    name = bindings->ns_first(source, E_THIS_NS);
-    if (name)
+    mark = eContainer::cast(bindings->byname(source));
+    if (mark)
     {
         if (command == ECMD_BIND || command == ECMD_BIND_REPLY) return;
-        delete name->parent();
+        delete mark;
     }
     else
     {
@@ -756,7 +755,7 @@ eStatus eConnection::read()
         return s;
     }
 
-// m_envelope->json_write(&econsole);
+m_envelope->json_write(&econsole);
    
     m_envelope->prependtarget("/");
 

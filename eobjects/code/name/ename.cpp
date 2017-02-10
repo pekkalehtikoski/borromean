@@ -97,6 +97,7 @@ void eName::setupclass()
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eName");
     eVariable::setupproperties(cls);
+    propertysetdone(cls);
     osal_mutex_system_unlock();
 }
 

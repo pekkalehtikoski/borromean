@@ -282,7 +282,7 @@ void ePropertyBinding::onmessage(
                 return;
 
             case ECMD_REBIND:
-                bind_base(OS_NULL, 0);
+                bind2(OS_NULL);
                 return;
         }
     }
@@ -318,6 +318,7 @@ void ePropertyBinding::onmessage(
             any limit to buffered memory use.
           - EBIND_METADATA: If meta data, like text, unit, attributes, etc exists, it is 
             also transferred from remote object to local object.
+          - EBIND_ATTR: Bind also attributes (subproperties like "x.min").
   @return None.
 
 ****************************************************************************************************
@@ -328,24 +329,32 @@ void ePropertyBinding::bind(
     const os_char *remoteproperty,
     os_int bflags)
 {
-    eSet *parameters;
-    eVariable x;
-
     /* Save bind parameters and flags.
      */
     set_propertyname(remoteproperty);
     m_localpropertynr = localpropertynr;
     m_bflags = bflags | EBIND_CLIENT;
 
+    bind2(remotepath);
+}
+
+/* If remotepath is OS_NULL last used name will be preserved/
+*/
+void ePropertyBinding::bind2(
+    const os_char *remotepath)
+{
+    eSet *parameters;
+    eVariable x;
+
     /* Get parameters from derived class and add flags to parameters.
      */
     parameters = new eSet(this);
-    parameters->setl(E_BINDPRM_FLAGS, bflags & EBIND_SER_MASK);
-    parameters->sets(E_BINDPRM_PROPERTYNAME, remoteproperty);
+    parameters->setl(E_BINDPRM_FLAGS, m_bflags & EBIND_SER_MASK);
+    parameters->sets(E_BINDPRM_PROPERTYNAME, m_propertyname);
 
     /* If this client is master, get property value.
      */
-    if (bflags & EBIND_CLIENTINIT)
+    if (m_bflags & EBIND_CLIENTINIT)
     {
         if (!binding_getproperty(&x))
         {
@@ -355,6 +364,16 @@ void ePropertyBinding::bind(
             return;
         }
         parameters->set(E_BINDPRM_VALUE, &x);
+    }
+
+    /* If we are binding attributes like "x.min", get these.
+     */
+    if (m_bflags & EBIND_ATTR)
+    {
+        if (listattr(m_localpropertynr, &x))
+        {
+            parameters->set(E_BINDPRM_ATTRLIST, &x);
+        }
     }
 
     /* Call base class to do binding.
@@ -427,6 +446,8 @@ void ePropertyBinding::srvbind(
     reply = new eSet(this);
     /* if (m_flags & ATTR)
     {
+        
+xxxx
 
     } */
 
@@ -492,7 +513,7 @@ void ePropertyBinding::cbindok(
      */
     if ((m_bflags & EBIND_CLIENTINIT) == 0)
     {
-        parameters->get(EVARP_VALUE, &v);    
+        parameters->get(E_BINDPRM_VALUE, &v);    
         binding_setproperty(&v);
     }
 
@@ -582,7 +603,10 @@ void ePropertyBinding::forward(
         forwarddone();
     }
 
-    if (delete_x && x) delete x;
+    if (delete_x && x) 
+    {
+        delete x;
+    }
 }
 
 
@@ -739,3 +763,42 @@ os_boolean ePropertyBinding::binding_getproperty(
     return OS_TRUE;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief List attributes (subproperties like "x.min") for the property.
+
+  The ePropertyBinding::listattr() function...
+
+  @param  x Variable where to store attribute list.
+  @return OS_TRUE if successfull.
+
+****************************************************************************************************
+*/
+os_boolean ePropertyBinding::listattr(
+    os_int propertynr,
+    eVariable *x)
+{
+    eContainer *propertyset;
+    eVariable *propertyvar;
+    eObject *obj;
+
+    /* Get property set for the class.
+     */
+    obj = grandparent();
+    if (obj == OS_NULL) return OS_FALSE;
+    osal_mutex_system_lock();
+    propertyset = eglobal->propertysets->firstc(obj->classid());
+    osal_mutex_system_unlock();
+
+    /* Get property var
+     */
+    propertyvar = propertyset->firstv(propertynr);
+    if (propertyvar == OS_NULL) return OS_FALSE;
+
+    /* Get subproperty list
+     */
+    propertyvar->property(EVARP_CONF, x);
+    return !x->isempty();
+}

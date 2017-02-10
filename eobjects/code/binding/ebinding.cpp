@@ -237,10 +237,9 @@ void eBinding::bind_base(
     const os_char *objpath,
     eSet *parameters)
 {
-    /* Disconnect, just in case binding is reused. If objpath is not given as argument, keep
-       current object path.
+    /* Clear state variables only?
      */
-    disconnect(objpath == OS_NULL);
+    disconnect(OS_TRUE);
 
     /* Save objpath. If objpath is NULL, this is skipped for reactivating binding.
      */
@@ -454,7 +453,6 @@ void eBinding::set_bindpath(
           is used for reactivating bindings later.
   @return None.
 
-
 ****************************************************************************************************
 */
 void eBinding::disconnect(
@@ -462,7 +460,7 @@ void eBinding::disconnect(
 {
     /* Send disconnect message
      */
-    switch (m_state)
+    if (!keep_objpath) switch (m_state)
     {
         case E_BINDING_UNUSED:
             break;

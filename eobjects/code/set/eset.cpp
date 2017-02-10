@@ -112,6 +112,7 @@ eObject *eSet::clone(
     os_schar itype;
     os_int strsz;
     os_memsz sz;
+    eHandle *handle;
 
     clonedobj = new eSet(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
 
@@ -141,7 +142,7 @@ eObject *eSet::clone(
                 {
                     case -OS_STRING:
                         strptr = *(os_char**)p;
-                        strsz = *(os_int*)(p + sizeof(char*));
+                        strsz = *(os_int*)(p + sizeof(os_char*));
                         newstr = (os_char*)osal_memory_allocate(strsz, OS_NULL);
                         os_memcpy(newstr, strptr, strsz);
                         *(os_char**)p = newstr;
@@ -158,13 +159,37 @@ eObject *eSet::clone(
         }        
     }
 
-    /* Copy clonable attachments.
+//    clonegeneric(clonedobj, aflags);
+
+    /* Copy attachments and properties stored as variable.
      */
-    clonegeneric(clonedobj, aflags);
+
+    /* If there is no handle pointer, there can be no children to clone.
+     */
+    if (mm_handle == OS_NULL) return clonedobj;
+
+    /* Copy clonable attachments or all clonable object.
+     */
+    for (handle = mm_handle->first();
+         handle;
+         handle = handle->next())
+    {
+        if (((handle->flags() & EOBJ_IS_ATTACHMENT) || handle->oid() >= 0) &&
+            (handle->flags() & EOBJ_NOT_CLONABLE) == 0)
+        {
+            handle->object()->clone(clonedobj, handle->oid(), EOBJ_NO_MAP);
+        }
+    }
+
+    /* Map names to name spaces.
+     */
+    if ((aflags & EOBJ_NO_MAP) == 0)
+    {
+        map(E_ATTACH_NAMES);
+    }
+
     return clonedobj;
 }
-
-
 
 
 /**
@@ -192,16 +217,49 @@ eStatus eSet::writer(
        and check for new version's items in read() function.
      */
     const os_int version = 0;
-    os_int strsz;
+    os_int strsz, count;
     os_memsz nwritten;
     eObject *objptr;
     os_char *p, *e, *strptr;
     os_uchar iid, ibytes;
     os_schar itype;
+    eHandle *handle;
 
 	/* Begin the object and write version number.
      */
     if (stream->write_begin_block(version)) goto failed;
+
+    /* Save properties stored as variable.
+     */
+    if (mm_handle) 
+    {
+        /* Save count.
+         */
+        count = 0;
+        for (handle = mm_handle->first();
+             handle;
+             handle = handle->next())
+        {
+            if (handle->oid() >= 0 && (handle->flags() & EOBJ_NOT_CLONABLE) == 0)
+            {
+                count++;
+            }
+        }
+        if (stream->putl(count)) goto failed;
+
+        /* Copy clonable attachments or all clonable object.
+         */
+        for (handle = mm_handle->first();
+             handle;
+             handle = handle->next())
+        {
+            if (handle->oid() >= 0 && (handle->flags() & EOBJ_NOT_CLONABLE) == 0)
+            {
+                if (stream->putl(handle->oid())) goto failed;
+                if (handle->object()->writer(stream, flags)) goto failed;
+            }
+        }
+    }
 
     /* Buffer used, bytes.
      */
@@ -291,27 +349,49 @@ eStatus eSet::reader(
     /* Version number. Used to check which versions item's are in serialized data.
      */
     os_int version;
-    os_long lval;
+    os_long lval, count;
     os_memsz nread;
     os_int strsz;
     eObject *objptr;
+    eVariable *v;
     os_char *p, *e, *strptr;
     os_uchar iid, ibytes;
     os_schar itype;
 
     /* If we have old data, delete it.
      */
-    if (m_items)
+    /* if (m_items)
     {
         osal_memory_free(m_items, m_alloc);
         m_items = OS_NULL;
         m_alloc = m_used = 0;
     }
-    while ((objptr = first())) delete objptr;
+    while ((objptr = first())) delete objptr; */
 
 	/* Read object start mark and version number.
      */
     if (stream->read_begin_block(&version)) goto failed;
+
+    /* Save properties stored as variable.
+     */
+    if (mm_handle) 
+    {
+        /* Read count.
+         */
+        if (stream->getl(&count)) goto failed;
+
+        /* Copy clonable attachments or all clonable object.
+         */
+        while (count--)
+        {
+            /* Read object identifier, allocate variable and
+               read variable from stream.
+             */
+            if (stream->getl(&lval)) goto failed;
+            v = new eVariable(this, (e_oid)lval);
+            if (v->reader(stream, flags)) goto failed;
+        }
+    }
 
     /* Buffer used, bytes.
      */
@@ -578,6 +658,8 @@ void eSet::set(
     const os_int slack = 10;
     void *iptr;
 
+    osal_debug_assert(id >= 0);
+
     /* If we have variable with this id, use it.
      */
     v = firstv(id);
@@ -680,7 +762,7 @@ void eSet::set(
             else
             {
                 itype = OS_STRING;
-                ibytes = (os_uchar)sz-1;
+                ibytes = (os_uchar)sz;
                 iptr = q;
             }
             break;
@@ -723,8 +805,9 @@ void eSet::set(
              */
             if (ibytes == jbytes)
             {
-                p = start + 1;
-                *(os_uchar*)(p++) = ibytes;
+                /* p = start + 1;
+                *(os_uchar*)(p++) = ibytes; */
+                p = start + 2;
                 if (ibytes == 0) return;
                 *(os_schar*)(p++) = itype;
 
@@ -742,7 +825,7 @@ void eSet::set(
             p += jbytes;
             if (e != p) 
             {
-                os_memmove(start, p, e-p); 
+                os_memmove(start, p, e - p); 
             }
             m_used -= (os_int)(p - start);
             break;
@@ -782,14 +865,11 @@ void eSet::set(
         }
         else
         {
-            ibytes -= sizeof(os_int);
+            ibytes = sizeof(os_char*);
             os_memcpy(p, iptr, ibytes);
             p += ibytes;
-            if (itype == -OS_STRING)
-            {
-                *(os_int*)p = isz;
-                p += sizeof(os_int);
-            }
+            *(os_int*)p = isz;
+            p += sizeof(os_int);
         }
     }
     m_used = (os_int)(p - m_items);

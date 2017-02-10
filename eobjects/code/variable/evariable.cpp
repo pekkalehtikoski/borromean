@@ -34,7 +34,7 @@ os_char
     evarp_offset[] = "x.offset",
     evarp_quality[] = "x.quality",
     evarp_timestamp[] = "x.timestamp",
-    evarp_conf[] = "conf";
+    evarp_conf[] = "conf"; /* This MUST not start with "x." */
 
 
 /**
@@ -136,6 +136,7 @@ void eVariable::setupclass()
     osal_mutex_system_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eVariable");
     setupproperties(cls);
+    propertysetdone(cls);
     osal_mutex_system_unlock();
 }
 
@@ -177,7 +178,8 @@ void eVariable::setupproperties(
     addpropertyd(cls, EVARP_OFFSET, evarp_offset, EPRO_METADATA|EPRO_NOONPRCH, "offset");
     addproperty (cls, EVARP_QUALITY, evarp_quality, EPRO_METADATA|EPRO_NOONPRCH, "quality");
     addproperty (cls, EVARP_TIMESTAMP, evarp_timestamp, EPRO_METADATA|EPRO_NOONPRCH, "timestamp");
-    addproperty (cls, EVARP_CONF, evarp_conf, EPRO_METADATA|EPRO_NOONPRCH, "conf");
+    addproperty (cls, EVARP_CONF, evarp_conf, EPRO_METADATA|EPRO_NOONPRCH, "conf"); 
+
 }
 
 
@@ -1353,6 +1355,7 @@ os_boolean eVariable::autotype(
 			}
 			break;
 		}
+        p++;
 	}
 
 	if (!digit_found) return OS_FALSE;
