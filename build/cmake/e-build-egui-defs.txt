@@ -2,7 +2,7 @@
 # 23.12.2016/pekka
 
 # Include path.
-set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/glm-0.9.7.4/glm;$ENV{E_ROOT}/egui/tools/glew-1.13.0/include")
+set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/glm-0.9.7.4/glm;$ENV{E_ROOT}/egui/tools/glew-1.13.0/include;;$ENV{E_ROOT}/egui/tools/assimp-3.2/include")
 
 # Commonly used libraries for objects console application.
 set(ENV{E_COMMON_CONSOLE_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};egui")

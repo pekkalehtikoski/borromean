@@ -199,12 +199,12 @@ void eObject3D::calculate_world_mtx(
      */
     if (oid() != EOID_ROOT)
     {
-        eObject3D *parent = eObject3D::cast(parent());
+        eObject3D *p = eObject3D::cast(parent());
 
-        if (parent)
+        if (p)
         {
-            m_world_mtx = parent->m_world_mtx * m_local_mtx;
-            m_norm_world_mtx = parent->m_norm_world_mtx * m_norm_local_mtx;
+            m_world_mtx = p->m_world_mtx * m_local_mtx;
+            m_norm_world_mtx = p->m_norm_world_mtx * m_norm_local_mtx;
         }
     }
 
@@ -261,18 +261,17 @@ void eObject3D::calculate_inverse_world_mtx()
 
     glm::dmat4 local_mtx = scale_mtx * rotation_mtx * position_mtx;
 
-    eObject3D *parent = eObject3D::cast(parent());
-    if (parent) if (parent->oid() != EOID_ROOT)
+    eObject3D *p = eObject3D::cast(parent());
+    if (p) if (p->oid() != EOID_ROOT)
     {
-        parent->calculate_inverse_world_mtx();
-        m_inv_word_mtx = local_mtx * parent->m_inv_word_mtx;
+        p->calculate_inverse_world_mtx();
+        m_inv_word_mtx = local_mtx * p->m_inv_word_mtx;
     }
     else
     {
         m_inv_word_mtx = local_mtx;
     }
 }
-
 
 
 /**

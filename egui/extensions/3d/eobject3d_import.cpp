@@ -68,7 +68,7 @@ void eObject3D::import(
 
     if (scene == OS_NULL)
     {
-	    edebug_error("Loading model failed");
+	    osal_debug_error("Loading model failed");
         return;
     }
 
