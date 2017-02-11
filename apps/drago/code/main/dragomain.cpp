@@ -13,7 +13,7 @@
 
 ****************************************************************************************************
 */
-#include "drago.h"
+#include "../drago.h"
 
 static void drago_main_loop(
     sf::Window *window);

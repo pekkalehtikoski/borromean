@@ -1,4 +1,4 @@
-#include "drago.h"
+#include "../drago.h"
 
 // Shader sources
 static const GLchar* vertexSource =
