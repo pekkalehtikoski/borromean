@@ -18,11 +18,46 @@
 //static void drago_main_loop(
 //    sf::Window *window);
 
+DragoWorld *world;
+
+
+/* Generate entry code for console application.
+ */
+EMAIN_CONSOLE_ENTRY
 
 void display(void)
 
 {
+    os_long elapsed;
 
+    int
+        camera_nr = 0;
+
+    eKeyboardCtrl
+        kbctrl;
+
+    // elapsed = clock.restart();
+    elapsed = 100; // clock.restart();
+
+    world->update_game(&kbctrl, elapsed);
+
+    world->calculate_world_mtx(camera_nr);
+
+    // Clear the screen to black
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+    world->draw_world(camera_nr);
+
+    // Swap buffers
+//    window->display();
+glFlush ();
+
+    // sf::sleep(sf::seconds(0.03f));
+    // os_sleep(30);
+
+
+#if 0
 /* clear all pixels */
 
 glClear (GL_COLOR_BUFFER_BIT);
@@ -54,6 +89,7 @@ glEnd();
 */
 
 glFlush ();
+#endif
 
 }
 
@@ -61,19 +97,18 @@ glFlush ();
 void init (void)
 
 {
+    /* select clearing (background) color */
+    glClearColor (0.0, 0.0, 0.0, 0.0);
 
-/* select clearing (background) color */
+    /* initialize viewing values */
+//    glMatrixMode(GL_PROJECTION);
 
-glClearColor (0.0, 0.0, 0.0, 0.0);
+//    glLoadIdentity();
+//    glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
 
-/* initialize viewing values */
+    glEnable(GL_DEPTH_TEST);
 
-glMatrixMode(GL_PROJECTION);
-
-glLoadIdentity();
-
-glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
-
+    world = new DragoWorld;
 }
 
 /*
@@ -90,28 +125,41 @@ glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
 
 */
 
-int main(int argc, char** argv)
+/**
+****************************************************************************************************
 
+  @brief Application entry point.
+
+  The emain() function is eobjects application's entry point.
+
+  @param   argc Number of command line arguments.
+  @param   argv Array of string pointers, one for each command line argument. UTF8 encoded.
+
+  @return  None.
+
+****************************************************************************************************
+*/
+os_int emain(
+    os_int argc,
+    os_char *argv[])
 {
+    glutInit(&argc, argv);
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB);
 
-glutInit(&argc, argv);
 
-glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize (250, 250);
+    glutInitWindowPosition (100, 100);
+    glutCreateWindow ("hello");
 
-glutInitWindowSize (250, 250);
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    glewInit();
 
-glutInitWindowPosition (100, 100);
+    init ();
+    glutDisplayFunc(display);
+    glutMainLoop();
 
-glutCreateWindow ("hello");
-
-init ();
-
-glutDisplayFunc(display);
-
-glutMainLoop();
-
-return 0; /* ISO C requires main to return int. */
-
+    return 0; /* ISO C requires main to return int. */
 }
 
 #if 0
