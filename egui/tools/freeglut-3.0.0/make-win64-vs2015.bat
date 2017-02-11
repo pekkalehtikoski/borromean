@@ -1,0 +1,1 @@
+cmake . -G "Visual Studio 14 Win64" -DFREEGLUT_BUILD_SHARED_LIBS=OFF

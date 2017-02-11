@@ -8,7 +8,11 @@ if(WIN32)
 
   # Generic operating system version "win32", "win64", "ubuntu16064", "mint18", etc. 
   # Used as name for banary folders and as part of installation package name. 
-  set(ENV{E_OSVER} "win32")
+  if (CMAKE_CL_64)
+    set(ENV{E_OSVER} "win64")
+  else()
+    set(ENV{E_OSVER} "win32")
+  endif()
 
   # Compiler name, used as part of library and temporary folder name. 
   # For example "vs2015", "mingw", "gcc", "gccarm9"...
