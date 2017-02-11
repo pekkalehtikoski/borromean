@@ -70,7 +70,7 @@ void osal_sysconsole_write(
 
 	/* Release memory allocated for conversion.
 	 */
-	osal_memory_free(utf16_str, sz);
+	os_free(utf16_str, sz);
 }
 
 

@@ -199,7 +199,7 @@ void eQueue::newblock()
 
     /* Allocate block.
      */
-    b = (eQueueBlock*)osal_memory_allocate(EQUEUE_DEFALT_BLOCK_SZ, &sz);
+    b = (eQueueBlock*)os_malloc(EQUEUE_DEFALT_BLOCK_SZ, &sz);
 
     /* Attach newly allocated block as newest block.
      */
@@ -250,7 +250,7 @@ void eQueue::delblock()
 
     /* Free memory allocate for the block.
      */
-    osal_memory_free(b, EQUEUE_DEFALT_BLOCK_SZ);
+    os_free(b, EQUEUE_DEFALT_BLOCK_SZ);
 }
 
 

@@ -41,7 +41,7 @@
 
 ****************************************************************************************************
 */
-void *osal_sysmem_alloc(
+os_char *osal_sysmem_alloc(
     os_memsz request_bytes,
     os_memsz *allocated_bytes)
 {

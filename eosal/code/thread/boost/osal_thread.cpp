@@ -171,7 +171,7 @@ osalThreadHandle *osal_thread_create(
 	}
 	else
 	{
-		handle = (osalBoostThreadHandle*)osal_memory_allocate(sizeof(osalBoostThreadHandle), OS_NULL);
+		handle = (osalBoostThreadHandle*)os_malloc(sizeof(osalBoostThreadHandle), OS_NULL);
 		os_memclear(handle, sizeof(osalBoostThreadHandle));
 		handle->exit_requested = OS_FALSE;
 
@@ -233,7 +233,7 @@ void osal_thread_join(
 	/* Delete the handle structure.
      */
 	delete ((osalBoostThreadHandle*)handle)->bthread;
-	osal_memory_free(handle, sizeof(osalBoostThreadHandle));
+	os_free(handle, sizeof(osalBoostThreadHandle));
 }
 
 

@@ -59,7 +59,7 @@ eSet::~eSet()
     
     /* Release items buffer
      */    
-    osal_memory_free(m_items, m_alloc);
+    os_free(m_items, m_alloc);
 }
 
 
@@ -118,7 +118,7 @@ eObject *eSet::clone(
 
     if (m_items)
     {
-        clonedobj->m_items = (os_char*)osal_memory_allocate(m_used, &sz);
+        clonedobj->m_items = os_malloc(m_used, &sz);
         clonedobj->m_used = m_used;
         clonedobj->m_alloc = (os_int)sz;
         os_memcpy(clonedobj->m_items, m_items, m_used);
@@ -143,7 +143,7 @@ eObject *eSet::clone(
                     case -OS_STRING:
                         strptr = *(os_char**)p;
                         strsz = *(os_int*)(p + sizeof(os_char*));
-                        newstr = (os_char*)osal_memory_allocate(strsz, OS_NULL);
+                        newstr = os_malloc(strsz, OS_NULL);
                         os_memcpy(newstr, strptr, strsz);
                         *(os_char**)p = newstr;
                         break;
@@ -362,7 +362,7 @@ eStatus eSet::reader(
      */
     /* if (m_items)
     {
-        osal_memory_free(m_items, m_alloc);
+        os_free(m_items, m_alloc);
         m_items = OS_NULL;
         m_alloc = m_used = 0;
     }
@@ -401,7 +401,7 @@ eStatus eSet::reader(
 
     /* Allocate buffer containing items
      */
-    m_items = (os_char*)osal_memory_allocate(m_used, &nread);
+    m_items = os_malloc(m_used, &nread);
     m_alloc = (os_int)nread;
 
     /* Prepare to go trough items.
@@ -432,7 +432,7 @@ eStatus eSet::reader(
                 case -OS_STRING:
                     if (stream->getl(&lval)) goto failed;
                     strsz = (os_int)(lval+1);
-                    strptr = (os_char*)osal_memory_allocate(strsz, OS_NULL);
+                    strptr = os_malloc(strsz, OS_NULL);
                     stream->read(strptr, (os_memsz)lval, &nread);
                     if (nread != lval) goto failed;
                     strptr[lval] = '\0';
@@ -469,7 +469,7 @@ skipit:
     /* Reading object failed.
      */
 failed:
-    osal_memory_free(m_items, m_alloc);
+    os_free(m_items, m_alloc);
     m_items = OS_NULL;
     m_alloc = m_used = 0;
 
@@ -754,7 +754,7 @@ void eSet::set(
             {
                 itype = -OS_STRING;
                 ibytes = sizeof(os_char*) + sizeof(os_int);
-                sptr = (os_char*)osal_memory_allocate(sz, OS_NULL);
+                sptr = os_malloc(sz, OS_NULL);
                 os_memcpy(sptr, q, sz);
                 iptr = &sptr;
                 isz = (os_int)sz;
@@ -798,7 +798,7 @@ void eSet::set(
             }
             else if (jtype == -OS_STRING) 
             {
-                osal_memory_free(*(void**)p, *(os_int*)(p + sizeof(os_char*)));
+                os_free(*(void**)p, *(os_int*)(p + sizeof(os_char*)));
             }
 
             /* If it is same length
@@ -839,12 +839,12 @@ void eSet::set(
      */
     if (m_used + ibytes + 3 * sizeof(os_char) > m_alloc)
     {
-        start = (os_char*)osal_memory_allocate(3 * sizeof(os_char)
+        start = os_malloc(3 * sizeof(os_char)
             + ibytes + m_used + m_used/4 + slack, &sz);
         if (m_items)
         {
             os_memcpy(start, m_items, m_used);
-            osal_memory_free(m_items, m_alloc);
+            os_free(m_items, m_alloc);
         }
         m_alloc = (os_int)sz;
         m_items = start;
@@ -1043,7 +1043,7 @@ void eSet::clear()
                 case -OS_STRING:
                     strptr = *(os_char**)p;
                     strsz = *(os_int*)(p + sizeof(char*)) ;
-                    osal_memory_free(strptr, strsz);
+                    os_free(strptr, strsz);
                     break;
 
                 case OS_OBJECT:

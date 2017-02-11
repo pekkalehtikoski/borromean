@@ -117,7 +117,7 @@ osalMutex osal_mutex_create(
     LPCRITICAL_SECTION
         critical_section;
 
-	/* Allocate memory for critical section. Here we cannot use osal_memory_allocate(), since
+	/* Allocate memory for critical section. Here we cannot use os_malloc(), since
 	   mutexes are initialized before memory (memory allocation needs mutexes).
 	 */
     critical_section = HeapAlloc(GetProcessHeap(), 0, (DWORD)sizeof(CRITICAL_SECTION));

@@ -1,0 +1,16 @@
+# e-build-defs.txt - Set cmake build environment variables common to all projects.
+# 23.12.2016/pekka
+
+# Include path.
+set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/glm-0.9.7.4/glm;$ENV{E_ROOT}/egui/tools/glew-1.13.0/include")
+
+# Commonly used libraries for objects console application.
+set(ENV{E_COMMON_CONSOLE_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};egui")
+
+# Commonly used libraries for eosal console application.
+# set(ENV{OSAL_CONSOLE_APP_LIBS} "eosal")
+
+# if(WIN32)
+#   set(ENV{E_COMMON_CONSOLE_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};WS2_32")
+#   set(ENV{OSAL_CONSOLE_APP_LIBS} "$ENV{OSAL_CONSOLE_APP_LIBS};WS2_32")
+# endif()

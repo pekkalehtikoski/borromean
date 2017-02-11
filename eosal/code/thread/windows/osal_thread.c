@@ -155,7 +155,7 @@ osalThreadHandle *osal_thread_create(
 
 	if (flags & OSAL_THREAD_ATTACHED)
 	{
-		handle = osal_memory_allocate(sizeof(osalWindowsThreadHandle), OS_NULL);
+		handle = (osalWindowsThreadHandle*)os_malloc(sizeof(osalWindowsThreadHandle), OS_NULL);
 		os_memclear(handle, sizeof(osalWindowsThreadHandle));
 	}
 	else
@@ -177,7 +177,7 @@ osalThreadHandle *osal_thread_create(
     if (thread_handle == NULL)
     {
 		osal_debug_error("osal_thread,CreateThread failed");
-		osal_memory_free(handle, sizeof(osalWindowsThreadHandle));
+		os_free(handle, sizeof(osalWindowsThreadHandle));
 		return OS_NULL;
     }
 
@@ -298,7 +298,7 @@ void osal_thread_join(
 	/* Delete the handle structure.
 	 */
 	CloseHandle(((osalWindowsThreadHandle*)handle)->thread_handle);
-	osal_memory_free(handle, sizeof(osalWindowsThreadHandle));
+	os_free(handle, sizeof(osalWindowsThreadHandle));
 }
 #endif
 
@@ -332,7 +332,7 @@ void osal_thread_release_handle(
 	/* Delete the handle structure.
 	 */
 	CloseHandle(((osalWindowsThreadHandle*)handle)->thread_handle);
-	osal_memory_free(handle, sizeof(osalWindowsThreadHandle));
+	os_free(handle, sizeof(osalWindowsThreadHandle));
 }
 #endif
 

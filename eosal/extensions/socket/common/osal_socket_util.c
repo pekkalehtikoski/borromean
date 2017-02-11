@@ -42,7 +42,7 @@
            refers to IPv6 (no numeric address), IPv6 is not detected here.
   @return  If the host was specified, the function returns pointer to null terminated
 		   string containing the host name. This buffer must be freed using
-		   osal_memory_free(buf, buf_sz) function. If parameters do not specify host name,
+		   os_free(buf, buf_sz) function. If parameters do not specify host name,
 		   the function returns OS_NULL.
 
 ****************************************************************************************************
@@ -79,7 +79,7 @@ os_char *osal_socket_get_host_name_and_port(
 	/* Allocate buffer and copy parameter value into it. Null terminate the string.
 	 */
 	*buf_sz = n_chars + 1;
-	buf = osal_memory_allocate(*buf_sz, OS_NULL);
+	buf = os_malloc(*buf_sz, OS_NULL);
 	if (buf == OS_NULL) return OS_NULL;
 	os_memcpy(buf, value_pos, n_chars);
 	buf[n_chars] = '\0';
@@ -123,7 +123,7 @@ os_char *osal_socket_get_host_name_and_port(
 	 */
 	if (buf[0] == '\0')
 	{
-		osal_memory_free(buf, *buf_sz);
+		os_free(buf, *buf_sz);
 		buf = OS_NULL;
 		*buf_sz = 0;
 	}

@@ -238,7 +238,7 @@ void eNameSpace::unmap_all()
 
   @brief Get first child object identified by oid.
 
-  The eNameSpace::ixgetfirst() function returns pointer to the first child object selected by object 
+  The eNameSpace::findname() function returns pointer to the first child object selected by object 
   identifier oid given as argument.
 
   @param   oid Object idenfifier. Default value EOID_CHILD specifies to get a child object, 

@@ -1,12 +1,12 @@
 /**
 
-  @file    egui.h
-  @brief   Main egui library header file.
+  @file    egui3d.h
+  @brief   egui library header file with 3D extensions.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  This egui library base main header file. If further includes rest of egui headers. 
+  This egui library main header file with 3D extensions. If further includes rest of egui headers. 
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -18,9 +18,16 @@
 #ifndef EGUI3D_INCLUDED
 #define EGUI3D_INCLUDED
 
-/* Include tools librarie.
+/* Include GLM headers.
  */
-#include "glm/eobjects.h"
+#include "egui/tools/glm-0.9.7.4/glm/glm.hpp"
+#include "egui/tools/glm-0.9.7.4/glm/gtc/matrix_transform.hpp"
+
+/* Include Glew header.
+ */
+#define GLEW_STATIC
+#include <GL/glew.h>
+
 
 /* Initialize the egui library for use.
  */

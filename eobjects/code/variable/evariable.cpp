@@ -340,7 +340,7 @@ void eVariable::clear()
              */
             if (m_vflags & EVAR_STRBUF_ALLOCATED)
             {
-                osal_memory_free(m_value.strptr.ptr, m_value.strptr.allocated);
+                os_free(m_value.strptr.ptr, m_value.strptr.allocated);
             }
             break;
 
@@ -357,7 +357,7 @@ void eVariable::clear()
         default:
             if (m_value.valbuf.tmpstr)
             {
-                osal_memory_free(m_value.valbuf.tmpstr, 
+                os_free(m_value.valbuf.tmpstr, 
                     m_value.valbuf.tmpstr_sz);
             }
             break;
@@ -497,7 +497,7 @@ void eVariable::sets(
      */
     else
     {
-        m_value.strptr.ptr = (os_char*)osal_memory_allocate(n, &m_value.strptr.allocated);
+        m_value.strptr.ptr = os_malloc(n, &m_value.strptr.allocated);
         os_memcpy(m_value.strptr.ptr, x, n);
         if (max_chars >= 0) m_value.strptr.ptr[max_chars] = '\0';
         m_value.strptr.used = n;
@@ -512,7 +512,7 @@ void eVariable::sets(
      */
     if (tmpstr) 
     {
-        osal_memory_free(tmpstr, tmpstr_sz);
+        os_free(tmpstr, tmpstr_sz);
     }
 }
 
@@ -580,7 +580,7 @@ void eVariable::setv(
                 else
                 {
                     n = x->m_value.strptr.used;
-                    m_value.strptr.ptr = (os_char*)osal_memory_allocate(n, 
+                    m_value.strptr.ptr = os_malloc(n, 
                         &m_value.strptr.allocated);
                     os_memcpy(m_value.strptr.ptr, x->m_value.strptr.ptr, n);
                     m_value.strptr.used = n;
@@ -934,7 +934,7 @@ os_char *eVariable::gets(
 
     /* Allocate buffer for temporary string and save it.
      */
-    str = (os_char*)osal_memory_allocate(vsz, OS_NULL);
+    str = os_malloc(vsz, OS_NULL);
     os_memcpy(str, buf, vsz);
     m_value.valbuf.tmpstr = str;
     m_value.valbuf.tmpstr_sz = vsz;
@@ -964,7 +964,7 @@ void eVariable::gets_free()
 {
     if (type() != OS_STRING && m_value.valbuf.tmpstr)
     {
-        osal_memory_free(m_value.valbuf.tmpstr, 
+        os_free(m_value.valbuf.tmpstr, 
             m_value.valbuf.tmpstr_sz);
 
         m_value.valbuf.tmpstr = OS_NULL;
@@ -1562,7 +1562,7 @@ eStatus eVariable::reader(
              */
             else
             {
-                m_value.strptr.ptr = (os_char*)osal_memory_allocate(sz+1, &m_value.strptr.allocated);
+                m_value.strptr.ptr = os_malloc(sz+1, &m_value.strptr.allocated);
                 if (stream->read(m_value.strptr.ptr, sz)) goto failed;
                 m_value.strptr.ptr[sz] = '\0';
                 m_value.strptr.used = sz+1;
@@ -1672,7 +1672,7 @@ void eVariable::appends_internal(
 
     /* Allocate and combine within new buffer.
      */
-    newval = (os_char*)osal_memory_allocate(n, &allocated);
+    newval = os_malloc(n, &allocated);
     os_memcpy(newval, val, used - 1);
     if (str) os_memcpy(newval + (used - 1), str, nchars);
     newval[n-1] = '\0';
@@ -1681,7 +1681,7 @@ void eVariable::appends_internal(
      */
     if (m_vflags & EVAR_STRBUF_ALLOCATED)
     {
-        osal_memory_free(m_value.strptr.ptr, m_value.strptr.allocated);
+        os_free(m_value.strptr.ptr, m_value.strptr.allocated);
     }
 
     /* Set pointer to buffer, buffer use and allocated bytes.

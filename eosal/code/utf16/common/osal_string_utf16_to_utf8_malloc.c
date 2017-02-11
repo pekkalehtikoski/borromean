@@ -7,7 +7,7 @@
   @date    9.11.2011
 
   Conversion of UTF16 encoded string to UTF8 encoded string, buffer for the new string
-  is allocated by osal_memory_allocate() function.
+  is allocated by os_malloc() function.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -30,7 +30,7 @@
   @anchor osal_string_utf16_to_utf8_malloc
 
   The osal_string_utf16_to_utf8_malloc() converts an UTF16 encoded string to UTF8 encoded string.
-  The UTF8 string is stored into buffer allocated using osal_memory_allocate() by this function.
+  The UTF8 string is stored into buffer allocated using os_malloc() by this function.
 
   Code sniplet below demonstrates converting string, and then releasing the conversion buffer.
   \verbatim
@@ -38,7 +38,7 @@
   os_long sz;
 
   str = osal_string_utf16_to_utf8_malloc(utf16_str, &sz);
-  osal_memory_free(str, sz);
+  os_free(str, sz);
   \endverbatim
 
   @param   str16 Pointer to UTF16 encoded null terminated string. If OS_NULL, the function
@@ -66,7 +66,7 @@ os_char *osal_string_utf16_to_utf8_malloc(
 
     /* Allocate buffer for the string.
      */
-    buf8 = osal_memory_allocate(sz, OS_NULL);
+    buf8 = os_malloc(sz, OS_NULL);
 
     /* Convert the string from UTF16 to UTF8.
      */

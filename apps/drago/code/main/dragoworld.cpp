@@ -298,8 +298,8 @@ void DragoWorld::upload_mesh_data()
         *mesh;
 
     // Calculate buffer sizes.
-    ememory_clear(bufsz, E3GL_NRO_BUFFERS * sizeof(os_int));
-    for (mesh = eMesh3D::cast(m_meshes.getfirst()); mesh; mesh=eMesh3D::cast(mesh->getnext()))
+    os_memclear(bufsz, E3GL_NRO_BUFFERS * sizeof(os_int));
+    for (mesh = eMesh3D::cast(m_meshes.first()); mesh; mesh=eMesh3D::cast(mesh->next()))
     {
         mesh->m_gl_vertex_buf_nr = E3GL_STATIC_VERTEX_BUF;
         mesh->m_vertex_offset = bufsz[mesh->m_gl_vertex_buf_nr];
@@ -332,7 +332,7 @@ void DragoWorld::upload_mesh_data()
     }
 
     // Upload data to buffers.
-    for (mesh = eMesh3D::cast(m_meshes.getfirst()); mesh; mesh=eMesh3D::cast(mesh->getnext()))
+    for (mesh = eMesh3D::cast(m_meshes.first()); mesh; mesh=eMesh3D::cast(mesh->next()))
     {
         if (mesh->m_vertices_sz) 
         {

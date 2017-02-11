@@ -149,14 +149,14 @@ eStatus eConsole::write(
     {
         /* Allocate copy just to terminate with NULL character.
          */
-        text = (os_char*)osal_memory_allocate(buf_sz+1, OS_NULL);
+        text = os_malloc(buf_sz+1, OS_NULL);
         os_memcpy(text, buf, buf_sz);
         text[buf_sz] = '\0';
 
         /* Write string to console, and be done.
          */
         osal_console_write(text);        
-        osal_memory_free(text, buf_sz+1);
+        os_free(text, buf_sz+1);
     }
 
     if (nwritten != OS_NULL) *nwritten = buf_sz; 

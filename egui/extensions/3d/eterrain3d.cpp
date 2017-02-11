@@ -13,7 +13,7 @@
 
 ****************************************************************************************************
 */
-#include "egui/egui.h"
+#include "egui/egui3d.h"
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
@@ -60,7 +60,7 @@ eTerrain3D::eTerrain3D(
 */
 eTerrain3D::~eTerrain3D()
 {
-    ememory_free(m_elev, m_elev_sz);
+    os_free(m_elev, m_elev_sz);
 }
 
 
@@ -155,13 +155,13 @@ void eTerrain3D::generate_elev_map(
 
     /* Release old elevation map, if any.
      */
-    ememory_free(m_elev, m_elev_sz);
+    os_free(m_elev, m_elev_sz);
     m_elev_sz = m_w * m_h * sizeof(float);
 
     /* Allocate elevation map.
      */
-    m_elev = (float*)ememory_allocate(m_elev_sz, 0);
-    ememory_clear(m_elev, m_elev_sz);
+    m_elev = (float*)os_malloc(m_elev_sz, 0);
+    os_memclear(m_elev, m_elev_sz);
 
     isfirst = adjust_1_m > 0;
 
@@ -340,7 +340,7 @@ void eTerrain3D::above_sea_level(
         histo[AS_HISTO_N],
         sum;
 
-    ememory_clear(histo, sizeof(histo));
+    os_memclear(histo, sizeof(histo));
     for (y = 0; y < m_h; y++)
     {
         for (x = 0; x < m_w; x++)
@@ -406,7 +406,7 @@ void eTerrain3D::blur(
         *elev,
         w;
 
-    elev = (float*)ememory_allocate(m_elev_sz, 0);
+    elev = (float*)os_malloc(m_elev_sz, 0);
 
     for (y = 0; y < m_h; y++)
     {
@@ -433,7 +433,7 @@ void eTerrain3D::blur(
         }
     }
 
-    ememory_free(m_elev, m_elev_sz);
+    os_free(m_elev, m_elev_sz);
     m_elev = elev;
 }
 
@@ -493,12 +493,12 @@ void eTerrain3D::generate_mesh(
     /* Allocate vertex and element buffers.
      */
     mesh->m_vertices_sz = m_w * m_h * sizeof(e3VertexAttrs);
-    mesh->m_vertices = (e3VertexAttrs*)ememory_allocate(mesh->m_vertices_sz, OS_NULL);
-    ememory_clear(mesh->m_vertices, mesh->m_vertices_sz);
+    mesh->m_vertices = (e3VertexAttrs*)os_malloc(mesh->m_vertices_sz, OS_NULL);
+    os_memclear(mesh->m_vertices, mesh->m_vertices_sz);
 
     mesh->m_elements_sz = 2 /* squares to triangles */ * (m_w-1) * (m_h-1) * 3 /* mNumIndices */ * sizeof(os_uint);
-    mesh->m_elements = (os_uint*)ememory_allocate(mesh->m_elements_sz, OS_NULL);
-    ememory_clear(mesh->m_elements, mesh->m_elements_sz);
+    mesh->m_elements = (os_uint*)os_malloc(mesh->m_elements_sz, OS_NULL);
+    os_memclear(mesh->m_elements, mesh->m_elements_sz);
 
     v = mesh->m_vertices;
     for (y = 0; y<m_h; y++)

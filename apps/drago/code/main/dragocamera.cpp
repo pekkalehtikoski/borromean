@@ -153,7 +153,7 @@ void DragoCamera::draw_object(
             GL_UNSIGNED_INT, BUFFER_OFFSET(mesh->m_element_offset));
     }
 
-    for (eObject *child = obj->getfirst(); child; child = child->getnext())
+    for (eObject *child = obj->first(); child; child = child->next())
     {
         draw_object(world, eObject3D::cast(child), camera_mtx);
     }

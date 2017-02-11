@@ -506,7 +506,7 @@ eStatus eSocket::write_socket(
 
         if (buf == OS_NULL)
         {
-            buf = (os_char*)osal_memory_allocate(m_frame_sz, OS_NULL);
+            buf = os_malloc(m_frame_sz, OS_NULL);
         }
    
         m_out->read(buf, m_frame_sz, &nread, OSAL_STREAM_PEEK);
@@ -527,7 +527,7 @@ osal_console_write("writing socket\n");
 
     if (buf)
     {
-        osal_memory_free(buf, m_frame_sz);
+        os_free(buf, m_frame_sz);
     }
 
     return s;

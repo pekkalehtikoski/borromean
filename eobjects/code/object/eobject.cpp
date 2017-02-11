@@ -285,7 +285,7 @@ eObject *eObject::newobject(
 
   @brief Overloaded new operator.
 
-  The new operator maps object memory allocation to OSAL function osal_memory_allocate().
+  The new operator maps object memory allocation to OSAL function os_malloc().
 
   @param   size Number of bytes to allocate.
   @return  Pointer to allocated memory block.
@@ -298,7 +298,7 @@ void *eObject::operator new(
 	os_char *buf;
 		
 	size += sizeof(os_memsz);
-	buf = (os_char*)osal_memory_allocate((os_memsz)size, OS_NULL);
+	buf = os_malloc((os_memsz)size, OS_NULL);
 
 	*(os_memsz*)buf = (os_memsz)size;
 
@@ -312,7 +312,7 @@ void *eObject::operator new(
 
   @brief Overloaded delete operator.
 
-  The delete operator maps freeing object memory to OSAL function osal_memory_free().
+  The delete operator maps freeing object memory to OSAL function os_free().
 
   @param   buf Pointer to memory block to free.
   @return  None.
@@ -325,7 +325,7 @@ void eObject::operator delete(
 	if (buf)
 	{
 		buf = (os_char*)buf - sizeof(os_memsz);
-		osal_memory_free(buf, *(os_memsz*)buf);
+		os_free(buf, *(os_memsz*)buf);
 	}
 }
 #endif

@@ -67,7 +67,7 @@ static void drago_main_loop(
     bool running = true;
     while (running)
     {
-        ememory_clear(&kbctrl, sizeof(kbctrl));
+        os_memclear(&kbctrl, sizeof(kbctrl));
 
         sf::Event windowEvent;
         while (window->pollEvent(windowEvent))

@@ -94,7 +94,10 @@ public:
 
 		/* Get class identifier.
 		*/
-		virtual os_int getclassid() { return ECLASSID_EVARIABLE; }
+		virtual os_int getclassid() 
+        { 
+            return EGUICLASSID_MESH3D; 
+        }
 
 		/* Static constructor function for generating instance by class list.
 		*/

@@ -694,7 +694,7 @@ void ePropertyBinding::set_propertyname(
 {
     if (m_propertyname)
     {
-        osal_memory_free(m_propertyname, m_propertynamesz);
+        os_free(m_propertyname, m_propertynamesz);
         m_propertyname = OS_NULL;
         m_propertynamesz = 0;
     }
@@ -702,7 +702,7 @@ void ePropertyBinding::set_propertyname(
     if (propertyname)
     {
         m_propertynamesz = (os_short)os_strlen(propertyname);
-        m_propertyname = (os_char*)osal_memory_allocate(m_propertynamesz, OS_NULL);
+        m_propertyname = os_malloc(m_propertynamesz, OS_NULL);
         os_memcpy(m_propertyname, propertyname, m_propertynamesz);
     }
 }

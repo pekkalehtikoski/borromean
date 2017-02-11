@@ -75,7 +75,7 @@ int wmain(
     /* Convert command line arguments from UTF16 to UTF8. This will be cleaned up when
        osal_shutdown runs at exit, and all memory will be released.
      */
-    utf8_argv = (os_char**)osal_memory_allocate(argc*sizeof(os_char*), OS_NULL);
+    utf8_argv = (os_char**)os_malloc(argc*sizeof(os_char*), OS_NULL);
     for (i = 0; i < argc; i++)
     {
         utf8_argv[i] = osal_string_utf16_to_utf8_malloc(argv[i], OS_NULL);

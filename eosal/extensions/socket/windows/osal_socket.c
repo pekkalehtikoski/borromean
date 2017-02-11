@@ -131,7 +131,7 @@ osalStream osal_socket_open(
     osal_socket_initialize();
 
 	/* Get host name or numeric IP address and TCP port number from parameters.
-       The host buffer must be released by calling osal_memory_free() function,
+       The host buffer must be released by calling os_free() function,
        unless if host is OS_NULL (unpecified).
 	 */
     port_nr = OSAL_DEFAULT_SOCKET_PORT;
@@ -161,8 +161,8 @@ osalStream osal_socket_open(
             s = GetAddrInfoW(host_utf16, port_utf16,
                 &hints, &addrinfo);
 
-            osal_memory_free(host_utf16, sz1);
-            osal_memory_free(port_utf16, sz2);
+            os_free(host_utf16, sz1);
+            os_free(port_utf16, sz2);
 
             if (s || addrinfo == NULL) 
 		    {
@@ -222,7 +222,7 @@ osalStream osal_socket_open(
 
 	/* Allocate and clear socket structure.
 	 */
-	mysocket = osal_memory_allocate(sizeof(osalSocket), OS_NULL);
+	mysocket = (osalSocket*)os_malloc(sizeof(osalSocket), OS_NULL);
 	if (mysocket == OS_NULL) 
 	{
 		rval = OSAL_STATUS_MEMORY_ALLOCATION_FAILED;
@@ -310,7 +310,7 @@ osalStream osal_socket_open(
 
 	/* Release memory allocated for the host name or address.
 	 */
-	osal_memory_free(hostbuf, host_sz);
+	os_free(hostbuf, host_sz);
 
 	/* Success set status code and cast socket structure pointer to stream pointer and return it.
 	 */
@@ -320,7 +320,7 @@ osalStream osal_socket_open(
 getout:
 	/* Opt out on error. First Release memory allocated for the host name or address.
 	 */
-	osal_memory_free(hostbuf, host_sz);
+	os_free(hostbuf, host_sz);
 
     /* If we got far enough to allocate the socket structure.
        Close the event handle (if any) and free memory allocated
@@ -333,7 +333,7 @@ getout:
 		    WSACloseEvent(mysocket->event);
 	    }
 
-        osal_memory_free(mysocket, sizeof(osalSocket));
+        os_free(mysocket, sizeof(osalSocket));
     }
 
     /* Close socket
@@ -533,7 +533,7 @@ osalStream osal_socket_accept(
 
 		/* Allocate and clear socket structure.
 		 */
-		newsocket = osal_memory_allocate(sizeof(osalSocket), OS_NULL);
+		newsocket = (osalSocket*)os_malloc(sizeof(osalSocket), OS_NULL);
 		if (newsocket == OS_NULL) 
 		{
 			closesocket(new_handle);
@@ -597,7 +597,7 @@ getout:
 		    WSACloseEvent(newsocket->event);
 	    }
 
-        osal_memory_free(newsocket, sizeof(osalSocket));
+        os_free(newsocket, sizeof(osalSocket));
     }
 
     /* Close socket

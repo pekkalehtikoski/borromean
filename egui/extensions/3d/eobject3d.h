@@ -48,6 +48,7 @@ typedef struct
 eKeyboardCtrl;
 
 class eWorld3D;
+class eMesh3D;
 
 
 /**

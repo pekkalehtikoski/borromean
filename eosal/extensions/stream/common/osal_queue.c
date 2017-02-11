@@ -83,7 +83,7 @@ osalStream osal_queue_open(
 	 
 	/* Allocate queue structure.
 	 */
-	queue = osal_memory_allocate(sizeof(osalQueue), OS_NULL);
+	queue = os_malloc(sizeof(osalQueue), OS_NULL);
 	if (queue == OS_NULL) goto memalloc_failed;
 
 	/* Get value of "ctrl" flag. This determines if the queue is to use control codes.
@@ -95,10 +95,10 @@ osalStream osal_queue_open(
 
 	/* Allocate buffer for queue and save size in bytes.
 	 */
-	queue->qbuf = osal_memory_allocate(sz+1, &true_sz);
+	queue->qbuf = os_malloc(sz+1, &true_sz);
 	if (queue->qbuf == OS_NULL)
 	{
-		osal_memory_free(queue, sizeof(osalQueue));
+		os_free(queue, sizeof(osalQueue));
 		goto memalloc_failed;
 	}
 	queue->sz = (os_memsz)true_sz;
@@ -110,7 +110,6 @@ osalStream osal_queue_open(
 	/* Save open flags.
 	 */
 	queue->open_flags = flags;
-
 
 	/* Save interface pointer.
 	 */
@@ -163,11 +162,11 @@ void osal_queue_close(
 
 		/* Free queue buffer.
 		 */
-		osal_memory_free(queue->qbuf, queue->sz);
+		os_free(queue->qbuf, queue->sz);
 
 		/* Free queue.
 		 */
-		osal_memory_free(queue, sizeof(osalQueue));
+		os_free(queue, sizeof(osalQueue));
 	}
 }
 

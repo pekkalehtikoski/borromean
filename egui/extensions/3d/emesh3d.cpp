@@ -15,7 +15,7 @@
 
 ****************************************************************************************************
 */
-#include "egui/egui.h"
+#include "egui/egui3d.h"
 
 
 /**
@@ -60,8 +60,8 @@ eMesh3D::eMesh3D(
 */
 eMesh3D::~eMesh3D()
 {
-    ememory_free(m_vertices, m_vertices_sz);
-    ememory_free(m_elements, m_elements_sz);
+    os_free(m_vertices, m_vertices_sz);
+    os_free(m_elements, m_elements_sz);
 }
 
 

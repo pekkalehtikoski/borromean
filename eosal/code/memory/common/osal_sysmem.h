@@ -36,7 +36,7 @@
 
 /* Allocate a block of memory.
  */
-typedef void *osal_sysmem_alloc_func(
+typedef os_char *osal_sysmem_alloc_func(
     os_memsz request_bytes,
     os_memsz *allocated_bytes);
 
@@ -63,7 +63,7 @@ typedef void osal_sysmem_free_func(
 
 /* Allocate a block of memory.
  */
-void *osal_sysmem_alloc(
+os_char *osal_sysmem_alloc(
     os_memsz request_bytes,
     os_memsz *allocated_bytes);
 

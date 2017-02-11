@@ -396,7 +396,7 @@ void eBinding::set_objpath(
 {
     if (m_objpath)
     {
-        osal_memory_free(m_objpath, m_objpathsz);
+        os_free(m_objpath, m_objpathsz);
         m_objpath = OS_NULL;
         m_objpathsz = 0;
     }
@@ -404,7 +404,7 @@ void eBinding::set_objpath(
     if (objpath)
     {
         m_objpathsz = (os_short)os_strlen(objpath);
-        m_objpath = (os_char*)osal_memory_allocate(m_objpathsz, OS_NULL);
+        m_objpath = os_malloc(m_objpathsz, OS_NULL);
         os_memcpy(m_objpath, objpath, m_objpathsz);
     }
 }
@@ -428,7 +428,7 @@ void eBinding::set_bindpath(
 {
     if (m_bindpath)
     {
-        osal_memory_free(m_bindpath, m_bindpathsz);
+        os_free(m_bindpath, m_bindpathsz);
         m_bindpath = OS_NULL;
         m_bindpathsz = 0;
     }
@@ -436,7 +436,7 @@ void eBinding::set_bindpath(
     if (bindpath)
     {
         m_bindpathsz = (os_short)os_strlen(bindpath);
-        m_bindpath = (os_char*)osal_memory_allocate(m_bindpathsz, OS_NULL);
+        m_bindpath = os_malloc(m_bindpathsz, OS_NULL);
         os_memcpy(m_bindpath, bindpath, m_bindpathsz);
     }
 }

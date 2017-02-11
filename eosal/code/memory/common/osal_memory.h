@@ -195,9 +195,14 @@ void osal_memory_shutdown(
  */
 /*@{*/
 
+/* Application memory allocation functions. These can be remapped for DLLs, etc.
+ */
+#define os_malloc(r,a) osal_memory_allocate(r,a)
+#define os_free(b,s) osal_memory_free(b,s)
+
 /* Allocate a block of memory.
  */
-void *osal_memory_allocate(
+os_char *osal_memory_allocate(
     os_memsz request_bytes,
     os_memsz *allocated_bytes);
 
@@ -210,8 +215,8 @@ void osal_memory_free(
 /*@}*/
 
 #else
-#define osal_memory_allocate(r,a)  osal_sysmem_alloc(r,a)
-#define osal_memory_free(b,s)  osal_sysmem_free(b,s)
+#define os_malloc(r,a) osal_sysmem_alloc(r,a)
+#define os_free(b,s) osal_sysmem_free(b,s)
 
 
 #endif /* OSAL_MEMORY_MANAGER */

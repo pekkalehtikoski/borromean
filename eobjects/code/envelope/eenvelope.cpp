@@ -46,7 +46,7 @@ void eenvelope_prepend_name(
      */
     if (name_sz > path->str_pos)
     {
-	    newstr = (os_char*)osal_memory_allocate(path->str_alloc + name_sz - path->str_pos + 14, &sz);
+	    newstr = os_malloc(path->str_alloc + name_sz - path->str_pos + 14, &sz);
         newpos = (os_int)(sz - (path->str_alloc - path->str_pos) - name_sz);
         p = newstr + newpos;
         os_memcpy(p, name, name_sz);
@@ -57,7 +57,7 @@ void eenvelope_prepend_name(
                 p[name_sz - 1] = '/';
                 os_memcpy(p + name_sz, path->str + path->str_pos, path->str_alloc - path->str_pos);
             }
-            osal_memory_free(path->str, path->str_alloc);
+            os_free(path->str, path->str_alloc);
         }
         path->str = newstr;
         path->str_alloc = (os_short)sz;
@@ -84,7 +84,7 @@ void eenvelope_clear_path(
 {
     if (path->str) 
     {
-        osal_memory_free(path->str, path->str_alloc);
+        os_free(path->str, path->str_alloc);
         path->str = OS_NULL;
     }
     path->str_alloc = 0;
@@ -528,7 +528,7 @@ eStatus eEnvelope::reader(
     if (stream->getl(&l)) goto failed;
     if (l > 0)
     {
-	    m_target.str = (os_char*)osal_memory_allocate(l + 1 + 14, &sz);
+	    m_target.str = os_malloc(l + 1 + 14, &sz);
         m_target.str_alloc = (os_short)sz;
         m_target.str_pos = (os_short)(sz - l - 1);
         stream->read(m_target.str + m_target.str_pos, l, &sz);
@@ -543,7 +543,7 @@ eStatus eEnvelope::reader(
         if (stream->getl(&l)) goto failed;
         if (l > 0)
         {
-	        m_source.str = (os_char*)osal_memory_allocate(l + 1 + 14, &sz);
+	        m_source.str = os_malloc(l + 1 + 14, &sz);
             m_source.str_alloc = (os_short)sz;
             m_source.str_pos = (os_short)(sz - l - 1);
             stream->read(m_source.str + m_source.str_pos, l, &sz);

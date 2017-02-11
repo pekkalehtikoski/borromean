@@ -19,7 +19,7 @@
 
 ****************************************************************************************************
 */
-#include "egui/egui.h"
+#include "egui/egui3d.h"
 
 
 /**
@@ -105,7 +105,7 @@ void eObject3D::update_game(
     {
         eContainer collisions;
         list_collisions(world, &collisions);
-        if (collisions.getfirst())
+        if (collisions.first())
         {
             objroot = this;
             do
@@ -118,7 +118,7 @@ void eObject3D::update_game(
                     }
                     break;
                 }
-                objroot = eObject3D::cast(objroot->getparent());
+                objroot = eObject3D::cast(objroot->parent());
             }
             while (objroot);
         }
@@ -126,7 +126,7 @@ void eObject3D::update_game(
 
     /* Calculate world for childern.
      */
-    for (eObject *child = getfirst(); child; child = child->getnext())
+    for (eObject *child = first(); child; child = child->next())
     {
         eObject3D::cast(child)->update_game(world, kbctrl, elapsed_s);
     }
@@ -196,10 +196,10 @@ void eObject3D::calculate_world_mtx(
     m_norm_local_mtx = m_rotation_mtx * scale_mtx;
 
     /* Calculate world position.
-        */
-    if (getoid() != EOID_ROOT)
+     */
+    if (oid() != EOID_ROOT)
     {
-        eObject3D *parent = eObject3D::cast(getparent());
+        eObject3D *parent = eObject3D::cast(parent());
 
         if (parent)
         {
@@ -210,7 +210,7 @@ void eObject3D::calculate_world_mtx(
 
     /* Calculate world for childern.
      */
-    for (eObject *child = getfirst(); child; child = child->getnext())
+    for (eObject *child = first(); child; child = child->next())
     {
         eObject3D::cast(child)->calculate_world_mtx(camera);
     }
@@ -238,7 +238,7 @@ void eObject3D::calculate_world_mtx(
 
 void eObject3D::calculate_inverse_world_mtx()
 {
-    if (getoid() == EOID_ROOT) return;
+    if (oid() == EOID_ROOT) return;
 
     glm::dmat4 rotation_x_mtx = glm::rotate(glm::dmat4(1.0), -m_rotate.x, glm::dvec3(1.0, 0.0, 0.0));
     glm::dmat4 rotation_y_mtx = glm::rotate(glm::dmat4(1.0), -m_rotate.y, glm::dvec3(0.0, 1.0, 0.0));
@@ -261,8 +261,8 @@ void eObject3D::calculate_inverse_world_mtx()
 
     glm::dmat4 local_mtx = scale_mtx * rotation_mtx * position_mtx;
 
-    eObject3D *parent = eObject3D::cast(getparent());
-    if (parent) if (parent->getoid() != EOID_ROOT)
+    eObject3D *parent = eObject3D::cast(parent());
+    if (parent) if (parent->oid() != EOID_ROOT)
     {
         parent->calculate_inverse_world_mtx();
         m_inv_word_mtx = local_mtx * parent->m_inv_word_mtx;
@@ -301,16 +301,16 @@ void eObject3D::list_collisions(
      */
     if (!m_bb_ok_world) return;
 
-    for (ptrobj = ePointer::cast(world->m_terrains->getfirst(EOID_PPTR_TARGET));
+    for (ptrobj = ePointer::cast(world->m_terrains->first(EOID_PPTR_TARGET));
             ptrobj;
-            ptrobj = ePointer::cast(ptrobj->getnext(EOID_PPTR_TARGET)))
+            ptrobj = ePointer::cast(ptrobj->next(EOID_PPTR_TARGET)))
     {
         terrain = eTerrain3D::cast(ptrobj->get());
         if (terrain)
         {
             if (terrain->collides_with_terrain(this))
             {
-                collision = ePointer::newobj(collisions);
+                collision = new ePointer(collisions);
                 collision->set(terrain);
             }
         }

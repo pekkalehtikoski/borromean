@@ -15,11 +15,8 @@
 
 ****************************************************************************************************
 */
-#include "egui/egui.h"
+#include "egui/egui3d.h"
 
-// Glew header
-#define GLEW_STATIC
-#include <GL/glew.h>
 
 // assimp library include files. These three are usually needed.
 #include "assimp/Importer.hpp"	//OO version Header!
@@ -196,12 +193,12 @@ static void eobj3d_recursive_convert(
         /* Allocate vertex and element buffers.
          */
         emesh->m_vertices_sz = mesh->mNumVertices * sizeof(e3VertexAttrs);
-        emesh->m_vertices = (e3VertexAttrs*)ememory_allocate(emesh->m_vertices_sz, OS_NULL);
-        ememory_clear(emesh->m_vertices, emesh->m_vertices_sz);
+        emesh->m_vertices = (e3VertexAttrs*)os_malloc(emesh->m_vertices_sz, OS_NULL);
+        os_memclear(emesh->m_vertices, emesh->m_vertices_sz);
 
         emesh->m_elements_sz = n_triangles * 3 /* mNumIndices */ * sizeof(os_uint);
-        emesh->m_elements = (os_uint*)ememory_allocate(emesh->m_elements_sz, OS_NULL);
-        ememory_clear(emesh->m_elements, emesh->m_elements_sz);
+        emesh->m_elements = (os_uint*)os_malloc(emesh->m_elements_sz, OS_NULL);
+        os_memclear(emesh->m_elements, emesh->m_elements_sz);
 
         /* Fill in vertices structure.
          */

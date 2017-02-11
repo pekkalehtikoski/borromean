@@ -232,7 +232,7 @@ void osal_memory_shutdown(
 
 ****************************************************************************************************
 */
-void *osal_memory_allocate(
+os_char *osal_memory_allocate(
     os_memsz request_bytes,
     os_memsz *allocated_bytes)
 {

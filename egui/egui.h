@@ -18,6 +18,8 @@
 #ifndef EGUI_INCLUDED
 #define EGUI_INCLUDED
 
+#define EOID_ROOT 9999
+
 /* Include objects headers.
  */
 #include "eobjects/eobjects.h"
@@ -29,14 +31,11 @@ void egui_initialize(
 
 /* Shut down the egui library.
 */
-void egui_shutdown();
+// void egui_shutdown();
 
 /* Include egui headers.
  */
-#include "egui/extensions/3d/eobject3d.h"
-#include "egui/extensions/3d/emesh3d.h"
-#include "egui/extensions/3d/emovingobject3d.h"
-#include "egui/extensions/3d/eterrain3d.h"
-#include "egui/extensions/3d/eworld3d.h"
+#include "egui/code/defs/eguiclassid.h"
+
 
 #endif

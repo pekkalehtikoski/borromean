@@ -78,13 +78,13 @@
 #define EOID_BINDINGS -35
 
 /** This is special object identifier that can be given as argument to object hierarchy 
-	functions, like getfirstchild(). The EOID_CHILD specifies to get a child object, 
+	functions, like first(). The EOID_CHILD specifies to get a child object, 
 	which is not flagged as attachment.
  */
 #define EOID_CHILD -1000
 
 /** This is special object identifier that can be given as argument to object hierarchy 
-	functions, like getfirstchild(). The EOID_ALL specifies to get a child object, 
+	functions, like first(). The EOID_ALL specifies to get a child object, 
 	including child objects which are flagged as attachments.
  */
 #define EOID_ALL -1001

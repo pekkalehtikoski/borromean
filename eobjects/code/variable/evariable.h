@@ -505,7 +505,7 @@ protected:
      */
 	union
 	{
-		/** Long string values are stored in separate buffer allocated osal_memory_allocate()
+		/** Long string values are stored in separate buffer allocated os_malloc()
 			function. allocated is number of allocated bytes, used is number of used bytes 
 			including terminating null character and ptr is pointer to allocated buffer.
 	     */

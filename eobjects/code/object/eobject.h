@@ -212,12 +212,12 @@ public:
     */
     /*@{*/
 
-    /* Overloaded new operator calls osal_memory_allocate().
+    /* Overloaded new operator calls os_malloc().
      */
     void* operator new(
         size_t);
 
-    /* Overloaded delete operator calls osal_memory_free().
+    /* Overloaded delete operator calls os_free().
      */
     void operator delete(
         void *buf); 
