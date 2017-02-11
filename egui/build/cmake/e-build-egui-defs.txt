@@ -6,7 +6,7 @@ set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/glm-0.9.7.4/glm;$ENV
 set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/freeglut-3.0.0/include;$ENV{E_ROOT}/egui/tools/SOIL/src")
 
 # Commonly used libraries for objects console application.
-set(ENV{E_COMMON_GUI_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};egui")
+set(ENV{E_COMMON_GUI_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};egui;libglew32;OpenGL32")
 
 # Commonly used libraries for eosal console application.
 # set(ENV{OSAL_CONSOLE_APP_LIBS} "eosal")

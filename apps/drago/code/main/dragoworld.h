@@ -81,7 +81,7 @@ class DragoWorld : public eObject
 
         void update_game(
             eKeyboardCtrl *kbctrl,
-            sf::Time *elapsed);
+            os_long elapsed);
 
         void calculate_world_mtx(
             os_int camera_nr);

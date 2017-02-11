@@ -20,13 +20,14 @@
 
 /* Include GLM headers.
  */
-#include "egui/tools/glm-0.9.7.4/glm/glm.hpp"
-#include "egui/tools/glm-0.9.7.4/glm/gtc/matrix_transform.hpp"
+#include "glm.hpp"
+#include "gtc/matrix_transform.hpp"
 
-/* Include Glew header. Static link.
+/* Include GL and glew headers. Static link.
  */
 #define GLEW_STATIC
 #include <GL/glew.h>
+#include <GL/gl.h>
 
 /* Include SOIL header.
  */

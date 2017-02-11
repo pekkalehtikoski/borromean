@@ -20,10 +20,10 @@
 
 #define EOID_ROOT 9999
 
-/* Include SFML header. Static link.
+/* Include freeglut header. Static link.
  */
-#define SFML_STATIC
-#include <SFML/Window.hpp>
+#define FREEGLUT_STATIC
+#include <GL/freeglut.h>
 
 /* Include objects headers.
  */

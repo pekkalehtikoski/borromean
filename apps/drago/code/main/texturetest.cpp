@@ -26,6 +26,7 @@ static const GLchar* fragmentSource =
     "    outColor = mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), 0.5);"
     "}";
 
+#if 0
 void texturetest(void)
 {
     sf::ContextSettings settings;
@@ -184,3 +185,4 @@ void texturetest(void)
 
     window.close();
 }
+#endif

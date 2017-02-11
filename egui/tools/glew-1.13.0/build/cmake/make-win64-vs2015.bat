@@ -1,0 +1,1 @@
+cmake . -G "Visual Studio 14 Win64" -DGLEW_USE_STATIC_LIBS=1

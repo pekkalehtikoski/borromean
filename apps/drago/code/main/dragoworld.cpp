@@ -358,14 +358,13 @@ void DragoWorld::upload_mesh_data()
 
 void DragoWorld::update_game(
     eKeyboardCtrl *kbctrl,
-    sf::Time *elapsed)
+    os_long elapsed)
 {
     double
         elapsed_sec;
-
     
     // Do not get out of whack if game is paused. Limit maximum loop time to 0.3 seconds.
-    elapsed_sec = elapsed->asSeconds();
+    elapsed_sec = 0.001 * elapsed;
     if (elapsed_sec > 0.3) elapsed_sec = 0.3;
     m_world->update_game(kbctrl, elapsed_sec);
 }

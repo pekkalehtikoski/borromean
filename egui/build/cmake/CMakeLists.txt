@@ -7,7 +7,7 @@ project(${E_PROJECT})
 
 # include build information common to all projects.
 include(../../../build/cmake/e-build-defs.txt)
-include(../../../build/cmake/e-build-egui-defs.txt)
+include(e-build-egui-defs.txt)
 
 # Set path to where to keep libraries.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_LIB})

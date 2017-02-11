@@ -1,1 +1,1 @@
-git clean -d -f -x C:\coderoot\borromean
+git clean -d -f -x ..\..
