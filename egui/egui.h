@@ -20,6 +20,11 @@
 
 #define EOID_ROOT 9999
 
+/* Include SFML header. Static link.
+ */
+#define SFML_STATIC
+#include <SFML/Window.hpp>
+
 /* Include objects headers.
  */
 #include "eobjects/eobjects.h"

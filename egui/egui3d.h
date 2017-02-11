@@ -23,11 +23,14 @@
 #include "egui/tools/glm-0.9.7.4/glm/glm.hpp"
 #include "egui/tools/glm-0.9.7.4/glm/gtc/matrix_transform.hpp"
 
-/* Include Glew header.
+/* Include Glew header. Static link.
  */
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+/* Include SOIL header.
+ */
+#include <SOIL.h>
 
 /* Initialize the egui library for use.
  */

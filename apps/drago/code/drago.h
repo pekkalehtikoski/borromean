@@ -16,15 +16,14 @@
 ****************************************************************************************************
 */
 
-// Link statically with GLEW and SFML
-#define GLEW_STATIC
-#define SFML_STATIC
+// #define GLEW_STATIC
+// #define SFML_STATIC
+// #include <GL/glew.h>
+// #include <SFML/Window.hpp>
+// #include <SOIL.h>
 
-// Library headers
-#include <GL/glew.h>
-#include <SFML/Window.hpp>
-#include <SOIL.h>
-#include <eobjects/eobjects.h>
+// egui library header
+#include <egui/egui3d.h>
 
 // Drago header files
 #include "main/dragoworld.h"
