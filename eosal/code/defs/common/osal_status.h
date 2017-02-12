@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_status.h
+  @file    defs/common/osal_status.h
   @brief   OSAL function return codes.
   @author  Pekka Lehtikoski
   @version 1.0

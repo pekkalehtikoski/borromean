@@ -1,6 +1,6 @@
 /**
 
-  @file    char/osal_char_utf8_to_utf32.c
+  @file    utf32/common/osal_char_utf8_to_utf32.c
   @brief   Character conversion from UTF8 to UTF32.
   @author  Pekka Lehtikoski
   @version 1.0

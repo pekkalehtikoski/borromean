@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_int64.h
+  @file    int64/common/osal_int64.h
   @brief   64 bit integer arithmetic.
   @author  Pekka Lehtikoski
   @version 1.0

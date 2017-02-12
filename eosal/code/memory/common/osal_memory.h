@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_memory.h
+  @file    memory/common/osal_memory.h
   @brief   Memory allocation.
   @author  Pekka Lehtikoski
   @version 1.0

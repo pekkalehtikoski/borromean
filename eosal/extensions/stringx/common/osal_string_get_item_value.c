@@ -1,6 +1,6 @@
 /**
 
-  @file    string/osal_string_get_item_value.c
+  @file    stringx/common/osal_string_get_item_value.c
   @brief   Find value of item in list string.
   @author  Pekka Lehtikoski
   @version 1.0

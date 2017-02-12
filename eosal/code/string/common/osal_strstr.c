@@ -1,6 +1,6 @@
 /**
 
-  @file    string/os_strchr.c
+  @file    string/commmon/osal_strchr.c
   @brief   Find a substring within a string.
   @author  Pekka Lehtikoski
   @version 1.0

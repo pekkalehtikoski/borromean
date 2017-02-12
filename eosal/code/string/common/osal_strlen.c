@@ -1,6 +1,6 @@
 /**
 
-  @file    string/os_strlen.c
+  @file    string/commmon/osal_strlen.c
   @brief   Get string size in bytes.
   @author  Pekka Lehtikoski
   @version 1.0

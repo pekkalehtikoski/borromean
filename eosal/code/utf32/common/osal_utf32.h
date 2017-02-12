@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_char32.h
+  @file    utf32/common/osal_char32.h
   @brief   Character classification and conversion.
   @author  Pekka Lehtikoski
   @version 1.0

@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_global.h
+  @file    defs/common/osal_global.h
   @brief   Global OSAL state structure.
   @author  Pekka Lehtikoski
   @version 1.0

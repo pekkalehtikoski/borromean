@@ -1,6 +1,6 @@
 /**
 
-  @file    int64/osal_int64_multiply.c
+  @file    int64x/common/osal_int64_multiply.c
   @brief   64 bit integer arithmetic, multiplication.
   @author  Pekka Lehtikoski
   @version 1.0

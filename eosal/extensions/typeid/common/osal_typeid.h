@@ -1,6 +1,6 @@
 /**
 
-  @file    modules/typeid/osal_typeid.h
+  @file    typeid/common/osal_typeid.h
   @brief   Enumeration of data types and type name - type id conversions.
   @author  Pekka Lehtikoski
   @version 1.0

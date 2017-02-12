@@ -1,6 +1,6 @@
 /**
 
-  @file    int64/osal_int64_double.c
+  @file    int64x/common/osal_int64_double.c
   @brief   Conversions between 64 bit integers and floating point values.
   @author  Pekka Lehtikoski
   @version 1.0

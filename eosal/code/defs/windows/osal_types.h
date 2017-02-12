@@ -1,6 +1,6 @@
 /**
 
-  @file    windows/osal_types.h
+  @file    defs/windows/osal_types.h
   @brief   Definition of OS dependent primitive types for Windows.
   @author  Pekka Lehtikoski
   @version 1.0

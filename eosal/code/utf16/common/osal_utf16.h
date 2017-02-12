@@ -1,6 +1,6 @@
 /**
 
-  @file    modules/utf16/osal_utf16.h
+  @file    utf16/common/osal_utf16.h
   @brief   UTF16 support.
   @author  Pekka Lehtikoski
   @version 1.0

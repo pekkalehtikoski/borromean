@@ -1,6 +1,6 @@
 /**
 
-  @file    string/os_strchr.c
+  @file    string/common/osal_strchr.c
   @brief   Find a character in string.
   @author  Pekka Lehtikoski
   @version 1.0

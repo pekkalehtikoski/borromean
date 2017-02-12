@@ -1,6 +1,6 @@
 /**
 
-  @file    modules/utf16/string/osal_string_utf8_to_utf16_malloc.c
+  @file    utf16/common/osal_string_utf8_to_utf16_malloc.c
   @brief   String conversion from UTF8 to UTF16 into new allocated buffer.
   @author  Pekka Lehtikoski
   @version 1.0

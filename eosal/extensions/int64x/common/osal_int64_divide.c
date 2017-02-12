@@ -1,6 +1,6 @@
 /**
 
-  @file    int64/osal_int64_divide.c
+  @file    int64x/common/osal_int64_divide.c
   @brief   64 bit integer arithmetic, division.
   @author  Pekka Lehtikoski
   @version 1.0

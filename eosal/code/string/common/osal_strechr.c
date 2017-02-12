@@ -1,6 +1,6 @@
 /**
 
-  @file    string/os_strechr.c
+  @file    string/common/osal_strechr.c
   @brief   Find last matching character in string.
   @author  Pekka Lehtikoski
   @version 1.0

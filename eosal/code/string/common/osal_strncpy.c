@@ -1,6 +1,6 @@
 /**
 
-  @file    string/os_strncpy.c
+  @file    string/commmon/osal_strncpy.c
   @brief   Copy memory.
   @author  Pekka Lehtikoski
   @version 1.0

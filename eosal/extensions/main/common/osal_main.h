@@ -1,6 +1,6 @@
 /**
 
-  @file    osal_main.h
+  @file    main/common/osal_main.h
   @brief   Calling generic entry point.
   @author  Pekka Lehtikoski
   @version 1.0

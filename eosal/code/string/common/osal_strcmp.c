@@ -1,6 +1,6 @@
 /**
 
-  @file    string/os_strcmp.c
+  @file    string/common/osal_strcmp.c
   @brief   Compare two strings.
   @author  Pekka Lehtikoski
   @version 1.0

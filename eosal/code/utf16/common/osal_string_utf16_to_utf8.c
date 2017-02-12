@@ -1,6 +1,6 @@
 /**
 
-  @file    modules/utf16/string/osal_string_utf16_to_utf8.c
+  @file    utf16/common/osal_string_utf16_to_utf8.c
   @brief   String conversion from UTF16 to UTF8.
   @author  Pekka Lehtikoski
   @version 1.0

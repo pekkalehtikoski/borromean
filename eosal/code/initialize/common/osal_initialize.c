@@ -1,6 +1,6 @@
 /**
 
-  @file    initialize/osal_initialize.c
+  @file    initialize/common/osal_initialize.c
   @brief   OSAL initialization and shut down.
   @author  Pekka Lehtikoski
   @version 1.0

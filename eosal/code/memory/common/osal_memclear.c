@@ -1,6 +1,6 @@
 /**
 
-  @file    memory/os_memclear.c
+  @file    memory/commmon/osal_memclear.c
   @brief   Clearing memory.
   @author  Pekka Lehtikoski
   @version 1.0

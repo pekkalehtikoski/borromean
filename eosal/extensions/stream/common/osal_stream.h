@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_stream.h
+  @file    stream/common/osal_stream.h
   @brief   Stream interface.
   @author  Pekka Lehtikoski
   @version 1.0

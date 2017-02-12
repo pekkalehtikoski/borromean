@@ -1,6 +1,6 @@
 /**
 
-  @file    resmon/osal_resource_monitor.c
+  @file    resmon/common/osal_resource_monitor.c
   @brief   Monitor operating system resource use.
   @author  Pekka Lehtikoski
   @version 1.0

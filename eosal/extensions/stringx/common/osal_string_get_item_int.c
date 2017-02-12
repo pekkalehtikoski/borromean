@@ -1,6 +1,6 @@
 /**
 
-  @file    string/osal_string_get_item_int.c
+  @file    stringx/common/osal_string_get_item_int.c
   @brief   Get integer value of an item in list string.
   @author  Pekka Lehtikoski
   @version 1.0

@@ -1,6 +1,6 @@
 /**
 
-  @file    modules/strcnv/osal_strcnv_string_to_int64.c
+  @file    strcnv/common/osal_strcnv_string_to_int64.c
   @brief   Convert string to 64 bit integer.
   @author  Pekka Lehtikoski
   @version 1.0

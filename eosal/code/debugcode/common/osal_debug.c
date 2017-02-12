@@ -1,6 +1,6 @@
 /**
 
-  @file    win32/osal_debug.c
+  @file    debugcode/common/osal_debug.c
   @brief   Debug related code.
   @author  Pekka Lehtikoski
   @version 1.0

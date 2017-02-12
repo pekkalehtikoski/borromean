@@ -1,6 +1,6 @@
 /**
 
-  @file    common/osal_rand.c
+  @file    rand/common/osal_rand.c
   @brief   Get random number.
   @author  Pekka Lehtikoski
   @version 1.0

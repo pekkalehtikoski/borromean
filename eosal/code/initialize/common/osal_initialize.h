@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_initialize.h
+  @file    initialize/common/osal_initialize.h
   @brief   OSAL initialization and shut down.
   @author  Pekka Lehtikoski
   @version 1.0

@@ -1,6 +1,6 @@
 /**
 
-  @file    string/osal_string_to_int.c
+  @file    stringx/common/osal_string_to_int.c
   @brief   Convert string to integer.
   @author  Pekka Lehtikoski
   @version 1.0

@@ -1,6 +1,6 @@
 /**
 
-  @file    memory/osal_memory.c
+  @file    memory/commmon/osal_memory.c
   @brief   Memory allocation manager.
   @author  Pekka Lehtikoski
   @version 1.0

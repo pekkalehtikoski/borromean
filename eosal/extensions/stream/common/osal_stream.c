@@ -1,6 +1,6 @@
 /**
 
-  @file    stream/osal_stream.c
+  @file    stream/commmon/osal_stream.c
   @brief   Stream interface and default function implementations.
   @author  Pekka Lehtikoski
   @version 1.0

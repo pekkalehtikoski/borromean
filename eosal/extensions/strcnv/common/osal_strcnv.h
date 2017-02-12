@@ -1,6 +1,6 @@
 /**
 
-  @file    modules/strcnv/osal_strcnv.h
+  @file    strcnv/common/osal_strcnv.h
   @brief   Conversions between numbers and strings.
   @author  Pekka Lehtikoski
   @version 1.0

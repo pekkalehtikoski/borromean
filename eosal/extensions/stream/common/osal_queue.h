@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_queue.h
+  @file    stream/common/osal_queue.h
   @brief   Byte queues.
   @author  Pekka Lehtikoski
   @version 1.0

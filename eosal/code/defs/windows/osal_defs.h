@@ -1,6 +1,6 @@
 /**
 
-  @file    windows/osal_defs.h
+  @file    defs/windows/osal_defs.h
   @brief   Operating system specific defines for Windows.
   @author  Pekka Lehtikoski
   @version 1.0

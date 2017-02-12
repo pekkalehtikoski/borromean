@@ -1,6 +1,6 @@
 /**
 
-  @file    memory/os_memcpy.c
+  @file    memory/commmon/osal_memcpy.c
   @brief   Copy memory.
   @author  Pekka Lehtikoski
   @version 1.0

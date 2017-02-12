@@ -1,6 +1,6 @@
 /**
 
-  @file    modules/strcnv/osal_strcnv_float_to_string.c
+  @file    strcnv/common/osal_strcnv_float_to_string.c
   @brief   Convert string to floating point number.
   @author  Pekka Lehtikoski
   @version 1.0

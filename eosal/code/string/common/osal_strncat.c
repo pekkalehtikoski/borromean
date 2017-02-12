@@ -1,6 +1,6 @@
 /**
 
-  @file    string/os_strncat.c
+  @file    string/commmon/osal_strncat.c
   @brief   Append a string to another string.
   @author  Pekka Lehtikoski
   @version 1.0
