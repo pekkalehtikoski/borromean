@@ -33,6 +33,7 @@ class eName;
 class eStream;
 class eEnvelope;
 class eThread;
+class ePointer;
 
 /* Flags for message()
  */
@@ -101,6 +102,7 @@ class eObject
 {
 	friend class eHandle;
 	friend class eRoot;
+    friend class ePointer;
 
     /** 
     ************************************************************************************************
@@ -128,7 +130,7 @@ private:
      */
 	eObject(eObject const&);
 	eObject& operator=(eObject const&);
-
+ 
     /* Create root helper object and handles for root and root helper.
      */
     void makeroot(

@@ -35,6 +35,7 @@ class eVariable;
 class eNameSpace;
 class eName;
 class eRoot;
+class ePointer;
 
 
 /**
@@ -102,6 +103,7 @@ class eHandle
 	friend class eObject;
 	friend class eHandleTable;
 	friend class eRoot;
+	friend class ePointer;
 
 public:
 

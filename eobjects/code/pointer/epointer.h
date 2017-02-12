@@ -18,6 +18,26 @@
 #ifndef EPOINTER_INCLUDED
 #define EPOINTER_INCLUDED
 
+/* Undefined pointer or index/use count reference to object.
+ */
+typedef union
+{
+    /* Pointer to undefined type (often function pointer).
+        */
+    void *undef;
+
+    /** Reference to object. Object index and use count.
+     */
+    struct 
+    {
+        e_oix oix;
+        os_int ucnt;
+    }
+    ref;
+}
+ePointerRef;
+
+
 /**
 ****************************************************************************************************
 
@@ -62,7 +82,10 @@ public:
 
 	/* Get class identifier.
  		*/
-	virtual os_int classid() { return ECLASSID_POINTER; }
+	virtual os_int classid() 
+    { 
+        return ECLASSID_POINTER; 
+    }
 
 	/* Static constructor function.
 	*/
@@ -88,40 +111,35 @@ public:
 	*/
 	/*@{*/
 
-    /* Set automatic pointer.
+    /* Set object pointer.
      */
 	void set(eObject *ptr);
 
-    /* Get object referred to by automatic pointer.
+    /* Get object referred to by object pointer.
      */
-    inline eObject *get()
-    {
-        if (m_my_pair) return m_my_pair->parent();
-        return OS_NULL;
-    }
+    eObject *get();
 
     /* Set plain pointer.
      */
 	inline void set_undef(
         void *ptr) 
     {
-        m_undef = ptr;
+        m_ref.undef = ptr;
     }
 
     /* Get plain pointer.
      */
 	inline void *get_undef()
     {
-        return m_undef;
+        return m_ref.undef;
     }
    
     /*@}*/
 
 protected:
-    ePointer *m_my_pair;
-
-    void *m_undef;
-
+    /* Undefined pointer or index/use count reference to object.
+     */
+    ePointerRef m_ref;
 };
 
 #endif

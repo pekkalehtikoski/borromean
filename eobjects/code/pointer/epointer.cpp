@@ -35,7 +35,7 @@ ePointer::ePointer(
 	os_int flags)
     : eObject(parent, oid, flags)
 {
-    m_my_pair = OS_NULL;
+    os_memclear(&m_ref, sizeof(ePointerRef));
 }
 
 
@@ -52,18 +52,17 @@ ePointer::ePointer(
 */
 ePointer::~ePointer()
 {
-    if (m_my_pair) set(OS_NULL);
 }
 
 
 /**
 ****************************************************************************************************
 
-  @brief Set automatic pointer.
+  @brief Set object pointer.
 
-  X...
+  The object pointer is much like C pointer, but it is known if the pointer object is deleted.
 
-  @param  ptr Pointer to object to refer to.
+  @param  ptr Pointer to object to save.
   @return None.
 
 ****************************************************************************************************
@@ -71,50 +70,57 @@ ePointer::~ePointer()
 void ePointer::set(
     eObject *ptr)
 {
+    eHandle *handle;
+
     /* If no change, do nothing.
      */
-    if (ptr == OS_NULL && m_my_pair == OS_NULL) return;
-
-    /* Disconnect existing ePointer object pair.
-     */
-    if (m_my_pair)
+    if (ptr == OS_NULL) 
     {
-        /* If this is pointer target side, this cannot no longer be
-           referenced. 
-         */
-        if (oid() == EOID_PPTR_TARGET)
-        {
-            m_my_pair->m_my_pair = OS_NULL;
-        }
-
-        /* This is active side end of ePointer pair.
-         */
-        else 
-        {
-            /* If right pair is already there, do nothing.
-             */
-            if (m_my_pair->parent() == ptr) return;
-            
-            /* Delete ePointer object at target.
-             */
-            delete m_my_pair;
-        }
-
-        /* Now pair detached.
-         */
-        m_my_pair = OS_NULL;
+        os_memclear(&m_ref, sizeof(ePointerRef));
+        return;
     }
 
-    /* No new pair. If ptr given as argument is also NULL, we do nothing.
-       Also set() function can be used on target end only to detach
-       pointer pair.
+    /* If object to point to is not part of tree, make it to be root of the tree.
      */
-    if (ptr == OS_NULL || oid() == EOID_PPTR_TARGET) return;
+    handle = ptr->handle();
+    if (handle == OS_NULL)
+    {
+        ptr->makeroot(EOID_ITEM, EOBJ_DEFAULT);
+        handle  = ptr->handle();
+    }
 
-    /* Create ePointer object to target side and make pair.
-     */
-    m_my_pair = new ePointer(ptr, EOID_PPTR_TARGET);
-    m_my_pair->setflags(EOBJ_IS_ATTACHMENT);
-    m_my_pair->m_my_pair = this;
+    m_ref.ref.oix = handle->oix();
+    m_ref.ref.ucnt = handle->ucnt();
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Get object pointer.
+
+  The object pointer is much like C pointer, but it is known if the pointer object is deleted.
+
+  @param  ptr Pointer to object to save.
+  @return Pointer to object. OS_NULL if not set or pointed object has been deleted.
+
+****************************************************************************************************
+*/
+eObject *ePointer::get()
+{
+    eHandle *handle;
+
+    /* If not set.
+     */
+    if (m_ref.ref.ucnt <= 0) return OS_NULL;
+
+    
+    handle = eget_handle(m_ref.ref.oix);
+    if (m_ref.ref.ucnt != handle->m_ucnt)
+    {
+        return OS_NULL;
+    }
+
+    return handle->object();
+
+}
