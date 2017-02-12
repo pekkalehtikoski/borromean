@@ -15,11 +15,7 @@
 */
 #include "../drago.h"
 
-//static void drago_main_loop(
-//    sf::Window *window);
-
 DragoWorld *world;
-
 
 /* Generate entry code for console application.
  */

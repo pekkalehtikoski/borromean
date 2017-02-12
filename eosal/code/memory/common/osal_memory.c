@@ -80,7 +80,6 @@ void osal_memory_initialize(
      */
     osal_global->sysmem_alloc_func = osal_sysmem_alloc;
     osal_global->sysmem_free_func = osal_sysmem_free;
-osal_global->sysmem_free_func = osal_sysmem_free;
 
     /* Get pointers to arrays, no entries yet.
      */
