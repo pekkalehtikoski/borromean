@@ -1,6 +1,6 @@
 /**
 
-  @file    timer/windows/osal_timer.c
+  @file    timer/linux/osal_timer.c
   @brief   System timer functions.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -18,7 +18,6 @@
 ****************************************************************************************************
 */
 #include "eosal/eosal.h"
-#include <windows.h>
 
 
 /**
@@ -37,21 +36,6 @@
 void osal_timer_initialize(
     void)
 {
-	LARGE_INTEGER winfreq;
-
-	/* Query high resolution system timer frequency. If the installed hardware does not 
-	   support a high-resolution performance counter, the return value should be zero
-	   (but this is not true on all systems). 
-	 */
-	if (QueryPerformanceFrequency(&winfreq)) /* was  > 1000 */
-	{
-		osal_int64_set_uint2(&osal_global->sys_timer_param, winfreq.LowPart, winfreq.HighPart);
-		osal_int64_divide(&osal_global->sys_timer_param, &osal_int64_1000);
-	}
-	else
-	{
-        osal_debug_error("QueryPerformanceFrequency() failed");
-	}
 }
 
 
@@ -72,17 +56,27 @@ void osal_timer_initialize(
 void os_timer(
     os_int64 *start_t)
 {
-	LARGE_INTEGER wincounter;
+    struct timespec ts;
 
-	QueryPerformanceCounter(&wincounter);
-
-#if OSAL_LONG_IS_64_BITS
-	*start_t = (1000 * wincounter.QuadPart) / osal_global->sys_timer_param;
+#ifdef CLOCK_MONOTONIC_COARSE
+    if (clock_gettime(CLOCK_MONOTONIC_COARSE, &t))
+    {
+        if (clock_gettime(CLOCK_MONOTONIC, &t))
+        {
+            osal_debug_error("os_timer: Get system timer failed");
+            *t = 0;
+            return;
+        }
+    }
 #else
-	osal_int64_set_uint2(start_t, wincounter.LowPart, wincounter.HighPart);
-	osal_int64_multiply(start_t, &osal_int64_1000);
-	osal_int64_divide(start_t, &osal_global->sys_timer_param);
+    if (clock_gettime(CLOCK_MONOTONIC, &t))
+    {
+        osal_debug_error("os_timer: Get system timer failed");
+        *t = 0;
+        return;
+    }
 #endif
+    *t = 1000000 * (os_long)ts.tv_sec + (os_long)ts.tv_usec;
 }
 
 	

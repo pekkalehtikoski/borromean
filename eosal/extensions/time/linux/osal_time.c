@@ -38,8 +38,6 @@ void os_time(
 {
     struct timespec ts;
 
-    // CLOCK_MONOTONIC_COARSE 
-
 #ifdef CLOCK_REALTIME_COARSE
     if (clock_gettime(CLOCK_REALTIME_COARSE, &t))
     {

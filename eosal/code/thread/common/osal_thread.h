@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_thread.h
+  @file    thread/windows/osal_thread.h
   @brief   Creating, terminating, scheduling and identifying threads.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -180,6 +180,7 @@ osalThreadHandle;
  */
 /*@{*/
 #if OSAL_MULTITHREAD_SUPPORT
+
     /* Create a new thread.
      */
     osalThreadHandle *osal_thread_create(
@@ -188,7 +189,6 @@ osalThreadHandle;
 	    os_int flags,
         os_memsz stack_size,
         const os_char *name);
-
 
     /* Join worker thread to this thread (one which created the worker)
        Releases thread handle.
@@ -210,24 +210,28 @@ osalThreadHandle;
     /* Get thread ID.
      */
     os_long osal_thread_get_id(
-        void);
+        os_int reserved);
 
 #else
 
-    /* Makros to do nothing if skip functions is OSAL_MULTITHREAD_SUPPORT
-       is not selected.
+    /* Macros to do nothing if OSAL_MULTITHREAD_SUPPORT is not selected.
      */
     #define osal_thread_create(f,p,l,s,n) OS_NULL
     #define osal_thread_join(h)
     #define osal_thread_set_priority(p) OSAL_SUCCESS
-    #define osal_thread_get_id() 0
+    #define osal_thread_get_id(r) 0
 
 #endif
 
-    /* Suspend thread execution for a specific time.
+    /* Suspend thread execution for a specific time, milliseconds.
      */
     void os_sleep(
         os_long time_ms);
+
+    /* Suspend thread execution for a specific time, microseconds.
+     */
+    void os_microsleep(
+        os_long time_us);
 
 /*@}*/
 

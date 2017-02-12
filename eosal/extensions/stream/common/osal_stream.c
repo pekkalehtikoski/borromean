@@ -102,11 +102,11 @@ osalStatus osal_stream_write(
 	{
 		write_timeout_ms = stream->write_timeout_ms;
 		use_timer = (os_boolean) ((flags & OSAL_STREAM_WAIT) != 0 && write_timeout_ms > 0);
-		if (use_timer) osal_timer_get(&start_t);
+		if (use_timer) os_timer(&start_t);
 		total_written = 0;
 		do
 		{
-			if (use_timer) osal_timer_get(&now_t);
+			if (use_timer) os_timer(&now_t);
 			rval = stream->iface->stream_write(stream, buf, n, &n_written_now, flags);
 			total_written += n_written_now;
 			n -= n_written_now;
@@ -116,11 +116,11 @@ osalStatus osal_stream_write(
 			{
 				if (n_written)
 				{
-					osal_timer_get(&start_t);
+					os_timer(&start_t);
 				}
 				else
 				{
-					if (osal_timer_elapsed2(&start_t, &now_t, write_timeout_ms)) break;
+					if (os_elapsed2(&start_t, &now_t, write_timeout_ms)) break;
 				}
 			}
 
@@ -165,11 +165,11 @@ osalStatus osal_stream_read(
 	{
 		read_timeout_ms = stream->read_timeout_ms;
 		use_timer = (os_boolean) ((flags & OSAL_STREAM_WAIT) != 0 && read_timeout_ms > 0);
-		if (use_timer) osal_timer_get(&start_t);
+		if (use_timer) os_timer(&start_t);
 		total_read = 0;
 		do
 		{
-			if (use_timer) osal_timer_get(&now_t);
+			if (use_timer) os_timer(&now_t);
 			rval = stream->iface->stream_read(stream, buf, n, &n_read_now, flags);
 			total_read += n_read_now;
 			n -= n_read_now;
@@ -179,11 +179,11 @@ osalStatus osal_stream_read(
 			{
 				if (n_read)
 				{
-					osal_timer_get(&start_t);
+					os_timer(&start_t);
 				}
 				else
 				{
-					if (osal_timer_elapsed2(&start_t, &now_t, read_timeout_ms)) break;
+					if (os_elapsed2(&start_t, &now_t, read_timeout_ms)) break;
 				}
 			}
 
@@ -222,16 +222,16 @@ osalStatus osal_stream_write_value(
 	{
 		write_timeout_ms = stream->write_timeout_ms;
 		use_timer = (os_boolean) ((flags & OSAL_STREAM_WAIT) != 0 && write_timeout_ms > 0);
-		if (use_timer) osal_timer_get(&start_t);
+		if (use_timer) os_timer(&start_t);
 		do
 		{
-			if (use_timer) osal_timer_get(&now_t);
+			if (use_timer) os_timer(&now_t);
 			rval = stream->iface->stream_write_value(stream, c, flags);
 			if (rval != OSAL_STATUS_STREAM_WOULD_BLOCK || write_timeout_ms == 0) break;
 
 			if (use_timer) 
 			{
-				if (osal_timer_elapsed2(&start_t, &now_t, write_timeout_ms)) break;
+				if (os_elapsed2(&start_t, &now_t, write_timeout_ms)) break;
 			}
 
 			os_sleep(0);
@@ -265,16 +265,16 @@ osalStatus osal_stream_read_value(
 	{
 		read_timeout_ms = stream->read_timeout_ms;
 		use_timer = (os_boolean) ((flags & OSAL_STREAM_WAIT) != 0 && read_timeout_ms > 0);
-		if (use_timer) osal_timer_get(&start_t);
+		if (use_timer) os_timer(&start_t);
 		do
 		{
-			if (use_timer) osal_timer_get(&now_t);
+			if (use_timer) os_timer(&now_t);
 			rval = stream->iface->stream_read_value(stream, c, flags);
 			if (rval != OSAL_STATUS_STREAM_WOULD_BLOCK || read_timeout_ms == 0) break;
 
 			if (use_timer) 
 			{
-				if (osal_timer_elapsed2(&start_t, &now_t, read_timeout_ms)) break;
+				if (os_elapsed2(&start_t, &now_t, read_timeout_ms)) break;
 			}
 
 			os_sleep(0);

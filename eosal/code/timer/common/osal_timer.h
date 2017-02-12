@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_timer.h
+  @file    timer/windows/osal_timer.h
   @brief   System timer functions.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -25,8 +25,8 @@
 
   @name System Timer Functions
 
-  The osal_timer_get() function gets the system timer as 64 bit integer, this is typically number
-  of microseconds since the computer booted up. The osal_timer_elapsed() and osal_timer_elapsed2() 
+  The os_timer() function gets the system timer as 64 bit integer, this is typically number
+  of microseconds since the computer booted up. The os_elapsed() and os_elapsed2() 
   functions check if the specified time interval has elapsed.
 
 ****************************************************************************************************
@@ -40,18 +40,18 @@ void osal_timer_initialize(
 
 /* Get system timer, microseconds, typically time elapsed since last boot.
  */
-void osal_timer_get(
+void os_timer(
     os_int64 *start_t);
 
-/* Check if specific time period has elapsed, gets current timer value by osal_timer_get().
+/* Check if specific time period (milliseconds) has elapsed, gets current timer value by os_timer().
  */
-os_boolean osal_timer_elapsed(
+os_boolean os_elapsed(
     os_int64 *start_t,
 	os_long period_ms);
 
-/* Check if specific time period has elapsed, current timer value given as argument.
+/* Check if specific time period (milliseconds) has elapsed, current timer value given as argument.
  */
-os_boolean osal_timer_elapsed2(
+os_boolean os_elapsed2(
     os_int64 *start_t,
     os_int64 *now_t,
 	os_long period_ms);

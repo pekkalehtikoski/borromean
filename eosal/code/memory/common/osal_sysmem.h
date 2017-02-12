@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_sysmem.h
+  @file    memory/windows/osal_sysmem.h
   @brief   Operating system memory allocation.
   @author  Pekka Lehtikoski
   @version 1.0
