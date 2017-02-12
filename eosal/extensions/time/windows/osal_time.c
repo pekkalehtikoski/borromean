@@ -1,12 +1,12 @@
 /**
 
-  @file    win32/osal_clock.c
+  @file    time/windows/osal_time.c
   @brief   Get and set system time.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  Getting and setting system time (GMT) as long integer.
+  Get or set system time (GMT) as long integer.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -48,24 +48,21 @@ static const os_int64 osal_clock_win_file_time_offset = {{0x4000, 0x4886, 0x5E96
 ****************************************************************************************************
 
   @brief Get system time (GMT).
-  @anchor osal_clock_get
+  @anchor os_time
 
-  The osal_clock_get() function get time from computer's clock. The time is always 64 bit integer,
-  which represents GMT in millisecons since epoc 1.1.1970.
+  The os_time() function get time from computer's clock. The time is always 64 bit integer,
+  GMT in microseconds since epoc 1.1.1970.
 
   @param   t Pointer to 64 bit integer into which to store the time.
   @return  None.
 
 ****************************************************************************************************
 */
-void osal_clock_get(
+void os_time(
     os_int64 *t)
 {
-	FILETIME
-		wintime;
-
-	os_int64
-		osaltime;
+	FILETIME wintime;
+	os_int64 osaltime;
 
 	/* The GetSystemTime function retrieves the current system date and time as Coordinated 
 	   Universal Time (UTC).
@@ -74,7 +71,7 @@ void osal_clock_get(
 
 	/* Convert to OSAL time, GMT, microseconds since 1.1.1970.
 	 */
-	osal_int64_set_uint2(&osaltime, wintime.dwLowDateTime,wintime.dwHighDateTime);
+	osal_int64_set_uint2(&osaltime, wintime.dwLowDateTime, wintime.dwHighDateTime);
 	osal_int64_divide(&osaltime, &osal_clock_10);
 	osal_int64_subtract(&osaltime, &osal_clock_win_file_time_offset);
 	osal_int64_copy(t, &osaltime);
@@ -85,30 +82,24 @@ void osal_clock_get(
 ****************************************************************************************************
 
   @brief Set system time (GMT).
-  @anchor osal_clock_set
+  @anchor os_settime
 
-  The osal_clock_set() function sets computer's clock. The time is always 64 bit integer,
-  which represents GMT in millisecons since epoc 1.1.1970.
+  The os_settime() function sets computer's clock. The time is always 64 bit integer,
+  microseconds since epoc 1.1.1970.
 
   @param   t Time to set.
 
-  @return  If the new thread is succesfully created the function returns OSAL_SUCCESS. Nonzero
-           return values indicate an error, possible error code is OSAL_STATUS_CLOCK_SET_FAILED.
-		   See @ref osalStatus "OSAL function return codes" for full list.
+  @return  If the system time is succesfully set OSAL_SUCCESS (0). Other return values 
+           indicate an error. See @ref osalStatus "OSAL function return codes" for full list.
 
 ****************************************************************************************************
 */
-osalStatus osal_clock_set(
+osalStatus os_settime(
     const os_int64 *t)
 {
-	FILETIME
-		wintime;
-
-	SYSTEMTIME 
-		winsystime;
-
-	os_int64
-		osaltime;
+	FILETIME wintime;
+	SYSTEMTIME winsystime;
+	os_int64 osaltime;
 
 	/* Convert OSAL time to Windows filetime.
 	 */
@@ -135,5 +126,3 @@ osalStatus osal_clock_set(
 
 	return OSAL_SUCCESS;
 }
-
-

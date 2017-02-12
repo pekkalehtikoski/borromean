@@ -30,7 +30,7 @@ OSAL_C_HEADER_BEGINS
 
 /* Include extension headers.
  */
-#include "eosal/extensions/clock/common/osal_clock.h"
+#include "eosal/extensions/time/common/osal_time.h"
 #include "eosal/extensions/rand/common/osal_rand.h"
 #include "eosal/extensions/main/common/osal_main.h"
 #include "eosal/extensions/strcnv/common/osal_strcnv.h"
