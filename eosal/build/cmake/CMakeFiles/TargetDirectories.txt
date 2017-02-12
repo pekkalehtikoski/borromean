@@ -1,3 +1,0 @@
-/coderoot/borromean/eosal/build/cmake/CMakeFiles/edit_cache.dir
-/coderoot/borromean/eosal/build/cmake/CMakeFiles/rebuild_cache.dir
-/coderoot/borromean/eosal/build/cmake/CMakeFiles/eosal.dir
