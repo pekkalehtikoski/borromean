@@ -105,7 +105,7 @@ eHandle *ehandleroot_reservehandles(
 
 	/* Synchronize while handling global free handles
 	 */
-    osal_mutex_system_lock();
+    os_lock();
 
     while (nro_handles-- > 0)
     {
@@ -141,7 +141,7 @@ eHandle *ehandleroot_reservehandles(
 
 	if (last_h) last_h->setright(OS_NULL);
 
-    osal_mutex_system_unlock();
+    os_unlock();
 
     return newchain;
 }
@@ -185,12 +185,12 @@ eHandle *ehandleroot_releasehandles(
 
 	/* Synchronize while handling global free handles.
 	*/
-	osal_mutex_system_lock();
+	os_lock();
 	if (last_to_join) 
     {   last_to_join->setright(eglobal->hroot.m_first_free);
 	    eglobal->hroot.m_first_free = h;
     }
-	osal_mutex_system_unlock();
+	os_unlock();
 
 	/* Return pointer to first eHandle to keep allocated for the thread.
  	 */

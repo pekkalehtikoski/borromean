@@ -94,11 +94,11 @@ void eName::setupclass()
 
     /* Add the class to class list.
      */
-    osal_mutex_system_lock();
+    os_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eName");
     eVariable::setupproperties(cls);
     propertysetdone(cls);
-    osal_mutex_system_unlock();
+    os_unlock();
 }
 
 
@@ -458,7 +458,7 @@ eStatus eName::mapname2(
 
     /* If process name space, synchronize.
      */
-    if (m_is_process_ns) osal_mutex_system_lock();
+    if (m_is_process_ns) os_lock();
 
     /* Insert name to name space's red black tree.
      */
@@ -466,7 +466,7 @@ eStatus eName::mapname2(
 
     /* Finish with syncronization and return. 
      */
-    if (m_is_process_ns) osal_mutex_system_unlock();
+    if (m_is_process_ns) os_unlock();
     return ESTATUS_SUCCESS;
 }
 
@@ -490,7 +490,7 @@ void eName::detach()
 
     /* If process name space, synchronize.
      */
-    if (m_is_process_ns) osal_mutex_system_lock();
+    if (m_is_process_ns) os_lock();
 
     /* Insert name to name space's red black tree.
      */
@@ -498,7 +498,7 @@ void eName::detach()
 
     /* Finish with syncronization. 
      */
-    if (m_is_process_ns) osal_mutex_system_unlock();
+    if (m_is_process_ns) os_unlock();
 
     /* Clear member variables to initial state.
      */

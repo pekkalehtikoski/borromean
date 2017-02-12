@@ -251,7 +251,7 @@ osalStatus osal_queue_write(
 		#if OSAL_MULTITHREAD_SUPPORT
 		if (queue->open_flags & OSAL_STREAM_SYNCHRONIZE)
 		{
-			osal_mutex_system_lock();
+			os_lock();
 		}
 		#endif
 
@@ -377,7 +377,7 @@ getout:
 		#if OSAL_MULTITHREAD_SUPPORT
 		if (queue->open_flags & OSAL_STREAM_SYNCHRONIZE)
 		{
-			osal_mutex_system_unlock();
+			os_unlock();
 		}
 		#endif
 
@@ -442,7 +442,7 @@ osalStatus osal_queue_read(
 		#if OSAL_MULTITHREAD_SUPPORT
 		if (queue->open_flags & OSAL_STREAM_SYNCHRONIZE)
 		{
-			osal_mutex_system_lock();
+			os_lock();
 		}
 		#endif
 
@@ -510,7 +510,7 @@ getout:
 		#if OSAL_MULTITHREAD_SUPPORT
 		if (queue->open_flags & OSAL_STREAM_SYNCHRONIZE)
 		{
-			osal_mutex_system_unlock();
+			os_unlock();
 		}
 		#endif
 
@@ -574,7 +574,7 @@ osalStatus osal_queue_write_value(
 		#if OSAL_MULTITHREAD_SUPPORT
 		if (queue->open_flags & OSAL_STREAM_SYNCHRONIZE)
 		{
-			osal_mutex_system_lock();
+			os_lock();
 		}
 		#endif
 
@@ -650,7 +650,7 @@ getout2:
 		#if OSAL_MULTITHREAD_SUPPORT
 		if (queue->open_flags & OSAL_STREAM_SYNCHRONIZE)
 		{
-			osal_mutex_system_unlock();
+			os_unlock();
 		}
 		#endif
 		
@@ -710,7 +710,7 @@ osalStatus osal_queue_read_value(
 		#if OSAL_MULTITHREAD_SUPPORT
 		if (queue->open_flags & OSAL_STREAM_SYNCHRONIZE)
 		{
-			osal_mutex_system_lock();
+			os_lock();
 		}
 		#endif
 
@@ -749,7 +749,7 @@ getout:
 		#if OSAL_MULTITHREAD_SUPPORT
 		if (queue->open_flags & OSAL_STREAM_SYNCHRONIZE)
 		{
-			osal_mutex_system_unlock();
+			os_unlock();
 		}
 		#endif
 

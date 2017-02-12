@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_string.h
+  @file    string/common/osal_string.h
   @brief   String manipulation.
   @author  Pekka Lehtikoski
   @version 1.0

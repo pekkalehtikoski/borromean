@@ -140,9 +140,9 @@ eStatus eObject::json_write(
 
     /* Write properties which are different from default value.
      */
-    osal_mutex_system_lock();
+    os_lock();
     propertyset = eglobal->propertysets->firstc(classid());
-    osal_mutex_system_unlock();
+    os_unlock();
     if (propertyset)
     {
         property_listed = OS_FALSE;

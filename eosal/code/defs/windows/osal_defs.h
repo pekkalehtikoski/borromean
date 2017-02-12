@@ -57,7 +57,7 @@
 #endif
 #endif
 
-/** Include code to force osal_mutex_system_lock() to switch to time critical priority
+/** Include code to force os_lock() to switch to time critical priority
     when in system mutex is locked. This can be used on systems which do not support
 	priority inheritance to avoid priority reversal, like desktop windows. Anyhow setting
 	this option slows the code down. On systems which do support priority inheritance,

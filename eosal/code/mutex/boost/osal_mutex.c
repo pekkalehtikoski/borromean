@@ -15,9 +15,9 @@
   called recursive mutex.
 
   System mutex is a global mutex for whole process used to synchronize access to global 
-  variables, etc. When system mutex is locked by osal_mutex_system_lock() function, the 
+  variables, etc. When system mutex is locked by os_lock() function, the 
   thread is switched to very high priority to prevent priority reversal. The old thread priority
-  is restored when system mutex is unlocked by osal_mutex_system_unlock() function. Using
+  is restored when system mutex is unlocked by os_unlock() function. Using
   one system mutex (as far as reasonable) instead of many mutexes will prevent deadlock
   situations. Limitation is that System mutex lock time should be minimized to be as short 
   as possible, since system mutex locks may halt many threads. For example never lock system
@@ -183,7 +183,7 @@ void osal_mutex_delete(
   The osal_mutex_lock() function locks the mutex (increments mutex'es lock count). If an another
   thread tries to lock the mutex while it is locked, it is suspended until the thread which
   originally locked the mutex releases it. All OSAL mutexes are recursive mutexes, thus if a 
-  thread calls osal_mutex_system_lock() function recursively, it will not block. Just lock count
+  thread calls os_lock() function recursively, it will not block. Just lock count
   is incremented.
 
   @param   mutex Mutex pointer returned by osal_mutex_create() function.
@@ -269,12 +269,12 @@ void osal_mutex_unlock(
 ****************************************************************************************************
 
   @brief Lock the system mutex.
-  @anchor osal_mutex_system_lock
+  @anchor os_lock
 
-  The osal_mutex_system_lock() function switches the thread to very high priority to prevent 
+  The os_lock() function switches the thread to very high priority to prevent 
   priority reversal and locks system mutex. The function saves old priority to be restored 
-  once the system mutex is unlocked by osal_mutex_system_unlock() function. System mutex
-  is recursive mutex, like all OSAL mutexes, thus if a thread calls osal_mutex_system_lock()
+  once the system mutex is unlocked by os_unlock() function. System mutex
+  is recursive mutex, like all OSAL mutexes, thus if a thread calls os_lock()
   function recursively, it will not block. Just lock count is incremented.
 
   System mutex is a global mutex for whole process used to synchronize access to global 
@@ -287,7 +287,7 @@ void osal_mutex_unlock(
 
 ****************************************************************************************************
 */
-void osal_mutex_system_lock(
+void os_lock(
     void)
 {
 #if OSAL_TIME_CRITICAL_SYSTEM_LOCK
@@ -328,17 +328,17 @@ void osal_mutex_system_lock(
 ****************************************************************************************************
 
   @brief Release the system mutex.
-  @anchor osal_mutex_system_unlock
+  @anchor os_unlock
 
-  The osal_mutex_system_unlock() function unlocks the system mutex which was locked by the
-  osal_mutex_system_lock() function and restores thread priority, which was used before 
+  The os_unlock() function unlocks the system mutex which was locked by the
+  os_lock() function and restores thread priority, which was used before 
   locking the system mutex. 
 
   @return  None.
 
 ****************************************************************************************************
 */
-void osal_mutex_system_unlock(
+void os_unlock(
     void)
 {
 #if OSAL_TIME_CRITICAL_SYSTEM_LOCK

@@ -1,6 +1,6 @@
 /**
 
-  @file    modules/socket/osal_socket_util.c
+  @file    socket/common/osal_socket_util.c
   @brief   Socket helper functions.
   @author  Pekka Lehtikoski
   @version 1.0

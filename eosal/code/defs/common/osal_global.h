@@ -54,19 +54,19 @@ typedef struct
 	struct osalMutexStruct *system_mutex;
 
 #if OSAL_TIME_CRITICAL_SYSTEM_LOCK
-	/** System mutex lock count. This is incremented by osal_mutex_system_lock() function
-	    and decremented by osal_mutex_system_unlock() function.
+	/** System mutex lock count. This is incremented by os_lock() function
+	    and decremented by os_unlock() function.
 	 */
 	os_int system_mutex_lock_count;
 
-	/** Saved priority when system mutex was locked. This is set by osal_mutex_system_lock() 
-	    function and restored by osal_mutex_system_unlock() function. The value is 
+	/** Saved priority when system mutex was locked. This is set by os_lock() 
+	    function and restored by os_unlock() function. The value is 
 		operating system's priority, not OSAL priority.
 	 */
 	os_int system_mutex_enter_priority;
 
-	/** Saved system mutex thread handle. This is saved by osal_mutex_system_lock() 
-	    function and used by osal_mutex_system_unlock() function.
+	/** Saved system mutex thread handle. This is saved by os_lock() 
+	    function and used by os_unlock() function.
 	 */
 	void *system_mutex_thread;
 #endif

@@ -107,9 +107,9 @@ void eTimer::setupclass()
 
     /* Synchronize, add the class to class list.
      */
-    osal_mutex_system_lock();
+    os_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eTimer");
-    osal_mutex_system_unlock();
+    os_unlock();
 }
 
 

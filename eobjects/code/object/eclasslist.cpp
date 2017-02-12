@@ -40,7 +40,7 @@ void eclasslist_add(
 
     /* Syncronization neeeded for eclasslist_add() function.
      */
-    osal_mutex_system_lock();
+    os_lock();
 
 #if OSAL_DEBUG
     /* Check for duplicated calls with same cid.
@@ -61,7 +61,7 @@ void eclasslist_add(
 getout:
     /* Finished with synchronization.
      */
-    osal_mutex_system_unlock();
+    os_unlock();
 }
 
 
@@ -84,7 +84,7 @@ eNewObjFunc eclasslist_newobj(
     eNewObjFunc nfunc;
 
     nfunc = OS_NULL;
-    osal_mutex_system_lock();
+    os_lock();
 
     pointer = eglobal->classlist->firstv(cid);
     if (pointer)
@@ -96,7 +96,7 @@ eNewObjFunc eclasslist_newobj(
         osal_debug_error("eclasslist_newobj: Class not found");
     }
 
-    osal_mutex_system_unlock();
+    os_unlock();
     return nfunc;
 }
 
@@ -119,7 +119,7 @@ os_char *eclasslist_classname(
     eName *name;
     os_char *namestr = OS_NULL;
 
-    osal_mutex_system_lock();
+    os_lock();
     pointer = eglobal->classlist->firstv(cid);
     if (pointer)
     {
@@ -131,7 +131,7 @@ os_char *eclasslist_classname(
         osal_debug_error("eclasslist_newobj: Class not found");
     }
 
-    osal_mutex_system_unlock();
+    os_unlock();
     return namestr;
 }
 

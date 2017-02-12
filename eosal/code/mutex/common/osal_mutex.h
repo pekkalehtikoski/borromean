@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_mutex.h
+  @file    mutex/common/osal_mutex.h
   @brief   Mutexes, synchronizing thread access to shared resources.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -16,9 +16,9 @@
   called recursive mutex.
 
   System mutex is a global mutex for whole process used to synchronize access to global 
-  variables, etc. When system mutex is locked by osal_mutex_system_lock() function, the 
+  variables, etc. When system mutex is locked by os_lock() function, the 
   thread is switched to very high priority to prevent priority reversal. The old thread priority
-  is restored when system mutex is unlocked by osal_mutex_system_unlock() function. Using
+  is restored when system mutex is unlocked by os_unlock() function. Using
   one system mutex (as far as reasonable) instead of many mutexes will prevent deadlock
   situations. Limitation is that System mutex lock time should be minimized to be as short 
   as possible, since system mutex locks may halt many threads. For example never lock system
@@ -137,8 +137,8 @@ void osal_mutex_unlock(
   @name System Mutex Functions
 
   The system mutex is single mutex used to synchronize thread access to global variables, etc. 
-  The system mutex is locked by osal_mutex_system_lock() function and released by 
-  osal_mutex_system_unlock() function.
+  The system mutex is locked by os_lock() function and released by 
+  os_unlock() function.
 
 ****************************************************************************************************
  */
@@ -147,12 +147,12 @@ void osal_mutex_unlock(
 
 /* Lock the system mutex.
  */
-void osal_mutex_system_lock(
+void os_lock(
     void);
 
 /* Unlock the system mutex.
  */
-void osal_mutex_system_unlock(
+void os_unlock(
     void);
 
 /*@}*/
@@ -177,8 +177,8 @@ void osal_mutex_system_unlock(
   #define osal_mutex_delete(x)
   #define osal_mutex_lock(x)
   #define osal_mutex_unlock(x)
-  #define osal_mutex_system_lock()
-  #define osal_mutex_system_unlock()
+  #define os_lock()
+  #define os_unlock()
 /*@}*/
 
 #endif

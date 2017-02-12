@@ -279,7 +279,7 @@ os_char *osal_memory_allocate(
 
 	/* Lock system mutex.
 	 */
-	osal_mutex_system_lock();
+	os_lock();
 
     /* Get pointer to fist free memory block of this size from chain of free blocks.
      */
@@ -294,7 +294,7 @@ os_char *osal_memory_allocate(
         memory_block = osal_memory_allocate_slice(ix);
         if (memory_block == OS_NULL) 
 		{
-			osal_mutex_system_unlock();
+			os_unlock();
 			osal_debug_error("Out of memory");
 			return OS_NULL;
 		}
@@ -309,7 +309,7 @@ os_char *osal_memory_allocate(
 
 	/* Unlock system mutex.
 	 */
-	osal_mutex_system_unlock();
+	os_unlock();
 
 #if OSAL_MEMORY_DEBUG
 	my_block_sz = osal_global->memstate.block_sz[ix];
@@ -434,7 +434,7 @@ void osal_memory_free(
 
 	/* Synchronize.
 	 */
-	osal_mutex_system_lock();
+	os_lock();
 
     /* Join to chain of free blocks of the same size.
      */
@@ -443,7 +443,7 @@ void osal_memory_free(
 
 	/* End synchronization.
 	 */
-	osal_mutex_system_unlock();
+	os_unlock();
 }
 #endif
 

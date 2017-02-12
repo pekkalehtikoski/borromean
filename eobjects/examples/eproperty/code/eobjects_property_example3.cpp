@@ -73,7 +73,7 @@ public:
         const os_int cls = MY_CLASS_ID;
         eVariable *p;
 
-        osal_mutex_system_lock();
+        os_lock();
         p = addpropertyd(cls, EMYCLASSP_CELCIUS, emyclassp_celcius, EPRO_PERSISTENT, "value", 20.0);
         p->setpropertys(EVARP_UNIT, "C");
         
@@ -82,7 +82,7 @@ public:
         p->setpropertyl(EVARP_DIGS, 5);
 
         addpropertys(cls, EMYCLASSP_OPINION, emyclassp_opinion, EPRO_NOONPRCH, "default");
-        osal_mutex_system_unlock();
+        os_unlock();
     }
 
     /* This gets called when property value changes

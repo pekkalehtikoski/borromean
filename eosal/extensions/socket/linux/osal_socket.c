@@ -1,7 +1,7 @@
 /**
 
-  @file    socket/windows/osal_socket.c
-  @brief   OSAL sockets API windows implementation.
+  @file    socket/linux/osal_socket.c
+  @brief   OSAL sockets API linux implementation.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011

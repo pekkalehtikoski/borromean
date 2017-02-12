@@ -1,6 +1,6 @@
 /**
 
-  @file    console/windows/osal_sysconsole.c
+  @file    console/linux/osal_sysconsole.c
   @brief   Operating system default console IO.
   @author  Pekka Lehtikoski
   @version 1.0

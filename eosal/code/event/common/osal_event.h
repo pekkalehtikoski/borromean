@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_event.h
+  @file    event/common/osal_event.h
   @brief   Events.
   @author  Pekka Lehtikoski
   @version 1.0

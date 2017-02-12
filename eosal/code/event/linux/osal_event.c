@@ -1,6 +1,6 @@
 /**
 
-  @file    event/windows/osal_event.c
+  @file    event/linux/osal_event.c
   @brief   Creating, deleting, setting and waiting for events.
   @author  Pekka Lehtikoski
   @version 1.0

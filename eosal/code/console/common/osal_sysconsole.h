@@ -1,6 +1,6 @@
 /**
 
-  @file    include/osal_sysconsole.h
+  @file    console/common/osal_sysconsole.h
   @brief   Operating system default console IO.
   @author  Pekka Lehtikoski
   @version 1.0

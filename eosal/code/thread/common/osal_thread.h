@@ -1,6 +1,6 @@
 /**
 
-  @file    thread/windows/osal_thread.h
+  @file    thread/common/osal_thread.h
   @brief   Creating, terminating, scheduling and identifying threads.
   @author  Pekka Lehtikoski
   @version 1.0

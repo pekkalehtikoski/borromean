@@ -72,10 +72,10 @@ public:
     {
         const os_int cls = MY_CLASS_ID_1;
 
-        osal_mutex_system_lock();
+        os_lock();
         addproperty(cls, EMYCLASS1P_A, emyclass1p_a, EPRO_PERSISTENT, "A");
         addproperty(cls, EMYCLASS1P_B, emyclass1p_b, EPRO_PERSISTENT, "B");
-        osal_mutex_system_unlock();
+        os_unlock();
     }
 
     /* Get class identifier.
@@ -141,10 +141,10 @@ public:
     {
         const os_int cls = MY_CLASS_ID_2;
 
-        osal_mutex_system_lock();
+        os_lock();
         addproperty(cls, EMYCLASS2P_X, emyclass2p_x, EPRO_PERSISTENT, "X");
         addproperty(cls, EMYCLASS2P_Y, emyclass2p_y, EPRO_PERSISTENT, "Y");
-        osal_mutex_system_unlock();
+        os_unlock();
     }
 
     /* Get class identifier.

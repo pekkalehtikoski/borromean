@@ -1,6 +1,6 @@
 /**
 
-  @file    serialize/windows/osal_float.c
+  @file    serialize/linux/osal_float.c
   @brief   Convert floating point number to two integers and vice versa.
   @author  Pekka Lehtikoski
   @version 1.0

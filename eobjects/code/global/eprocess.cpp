@@ -69,9 +69,9 @@ void eProcess::run()
 
         /* Process messages
          */
-        osal_mutex_system_lock();
+        os_lock();
         alive(EALIVE_RETURN_IMMEDIATELY);
-        osal_mutex_system_unlock();
+        os_unlock();
     }
 }
 
@@ -122,11 +122,11 @@ void eprocess_create()
 
         /* Add as global process only when process has been created.
          */
-        osal_mutex_system_lock();
+        os_lock();
         eglobal->process = process;
         eglobal->processhandle = processhandle;
         eglobal->timerhandle = timerhandle;
-        osal_mutex_system_unlock();
+        os_unlock();
     }
 }
 

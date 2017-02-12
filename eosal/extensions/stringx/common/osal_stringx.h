@@ -1,12 +1,12 @@
 /**
 
-  @file    common/osal_string.h
-  @brief   String manipulation.
+  @file    stringx/common/osal_stringx.h
+  @brief   String manipulation, extended functions.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  This header file contains functions prototypes for string manipulation.
+  This header file contains functions prototypes for more string manipulation.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -17,7 +17,6 @@
 */
 #ifndef OSAL_STRINGX_INCLUDED
 #define OSAL_STRINGX_INCLUDED
-
 
 
 /** 

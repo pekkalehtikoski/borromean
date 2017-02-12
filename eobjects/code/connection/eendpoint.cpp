@@ -87,7 +87,7 @@ void eEndPoint::setupclass()
 
     /* Synchronize, add the class to class list and properties to property set.
      */
-    osal_mutex_system_lock();
+    os_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eEndPoint");
     addproperty(cls, EENDPP_CLASSID, eendpp_classid, 
         EPRO_PERSISTENT|EPRO_SIMPLE, "class ID");
@@ -96,7 +96,7 @@ void eEndPoint::setupclass()
     p = addpropertyl(cls, EENDPP_ISOPEN, eendpp_isopen, 
         EPRO_NOONPRCH, "is open", OS_FALSE);
     p->setpropertys(EVARP_ATTR, "rdonly;chkbox");
-    osal_mutex_system_unlock();
+    os_unlock();
 }
 
 

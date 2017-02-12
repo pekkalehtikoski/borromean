@@ -207,7 +207,7 @@ void eEnvelope::setupclass()
 
     /* Add the class to class list.
      */
-    osal_mutex_system_lock();
+    os_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eEnvelope");
 
     addpropertyl(cls, EENVP_COMMAND, eenvp_command, EPRO_PERSISTENT|EPRO_SIMPLE, "command");
@@ -215,7 +215,7 @@ void eEnvelope::setupclass()
     addpropertys(cls, EENVP_SOURCE, eenvp_source, EPRO_PERSISTENT|EPRO_SIMPLE, "source");
     addproperty (cls, EENVP_CONTENT, eenvp_content, EPRO_PERSISTENT|EPRO_SIMPLE, "content");
     addproperty (cls, EENVP_CONTEXT, eenvp_context, EPRO_PERSISTENT|EPRO_SIMPLE, "context");
-    osal_mutex_system_unlock();
+    os_unlock();
 }
 
 

@@ -108,9 +108,9 @@ void eThread::setupclass()
 
     /* Add the class to class list.
      */
-    osal_mutex_system_lock();
+    os_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eThread");
-    osal_mutex_system_unlock();
+    os_unlock();
 }
 
 
@@ -330,7 +330,7 @@ void eThread::alive(
     {
         /* Synchronize and get message (envelope) from queue.
          */
-	    osal_mutex_system_lock();
+	    os_lock();
         envelope = eEnvelope::cast(m_message_queue->first());
         if (envelope) 
         {
@@ -340,7 +340,7 @@ void eThread::alive(
              */
             envelope->addmflags(EMSG_INTERTHREAD);
         }
-	    osal_mutex_system_unlock();
+	    os_unlock();
 
         /* If no message, do nothing more.
          */

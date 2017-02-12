@@ -151,7 +151,7 @@ eObject::~eObject()
      */
 	if (mm_handle) 
     {
-        osal_mutex_system_lock();
+        os_lock();
 
         if (mm_handle->m_parent) 
         {
@@ -172,7 +172,7 @@ eObject::~eObject()
             mm_handle->m_root->freehandle(mm_handle);
 
         }
-        osal_mutex_system_unlock();
+        os_unlock();
     }
 }
 
@@ -682,11 +682,11 @@ void eObject::adopt(
     if (child->mm_handle == OS_NULL)
     {
         sync = OS_FALSE; // || m_root->is_process ???????????????????????????????????????????????????????????????????????
-        if (sync) osal_mutex_system_lock();
+        if (sync) os_lock();
 
         mm_handle->m_root->newhandle(child, this, oid, 0);
 
-        if (sync) osal_mutex_system_unlock();
+        if (sync) os_unlock();
     }
 
     else
@@ -705,7 +705,7 @@ void eObject::adopt(
 
         if (sync) 
         {
-            osal_mutex_system_lock();
+            os_lock();
         }
 
         /* Detach names of child object and it's childen from name spaces 
@@ -746,7 +746,7 @@ void eObject::adopt(
 // mm_root->mm_handle->verify_whole_tree();
 
     
-        if (sync) osal_mutex_system_unlock();
+        if (sync) os_unlock();
     }
 }
 
@@ -1611,11 +1611,11 @@ void eObject::message_process_ns(
     {
         /* Synchronize.
          */
-        osal_mutex_system_lock();
+        os_lock();
 
         if (eglobal->process == OS_NULL) 
         {
-            osal_mutex_system_unlock();
+            os_unlock();
 #if OSAL_DEBUG
             osal_debug_error("message() failed: eobjects library not initialized");
 #endif
@@ -1626,7 +1626,7 @@ void eObject::message_process_ns(
 
         /* Done, finish with synnchronization and return.
          */
-        osal_mutex_system_unlock();
+        os_unlock();
         return;
     }
 
@@ -1643,7 +1643,7 @@ void eObject::message_process_ns(
 
         /* Synchronize.
          */
-        osal_mutex_system_lock();
+        os_lock();
 
         /* Find the name in process name space. Done with objname.
          */
@@ -1654,7 +1654,7 @@ void eObject::message_process_ns(
          */
         if (name == OS_NULL)
         {
-            osal_mutex_system_unlock();
+            os_unlock();
 #if OSAL_DEBUG
             if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
             {
@@ -1671,7 +1671,7 @@ void eObject::message_process_ns(
         thread = name->thread();
         if (thread == OS_NULL)
         {
-            osal_mutex_system_unlock();
+            os_unlock();
             delete objname;
 #if OSAL_DEBUG
             if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
@@ -1775,7 +1775,7 @@ void eObject::message_process_ns(
 
         /* End synchronization
          */
-        osal_mutex_system_unlock();
+        os_unlock();
 
         delete objname;
     }
@@ -1837,11 +1837,11 @@ void eObject::message_oix(
 
     /* Synchnronize and find handle pointer.
      */
-    osal_mutex_system_lock();
+    os_lock();
     handle = eget_handle(oix);
     if (ucnt != handle->m_ucnt)
     {
-        osal_mutex_system_unlock();
+        os_unlock();
 #if OSAL_DEBUG
         if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
         {
@@ -1859,7 +1859,7 @@ void eObject::message_oix(
          */
         envelope->move_target_over_objname(count);
 
-        osal_mutex_system_unlock();
+        os_unlock();
         handle->m_object->onmessage(envelope);
         delete envelope;
         return;
@@ -1884,7 +1884,7 @@ void eObject::message_oix(
 
     /* Finish with synchronization and return.
      */
-    osal_mutex_system_unlock();
+    os_unlock();
     return;
 
 getout:
@@ -2381,9 +2381,9 @@ void eObject::initproperties()
     /* Get global property set for the class.
        Synchnonize, to get class'es property set, in case someone is adding class at this moment.
      */
-    osal_mutex_system_lock();
+    os_lock();
     propertyset = eglobal->propertysets->firstc(classid());
-    osal_mutex_system_unlock();
+    os_unlock();
     if (propertyset == OS_NULL)
     {
         osal_debug_error("setproperty: Class has no property support "
@@ -2428,7 +2428,7 @@ os_int eObject::propertynr(
 
     /* Synchronize.
      */
-    osal_mutex_system_lock();
+    os_lock();
  
     /* Get pointer to class'es property set. If not found, create one. Property set always
        has name space
@@ -2447,11 +2447,11 @@ os_int eObject::propertynr(
 
     /* End sync and return.
      */
-    osal_mutex_system_unlock();
+    os_unlock();
     return pnr;
 
 notfound:
-    osal_mutex_system_unlock();
+    os_unlock();
     return -1;
 }
 
@@ -2478,7 +2478,7 @@ os_char *eObject::propertyname(
 
     /* Synchronize.
      */
-    osal_mutex_system_lock();
+    os_lock();
  
     /* Get pointer to class'es property set. If not found, create one. Property set always
        has name space
@@ -2499,11 +2499,11 @@ os_char *eObject::propertyname(
 
     /* End sync and return.
      */
-    osal_mutex_system_unlock();
+    os_unlock();
     return namestr;
 
 notfound:
-    osal_mutex_system_unlock();
+    os_unlock();
     return OS_NULL;
 }
 
@@ -2537,7 +2537,7 @@ void eObject::setproperty(
 
     /* Synchronize access to global property set.
      */
-    osal_mutex_system_lock();
+    os_lock();
 
     /* Get global property set for the class.
      */
@@ -2545,7 +2545,7 @@ void eObject::setproperty(
     if (propertyset == OS_NULL)
     {
         osal_debug_error("setproperty: Class has no property support");
-        osal_mutex_system_unlock();
+        os_unlock();
         return;
     }
 
@@ -2555,14 +2555,14 @@ void eObject::setproperty(
     if (p == OS_NULL)
     {
         osal_debug_error("setproperty: Property number is not valid for the class");
-        osal_mutex_system_unlock();
+        os_unlock();
         return;
     }
     pflags = p->flags();
 
     /* Finished with synchronization.
      */
-    osal_mutex_system_unlock();
+    os_unlock();
 
     /* Empty x and x as null pointer are thes ame thing, handle these in 
        the same way. 
@@ -2737,7 +2737,7 @@ void eObject::property(
 
     /* Look for default value. Start by synchronizing access to global property data.
      */
-    osal_mutex_system_lock();
+    os_lock();
 
     /* Get global property set for the class.
      */
@@ -2759,7 +2759,7 @@ void eObject::property(
 
     /* Finished with synchwonization.
      */
-    osal_mutex_system_unlock();
+    os_unlock();
 
     /* Return default value for the property.
      */
@@ -2767,7 +2767,7 @@ void eObject::property(
     return;
 
 getout:
-    osal_mutex_system_unlock();
+    os_unlock();
     x->clear();
 }
 

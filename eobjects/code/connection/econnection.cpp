@@ -98,7 +98,7 @@ void eConnection::setupclass()
 
     /* Synchronize, add the class to class list and properties to property set.
      */
-    osal_mutex_system_lock();
+    os_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eConnection");
     addproperty(cls, ECONNP_CLASSID, econnp_classid, 
         EPRO_PERSISTENT|EPRO_SIMPLE, "class ID");
@@ -107,7 +107,7 @@ void eConnection::setupclass()
     p = addpropertyl(cls, ECONNP_ISOPEN, econnp_isopen, 
         EPRO_NOONPRCH, "is open", OS_FALSE);
     p->setpropertys(EVARP_ATTR, "rdonly;chkbox");
-    osal_mutex_system_unlock();
+    os_unlock();
 }
 
 
