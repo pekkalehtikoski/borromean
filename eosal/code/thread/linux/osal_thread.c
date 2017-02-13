@@ -1,12 +1,12 @@
 /**
 
-  @file    thread/windows/osal_thread.c
+  @file    thread/linux/osal_thread.c
   @brief   Creating, terminating, scheduling and identifying threads.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  Thread functions for Windows are implemented here.
+  Thread functions for Linux.
   A process can run multiple tasks concurrently, and these concurrently running tasks are called
   threads of execution. The treads of the same process and share memory and other processe's
   resources. Typically access to shared resources must be synchronized, see mutexes.
@@ -27,11 +27,13 @@
 ****************************************************************************************************
 */
 #include "eosal/eosal.h"
-#include <windows.h>
+#include <sched.h>
+#include <pthread.h>
+#include <unistd.h>
 
 #if OSAL_MULTITHREAD_SUPPORT
 
-/** Intermediate parameter structure when creating a new Windows thread.
+/** Intermediate parameter structure when creating a new Linux thread.
  */
 typedef struct
 {
@@ -47,27 +49,24 @@ typedef struct
      */
     osalEvent done;
 }
-osalWindowsThreadPrms;
+osalLinuxThreadPrms;
 
 /** Operating system specific thread handle.
 */
 typedef struct
 {
-	/* Windows thread handle.
+    /* Linux thread handle.
 	*/
-	HANDLE thread_handle;
+    pthread_t threadh;
 }
-osalWindowsThreadHandle;
+osalLinuxThreadHandle;
 #endif
 
 /* Forward referred static functions.
  */
 #if OSAL_MULTITHREAD_SUPPORT
-static DWORD WINAPI osal_thread_intermediate_func(
-  LPVOID lpParameter);
-
-static int osal_thread_priority_to_windows_priority(
-    osalThreadPriority priority);
+static void *osal_thread_intermediate_func(
+  void *parameters);
 #endif
 
 
@@ -124,30 +123,24 @@ osalThreadHandle *osal_thread_create(
 	os_memsz stack_size,
 	const os_char *name)
 {
-    HANDLE 
-		thread_handle;
-
-    DWORD
-        thread_id;
-
-    osalWindowsThreadPrms
-        winprm;
-
-	osalWindowsThreadHandle
-		*handle;
+    osalLinuxThreadPrms linprm;
+    osalLinuxThreadHandle *handle;
+    pthread_attr_t attrib;
+    pthread_t threadh;
+    int s;
 
     /* Save pointers to thread entry point function and to parameters into
        thread creation parameter structure.
      */
-	os_memclear(&winprm, sizeof(osalWindowsThreadPrms));
-    winprm.func = func;
-    winprm.prm = prm;
+    os_memclear(&linprm, sizeof(osalLinuxThreadPrms));
+    linprm.func = func;
+    linprm.prm = prm;
 
     /* Create event to wait until newly created thread has processed it's parameters. If creating
        the event failes, return the error code.
      */
-    winprm.done = osal_event_create();
-    if (winprm.done == OS_NULL)
+    linprm.done = osal_event_create();
+    if (linprm.done == OS_NULL)
     {
 		osal_debug_error("osal_thread,osal_event_create failed");
         return OS_NULL;
@@ -155,29 +148,32 @@ osalThreadHandle *osal_thread_create(
 
 	if (flags & OSAL_THREAD_ATTACHED)
 	{
-		handle = (osalWindowsThreadHandle*)os_malloc(sizeof(osalWindowsThreadHandle), OS_NULL);
-		os_memclear(handle, sizeof(osalWindowsThreadHandle));
+        handle = (osalLinuxThreadHandle*)os_malloc(sizeof(osalLinuxThreadHandle), OS_NULL);
+        os_memclear(handle, sizeof(osalLinuxThreadHandle));
 	}
 	else
 	{
 		handle = OS_NULL;
 	}
 
-    /* Call Windows to create and start the new thread.
+    pthread_attr_setschedpolicy(&attrib, SCHED_OTHER);
+    pthread_attr_setdetachstate(&attrib,
+        handle ? PTHREAD_CREATE_JOINABLE : PTHREAD_CREATE_DETACHED);
+
+    // pthread_attr_setstacksize(&attrib, stack_size);
+
+    /* Call linux to create and start the new thread.
      */
-    thread_handle = CreateThread(NULL,
-        (SIZE_T)stack_size,
-        osal_thread_intermediate_func,
-        &winprm,
-        0,
-        &thread_id);
+    s = pthread_create(&threadh, &attrib,
+        osal_thread_intermediate_func, &linprm);
+    pthread_attr_destroy(&attrib);
 
     /* If thread creation fails, then return error code.
      */
-    if (thread_handle == NULL)
+    if (s)
     {
-		osal_debug_error("osal_thread,CreateThread failed");
-		os_free(handle, sizeof(osalWindowsThreadHandle));
+        osal_debug_error("osal_thread,pthread_create failed");
+        os_free(handle, sizeof(osalLinuxThreadHandle));
 		return OS_NULL;
     }
 
@@ -187,23 +183,17 @@ osalThreadHandle *osal_thread_create(
 
     /* Wait for "done" event. This is set once the new thread has taken over the parameters.
      */
-    osal_event_wait(winprm.done, OSAL_EVENT_INFINITE);
+    osal_event_wait(linprm.done, OSAL_EVENT_INFINITE);
 
     /* Delete the event.
      */
-    osal_event_delete(winprm.done);
+    osal_event_delete(linprm.done);
 
-	/* If we attach the new thread, save windows thread handle. Otherwise close it.
+    /* If we created joinable thread, save linux thread handle.
 	 */
 	if (handle)
 	{
-		handle->thread_handle = thread_handle;
-	}
-	else
-	{
-		/* Close the Windows thread handle so that no zombie handles are left hanging around.
-		 */
-		CloseHandle(thread_handle);
+        handle->threadh = threadh;
 	}
 
     /* Success.
@@ -230,14 +220,11 @@ osalThreadHandle *osal_thread_create(
 
 ****************************************************************************************************
 */
-static DWORD WINAPI osal_thread_intermediate_func(
-  LPVOID lpParameter)
+static void *osal_thread_intermediate_func(
+  void *parameters)
 {
-    osalWindowsThreadPrms
-        *winprm;
-
-	os_boolean
-		local_exit_requested = OS_FALSE;
+    osalLinuxThreadPrms
+        *linprm;
 
     /* Make sure that we are running on normal thread priority.
      */
@@ -245,19 +232,19 @@ static DWORD WINAPI osal_thread_intermediate_func(
 
     /* Cast the pointer
      */
-    winprm = (osalWindowsThreadPrms*)lpParameter;
+    linprm = (osalLinuxThreadPrms*)parameters;
 
     /* Call the final thread entry point function.
      */
-    winprm->func(winprm->prm, winprm->done);
+    linprm->func(linprm->prm, linprm->done);
 
 	/* Inform resource monitor that thread is terminated.
 	*/
 	osal_resource_monitor_decrement(OSAL_RMON_THREAD_COUNT);
 	
-    /* Return success.
+    /* Return.
      */
-    return 1;
+    return OS_NULL;
 }
 #endif
 
@@ -283,6 +270,10 @@ static DWORD WINAPI osal_thread_intermediate_func(
 void osal_thread_join(
 	osalThreadHandle *handle)
 {
+    osalLinuxThreadHandle *linuxhandle;
+    void *res;
+    int s;
+
 	/* Check for programming errors.
 	 */
 	if (handle == OS_NULL)
@@ -291,16 +282,22 @@ void osal_thread_join(
 		return;
 	}
 
-	/* Join the thread.
-	 */
-	WaitForSingleObject(((osalWindowsThreadHandle*)handle)->thread_handle, INFINITE);
+    linuxhandle = (osalLinuxThreadHandle*)handle;
+    s = pthread_join(linuxhandle->threadh, &res);
+    if (s != 0)
+    {
+        osal_debug_error("osal_thread,osal_thread_join failed");
+        return;
+    }
+
+    /* free(res); Free memory allocated by thread */
 
 	/* Delete the handle structure.
 	 */
-	CloseHandle(((osalWindowsThreadHandle*)handle)->thread_handle);
-	os_free(handle, sizeof(osalWindowsThreadHandle));
+    os_free(handle, sizeof(osalLinuxThreadHandle));
 }
 #endif
+
 
 #if OSAL_MULTITHREAD_SUPPORT
 /**
@@ -331,8 +328,7 @@ void osal_thread_release_handle(
 
 	/* Delete the handle structure.
 	 */
-	CloseHandle(((osalWindowsThreadHandle*)handle)->thread_handle);
-	os_free(handle, sizeof(osalWindowsThreadHandle));
+    os_free(handle, sizeof(osalLinuxThreadHandle));
 }
 #endif
 
@@ -362,9 +358,8 @@ void osal_thread_exit(
      */
     osal_resource_monitor_decrement(OSAL_RMON_THREAD_COUNT);
 
-    /* Call Windows to exit the thread.
+    /* Call Linux to exit the thread.
      */
-    ExitThread(1);
 }
 #endif
 
@@ -389,9 +384,14 @@ void osal_thread_exit(
 void os_sleep(
     os_long time_ms)
 {
-    /* Call Windows to sleep.
-     */
-    Sleep((DWORD)time_ms);
+    if (time_ms >= 1000000)
+    {
+        sleep(time_ms/1000);
+    }
+    else
+    {
+        usleep(time_ms*1000);
+    }
 }
 
 
@@ -417,7 +417,12 @@ void os_sleep(
 void os_microsleep(
     os_long time_us)
 {
-    /* Call Windows to sleep.
-     */
-    Sleep((DWORD)((time_us + 999) / 1000));
+    if (time_us >= 1000000000)
+    {
+        os_sleep(time_us/1000);
+    }
+    else
+    {
+        usleep(time_us);
+    }
 }

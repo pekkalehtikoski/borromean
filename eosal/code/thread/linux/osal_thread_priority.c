@@ -1,6 +1,6 @@
 /**
 
-  @file    thread/windows/osal_thread_priority.c
+  @file    thread/linux/osal_thread_priority.c
   @brief   Thread priority and identification.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -16,13 +16,12 @@
 ****************************************************************************************************
 */
 #include "eosal/eosal.h"
-#include <windows.h>
 
 
 /* Forward referred static functions.
  */
 #if OSAL_MULTITHREAD_SUPPORT
-static int osal_thread_priority_to_windows_priority(
+static int osal_thread_priority_to_rt_priority(
     osalThreadPriority priority);
 #endif
 
@@ -60,20 +59,14 @@ static int osal_thread_priority_to_windows_priority(
 osalStatus osal_thread_set_priority(
 	osalThreadPriority priority)
 {
-    HANDLE hThread;
-
-    /* Get pseudo handle
+    /* Set thread priority. NOT IMPLEMENTED YET.
      */
-    hThread = GetCurrentThread();
-
-    /* Set thread priority
-     */
-    if (!SetThreadPriority(hThread,
-       osal_thread_priority_to_windows_priority(priority)))
+    /* if (!SetThreadPriority(hThread,
+       osal_thread_priority_to_rt_priority(priority)))
     {
-        osal_debug_error("SetThreadPriority() failed");
+        osal_debug_error("Setting thread priority failed");
         return OSAL_STATUS_THREAD_SET_PRIORITY_FAILED;
-    }
+    } */
 
     /* Success.
      */
@@ -85,31 +78,30 @@ osalStatus osal_thread_set_priority(
 /**
 ****************************************************************************************************
 
-  @brief Convert OSAL thread priority to Windows thread priority.
+  @brief Convert OSAL thread priority to real time thread priority.
 
-  The osal_thread_priority_to_windows_priority function converts OSAL threa priority to Windows
+  The osal_thread_priority_to_rt_priority function converts OSAL threa priority to linux
   thread priority number. For portability the OSAL has it's own thread priority enumeration,
-  and this function translated these for Windows.
+  and this function translated these for linux.
 
   @return  Thread priority. One of OSAL_THREAD_PRIORITY_LOW, OSAL_THREAD_PRIORITY_NORMAL,
            OSAL_THREAD_PRIORITY_HIGH or OSAL_THREAD_PRIORITY_TIME_CRITICAL.
            See @ref osalThreadPriority "enumeration of thread priorities" for more information.
 
-  @return  Windows thread priority number. One of THREAD_PRIORITY_BELOW_NORMAL,
-           THREAD_PRIORITY_NORMAL, THREAD_PRIORITY_HIGHEST or THREAD_PRIORITY_TIME_CRITICAL.
+  @return  Linux thread priority number.
 
 ****************************************************************************************************
 */
 #if OSAL_MULTITHREAD_SUPPORT
-static int osal_thread_priority_to_windows_priority(
+static int osal_thread_priority_to_rt_priority(
     osalThreadPriority priority)
 {
-    int winpriority;
+    int rtpriority;
 
     switch (priority)
     {
         case OSAL_THREAD_PRIORITY_LOW:
-            winpriority = THREAD_PRIORITY_BELOW_NORMAL;
+            rtpriority = 0;
             break;
 
         default:
@@ -118,19 +110,19 @@ static int osal_thread_priority_to_windows_priority(
              */
 
         case OSAL_THREAD_PRIORITY_NORMAL:
-            winpriority = THREAD_PRIORITY_NORMAL;
+            rtpriority = 0;
             break;
 
         case OSAL_THREAD_PRIORITY_HIGH:
-            winpriority = THREAD_PRIORITY_HIGHEST;
+            rtpriority = 0;
             break;
 
         case OSAL_THREAD_PRIORITY_TIME_CRITICAL:
-            winpriority = THREAD_PRIORITY_TIME_CRITICAL;
+            rtpriority = 0;
             break;
     }
 
-    return winpriority;
+    return rtpriority;
 }
 #endif
 
@@ -156,8 +148,8 @@ static int osal_thread_priority_to_windows_priority(
 os_long osal_thread_get_id(
     os_int reserved)
 {
-    /* Ask Windows for thread ID number.
+    /* Ask Linux for thread ID number. NOT IMPLEMENTED YET.
      */
-    return GetCurrentThreadId();
+    return 0;
 }
 #endif

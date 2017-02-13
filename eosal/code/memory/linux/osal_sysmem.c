@@ -1,12 +1,12 @@
 /**
 
-  @file    memory/windows/osal_sysmem.c
+  @file    memory/linux/osal_sysmem.c
   @brief   Operating system memory allocation.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  Prototypes for operating system memory allocation functions.
+  Linux operating system memory allocation functions.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -16,7 +16,9 @@
 ****************************************************************************************************
 */
 #include "eosal/eosal.h"
-#include <windows.h>
+#include <stdlib.h>
+
+/* #include <malloc.h> Needed for APPLE */
 
 
 /**
@@ -45,28 +47,8 @@ os_char *osal_sysmem_alloc(
     os_memsz request_bytes,
     os_memsz *allocated_bytes)
 {
-    LPVOID memory_block;
-    HANDLE heap;
-
-    /* Get process heap handle.
-     */
-    heap = GetProcessHeap();
-
-    /* Allocate block from process heap. If fails, then return OS_NULL.
-     */
-    memory_block = HeapAlloc(heap, 0, (DWORD)request_bytes);
-    if (memory_block == NULL) return OS_NULL;
-
-    /* If caller wants to know number of bytes actually allocated, return it.
-     */
-    if (allocated_bytes)
-    {
-        *allocated_bytes = (os_memsz)HeapSize(heap, 0, memory_block);
-    }
-
-    /* Return pointer to the allocated memory block.
-     */
-    return memory_block;
+    if (allocated_bytes) *allocated_bytes = request_bytes;
+    return malloc(request_bytes);
 }
 
 
@@ -89,22 +71,5 @@ os_char *osal_sysmem_alloc(
 void osal_sysmem_free(
     void *memory_block)
 {
-    HANDLE heap;
-
-    /* If memory_block is NULL pointer, do nothing.
-     */
-    if (memory_block == OS_NULL) return;
-
-    /* Get process heap handle.
-     */
-    heap = GetProcessHeap();
-
-#if OSAL_DEBUG
-    if (!HeapFree(heap, 0, memory_block))
-    {
-        osal_debug_error("HeapFree() failed");
-    }
-#else
-    HeapFree(heap, 0, memory_block);
-#endif
+    free(memory_block);
 }

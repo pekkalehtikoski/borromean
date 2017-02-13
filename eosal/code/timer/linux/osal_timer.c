@@ -18,7 +18,7 @@
 ****************************************************************************************************
 */
 #include "eosal/eosal.h"
-
+#include <time.h>
 
 /**
 ****************************************************************************************************
@@ -54,14 +54,14 @@ void osal_timer_initialize(
 ****************************************************************************************************
 */
 void os_timer(
-    os_int64 *start_t)
+    os_int64 *t)
 {
     struct timespec ts;
 
 #ifdef CLOCK_MONOTONIC_COARSE
-    if (clock_gettime(CLOCK_MONOTONIC_COARSE, &t))
+    if (clock_gettime(CLOCK_MONOTONIC_COARSE, &ts))
     {
-        if (clock_gettime(CLOCK_MONOTONIC, &t))
+        if (clock_gettime(CLOCK_MONOTONIC, &ts))
         {
             osal_debug_error("os_timer: Get system timer failed");
             *t = 0;
@@ -69,14 +69,14 @@ void os_timer(
         }
     }
 #else
-    if (clock_gettime(CLOCK_MONOTONIC, &t))
+    if (clock_gettime(CLOCK_MONOTONIC, &ts))
     {
         osal_debug_error("os_timer: Get system timer failed");
         *t = 0;
         return;
     }
 #endif
-    *t = 1000000 * (os_long)ts.tv_sec + (os_long)ts.tv_usec;
+    *t = 1000000 * (os_long)ts.tv_sec + (os_long)ts.tv_nsec / 1000;
 }
 
 	

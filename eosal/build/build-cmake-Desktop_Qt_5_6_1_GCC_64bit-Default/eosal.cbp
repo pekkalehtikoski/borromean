@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+   <FileVersion major="1" minor="6" />
+   <Project>
+      <Option title="eosal" />
+      <Option makefile_is_custom="1" />
+      <Option compiler="gcc" />
+      <Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\build\;CMake Files\..\..\..\build\cmake\;" />
+      <Build>
+      <Target title="all">
+         <Option working_dir="/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="edit_cache">
+         <Option working_dir="/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 edit_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="rebuild_cache">
+         <Option working_dir="/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 rebuild_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="eosal">
+         <Option output="/coderoot/borromean/lib/mint18_gcc/libeosal.a" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option object_output="./" />
+         <Option type="2" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/coderoot/borromean" />
+            <Add directory="/usr/include" />
+            <Add directory="/usr/include/c++/5" />
+            <Add directory="/usr/include/c++/5/backward" />
+            <Add directory="/usr/include/x86_64-linux-gnu" />
+            <Add directory="/usr/include/x86_64-linux-gnu/c++/5" />
+            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include" />
+            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 eosal" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="eosal/fast">
+         <Option output="/coderoot/borromean/lib/mint18_gcc/libeosal.a" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default" />
+         <Option object_output="./" />
+         <Option type="2" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/coderoot/borromean" />
+            <Add directory="/usr/include" />
+            <Add directory="/usr/include/c++/5" />
+            <Add directory="/usr/include/c++/5/backward" />
+            <Add directory="/usr/include/x86_64-linux-gnu" />
+            <Add directory="/usr/include/x86_64-linux-gnu/c++/5" />
+            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include" />
+            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 eosal/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/coderoot/borromean/eosal/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      </Build>
+      <Unit filename="/coderoot/borromean/eosal/code/console/common/osal_console.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/console/common/osal_sysconsole.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/console/linux/osal_sysconsole.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/debugcode/common/osal_debug.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/debugcode/common/osal_debug.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/defs/common/osal_common_defs.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/defs/common/osal_global.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/defs/common/osal_status.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/defs/linux/osal_defs.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/defs/linux/osal_types.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/event/common/osal_event.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/event/linux/osal_event.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/initialize/common/osal_initialize.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/initialize/common/osal_initialize.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/int64/common/osal_int64.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/int64/common/osal_int64.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/memory/common/osal_memclear.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/memory/common/osal_memcpy.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/memory/common/osal_memory.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/memory/common/osal_memory.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/memory/common/osal_sysmem.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/memory/linux/osal_sysmem.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/mutex/common/osal_mutex.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/mutex/linux/osal_mutex.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_char.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_int_to_string.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_strchr.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_strcmp.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_strechr.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_string.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_strlen.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_strncat.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_strncpy.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/string/common/osal_strstr.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/thread/common/osal_thread.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/thread/linux/osal_thread.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/thread/linux/osal_thread_priority.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/timer/common/osal_timer.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/timer/linux/osal_timer.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf16/common/osal_char_utf16_to_utf32.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf16/common/osal_char_utf32_to_utf16.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf16/common/osal_string_utf16_to_utf8.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf16/common/osal_string_utf16_to_utf8_malloc.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf16/common/osal_string_utf8_to_utf16.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf16/common/osal_string_utf8_to_utf16_malloc.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf16/common/osal_utf16.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf32/common/osal_char_utf32_to_utf8.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf32/common/osal_char_utf8_to_utf32.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/code/utf32/common/osal_utf32.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/eosal.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/eosalx.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/int64x/common/osal_int64_divide.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/int64x/common/osal_int64_double.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/int64x/common/osal_int64_multiply.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/main/common/osal_main.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/main/linux/osal_main.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/rand/common/osal_rand.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/rand/common/osal_rand.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/serialize/common/osal_intser.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/serialize/linux/osal_float.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/socket/common/osal_socket.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/socket/common/osal_socket_util.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/socket/linux/osal_socket.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv_float_to_string.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv_int64_to_string.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv_string_to_float.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv_string_to_int64.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/stream/common/osal_queue.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/stream/common/osal_queue.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/stream/common/osal_stream.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/stream/common/osal_stream.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/stringx/common/osal_string_get_item_int.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/stringx/common/osal_string_get_item_value.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/stringx/common/osal_string_to_int.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/time/common/osal_time.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/time/linux/osal_time.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.c">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h">
+         <Option target="eosal"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/build/cmake/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+      <Unit filename="/coderoot/borromean/eosal/build/cmake/../../../build/cmake/e-build-defs.txt">
+          <Option virtualFolder="CMake Files\..\..\..\build\cmake\" />
+      </Unit>
+   </Project>
+</CodeBlocks_project_file>

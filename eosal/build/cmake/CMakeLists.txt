@@ -29,10 +29,10 @@ file(GLOB EX_CM_SOURCES "${EXTENSIONS}/*/common/*.c")
 file(GLOB EX_CM_HEADERS "${EXTENSIONS}/*/common/*.h")
 
 # Add operating system specific files.
-file(GLOB BB_OS_SOURCES "${BACKBONE}/*/windows/*.c")
-file(GLOB BB_OS_HEADERS "${BACKBONE}/*/windows/*.h")
-file(GLOB EX_OS_SOURCES "${EXTENSIONS}/*/windows/*.c")
-file(GLOB EX_OS_HEADERS "${EXTENSIONS}/*/windows/*.h")
+file(GLOB BB_OS_SOURCES "${BACKBONE}/*/$ENV{E_OS}/*.c")
+file(GLOB BB_OS_HEADERS "${BACKBONE}/*/$ENV{E_OS}/*.h")
+file(GLOB EX_OS_SOURCES "${EXTENSIONS}/*/$ENV{E_OS}/*.c")
+file(GLOB EX_OS_HEADERS "${EXTENSIONS}/*/$ENV{E_OS}/*.h")
 
 # Generate the static library
 add_library(${E_PROJECT} STATIC ${MAIN_HEADERS} ${BB_CM_HEADERS} ${BB_OS_HEADERS} ${EX_CM_HEADERS} ${EX_OS_HEADERS} ${BB_CM_SOURCES} ${BB_OS_SOURCES} ${EX_CM_SOURCES} ${EX_OS_SOURCES})

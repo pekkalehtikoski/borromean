@@ -177,6 +177,60 @@ coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.s:
 	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.s
 .PHONY : coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.s
 
+coderoot/borromean/eobjects/code/connection/econnection.o: coderoot/borromean/eobjects/code/connection/econnection.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/code/connection/econnection.o
+
+# target to build an object file
+coderoot/borromean/eobjects/code/connection/econnection.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o
+.PHONY : coderoot/borromean/eobjects/code/connection/econnection.cpp.o
+
+coderoot/borromean/eobjects/code/connection/econnection.i: coderoot/borromean/eobjects/code/connection/econnection.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/code/connection/econnection.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/code/connection/econnection.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.i
+.PHONY : coderoot/borromean/eobjects/code/connection/econnection.cpp.i
+
+coderoot/borromean/eobjects/code/connection/econnection.s: coderoot/borromean/eobjects/code/connection/econnection.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/code/connection/econnection.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/code/connection/econnection.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.s
+.PHONY : coderoot/borromean/eobjects/code/connection/econnection.cpp.s
+
+coderoot/borromean/eobjects/code/connection/eendpoint.o: coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/code/connection/eendpoint.o
+
+# target to build an object file
+coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o
+.PHONY : coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o
+
+coderoot/borromean/eobjects/code/connection/eendpoint.i: coderoot/borromean/eobjects/code/connection/eendpoint.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/code/connection/eendpoint.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/code/connection/eendpoint.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.i
+.PHONY : coderoot/borromean/eobjects/code/connection/eendpoint.cpp.i
+
+coderoot/borromean/eobjects/code/connection/eendpoint.s: coderoot/borromean/eobjects/code/connection/eendpoint.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/code/connection/eendpoint.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/code/connection/eendpoint.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.s
+.PHONY : coderoot/borromean/eobjects/code/connection/eendpoint.cpp.s
+
 coderoot/borromean/eobjects/code/container/econtainer.o: coderoot/borromean/eobjects/code/container/econtainer.cpp.o
 
 .PHONY : coderoot/borromean/eobjects/code/container/econtainer.o
@@ -474,6 +528,33 @@ coderoot/borromean/eobjects/code/object/ehandletable.cpp.s:
 	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.s
 .PHONY : coderoot/borromean/eobjects/code/object/ehandletable.cpp.s
 
+coderoot/borromean/eobjects/code/object/ejsonserialization.o: coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/code/object/ejsonserialization.o
+
+# target to build an object file
+coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o
+.PHONY : coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o
+
+coderoot/borromean/eobjects/code/object/ejsonserialization.i: coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/code/object/ejsonserialization.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.i
+.PHONY : coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.i
+
+coderoot/borromean/eobjects/code/object/ejsonserialization.s: coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/code/object/ejsonserialization.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.s
+.PHONY : coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.s
+
 coderoot/borromean/eobjects/code/object/eobject.o: coderoot/borromean/eobjects/code/object/eobject.cpp.o
 
 .PHONY : coderoot/borromean/eobjects/code/object/eobject.o
@@ -582,6 +663,60 @@ coderoot/borromean/eobjects/code/set/eset.cpp.s:
 	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.s
 .PHONY : coderoot/borromean/eobjects/code/set/eset.cpp.s
 
+coderoot/borromean/eobjects/code/stream/econsole.o: coderoot/borromean/eobjects/code/stream/econsole.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/code/stream/econsole.o
+
+# target to build an object file
+coderoot/borromean/eobjects/code/stream/econsole.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o
+.PHONY : coderoot/borromean/eobjects/code/stream/econsole.cpp.o
+
+coderoot/borromean/eobjects/code/stream/econsole.i: coderoot/borromean/eobjects/code/stream/econsole.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/code/stream/econsole.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/code/stream/econsole.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.i
+.PHONY : coderoot/borromean/eobjects/code/stream/econsole.cpp.i
+
+coderoot/borromean/eobjects/code/stream/econsole.s: coderoot/borromean/eobjects/code/stream/econsole.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/code/stream/econsole.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/code/stream/econsole.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.s
+.PHONY : coderoot/borromean/eobjects/code/stream/econsole.cpp.s
+
+coderoot/borromean/eobjects/code/stream/equeue.o: coderoot/borromean/eobjects/code/stream/equeue.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/code/stream/equeue.o
+
+# target to build an object file
+coderoot/borromean/eobjects/code/stream/equeue.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o
+.PHONY : coderoot/borromean/eobjects/code/stream/equeue.cpp.o
+
+coderoot/borromean/eobjects/code/stream/equeue.i: coderoot/borromean/eobjects/code/stream/equeue.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/code/stream/equeue.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/code/stream/equeue.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.i
+.PHONY : coderoot/borromean/eobjects/code/stream/equeue.cpp.i
+
+coderoot/borromean/eobjects/code/stream/equeue.s: coderoot/borromean/eobjects/code/stream/equeue.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/code/stream/equeue.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/code/stream/equeue.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.s
+.PHONY : coderoot/borromean/eobjects/code/stream/equeue.cpp.s
+
 coderoot/borromean/eobjects/code/stream/estream.o: coderoot/borromean/eobjects/code/stream/estream.cpp.o
 
 .PHONY : coderoot/borromean/eobjects/code/stream/estream.o
@@ -663,6 +798,33 @@ coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.s:
 	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.s
 .PHONY : coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.s
 
+coderoot/borromean/eobjects/code/timer/etimer.o: coderoot/borromean/eobjects/code/timer/etimer.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/code/timer/etimer.o
+
+# target to build an object file
+coderoot/borromean/eobjects/code/timer/etimer.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o
+.PHONY : coderoot/borromean/eobjects/code/timer/etimer.cpp.o
+
+coderoot/borromean/eobjects/code/timer/etimer.i: coderoot/borromean/eobjects/code/timer/etimer.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/code/timer/etimer.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/code/timer/etimer.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.i
+.PHONY : coderoot/borromean/eobjects/code/timer/etimer.cpp.i
+
+coderoot/borromean/eobjects/code/timer/etimer.s: coderoot/borromean/eobjects/code/timer/etimer.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/code/timer/etimer.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/code/timer/etimer.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.s
+.PHONY : coderoot/borromean/eobjects/code/timer/etimer.cpp.s
+
 coderoot/borromean/eobjects/code/variable/evariable.o: coderoot/borromean/eobjects/code/variable/evariable.cpp.o
 
 .PHONY : coderoot/borromean/eobjects/code/variable/evariable.o
@@ -690,6 +852,33 @@ coderoot/borromean/eobjects/code/variable/evariable.cpp.s:
 	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.s
 .PHONY : coderoot/borromean/eobjects/code/variable/evariable.cpp.s
 
+coderoot/borromean/eobjects/extensions/socket/esocket.o: coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/extensions/socket/esocket.o
+
+# target to build an object file
+coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o
+.PHONY : coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o
+
+coderoot/borromean/eobjects/extensions/socket/esocket.i: coderoot/borromean/eobjects/extensions/socket/esocket.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/extensions/socket/esocket.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/extensions/socket/esocket.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.i
+.PHONY : coderoot/borromean/eobjects/extensions/socket/esocket.cpp.i
+
+coderoot/borromean/eobjects/extensions/socket/esocket.s: coderoot/borromean/eobjects/extensions/socket/esocket.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/extensions/socket/esocket.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/extensions/socket/esocket.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.s
+.PHONY : coderoot/borromean/eobjects/extensions/socket/esocket.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -705,6 +894,12 @@ help:
 	@echo "... coderoot/borromean/eobjects/code/binding/epropertybinding.o"
 	@echo "... coderoot/borromean/eobjects/code/binding/epropertybinding.i"
 	@echo "... coderoot/borromean/eobjects/code/binding/epropertybinding.s"
+	@echo "... coderoot/borromean/eobjects/code/connection/econnection.o"
+	@echo "... coderoot/borromean/eobjects/code/connection/econnection.i"
+	@echo "... coderoot/borromean/eobjects/code/connection/econnection.s"
+	@echo "... coderoot/borromean/eobjects/code/connection/eendpoint.o"
+	@echo "... coderoot/borromean/eobjects/code/connection/eendpoint.i"
+	@echo "... coderoot/borromean/eobjects/code/connection/eendpoint.s"
 	@echo "... coderoot/borromean/eobjects/code/container/econtainer.o"
 	@echo "... coderoot/borromean/eobjects/code/container/econtainer.i"
 	@echo "... coderoot/borromean/eobjects/code/container/econtainer.s"
@@ -738,6 +933,9 @@ help:
 	@echo "... coderoot/borromean/eobjects/code/object/ehandletable.o"
 	@echo "... coderoot/borromean/eobjects/code/object/ehandletable.i"
 	@echo "... coderoot/borromean/eobjects/code/object/ehandletable.s"
+	@echo "... coderoot/borromean/eobjects/code/object/ejsonserialization.o"
+	@echo "... coderoot/borromean/eobjects/code/object/ejsonserialization.i"
+	@echo "... coderoot/borromean/eobjects/code/object/ejsonserialization.s"
 	@echo "... coderoot/borromean/eobjects/code/object/eobject.o"
 	@echo "... coderoot/borromean/eobjects/code/object/eobject.i"
 	@echo "... coderoot/borromean/eobjects/code/object/eobject.s"
@@ -750,6 +948,12 @@ help:
 	@echo "... coderoot/borromean/eobjects/code/set/eset.o"
 	@echo "... coderoot/borromean/eobjects/code/set/eset.i"
 	@echo "... coderoot/borromean/eobjects/code/set/eset.s"
+	@echo "... coderoot/borromean/eobjects/code/stream/econsole.o"
+	@echo "... coderoot/borromean/eobjects/code/stream/econsole.i"
+	@echo "... coderoot/borromean/eobjects/code/stream/econsole.s"
+	@echo "... coderoot/borromean/eobjects/code/stream/equeue.o"
+	@echo "... coderoot/borromean/eobjects/code/stream/equeue.i"
+	@echo "... coderoot/borromean/eobjects/code/stream/equeue.s"
 	@echo "... coderoot/borromean/eobjects/code/stream/estream.o"
 	@echo "... coderoot/borromean/eobjects/code/stream/estream.i"
 	@echo "... coderoot/borromean/eobjects/code/stream/estream.s"
@@ -759,9 +963,15 @@ help:
 	@echo "... coderoot/borromean/eobjects/code/thread/ethreadhandle.o"
 	@echo "... coderoot/borromean/eobjects/code/thread/ethreadhandle.i"
 	@echo "... coderoot/borromean/eobjects/code/thread/ethreadhandle.s"
+	@echo "... coderoot/borromean/eobjects/code/timer/etimer.o"
+	@echo "... coderoot/borromean/eobjects/code/timer/etimer.i"
+	@echo "... coderoot/borromean/eobjects/code/timer/etimer.s"
 	@echo "... coderoot/borromean/eobjects/code/variable/evariable.o"
 	@echo "... coderoot/borromean/eobjects/code/variable/evariable.i"
 	@echo "... coderoot/borromean/eobjects/code/variable/evariable.s"
+	@echo "... coderoot/borromean/eobjects/extensions/socket/esocket.o"
+	@echo "... coderoot/borromean/eobjects/extensions/socket/esocket.i"
+	@echo "... coderoot/borromean/eobjects/extensions/socket/esocket.s"
 .PHONY : help
 
 

@@ -98,6 +98,18 @@
       <Unit filename="/coderoot/borromean/eobjects/code/binding/epropertybinding.h">
          <Option target="eobjects"/>
       </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/connection/econnection.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/connection/econnection.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/connection/eendpoint.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/connection/eendpoint.h">
+         <Option target="eobjects"/>
+      </Unit>
       <Unit filename="/coderoot/borromean/eobjects/code/container/econtainer.cpp">
          <Option target="eobjects"/>
       </Unit>
@@ -176,6 +188,9 @@
       <Unit filename="/coderoot/borromean/eobjects/code/object/ehandletable.h">
          <Option target="eobjects"/>
       </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp">
+         <Option target="eobjects"/>
+      </Unit>
       <Unit filename="/coderoot/borromean/eobjects/code/object/eobject.cpp">
          <Option target="eobjects"/>
       </Unit>
@@ -200,6 +215,18 @@
       <Unit filename="/coderoot/borromean/eobjects/code/set/eset.h">
          <Option target="eobjects"/>
       </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/stream/econsole.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/stream/econsole.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/stream/equeue.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/stream/equeue.h">
+         <Option target="eobjects"/>
+      </Unit>
       <Unit filename="/coderoot/borromean/eobjects/code/stream/estream.cpp">
          <Option target="eobjects"/>
       </Unit>
@@ -218,6 +245,12 @@
       <Unit filename="/coderoot/borromean/eobjects/code/thread/ethreadhandle.h">
          <Option target="eobjects"/>
       </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/timer/etimer.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/timer/etimer.h">
+         <Option target="eobjects"/>
+      </Unit>
       <Unit filename="/coderoot/borromean/eobjects/code/variable/evariable.cpp">
          <Option target="eobjects"/>
       </Unit>
@@ -225,6 +258,15 @@
          <Option target="eobjects"/>
       </Unit>
       <Unit filename="/coderoot/borromean/eobjects/eobjects.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/extensions/json/json-parser-master/json.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/extensions/socket/esocket.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/extensions/socket/esocket.h">
          <Option target="eobjects"/>
       </Unit>
       <Unit filename="/coderoot/borromean/eobjects/build/cmake/CMakeLists.txt">

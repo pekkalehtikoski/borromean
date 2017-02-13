@@ -236,9 +236,6 @@ static DWORD WINAPI osal_thread_intermediate_func(
     osalWindowsThreadPrms
         *winprm;
 
-	os_boolean
-		local_exit_requested = OS_FALSE;
-
     /* Make sure that we are running on normal thread priority.
      */
     osal_thread_set_priority(OSAL_THREAD_PRIORITY_NORMAL);

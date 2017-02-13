@@ -129,9 +129,57 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o.pr
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o
 
 
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: CMakeFiles/eobjects.dir/flags.make
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: /coderoot/borromean/eobjects/code/stream/econsole.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o"
+	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o -c /coderoot/borromean/eobjects/code/stream/econsole.cpp
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.i"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /coderoot/borromean/eobjects/code/stream/econsole.cpp > CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.i
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.s"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /coderoot/borromean/eobjects/code/stream/econsole.cpp -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.s
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o.requires:
+
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o.requires
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o.provides: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o.requires
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o.provides.build
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o.provides
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o
+
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: CMakeFiles/eobjects.dir/flags.make
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: /coderoot/borromean/eobjects/code/stream/equeue.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o"
+	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o -c /coderoot/borromean/eobjects/code/stream/equeue.cpp
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.i"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /coderoot/borromean/eobjects/code/stream/equeue.cpp > CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.i
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.s"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /coderoot/borromean/eobjects/code/stream/equeue.cpp -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.s
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o.requires:
+
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o.requires
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o.provides: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o.requires
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o.provides.build
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o.provides
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o
+
+
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: /coderoot/borromean/eobjects/code/thread/ethread.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o -c /coderoot/borromean/eobjects/code/thread/ethread.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.i: cmake_force
@@ -155,7 +203,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o.pr
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o: /coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o -c /coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.i: cmake_force
@@ -179,7 +227,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: /coderoot/borromean/eobjects/code/root/eroot.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o -c /coderoot/borromean/eobjects/code/root/eroot.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.i: cmake_force
@@ -201,9 +249,33 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o.provid
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o
 
 
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: CMakeFiles/eobjects.dir/flags.make
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: /coderoot/borromean/eobjects/code/timer/etimer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o"
+	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o -c /coderoot/borromean/eobjects/code/timer/etimer.cpp
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.i"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /coderoot/borromean/eobjects/code/timer/etimer.cpp > CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.i
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.s"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /coderoot/borromean/eobjects/code/timer/etimer.cpp -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.s
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o.requires:
+
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o.requires
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o.provides: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o.requires
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o.provides.build
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o.provides
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o
+
+
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: /coderoot/borromean/eobjects/code/eobjects.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o -c /coderoot/borromean/eobjects/code/eobjects.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.i: cmake_force
@@ -227,7 +299,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o.provides
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o: /coderoot/borromean/eobjects/code/pointer/epointer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o -c /coderoot/borromean/eobjects/code/pointer/epointer.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.i: cmake_force
@@ -249,9 +321,57 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o.
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o
 
 
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o: CMakeFiles/eobjects.dir/flags.make
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o: /coderoot/borromean/eobjects/code/connection/eendpoint.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o"
+	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o -c /coderoot/borromean/eobjects/code/connection/eendpoint.cpp
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.i"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /coderoot/borromean/eobjects/code/connection/eendpoint.cpp > CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.i
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.s"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /coderoot/borromean/eobjects/code/connection/eendpoint.cpp -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.s
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o.requires:
+
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o.requires
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o.provides: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o.requires
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o.provides.build
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o.provides
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o
+
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o: CMakeFiles/eobjects.dir/flags.make
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o: /coderoot/borromean/eobjects/code/connection/econnection.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o"
+	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o -c /coderoot/borromean/eobjects/code/connection/econnection.cpp
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.i"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /coderoot/borromean/eobjects/code/connection/econnection.cpp > CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.i
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.s"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /coderoot/borromean/eobjects/code/connection/econnection.cpp -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.s
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o.requires:
+
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o.requires
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o.provides: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o.requires
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o.provides.build
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o.provides
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o
+
+
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o: /coderoot/borromean/eobjects/code/envelope/eenvelope.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o -c /coderoot/borromean/eobjects/code/envelope/eenvelope.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.i: cmake_force
@@ -275,7 +395,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o: /coderoot/borromean/eobjects/code/container/econtainer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o -c /coderoot/borromean/eobjects/code/container/econtainer.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.i: cmake_force
@@ -299,7 +419,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o: /coderoot/borromean/eobjects/code/object/ehandletable.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o -c /coderoot/borromean/eobjects/code/object/ehandletable.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.i: cmake_force
@@ -323,7 +443,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o: /coderoot/borromean/eobjects/code/object/ehandleroot.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o -c /coderoot/borromean/eobjects/code/object/ehandleroot.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.i: cmake_force
@@ -347,7 +467,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: /coderoot/borromean/eobjects/code/object/ehandle.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o -c /coderoot/borromean/eobjects/code/object/ehandle.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.i: cmake_force
@@ -371,7 +491,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o.pr
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o -c /coderoot/borromean/eobjects/code/object/eclasslist.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.i: cmake_force
@@ -393,9 +513,33 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o
 
 
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o: CMakeFiles/eobjects.dir/flags.make
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o: /coderoot/borromean/eobjects/code/object/ejsonserialization.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o"
+	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o -c /coderoot/borromean/eobjects/code/object/ejsonserialization.cpp
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.i"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /coderoot/borromean/eobjects/code/object/ejsonserialization.cpp > CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.i
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.s"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /coderoot/borromean/eobjects/code/object/ejsonserialization.cpp -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.s
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o.requires:
+
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o.requires
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o.provides: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o.requires
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o.provides.build
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o.provides
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o
+
+
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: /coderoot/borromean/eobjects/code/object/eobject.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o -c /coderoot/borromean/eobjects/code/object/eobject.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.i: cmake_force
@@ -419,7 +563,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o.pr
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o: /coderoot/borromean/eobjects/code/binding/ebinding.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o -c /coderoot/borromean/eobjects/code/binding/ebinding.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.i: cmake_force
@@ -443,7 +587,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o.
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o: /coderoot/borromean/eobjects/code/binding/epropertybinding.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o -c /coderoot/borromean/eobjects/code/binding/epropertybinding.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.i: cmake_force
@@ -467,7 +611,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybindin
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o: /coderoot/borromean/eobjects/code/variable/evariable.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o -c /coderoot/borromean/eobjects/code/variable/evariable.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.i: cmake_force
@@ -491,7 +635,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o -c /coderoot/borromean/eobjects/code/name/enamespace.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.i: cmake_force
@@ -515,7 +659,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o.p
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/name/ename.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o -c /coderoot/borromean/eobjects/code/name/ename.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.i: cmake_force
@@ -539,7 +683,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o.provid
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: CMakeFiles/eobjects.dir/flags.make
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: /coderoot/borromean/eobjects/code/set/eset.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o"
 	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o -c /coderoot/borromean/eobjects/code/set/eset.cpp
 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.i: cmake_force
@@ -561,29 +705,60 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o.provides
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o
 
 
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o: CMakeFiles/eobjects.dir/flags.make
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o: /coderoot/borromean/eobjects/extensions/socket/esocket.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o"
+	/usr/bin/g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o -c /coderoot/borromean/eobjects/extensions/socket/esocket.cpp
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.i"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /coderoot/borromean/eobjects/extensions/socket/esocket.cpp > CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.i
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.s"
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /coderoot/borromean/eobjects/extensions/socket/esocket.cpp -o CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.s
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o.requires:
+
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o.requires
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o.provides: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o.requires
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o.provides.build
+.PHONY : CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o.provides
+
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o.provides.build: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o
+
+
 # Object files for target eobjects
 eobjects_OBJECTS = \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o" \
+"CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o" \
+"CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o" \
+"CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o" \
+"CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o" \
+"CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o" \
+"CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o" \
 "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o" \
-"CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o"
+"CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o" \
+"CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o"
 
 # External object files for target eobjects
 eobjects_EXTERNAL_OBJECTS =
@@ -591,17 +766,23 @@ eobjects_EXTERNAL_OBJECTS =
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o
+/coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o
+/coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o
+/coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o
+/coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o
+/coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o
+/coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o
@@ -609,9 +790,10 @@ eobjects_EXTERNAL_OBJECTS =
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o
+/coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/build.make
 /coderoot/borromean/lib/mint18_gcc/libeobjects.a: CMakeFiles/eobjects.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking CXX static library /coderoot/borromean/lib/mint18_gcc/libeobjects.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Linking CXX static library /coderoot/borromean/lib/mint18_gcc/libeobjects.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/eobjects.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/eobjects.dir/link.txt --verbose=$(VERBOSE)
 
@@ -623,17 +805,23 @@ CMakeFiles/eobjects.dir/build: /coderoot/borromean/lib/mint18_gcc/libeobjects.a
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o.requires
+CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o.requires
+CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o.requires
+CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o.requires
+CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o.requires
+CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o.requires
+CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o.requires
@@ -641,6 +829,7 @@ CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eob
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o.requires
 CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o.requires
+CMakeFiles/eobjects.dir/requires: CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o.requires
 
 .PHONY : CMakeFiles/eobjects.dir/requires
 
