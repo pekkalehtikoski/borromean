@@ -34,14 +34,22 @@
 ****************************************************************************************************
 */
 #include "eosal/eosal.h"
-#define _WIN32_WINNT 0x0403
-#include <windows.h>
+#include <pthread.h>
+#include <stdlib.h>
 
 #if OSAL_MULTITHREAD_SUPPORT
 
 #if OSAL_DEBUG
 static os_char osal_mutex_null_ptr_msg[] = "NULL mutex pointer";
 #endif
+
+typedef struct
+{
+    pthread_mutex_t mutex;
+    pthread_mutexattr_t attrib;
+}
+osalPosixMutex;
+
 
 /**
 ****************************************************************************************************
@@ -114,18 +122,25 @@ void osal_mutex_shutdown(
 osalMutex osal_mutex_create(
     void)
 {
-    LPCRITICAL_SECTION
-        critical_section;
+    osalPosixMutex *pm;
 
-	/* Allocate memory for critical section. Here we cannot use os_malloc(), since
-	   mutexes are initialized before memory (memory allocation needs mutexes).
+    /* Allocate memory for mutex. Here we cannot use os_malloc(), since
+       mutexes are initialized before memory (eosal memory allocation needs mutexes).
 	 */
-    critical_section = HeapAlloc(GetProcessHeap(), 0, (DWORD)sizeof(CRITICAL_SECTION));
-    if (critical_section == NULL) return OS_NULL;
+    pm = malloc(sizeof(osalPosixMutex));
 
-    /* Call Windows to initialize critical section.
+    /* Setup mutex attributes.
      */
-	InitializeCriticalSection(critical_section);
+    pthread_mutexattr_init(&pm->attrib);
+    pthread_mutexattr_settype(&pm->attrib, PTHREAD_MUTEX_RECURSIVE);
+
+    /* Create the mutext
+     */
+    if (pthread_mutex_init(&pm->mutex, &pm->attrib))
+    {
+        osal_debug_error("pthread_mutex_init failed");
+        return OS_NULL;
+    }
 
     /* Inform resource monitor that new mutex has been succesfullly created.
      */
@@ -133,7 +148,7 @@ osalMutex osal_mutex_create(
 
     /* Return the mutex pointer.
      */
-    return (osalMutex)critical_section;
+    return (osalMutex)pm;
 }
 
 
@@ -155,17 +170,26 @@ osalMutex osal_mutex_create(
 void osal_mutex_delete(
     osalMutex mutex)
 {
+    osalPosixMutex *pm;
+
     if (mutex == OS_NULL)
     {
         osal_debug_error(osal_mutex_null_ptr_msg);
         return;
     }
 
-	DeleteCriticalSection((LPCRITICAL_SECTION)mutex);
+    /* Delete mutex and mutex attributes.
+     */
+    pm = (osalPosixMutex*)mutex;
+    if (pthread_mutex_destroy(&pm->mutex))
+    {
+        osal_debug_error("pthread_mutex_destroy failed");
+    }
+    pthread_mutexattr_destroy(&pm->attrib);
 
     /* Release memory.
      */
-    HeapFree(GetProcessHeap(), 0, mutex);
+    free(pm);
 
     /* Inform resource monitor that mutex has been deleted.
      */
@@ -193,13 +217,16 @@ void osal_mutex_delete(
 void osal_mutex_lock(
     osalMutex mutex)
 {
+    osalPosixMutex *pm;
+
     if (mutex == OS_NULL)
     {
         osal_debug_error(osal_mutex_null_ptr_msg);
         return;
     }
 
-	EnterCriticalSection((LPCRITICAL_SECTION)mutex);
+    pm = (osalPosixMutex*)mutex;
+    pthread_mutex_lock(&pm->mutex);
 }
 
 
@@ -221,7 +248,7 @@ void osal_mutex_lock(
 
 ****************************************************************************************************
 */
-osalStatus osal_mutex_try_lock(
+/* osalStatus osal_mutex_try_lock(
     osalMutex mutex)
 {
     if (mutex == OS_NULL)
@@ -232,7 +259,7 @@ osalStatus osal_mutex_try_lock(
 
 	return TryEnterCriticalSection((LPCRITICAL_SECTION)mutex) 
 		? OSAL_SUCCESS : OSAL_STATUS_MUTEX_ALREADY_LOCKED;
-}
+} */
 
 
 /**
@@ -254,13 +281,16 @@ osalStatus osal_mutex_try_lock(
 void osal_mutex_unlock(
     osalMutex mutex)
 {
+    osalPosixMutex *pm;
+
     if (mutex == OS_NULL)
     {
         osal_debug_error(osal_mutex_null_ptr_msg);
         return;
     }
 
-	LeaveCriticalSection((LPCRITICAL_SECTION)mutex);
+    pm = (osalPosixMutex*)mutex;
+    pthread_mutex_unlock(&pm->mutex);
 }
 
 
@@ -289,37 +319,7 @@ void osal_mutex_unlock(
 void os_lock(
     void)
 {
-#if OSAL_TIME_CRITICAL_SYSTEM_LOCK
-	HANDLE 
-		handle;
-
-	int 
-        winpriority;
-
-	/* Save the current priority and switch to very high priority. This is done to prevent 
-	   any change of priority reversal. Notice that osal_global structure must not be modified
-	   before the synchronization starts.
-	 */
-	handle = GetCurrentThread();
-	winpriority = GetThreadPriority(handle);
-    SetThreadPriority(handle, THREAD_PRIORITY_TIME_CRITICAL);
-
-	/* Start synchronization.
-	 */
-	EnterCriticalSection((LPCRITICAL_SECTION)osal_global->system_mutex);
-
-	/* Increment system mutex lock count. If this is not recursive call, save priority.
-	 */
-	if (osal_global->system_mutex_lock_count++ == 0)
-	{
-		osal_global->system_mutex_enter_priority = winpriority;
-		osal_global->system_mutex_thread = handle;
-	}
-#else
-	/* Start synchronization.
-	 */
-	EnterCriticalSection((LPCRITICAL_SECTION)osal_global->system_mutex);
-#endif
+    osal_mutex_lock(osal_global->system_mutex);
 }
 
 
@@ -340,39 +340,7 @@ void os_lock(
 void os_unlock(
     void)
 {
-#if OSAL_TIME_CRITICAL_SYSTEM_LOCK
-	HANDLE
-		handle;
-
-	int 
-        winpriority;
-
-	os_int
-		system_mutex_lock_count;
-
-	/* Decrement system mutex lock count, and save the lock count value. Copy saved 
-	   priority and thread handle from global structure to local variable. This must 
-	   be done before synchronization ends.
-	 */
-	system_mutex_lock_count = --(osal_global->system_mutex_lock_count);
-	winpriority = osal_global->system_mutex_enter_priority;
-	handle = osal_global->system_mutex_thread;
-
-	/* End synchronization.
-	 */
-	LeaveCriticalSection((LPCRITICAL_SECTION)osal_global->system_mutex);
-
-    /* If the system mutex was unlocked (no recursion), then restore the saved priority.
-     */
-    if (system_mutex_lock_count == 0) 
-    {
-        SetThreadPriority(handle, winpriority);
-    }
-#else
-	/* End synchronization.
-	 */
-	LeaveCriticalSection((LPCRITICAL_SECTION)osal_global->system_mutex);
-#endif
+    osal_mutex_unlock(osal_global->system_mutex);
 }
 
 #endif

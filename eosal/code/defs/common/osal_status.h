@@ -67,7 +67,7 @@ typedef enum
 
     /** Mutex already locked, code returned by osal_mutex_try_lock().
      */
-    OSAL_STATUS_MUTEX_ALREADY_LOCKED,
+    /* OSAL_STATUS_MUTEX_ALREADY_LOCKED, */
 
     /** Memory allocation from operating system has failed.
      */

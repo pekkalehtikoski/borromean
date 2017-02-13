@@ -171,7 +171,7 @@ void osal_event_set(
            OSAL_EVENT_INFINITE (-1) here. To check event state or to reset event to non
            signaled state without waiting set timeout_ms to 0.
 
-  @return  If the event was signaled, either before the oeal_event_wait call or during
+  @return  If the event was signaled, either before the osal_event_wait call or during
            wait interval, the function will return OSAL_SUCCESS (0). If the function timed
            out and the event remained unsignaled, it will return OSAL_STATUS_EVENT_TIMEOUT.
            Other values indicate failure, typically OSAL_STATUS_EVENT_FAILED.

@@ -120,8 +120,8 @@ void osal_mutex_lock(
 
 /* Lock a mutex if mutex is unlocked, return immediately.
  */
-osalStatus osal_mutex_try_lock(
-    osalMutex mutex);
+/* osalStatus osal_mutex_try_lock(
+    osalMutex mutex); */
 
 /* Unlock a mutex.
  */

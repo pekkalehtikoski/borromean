@@ -17,6 +17,18 @@
 ****************************************************************************************************
 */
 #include "eosal/eosal.h"
+#include <stdlib.h>
+#include <pthread.h>
+// #include <semaphore.h>
+
+typedef struct osalPosixEvent
+{
+    pthread_cond_t cond;
+    pthread_mutex_t mutex;
+    os_boolean signaled;
+}
+osalPosixEvent;
+
 
 #if OSAL_MULTITHREAD_SUPPORT
 
@@ -39,28 +51,41 @@
 osalEvent osal_event_create(
     void)
 {
-    HANDLE
-        handle;
+    osalPosixEvent *pe;
+    pthread_condattr_t attrib;
 
-    /* Call Windows to create an event.
+    /* Allocate event handle stricture and mark it initially not signaled.
      */
-    handle = CreateEvent(NULL, FALSE, FALSE, NULL);
+    pe = malloc(sizeof(osalPosixEvent));
+    pe->signaled = OS_FALSE;
 
-    /* If failed.
+    /* Create mutex to access the event
      */
-    if (handle == NULL)
+    if (pthread_mutex_init(&pe->mutex, NULL))
     {
-        osal_debug_error("CreateEvent failed");
+        osal_debug_error("osal_event.c: pthread_mutex_init() failed");
         return OS_NULL;
     }
 
-    /* Inform resource monitor that new event has been succesfullly created.
+    /* Setup condition attributes
+     */
+    pthread_condattr_init(&attrib);
+    pthread_condattr_setclock(&attrib, CLOCK_MONOTONIC);
+
+    /* Create condition variable.
+     */
+    if (pthread_cond_init(&pe->cond, &attrib))
+    {
+        osal_debug_error("osal_event.c: pthread_cond_init() failed");
+        return OS_NULL;
+    }
+
+    pthread_condattr_destroy(&attrib);
+
+    /* Inform resource monitor that event has been created and return the event pointer.
      */
     osal_resource_monitor_increment(OSAL_RMON_EVENT_COUNT);
-
-    /* Return the event pointer.
-     */
-    return (osalEvent)handle;
+    return (osalEvent)pe;
 }
 
 
@@ -82,30 +107,38 @@ osalEvent osal_event_create(
 void osal_event_delete(
     osalEvent evnt)
 {
-    HANDLE
-        handle;
+    osalPosixEvent *pe;
 
-    handle = (HANDLE)evnt;
-
-#if OSAL_DEBUG
-    if (handle == NULL)
+    if (evnt == OS_NULL)
     {
-        osal_debug_error("NULL event pointer");
-        return;
-    }
-#endif
-
-    /* Call Windows to delete the event.
-     */
-    if (!CloseHandle(handle))
-    {
-        osal_debug_error("osal_event: CloseHandle failed");
+        osal_debug_error("osal_event_delete: NULL argument");
         return;
     }
 
-    /* Inform resource monitor that event has been deleted.
+    pe = (osalPosixEvent*)evnt;
+
+    /* Delete condition variable.
      */
+    if (pthread_cond_destroy(&pe->cond))
+    {
+        osal_debug_error("osal_event.c: pthread_cond_destroy() failed");
+        return;
+    }
+
+    /* Delete mutex.
+     */
+    if (pthread_mutex_destroy(&pe->mutex))
+    {
+        osal_debug_error("osal_event.c: pthread_mutex_destroy() failed");
+        return;
+    }
+
+    /* Free memory allocated for the event structure and inform resource monitor
+       that event has been deleted.
+     */
+    free(pe);
     osal_resource_monitor_decrement(OSAL_RMON_EVENT_COUNT);
+
 }
 
 
@@ -128,27 +161,42 @@ void osal_event_delete(
 void osal_event_set(
     osalEvent evnt)
 {
-    HANDLE
-        handle;
+    osalPosixEvent *pe;
 
-    /* Convert OSAL event pointer to Windows handle.
+    if (evnt == OS_NULL)
+    {
+        osal_debug_error("osal_event_set: NULL argument");
+        return;
+    }
+
+    pe = (osalPosixEvent*)evnt;
+
+    /* Lock event structure.
      */
-    handle = (HANDLE)evnt;
+    pthread_mutex_lock(&pe->mutex);
 
-
-#if OSAL_DEBUG
-    if (handle == NULL)
+    /* If event is already signaled, there is not much to do.
+     */
+    if (pe->signaled)
     {
-        osal_debug_error("NULL event pointer");
+        pthread_mutex_unlock(&pe->mutex);
         return;
     }
-#endif
 
-    if (!SetEvent(handle))
+    /* Mark event as signaled.
+     */
+    pe->signaled = OS_TRUE;
+
+    /* Set condition variable
+     */
+    if (pthread_cond_signal(&pe->cond))
     {
-        osal_debug_error("SetEvent failed");
-        return;
+        osal_debug_error("osal_event.c: pthread_cond_signal failed");
     }
+
+    /* Unlock event.
+     */
+    pthread_mutex_unlock(&pe->mutex);
 }
 
 
@@ -164,13 +212,16 @@ void osal_event_set(
   is signaled either before the function call or during wait interval function returns
   OSAL_SUCCESS. When the function returns the event is always cleared to non signaled state.
 
+  NOTE: Currently only timeout values 0 and OSAL_EVENT_INFINITE (-1) are supported.
+  I hope others would not be needed.
+
   @param   evnt Event pointer returned by osal_event_create() function.
   @param   timeout_ms Wait timeout. If event is not signaled within this time, then the
            function will return OSAL_STATUS_EVENT_TIMEOUT. To wait infinetly give
            OSAL_EVENT_INFINITE (-1) here. To check event state or to reset event to non
            signaled state without waiting set timeout_ms to 0.
 
-  @return  If the event was signaled, either before the oeal_event_wait call or during
+  @return  If the event was signaled, either before the osal_event_wait call or during
            wait interval, the function will return OSAL_SUCCESS (0). If the function timed
            out and the event remained unsignaled, it will return OSAL_STATUS_EVENT_TIMEOUT.
            Other values indicate failure, typically OSAL_STATUS_EVENT_FAILED.
@@ -182,40 +233,42 @@ osalStatus osal_event_wait(
     osalEvent evnt,
     os_int timeout_ms)
 {
-    HANDLE
-        handle;
+    osalPosixEvent *pe;
+    osalStatus s;
 
-    /* Convert OSAL event pointer to Windows handle.
-     */
-    handle = (HANDLE)evnt;
-
-    /* Make sure that infinite timeout matshes. This is propably unnecessary, check?
-     */
-    if (timeout_ms == OSAL_EVENT_INFINITE)
+    if (evnt == OS_NULL)
     {
-        timeout_ms = INFINITE;
+        osal_debug_error("osal_event_wait: NULL argument");
+        return OSAL_STATUS_EVENT_FAILED;
     }
 
-    /* Call Windows wait function
+    /* Cast posix event pointer and lock event.
      */
-    switch (WaitForSingleObject(handle, (DWORD)timeout_ms))
+    pe = (osalPosixEvent*)evnt;
+    pthread_mutex_lock(&pe->mutex);
+
+    /* If event is already signaled or immediate return regardless is requested,
+       set event to unsignald state and return OSAL SUCCESS or OSAL_STATUS_EVENT_TIMEOUT.
+     */
+    if (pe->signaled || timeout_ms == 0)
     {
-        /* The state of the specified object is signaled.
-         */
-        case WAIT_OBJECT_0:
-            return OSAL_SUCCESS;
-
-        /* The time-out interval elapsed, and the object's state is nonsignaled.
-         */
-        case WAIT_TIMEOUT:
-            return OSAL_STATUS_EVENT_TIMEOUT;
-
-        /* Some other problem.
-         */
-        default:
-            osal_debug_error("WaitForSingleObject failed");
-            return OSAL_STATUS_EVENT_FAILED;
+        s = (pe->signaled ? OSAL_SUCCESS : OSAL_STATUS_EVENT_TIMEOUT);
+        pe->signaled = OS_FALSE;
+        pthread_mutex_unlock(&pe->mutex);
+        return s;
     }
+
+    /* Wait for event.
+     */
+    do
+    {
+        pthread_cond_wait(&pe->cond, &pe->mutex);
+    }
+    while (!pe->signaled);
+
+    pe->signaled = OS_FALSE;
+    pthread_mutex_unlock(&pe->mutex);
+    return OSAL_SUCCESS;
 }
 
 #endif

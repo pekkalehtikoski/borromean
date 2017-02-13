@@ -41,7 +41,9 @@ eosal/eosal.h
 /coderoot/borromean/eosal/code/event/linux/osal_event.c
 eosal/eosal.h
 /coderoot/borromean/eosal/code/event/linux/eosal/eosal.h
-windows.h
+stdlib.h
+-
+pthread.h
 -
 
 /coderoot/borromean/eosal/code/initialize/common/osal_initialize.c
@@ -87,7 +89,9 @@ windows.h
 /coderoot/borromean/eosal/code/mutex/linux/osal_mutex.c
 eosal/eosal.h
 /coderoot/borromean/eosal/code/mutex/linux/eosal/eosal.h
-windows.h
+pthread.h
+-
+stdlib.h
 -
 
 /coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.c

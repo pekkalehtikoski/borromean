@@ -222,7 +222,7 @@ void osal_mutex_lock(
 
 ****************************************************************************************************
 */
-osalStatus osal_mutex_try_lock(
+/* osalStatus osal_mutex_try_lock(
     osalMutex mutex)
 {
     if (mutex == OS_NULL)
@@ -234,6 +234,7 @@ osalStatus osal_mutex_try_lock(
 	return TryEnterCriticalSection((LPCRITICAL_SECTION)mutex) 
 		? OSAL_SUCCESS : OSAL_STATUS_MUTEX_ALREADY_LOCKED;
 }
+*/
 
 
 /**

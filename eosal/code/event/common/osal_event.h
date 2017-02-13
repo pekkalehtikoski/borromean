@@ -66,6 +66,7 @@ typedef struct osalEventDummy *osalEvent;
     event is signaled.
  */
 #define OSAL_EVENT_INFINITE -1
+#define OSAL_EVENT_NO_WAIT 0
 
 /*@}*/
 
