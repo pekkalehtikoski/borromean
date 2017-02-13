@@ -17,7 +17,12 @@
 */
 #include "eosal/eosalx.h"
 
-#if 0
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/ip.h> /* superset of previous */
+#include <arpa/inet.h>
 
 /**
 ****************************************************************************************************
@@ -39,18 +44,19 @@ typedef struct osalSocket
 
 	/** Operating system's socket handle.
 	 */
-	SOCKET handle;
+    int handle;
 
-	/** Even to be set when new data has been received, can be sent, new connection has been 
-		created, accepted or closed socket.
+    /** Set to use for select.
 	 */
-	WSAEVENT event;
+    fd_set active_fd_set;
 
 	/** Stream open flags. Flags which were given to osal_socket_open() or osal_socket_accept()
         function. 
 	 */
 	os_int open_flags;
 
+    /** OS_TRUE if this is IPv6 socket.
+     */
     os_boolean is_ipv6;
 } 
 osalSocket;
@@ -111,11 +117,11 @@ osalStream osal_socket_open(
 	os_int port_nr;
 	os_char *host, *hostbuf, nbuf[OSAL_NBUF_SZ];
     os_ushort *host_utf16, *port_utf16;
-    ADDRINFOW *addrinfo = NULL;
-    ADDRINFOW *ptr = NULL;
-    ADDRINFOW hints;
+    struct addrinfo *addrinfo = NULL;
+    struct addrinfo *ptr = NULL;
+    struct addrinfo hints;
 	osalStatus rval;
-	SOCKET handle = INVALID_SOCKET;
+    int handle = -1;
 	struct sockaddr_in saddr;
     struct sockaddr_in6 saddr6;
     struct sockaddr *sa;
@@ -135,34 +141,27 @@ osalStream osal_socket_open(
     udp = (flags & OSAL_STREAM_UDP_MULTICAST) ? OS_TRUE : OS_FALSE;
 
     af = is_ipv6 ? AF_INET6 : AF_INET;
-    (struct sockaddr*)
+
 
     os_memclear(&hints, sizeof(hints));
     hints.ai_family = af;
     hints.ai_socktype = udp ? SOCK_DGRAM : SOCK_STREAM;
     hints.ai_protocol = udp ? IPPROTO_UDP : IPPROTO_TCP;
+
     sa = is_ipv6 ? (struct sockaddr *)&saddr6 : (struct sockaddr *)&saddr;
     sa_sz = is_ipv6 ? sizeof(saddr6) : sizeof(saddr);
     os_memclear(sa, sa_sz);
     
     if (host)
     {
-        if (InetPton(af, host, sa) <= 0)
+        if (inet_pton(af, host, sa) <= 0)
         {
-
-            host_utf16 = osal_string_utf8_to_utf16_malloc(host, &sz1);
             osal_int_to_string(nbuf, sizeof(nbuf), port_nr);
-            port_utf16 = osal_string_utf8_to_utf16_malloc(nbuf, &sz2);
-
-            s = GetAddrInfoW(host_utf16, port_utf16,
-                &hints, &addrinfo);
-
-            os_free(host_utf16, sz1);
-            os_free(port_utf16, sz2);
+            s = getaddrinfo(host, nbuf, &hints, &addrinfo);
 
             if (s || addrinfo == NULL) 
 		    {
-                if (addrinfo) FreeAddrInfoW(addrinfo);
+                if (addrinfo) freeaddrinfo(addrinfo);
 			    rval = OSAL_STATUS_FAILED;
 			    goto getout;
             }
@@ -176,7 +175,7 @@ osalStream osal_socket_open(
                 }
             }
 
-            FreeAddrInfoW(addrinfo);
+            freeaddrinfo(addrinfo);
 
             /* If no match found
              */
@@ -191,7 +190,7 @@ osalStream osal_socket_open(
     /* Create socket.
      */
     handle = socket(af, hints.ai_socktype, hints.ai_protocol);
-    if (handle == INVALID_SOCKET) 
+    if (handle == -1)
 	{
 		rval = OSAL_STATUS_FAILED;
 		goto getout;
@@ -246,6 +245,7 @@ osalStream osal_socket_open(
     {   
         /* Create event
          */
+/*
         mysocket->event = WSACreateEvent();
         if (mysocket->event == WSA_INVALID_EVENT)
         {
@@ -258,6 +258,7 @@ osalStream osal_socket_open(
 		    rval = OSAL_STATUS_FAILED;
 		    goto getout;
         }           
+ */
     }
 
     if (is_ipv6)
@@ -324,17 +325,18 @@ getout:
      */
     if (mysocket)
     {
-        if (mysocket->event) 
+/*        if (mysocket->event)
 	    {
 		    WSACloseEvent(mysocket->event);
 	    }
+        */
 
         os_free(mysocket, sizeof(osalSocket));
     }
 
     /* Close socket
      */    
-	if (handle != INVALID_SOCKET) 
+    if (handle != -1)
 	{
 		closesocket(handle);
 	}
@@ -366,7 +368,7 @@ void osal_socket_close(
 	osalStream stream)
 {
 	osalSocket *mysocket;
-	SOCKET handle;
+    int handle;
     char buf[64];
 	int n, rval;
 
@@ -381,11 +383,11 @@ void osal_socket_close(
 
 	/* If socket operating system socket is not already closed, close now.
 	 */
-	if (handle != INVALID_SOCKET)
+    if (handle != -1)
 	{
 		/* Mark socket closed
 		 */
-		mysocket->handle = INVALID_SOCKET;
+        mysocket->handle = -1;
 
 	    if (mysocket->event) 
 	    {
@@ -408,15 +410,16 @@ void osal_socket_close(
 		do
 		{
 			n = recv(handle, buf, sizeof(buf), 0);
-			if (n == SOCKET_ERROR) 
+            if (n == -1)
 			{
-	#if OSAL_DEBUG
+    /* #if OSAL_DEBUG
                 rval = WSAGetLastError();
-				if (rval != WSAEWOULDBLOCK && rval != WSAENOTCONN) 
+                if (errorno != WSAEWOULDBLOCK && rval != WSAENOTCONN)
 				{
 					osal_debug_error("reading end failed");
 				}
 	#endif
+    */
 				break;
 			}
 		} 
@@ -474,7 +477,7 @@ osalStream osal_socket_accept(
 
 		/* If socket operating system socket is not already closed.
 		 */
-		if (handle != INVALID_SOCKET)
+        if (handle != -1)
 		{
             if (mysocket->is_ipv6) 
             {
@@ -490,12 +493,12 @@ osalStream osal_socket_accept(
 		}
 		else
 		{
-			new_handle = INVALID_SOCKET;
+            new_handle = -1;
 		}
 
 		/* If no new connection, do nothing more.
 		 */
-        if (new_handle == INVALID_SOCKET) 
+        if (new_handle == -1)
 		{
 			if (status) *status = OSAL_STATUS_NO_NEW_CONNECTION;
 			return OS_NULL;
@@ -595,7 +598,7 @@ getout:
 
     /* Close socket
      */    
-	if (new_handle != INVALID_SOCKET) 
+    if (new_handle != -1)
 	{
 		closesocket(new_handle);
 	}
@@ -682,7 +685,7 @@ osalStatus osal_socket_write(
 
 		/* If operating system socket is already closed.
 		 */
-		if (handle == INVALID_SOCKET)
+        if (handle == -1)
 		{
 			goto getout;
 		}
@@ -757,7 +760,7 @@ osalStatus osal_socket_read(
 
 		/* If operating system socket is already closed.
 		 */
-		if (handle == INVALID_SOCKET)
+        if (handle == -1)
 		{
 			goto getout;
 		}
@@ -986,6 +989,7 @@ osalStatus osal_socket_select(
 void osal_socket_initialize(
 	void)
 {
+#if 0
     /** Windows socket library version information.
      */
     WSADATA osal_wsadata;
@@ -1022,6 +1026,7 @@ void osal_socket_initialize(
 	/* End synchronization.
 	 */
 	os_unlock();
+#endif
 }
 
 
@@ -1040,6 +1045,7 @@ void osal_socket_initialize(
 void osal_socket_shutdown(
 	void)
 {
+#if 0
 	/* If socket library is not initialized, do nothing.
 	 */
 	if (!osal_global->sockets_shutdown_func) return;
@@ -1055,6 +1061,7 @@ void osal_socket_shutdown(
 	/* Mark that socket library is no longer initialized.
 	 */
     osal_global->sockets_shutdown_func = OS_NULL;
+#endif
 }
 
 
@@ -1076,4 +1083,3 @@ osalStreamInterface osal_socket_iface
 
 #endif
 
-#endif
