@@ -16,12 +16,8 @@
 ****************************************************************************************************
 */
 #include "eosal/eosalx.h"
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <winsock2.h>
-#include <Ws2ipdef.h>
-#include <Ws2tcpip.h>
+
+#if 0
 
 /**
 ****************************************************************************************************
@@ -1083,3 +1079,4 @@ osalStreamInterface osal_socket_iface
 
 #endif
 
+#endif

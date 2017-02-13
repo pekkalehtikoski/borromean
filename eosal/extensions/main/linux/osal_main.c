@@ -1,15 +1,14 @@
 /**
 
-  @file    main/windows/osal_main.c
-  @brief   Windows specific process entry point function.
+  @file    main/linux/osal_main.c
+  @brief   Linux process entry point function.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
   This OSAL main process entry point header file. Generally the operating system calls entry
   point function to start the process. Unfortunately name, arguments and character encoding
-  for this entry point function varies. For example Windows uses main, wmain, WinMain and
-  wWinMain. Besides many tool libraries define their own entry point functions.
+  and other detail for this entry point function varies.
 
   To be start a process in generic way we write osal_main() function in our application
   and then link with osal_main, etc. library which contains appropriate operating system
@@ -18,11 +17,9 @@
   Notice that using osal_main() function to enter the process is optional, you can start the
   process in any way you like.
 
-  Windows notes:
-  - An application using /SUBSYSTEM:CONSOLE calls wmain, set wmainCRTStartup linker option
-    and link with osal_maind.lib (debug) or osal_main.lib (release).
-  - An application using /SUBSYSTEM:WINDOWS; calls wWinMain, which must be defined with
-    __stdcall, set wWinMainCRTStartup as entry point. Link with ?
+  Linux notes:
+  - On linux terminating '\r' on command line is removed. This is typically caused by
+    editing scripts on windows.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -37,10 +34,11 @@
 /**
 ****************************************************************************************************
 
-  @brief Windows console subsystem Unicode entry point.
-  @anchor wmain
+  @brief Linux process entry point.
+  @anchor main
 
-  The wmain() function is Windows /SUBSYSTEM:CONSOLE Unicode compilation entry point name.
+  The main() function is used generally as entry point. This function just removes extra '\r'
+  character, if one is found.
 
   @param   argc Number of command line arguments. First argument is name of the executable.
   @param   argv Array of string pointers, one for each command line argument plus first
@@ -50,18 +48,14 @@
 
 ****************************************************************************************************
 */
-int wmain(
+int main(
     int argc,
-    wchar_t *argv[])
+    char **argv)
 {
-    os_char
-        **utf8_argv;
-
-    os_int
-        i;
-
-    int
-        rval;
+    os_char **myargv, *p, *q;
+    os_memsz sz;
+    os_int i;
+    int rval;
 
     /* Initialize operating system abstraction layer.
      */
@@ -71,57 +65,33 @@ int wmain(
      */
     osal_thread_set_priority(OSAL_THREAD_PRIORITY_NORMAL);
 
-    /* Convert command line arguments from UTF16 to UTF8. This will be cleaned up when
-       osal_shutdown runs at exit, and all memory will be released.
+    /* Copy pointers to command line arguments. If command line argument contains '\r'
+       character, make copy and terminate ar '\r'. These memory allocations will be
+       cleaned up when osal_shutdown runs at exit, and all memory is released.
      */
-    utf8_argv = (os_char**)os_malloc(argc*sizeof(os_char*), OS_NULL);
+    myargv = (os_char**)os_malloc(argc*sizeof(os_char*), OS_NULL);
     for (i = 0; i < argc; i++)
     {
-        utf8_argv[i] = osal_string_utf16_to_utf8_malloc(argv[i], OS_NULL);
+        myargv[i] = argv[i];
+        p = myargv[i];
+        if (os_strchr(p, '\r'))
+        {
+            sz = os_strlen(p);
+            q = os_malloc(sz, OS_NULL);
+            os_memcpy(q, p, sz);
+            myargv[argc-1] = q;
+            p = os_strchr(q, '\r');
+            *p = '\0';
+        }
     }
 
     /* Call OS independent process entry point.
      */
-    rval = osal_main(argc, utf8_argv);
+    rval = osal_main(argc, myargv);
 
     /* Shut down operating system abstraction layer.
      */
     osal_shutdown();
     
     return rval;
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Windows console subsystem MBCS entry point.
-  @anchor main
-
-  The main() function is Windows /SUBSYSTEM:CONSOLE MBCS compilation entry point name.
-
-  MinGW doesn't support wmain() directly, thus this intermediate entry point function is
-  always needed when compiling with MinGW.
-
-  @param   argc Number of command line arguments.
-  @param   argv Array of string pointers, one for each command line argument plus.
-
-  @return  Integer return value to caller.
-
-****************************************************************************************************
-*/
-int main(
-    int a_argc,
-    char **a_argv)
-{
-    wchar_t **argv;
-    int argc;
-
-    /* Get comman line arguments as UTF16
-     */
-    argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-
-    /* Call the Unicode entry point.
-     */
-    return wmain(argc, argv);
 }

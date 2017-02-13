@@ -16,7 +16,7 @@
 ****************************************************************************************************
 */
 #include "eosal/eosalx.h"
-#include <sys/time.h>
+#include <time.h>
 
 
 /**
@@ -39,24 +39,19 @@ void os_time(
     struct timespec ts;
 
 #ifdef CLOCK_REALTIME_COARSE
-    if (clock_gettime(CLOCK_REALTIME_COARSE, &t))
+    if (!clock_gettime(CLOCK_REALTIME_COARSE, &ts))
     {
-        if (gettimeofday(&ts, NULL))
-        {
-            osal_debug_error("os_time: Get system time failed");
-            *t = 0;
-            return;
-        }
+        goto goon;
     }
-#else
-    if (gettimeofday(&ts, NULL))
+#endif
+    if (clock_gettime(CLOCK_REALTIME, &ts))
     {
         osal_debug_error("os_time: Get system time failed");
         *t = 0;
         return;
     }
-#endif
-    *t = 1000000 * (os_long)ts.tv_sec + (os_long)ts.tv_usec;
+goon:
+    *t = 1000000 * (os_long)ts.tv_sec + (os_long)ts.tv_nsec / 10000;
 }
 
 
@@ -80,11 +75,11 @@ osalStatus os_settime(
     struct timespec ts;
 
     ts.tv_sec = (time_t)(*t / 1000000);
-    ts.tv_usec = (suseconds_t)(*t % 1000000);
+    ts.tv_nsec = (long)(*t % 1000000) * 1000;
 
     if (clock_settime(CLOCK_REALTIME, &ts))
     {
-	    return OSAL_FAILED;
+        return OSAL_STATUS_FAILED;
     }
 
 	return OSAL_SUCCESS;
