@@ -51,8 +51,7 @@ void osal_debug_error_func(
     const os_char *file,
 	os_int line)
 {
-	os_char 
-		nbuf[22];
+    os_char nbuf[22];
 
 	/* Write error message on debug console, if any.
 	 */

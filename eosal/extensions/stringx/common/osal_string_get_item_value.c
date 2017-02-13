@@ -58,10 +58,7 @@ os_char *osal_string_get_item_value(
 	os_memsz *n_chars,
 	os_short flags)
 {
-	os_char
-		c,
-		*p,
-		*start;
+    os_char c, *p, *start;
 
 	/* Find item by name.
 	 */
@@ -142,9 +139,7 @@ getout:
 os_char *osal_string_get_next_line(
     os_char *list_str)
 {
-	os_char
-		*a,
-		*b;
+    os_char *a, *b;
 
 	/* If list string is NULL pointer, return pointer to null character.
 	 */

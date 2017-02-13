@@ -52,20 +52,13 @@ os_memsz osal_string_utf16_to_utf8(
     os_memsz buf8_sz,
     const os_ushort *str16)
 {
-    os_uint
-        c32;
-
-    os_memsz
-        pos;
-
-    static os_ushort
-        null_16 = '\0';
+    os_uint c32;
+    os_memsz pos;
+    static os_ushort null_16 = '\0';
 
 #if OSAL_UTF8
-    os_int
-        n;
+    os_int n;
 #endif
-
 
     /* Treat NULL pointer source string as an empty string.
      */

@@ -37,15 +37,9 @@ os_long osal_string_to_int(
     os_char *str,
 	os_memsz *count)
 {
-	os_char
-		c,
-		*p;
-
-	os_long
-		x;
-
-	os_boolean
-		negative;
+    os_char c, *p;
+    os_long x;
+    os_boolean negative;
 
 	/* Check that str is not NULL pointer.
 	 */

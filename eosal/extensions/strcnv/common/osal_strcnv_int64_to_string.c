@@ -44,22 +44,10 @@ os_memsz osal_strcnv_int64_to_string(
     os_memsz buf_sz,
     os_int64 *x)
 {
-    os_uint 
-        low, 
-        high;
-
-    os_int64 
-		i1,
-		i2,
-		i3;
-
-    os_char 
-        tmpbuf[22], 
-        *b, 
-        *dst;
-
-    os_boolean 
-        negative;
+    os_uint low, high;
+    os_int64 i1, i2, i3;
+    os_char tmpbuf[22], *b, *dst;
+    os_boolean negative;
 
 	/* Check function arguments.
 	 */

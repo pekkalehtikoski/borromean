@@ -41,8 +41,7 @@ os_memsz osal_strcnv_string_to_int64(
     os_char *str)
 {
 #if OSAL_LONG_IS_64_BITS
-	os_memsz 
-		count;
+    os_memsz count;
 	
 	*x = (os_int64)osal_string_to_int(str, &count);
 	return count;

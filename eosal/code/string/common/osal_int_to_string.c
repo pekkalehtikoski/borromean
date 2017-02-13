@@ -41,10 +41,7 @@ os_memsz osal_int_to_string(
 	os_memsz buf_sz,
 	os_long x)
 {
-	os_char
-		*p,
-		*t,
-		tmp[22];
+    os_char *p, *t, tmp[22];
 
 	/* Check function arguments.
 	 */

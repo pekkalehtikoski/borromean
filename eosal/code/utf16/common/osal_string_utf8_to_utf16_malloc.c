@@ -54,11 +54,8 @@ os_ushort *osal_string_utf8_to_utf16_malloc(
     const os_char *str8,
     os_memsz *sz_ptr)
 {
-    os_memsz
-        sz;
-
-    os_ushort
-        *buf16;
+    os_memsz sz;
+    os_ushort *buf16;
 
     /* Calculate buffer size to hold the UTF16 encoded string.
      */

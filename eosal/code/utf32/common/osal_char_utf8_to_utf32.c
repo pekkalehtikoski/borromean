@@ -46,14 +46,8 @@
 os_uint osal_char_utf8_to_utf32(
     const os_char **c8ptr)
 {
-    os_uchar
-        *c,
-        firstc;
-
-    os_uint
-        mask,
-        sz,
-        c32;
+    os_uchar *c, firstc;
+    os_uint mask, sz, c32;
 
     c = (os_uchar*)*c8ptr;
 

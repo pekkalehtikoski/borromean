@@ -42,9 +42,7 @@
 os_uint osal_char_utf16_to_utf32(
     const os_ushort **c16ptr)
 {
-    os_uint
-        a,
-        b;
+    os_uint a, b;
 
 #if OSAL_DEBUG
     if (*c16ptr == OS_NULL)

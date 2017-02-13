@@ -81,22 +81,11 @@ osalStatus osal_stream_write(
 	os_memsz *n_written,
 	os_int flags)
 {
-	os_int64 
-		start_t,
-		now_t;
-
-	osalStatus 
-		rval;
-
-	os_memsz
-		n_written_now,
-		total_written;
-
-	os_int 
-		write_timeout_ms;
-
-	os_boolean
-		use_timer;
+    os_int64 start_t, now_t;
+    osalStatus rval;
+    os_memsz n_written_now, total_written;
+    os_int write_timeout_ms;
+    os_boolean use_timer;
 
 	if (stream)
 	{
@@ -248,18 +237,10 @@ osalStatus osal_stream_read_value(
 	os_ushort *c,
 	os_int flags)
 {
-	os_int64 
-		start_t,
-		now_t;
-
-	osalStatus 
-		rval;
-
-	os_int 
-		read_timeout_ms;
-
-	os_boolean
-		use_timer;
+    os_int64 start_t, now_t;
+    osalStatus rval;
+    os_int read_timeout_ms;
+    os_boolean use_timer;
 
 	if (stream)
 	{

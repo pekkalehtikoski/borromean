@@ -64,19 +64,9 @@ os_memsz osal_strcnv_string_to_float(
     os_double *x,
     const os_char *str)
 {
-	os_double 
-		number,
-		p10;
-
-	os_int 
-		exponent,
-		negative,
-		n,
-		num_digits,
-		num_decimals;
-
-	os_char 
-		*p;
+    os_double number, p10;
+    os_int exponent, negative, n, num_digits, num_decimals;
+    os_char *p;
 
     p = (os_char*)str;
 

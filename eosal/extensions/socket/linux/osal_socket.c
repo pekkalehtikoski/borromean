@@ -441,17 +441,14 @@ void osal_socket_close(
   The osal_socket_accept() function accepts an incoming connection from listening socket.
 
   @param   stream Stream pointer representing the listening socket.
-
   @param   status Pointer to integer into which to store the function status code. Value
 		   OSAL_SUCCESS (0) indicates that new connection was successfully accepted.
 		   The value OSAL_STATUS_NO_NEW_CONNECTION indicates that no new incoming 
 		   connection, was accepted.  All other nonzero values indicate an error,
            See @ref osalStatus "OSAL function return codes" for full list.
 		   This parameter can be OS_NULL, if no status code is needed. 
-
   @param   flags Flags for creating the socket. Define OSAL_STREAM_DEFAULT for normal operation.
 		   See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
-
   @return  Stream pointer representing the socket, or OS_NULL if the function failed.
 
 ****************************************************************************************************

@@ -46,18 +46,9 @@ os_memsz osal_strcnv_float_to_string(
     os_int ddigs,
 	os_int flags)
 {
-	os_int 
-		c,
-		j, 
-		m, 
-		ndig;
-
-	os_double 
-		y;
-
-	os_char
-		*s,
-		*e;
+    os_int c, j, m, ndig;
+    os_double y;
+    os_char *s, *e;
 
     /* Set s to point position where to store the next character, 
 	   and e to point end of buffer.

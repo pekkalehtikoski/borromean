@@ -53,11 +53,7 @@ os_int osal_char_utf32_to_utf8(
     os_memsz buf_sz,
     os_uint c32)
 {
-    os_uint
-        sz,
-        limit_value,
-        sh,
-        mask;
+    os_uint sz, limit_value, sh, mask;
 
     /* One byte UTF8 character. This is most common case.
      */

@@ -68,12 +68,8 @@ osalStream osal_queue_open(
 	osalStatus *status,
 	os_short flags)
 {
-	osalQueue 
-		*queue;
-
-	os_memsz
-		sz,
-		true_sz;
+    osalQueue *queue;
+    os_memsz sz, true_sz;
 
 	/* Parse queue buffer size from paramete string, for example "buf=1024". Default 
 	   queue size is 512 bytes.
@@ -153,8 +149,7 @@ memalloc_failed:
 void osal_queue_close(
 	osalStream stream)
 {
-	osalQueue 
-		*queue;
+    osalQueue *queue;
 
 	if (stream)
 	{
@@ -222,27 +217,11 @@ osalStatus osal_queue_write(
 	os_memsz *n_written,
 	os_short flags)
 {
-	osalQueue
-		*queue;
-
-	os_uchar 
-		*qbuf,
-		prev_c;
-
-	const os_uchar 
-		*d;
-
-	os_memsz
-		cnt,
-		sz,
-		head,
-		tail,
-		space,
-		i,
-		qu_n;
-
-	os_boolean
-		ctrl_support;
+    osalQueue *queue;
+    os_uchar *qbuf, prev_c;
+    const os_uchar *d;
+    os_memsz cnt, sz, head, tail, space, i, qu_n;
+    os_boolean ctrl_support;
 
 	if (stream)
 	{
@@ -421,19 +400,9 @@ osalStatus osal_queue_read(
 	os_memsz *n_read,
 	os_short flags)
 {
-	osalQueue
-		*queue;
-
-	os_uchar 
-		*qbuf,
-		*d,
-		prev_c;
-
-	os_memsz
-		cnt,
-		sz,
-		head,
-		tail;
+    osalQueue *queue;
+    os_uchar *qbuf, *d, prev_c;
+    os_memsz cnt, sz, head, tail;
 
 	if (stream)
 	{
@@ -550,22 +519,10 @@ osalStatus osal_queue_write_value(
 	os_ushort c,
 	os_short flags)
 {
-	osalQueue
-		*queue;
-
-	os_memsz
-		head,
-		next_head,
-		prev_head,
-		tail,
-		sz,
-		space;
-
-	osalStatus
-		rval;
-
-	os_boolean
-		ctrl_support;
+    osalQueue *queue;
+    os_memsz head, next_head, prev_head, tail, sz, space;
+    osalStatus rval;
+    os_boolean ctrl_support;
 
 	if (stream)
 	{
@@ -688,20 +645,10 @@ osalStatus osal_queue_read_value(
 	os_ushort *c,
 	os_short flags)
 {
-	osalQueue
-		*queue;
-
-	os_memsz
-		head,
-		tail,
-		sz;
-
-	osalStatus
-		rval;
-
-	os_ushort 
-		cc,
-		nc;
+    osalQueue *queue;
+    os_memsz head, tail, sz;
+    osalStatus rval;
+    os_ushort cc, nc;
 
 	if (stream)
 	{

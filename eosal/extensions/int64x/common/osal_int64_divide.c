@@ -55,11 +55,8 @@ void osal_int64_divide(
     os_int64 *x, 
     const os_int64 *y)
 {
-    os_int64
-        yy;
-
-    os_boolean
-        negative_result;
+    os_int64 yy;
+    os_boolean negative_result;
 
     negative_result = OS_FALSE;
     if (osal_int64_is_negative(x)) 
@@ -100,31 +97,11 @@ static void osal_int64_unsigned_divide(
     os_int64 *x, 
     const os_int64 *y)
 {
-    os_ushort
-		*xw,
-		x_start,
-		y_start,
-		x_end,
-		borrow,
-		next_borrow,
-		xx,
-		yy;
-
-	const os_ushort
-		*yw;
-
-	os_short
-		j;
-
-	os_uint
-		x32,
-		y32,
-		y32_original,
-		res;
-
-	os_int64
-		result,
-		tmp;
+    os_ushort *xw, x_start, y_start, x_end, borrow, next_borrow, xx,yy;
+    const os_ushort *yw;
+    os_short j;
+    os_uint x32, y32, y32_original, res;
+    os_int64 result, tmp;
 
 	xw = x->w;
 	yw = y->w;

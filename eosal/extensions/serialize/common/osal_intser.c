@@ -44,11 +44,8 @@ os_int osal_intser_writer(
 	os_char *buf,
 	os_long x)
 {
-	os_int
-		n;
-
-	os_char 
-		*p;
+    os_int n;
+    os_char *p;
 
 	if (x < 0x10)
 	{
@@ -107,16 +104,9 @@ os_int osal_intser_reader(
 	os_char *buf,
 	os_long *x)
 {
-	os_int 
-		shift;
-
-	os_char
-		c,
-		count,
-		*p;
-
-	os_long
-		y;
+    os_int shift;
+    os_char c, count, *p;
+    os_long y;
 
 	c = *buf;
 

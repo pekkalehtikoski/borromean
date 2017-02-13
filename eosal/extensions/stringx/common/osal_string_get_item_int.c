@@ -46,14 +46,9 @@ os_long osal_string_get_item_int(
 	os_long default_value,
 	os_short flags)
 {
-	os_char
-		*str_value;
-
-	os_memsz 
-		count;
-
-	os_long
-		x;
+    os_char *str_value;
+    os_memsz count;
+    os_long x;
 
 	/* Get pointer to value as string.
 	 */

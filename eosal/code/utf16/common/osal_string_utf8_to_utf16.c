@@ -53,14 +53,9 @@ os_memsz osal_string_utf8_to_utf16(
     os_memsz buf16_n,
     const os_char *str8)
 {
-    os_uint
-        c32;
-
-    os_int
-        n;
-
-    os_memsz
-        pos;
+    os_uint c32;
+    os_int n;
+    os_memsz pos;
 
     /* Treat NULL pointer source string as an empty string.
      */
