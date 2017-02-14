@@ -433,6 +433,10 @@ void osal_socket_close(
 			osal_debug_error("closesocket failed");
 		}
 	}
+
+    /* Free memory allocated for socket structure.
+     */
+    os_free(mysocket, (osalSocket*));
 }
 
 

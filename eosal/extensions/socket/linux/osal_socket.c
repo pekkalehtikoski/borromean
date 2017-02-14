@@ -23,6 +23,8 @@
 #include <netinet/in.h>
 #include <netinet/ip.h> /* superset of previous */
 #include <arpa/inet.h>
+#include <errno.h>
+#include <unistd.h>
 
 /**
 ****************************************************************************************************
@@ -48,7 +50,7 @@ typedef struct osalSocket
 
     /** Set to use for select.
 	 */
-    fd_set active_fd_set;
+//    fd_set active_fd_set;
 
 	/** Stream open flags. Flags which were given to osal_socket_open() or osal_socket_accept()
         function. 
@@ -60,6 +62,13 @@ typedef struct osalSocket
     os_boolean is_ipv6;
 } 
 osalSocket;
+
+
+/* Prototypes for forward referred static functions.
+ */
+static void osal_socket_blocking_mode(
+    int handle,
+    int blockingmode);
 
 
 /**
@@ -212,7 +221,7 @@ osalStream osal_socket_open(
 	 */
     if ((flags & OSAL_STREAM_BLOCKING) == 0)
     {
-    	ioctlsocket(handle, FIONBIO, &on);
+        osal_socket_blocking_mode(handle, OS_FALSE);
     }
 
 	/* Allocate and clear socket structure.
@@ -296,8 +305,7 @@ osalStream osal_socket_open(
 	{
 		if (connect(handle, sa, sa_sz))
 		{
-            rval = WSAGetLastError();
-            if (rval != WSAEWOULDBLOCK )
+            if (errno != EWOULDBLOCK && errno != EINPROGRESS)
             {
 			    rval = OSAL_STATUS_FAILED;
 			    goto getout;
@@ -338,7 +346,7 @@ getout:
      */    
     if (handle != -1)
 	{
-		closesocket(handle);
+        close(handle);
 	}
 
 	/* Set status code and return NULL pointer.
@@ -389,17 +397,16 @@ void osal_socket_close(
 		 */
         mysocket->handle = -1;
 
-	    if (mysocket->event) 
+        /* if (mysocket->event)
 	    {
 		    WSACloseEvent(mysocket->event);
-	    }
+        } */
 
 		/* Disable sending data. This informs other the end of socket that it is going down now.
 		 */
-		if (shutdown(handle, SD_SEND)) 
+        if (shutdown(handle, 2))
 		{
-            rval = WSAGetLastError();
-            if (rval != WSAENOTCONN)
+            if (errno != ENOTCONN)
             {
 			    osal_debug_error("shutdown() failed");
             }
@@ -412,14 +419,15 @@ void osal_socket_close(
 			n = recv(handle, buf, sizeof(buf), 0);
             if (n == -1)
 			{
-    /* #if OSAL_DEBUG
-                rval = WSAGetLastError();
-                if (errorno != WSAEWOULDBLOCK && rval != WSAENOTCONN)
+    #if OSAL_DEBUG
+
+                if (errno != EWOULDBLOCK &&
+                    errno != EINPROGRESS &&
+                    errno != ENOTCONN)
 				{
 					osal_debug_error("reading end failed");
 				}
 	#endif
-    */
 				break;
 			}
 		} 
@@ -427,11 +435,15 @@ void osal_socket_close(
 
 		/* Close the socket.
 		 */
-		if (closesocket(handle)) 
+        if (close(handle))
 		{
 			osal_debug_error("closesocket failed");
 		}
 	}
+
+    /* Free memory allocated for socket structure.
+     */
+    os_free(mysocket, sizeof(osalSocket));
 }
 
 
@@ -462,7 +474,7 @@ osalStream osal_socket_accept(
 	os_int flags)
 {
 	osalSocket *mysocket, *newsocket = OS_NULL;
-	SOCKET handle, new_handle;
+    int handle, new_handle;
 	int addr_size, on = 1;
 	struct sockaddr_in sin_remote;
 	struct sockaddr_in6 sin_remote6;
@@ -520,11 +532,7 @@ osalStream osal_socket_accept(
 	     */
         if ((flags & OSAL_STREAM_BLOCKING) == 0)
         {
-    	    if (ioctlsocket(new_handle, FIONBIO, &on) == SOCKET_ERROR)
-            {
-		        rval = OSAL_STATUS_FAILED;
-		        goto getout;
-            }
+            osal_socket_blocking_mode(handle, OS_FALSE);
         }
 
 		/* Allocate and clear socket structure.
@@ -532,7 +540,7 @@ osalStream osal_socket_accept(
 		newsocket = (osalSocket*)os_malloc(sizeof(osalSocket), OS_NULL);
 		if (newsocket == OS_NULL) 
 		{
-			closesocket(new_handle);
+            close(new_handle);
 			if (status) *status = OSAL_STATUS_MEMORY_ALLOCATION_FAILED;
 			return OS_NULL;
 		}
@@ -560,7 +568,7 @@ osalStream osal_socket_accept(
         {   
             /* Create event
              */
-            newsocket->event = WSACreateEvent();
+            /* newsocket->event = WSACreateEvent();
             if (newsocket->event == WSA_INVALID_EVENT)
             {
 		        rval = OSAL_STATUS_MEMORY_ALLOCATION_FAILED;
@@ -572,7 +580,7 @@ osalStream osal_socket_accept(
             {
 		        rval = OSAL_STATUS_FAILED;
 		        goto getout;
-            }           
+            }  */
         }
 
 		/* Success set status code and cast socket structure pointer to stream pointer 
@@ -588,10 +596,10 @@ getout:
      */
     if (newsocket)
     {
-        if (newsocket->event) 
+        /* if (newsocket->event)
 	    {
 		    WSACloseEvent(newsocket->event);
-	    }
+        } */
 
         os_free(newsocket, sizeof(osalSocket));
     }
@@ -600,7 +608,7 @@ getout:
      */    
     if (new_handle != -1)
 	{
-		closesocket(new_handle);
+        close(new_handle);
 	}
 
 	/* Set status code and return NULL pointer.
@@ -663,7 +671,7 @@ osalStatus osal_socket_write(
 {
 	int rval;
 	osalSocket *mysocket;
-	SOCKET handle;
+    int handle;
 
 	if (stream)
 	{
@@ -696,9 +704,9 @@ osalStatus osal_socket_write(
         
 		rval = send(handle, buf, (int)n, 0);
 
-		if (rval == SOCKET_ERROR)
+        if (rval == -1)
 		{
-			if (WSAGetLastError() != WSAEWOULDBLOCK) 
+            if (errno != EWOULDBLOCK && errno != EINPROGRESS)
 			{
 				goto getout;
 			}
@@ -747,9 +755,8 @@ osalStatus osal_socket_read(
 	os_memsz *n_read,
 	os_int flags)
 {
-	int rval;
 	osalSocket *mysocket;
-	SOCKET handle;
+    int handle, rval;
 
 	if (stream)
 	{
@@ -771,9 +778,9 @@ osalStatus osal_socket_read(
 
 		rval = recv(handle, buf, (int)n, 0);
 
-		if (rval == SOCKET_ERROR)
+        if (rval == -1)
 		{
-			if (WSAGetLastError() != WSAEWOULDBLOCK) 
+            if (errno != EWOULDBLOCK && errno != EINPROGRESS)
 			{
 				goto getout;
 			}
@@ -867,11 +874,10 @@ osalStatus osal_socket_select(
 {
 	osalSocket *mysocket;
     osalSocket *sockets[OSAL_SOCKET_SELECT_MAX+1];
-	WSAEVENT events[OSAL_SOCKET_SELECT_MAX+1];
+//	WSAEVENT events[OSAL_SOCKET_SELECT_MAX+1];
 	os_int ixtable[OSAL_SOCKET_SELECT_MAX+1];
-	WSANETWORKEVENTS network_events;
-    os_int i, n_sockets, n_events, event_nr, eventflags, errorcode;
-    DWORD rval;
+//	WSANETWORKEVENTS network_events;
+    os_int i, n_sockets, n_events, event_nr, eventflags, errorcode, rval;
     
     os_memclear(selectdata, sizeof(osalSelectData));
 
@@ -972,6 +978,42 @@ osalStatus osal_socket_select(
 
     return OSAL_SUCCESS;
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Set blocking or non blocking mode for socket.
+  @anchor osal_socket_blocking_mode
+
+  The osal_socket_blocking_mode() function selects either blocking on nonblocking mode for the
+  socket.
+
+  @param  handle Socket handle.
+  @param  blockingmode Nonzero to set blocking mode, zero to set non blocking mode.
+  @return None.
+
+****************************************************************************************************
+*/
+static void osal_socket_blocking_mode(
+    int handle,
+    int blockingmode)
+{
+   int fl;
+
+   if (handle >= 0)
+   {
+       fl = fcntl(fd, F_GETFL, 0);
+       if (fl < 0) goto getout;
+       fl = blockingmode ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
+       if (fcntl(fd, F_SETFL, flags)) goto getout;
+       return;
+   }
+
+getout:
+   osal_debug_error("osal_socket.c: blocking mode ctrl failed");
+}
+
 
 
 /**
