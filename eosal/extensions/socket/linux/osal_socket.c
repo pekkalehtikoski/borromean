@@ -25,6 +25,11 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <unistd.h>
+#include <fcntl.h>
+
+
+
+#include <stdio.h> // FOR TESTING
 
 /**
 ****************************************************************************************************
@@ -50,7 +55,7 @@ typedef struct osalSocket
 
     /** Set to use for select.
 	 */
-//    fd_set active_fd_set;
+//    fd_set *set;
 
 	/** Stream open flags. Flags which were given to osal_socket_open() or osal_socket_accept()
         function. 
@@ -874,6 +879,7 @@ osalStatus osal_socket_select(
 {
 	osalSocket *mysocket;
     osalSocket *sockets[OSAL_SOCKET_SELECT_MAX+1];
+    fd_set rdset, wrset, exset;
 //	WSAEVENT events[OSAL_SOCKET_SELECT_MAX+1];
 	os_int ixtable[OSAL_SOCKET_SELECT_MAX+1];
 //	WSANETWORKEVENTS network_events;
@@ -885,13 +891,21 @@ osalStatus osal_socket_select(
         return OSAL_STATUS_FAILED;
 
     n_sockets = 0;
+    FD_ZERO(&rdset);
+    FD_ZERO(&wrset);
+    FD_ZERO(&exset);
+
     for (i = 0; i < nstreams; i++)
     {
         mysocket = (osalSocket*)streams[i];
         if (mysocket)
         {
-            sockets[n_sockets] = mysocket; 
-            events[n_sockets] = mysocket->event;
+            sockets[n_sockets] = mysocket;
+//            events[n_sockets] = mysocket->event;
+            FD_SET(mysocket->handle, &rdset);
+            FD_SET(mysocket->handle, &wrset);
+            FD_SET(mysocket->handle, &exset);
+                     // myfds[j] is readable
             ixtable[n_sockets++] = i;
         }
     }
@@ -899,15 +913,35 @@ osalStatus osal_socket_select(
 
     /* If we have event, add it to wait.
      */
-    if (evnt)
+    /* if (evnt)
     {
         events[n_events++] = evnt;
     }
+    */
 
-    rval = WSAWaitForMultipleEvents(n_events,
-		events, FALSE, WSA_INFINITE, FALSE);
+    if (select(n_sockets, &rdset, &wrset, &exset, NULL) < 0)
+    {
+        printf ("select failed\n");
+    }
 
-    event_nr = (os_int)(rval - WSA_WAIT_EVENT_0);
+
+    for (i = 0; i < nstreams; i++)
+    {
+        if (FD_ISSET (i, &rdset))
+        {
+            printf ("Read %d\n", (int)i);
+        }
+
+        if (FD_ISSET (i, &wrset))
+        {
+            printf ("Write %d\n", (int)i);
+        }
+    }
+
+    /* rval = WSAWaitForMultipleEvents(n_events,
+        events, FALSE, WSA_INFINITE, FALSE); */
+
+    /* event_nr = (os_int)(rval - WSA_WAIT_EVENT_0);
 
     if (evnt && event_nr == n_sockets)
     {
@@ -968,7 +1002,7 @@ osalStatus osal_socket_select(
 	if (network_events.lNetworkEvents & FD_WRITE)
 	{
         eventflags |= OSAL_STREAM_WRITE_EVENT;
-	}
+    } */
 
     selectdata->eventflags = eventflags;
     selectdata->errorcode = errorcode;
@@ -1003,17 +1037,16 @@ static void osal_socket_blocking_mode(
 
    if (handle >= 0)
    {
-       fl = fcntl(fd, F_GETFL, 0);
+       fl = fcntl(handle, F_GETFL, 0);
        if (fl < 0) goto getout;
-       fl = blockingmode ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
-       if (fcntl(fd, F_SETFL, flags)) goto getout;
+       fl = blockingmode ? (fl & ~O_NONBLOCK) : (fl | O_NONBLOCK);
+       if (fcntl(handle, F_SETFL, fl)) goto getout;
        return;
    }
 
 getout:
    osal_debug_error("osal_socket.c: blocking mode ctrl failed");
 }
-
 
 
 /**

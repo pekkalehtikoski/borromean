@@ -136,7 +136,7 @@ os_boolean os_elapsed(
 
 ****************************************************************************************************
 */
-os_boolean osal_timer_elapsed2(
+os_boolean os_elapsed2(
     os_int64 *start_t,
     os_int64 *now_t,
 	os_long period_ms)

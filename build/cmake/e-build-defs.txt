@@ -39,6 +39,13 @@ else()
 endif()
 
 
+# Postfix letter "d" for debug libraries and binaries.
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+  set(E_POSTFIX "d")
+else()
+  set(E_POSTFIX "")
+endif()
+
 # Include path.
 set(ENV{E_INCLUDE} "$ENV{E_ROOT}")
 
@@ -51,13 +58,21 @@ set(ENV{E_BIN} "$ENV{E_ROOT}/bin/$ENV{E_OSVER}")
 # Temporary file path.
 set(ENV{E_TMP} "$ENV{E_ROOT}/tmp/$ENV{E_OSVER}_$ENV{E_COMPILER}")
 
-# Commonly used libraries for objects console application.
-set(ENV{E_COMMON_CONSOLE_APP_LIBS} "eobjects;eosal")
-
 # Commonly used libraries for eosal console application.
-set(ENV{OSAL_CONSOLE_APP_LIBS} "eosal")
+set(ENV{OSAL_CONSOLE_APP_LIBS} "eosal${E_POSTFIX}")
 
+# Commonly used libraries for objects console application.
+set(ENV{E_COMMON_CONSOLE_APP_LIBS} "eobjects${E_POSTFIX};eosal${E_POSTFIX}")
+
+#windows
 if(WIN32)
-  set(ENV{E_COMMON_CONSOLE_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};WS2_32")
   set(ENV{OSAL_CONSOLE_APP_LIBS} "$ENV{OSAL_CONSOLE_APP_LIBS};WS2_32")
+  set(ENV{E_COMMON_CONSOLE_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};WS2_32")
+
+# Linux
+else()
+  set(ENV{OSAL_CONSOLE_APP_LIBS} "$ENV{OSAL_CONSOLE_APP_LIBS};pthread")
+  set(ENV{E_COMMON_CONSOLE_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};pthread")
 endif()
+
+# LINK_LIBRARY optimized Foo debug Foo_d)
