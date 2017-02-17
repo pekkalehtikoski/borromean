@@ -436,7 +436,7 @@ void osal_socket_close(
 
     /* Free memory allocated for socket structure.
      */
-    os_free(mysocket, (osalSocket*));
+    os_free(mysocket, sizeof(osalSocket));
 }
 
 

@@ -26,5 +26,5 @@ file(GLOB_RECURSE SOURCES "${E_SOURCE_PATH}/*.cpp")
  
 # Build executable. Set library folder and libraries to link with
 link_directories($ENV{E_LIB})
-add_executable(${E_PROJECT} ${HEADERS} ${SOURCES})
-target_link_libraries(${E_PROJECT} $ENV{E_COMMON_GUI_APP_LIBS})
+add_executable(${E_PROJECT}${E_POSTFIX} ${HEADERS} ${SOURCES})
+target_link_libraries(${E_PROJECT}${E_POSTFIX} $ENV{E_COMMON_GUI_APP_LIBS})

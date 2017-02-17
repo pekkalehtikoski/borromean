@@ -25,5 +25,5 @@ file(GLOB_RECURSE SOURCES "${E_SOURCE_PATH}/*.c")
  
 # Build executable. Set library folder and libraries to link with
 link_directories($ENV{E_LIB})
-add_executable(${E_PROJECT} ${SOURCES})
-target_link_libraries(${E_PROJECT} $ENV{OSAL_CONSOLE_APP_LIBS})
+add_executable(${E_PROJECT}${E_POSTFIX} ${SOURCES})
+target_link_libraries(${E_PROJECT}${E_POSTFIX} $ENV{OSAL_CONSOLE_APP_LIBS})
