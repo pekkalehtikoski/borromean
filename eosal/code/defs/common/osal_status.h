@@ -86,7 +86,11 @@ typedef enum
 	/** No new incoming connection. The stream function osal_stream_accept() return this 
 	    code to indicate that no new connection was accepted. 
 	 */
-	OSAL_STATUS_NO_NEW_CONNECTION
+    OSAL_STATUS_NO_NEW_CONNECTION,
+
+    /** Socket has been closed.
+     */
+    OSAL_STATUS_SOCKET_CLOSED
 }
 osalStatus;
 

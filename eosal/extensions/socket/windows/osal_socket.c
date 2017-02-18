@@ -412,7 +412,7 @@ void osal_socket_close(
 		do
 		{
 			n = recv(handle, buf, sizeof(buf), 0);
-			if (n == SOCKET_ERROR) 
+            if (n == SOCKET_ERROR)
 			{
 	#if OSAL_DEBUG
                 rval = WSAGetLastError();
@@ -778,6 +778,14 @@ osalStatus osal_socket_read(
         if (n > 0x7FFFFFFFFFFFFFFE) n = 0x7FFFFFFFFFFFFFFF;
 
 		rval = recv(handle, buf, (int)n, 0);
+
+        /* If other end has gracefylly closed.
+         */
+        if (rval == 0)
+        {
+            *n_read = rval;
+            return OSAL_STATUS_SOCKET_CLOSED;
+        }
 
 		if (rval == SOCKET_ERROR)
 		{

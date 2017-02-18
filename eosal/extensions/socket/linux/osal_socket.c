@@ -65,6 +65,10 @@ typedef struct osalSocket
     /** OS_TRUE if this is IPv6 socket.
      */
     os_boolean is_ipv6;
+
+    /** OS_TRUE if last write to socket has been blocked.
+     */
+    os_boolean write_blocked;
 } 
 osalSocket;
 
@@ -253,28 +257,6 @@ osalStream osal_socket_open(
 	 */
 	mysocket->hdr.write_timeout_ms = mysocket->hdr.read_timeout_ms = 0;
 
-    /* If we are preparing to use this with select function.
-     */
-    if ((flags & OSAL_STREAM_NO_SELECT) == 0)
-    {   
-        /* Create event
-         */
-/*
-        mysocket->event = WSACreateEvent();
-        if (mysocket->event == WSA_INVALID_EVENT)
-        {
-		    rval = OSAL_STATUS_MEMORY_ALLOCATION_FAILED;
-		    goto getout;
-        }
-
-        if (WSAEventSelect(handle, mysocket->event, FD_ACCEPT|FD_CONNECT|FD_CLOSE|FD_READ|FD_WRITE) == SOCKET_ERROR)
-        {
-		    rval = OSAL_STATUS_FAILED;
-		    goto getout;
-        }           
- */
-    }
-
     if (is_ipv6)
     {
         saddr6.sin6_family = AF_INET6;
@@ -338,12 +320,6 @@ getout:
      */
     if (mysocket)
     {
-/*        if (mysocket->event)
-	    {
-		    WSACloseEvent(mysocket->event);
-	    }
-        */
-
         os_free(mysocket, sizeof(osalSocket));
     }
 
@@ -401,11 +377,6 @@ void osal_socket_close(
 		/* Mark socket closed
 		 */
         mysocket->handle = -1;
-
-        /* if (mysocket->event)
-	    {
-		    WSACloseEvent(mysocket->event);
-        } */
 
 		/* Disable sending data. This informs other the end of socket that it is going down now.
 		 */
@@ -567,27 +538,6 @@ osalStream osal_socket_accept(
 	     */
 		newsocket->hdr.write_timeout_ms = newsocket->hdr.read_timeout_ms = 0;
 
-        /* If we are preparing to use this with select function.
-         */
-        if ((flags & OSAL_STREAM_NO_SELECT) == 0)
-        {   
-            /* Create event
-             */
-            /* newsocket->event = WSACreateEvent();
-            if (newsocket->event == WSA_INVALID_EVENT)
-            {
-		        rval = OSAL_STATUS_MEMORY_ALLOCATION_FAILED;
-		        goto getout;
-            }
-
-            if (WSAEventSelect(new_handle, newsocket->event,
-                FD_ACCEPT|FD_CONNECT|FD_CLOSE|FD_READ|FD_WRITE) == SOCKET_ERROR)
-            {
-		        rval = OSAL_STATUS_FAILED;
-		        goto getout;
-            }  */
-        }
-
 		/* Success set status code and cast socket structure pointer to stream pointer 
 		   and return it.
 		 */
@@ -601,11 +551,6 @@ getout:
      */
     if (newsocket)
     {
-        /* if (newsocket->event)
-	    {
-		    WSACloseEvent(newsocket->event);
-        } */
-
         os_free(newsocket, sizeof(osalSocket));
     }
 
@@ -683,8 +628,9 @@ osalStatus osal_socket_write(
 		/* Cast stream pointer to socket structure pointer.
 		 */
 		mysocket = (osalSocket*)stream;
+        mysocket->write_blocked = OS_FALSE;
 
-		/* Special case. Writing 0 bytes will trigger write callback by worker thread.
+        /* If nothing to write.
 		 */
 		if (n == 0)
 		{
@@ -713,6 +659,7 @@ osalStatus osal_socket_write(
 		{
             if (errno != EWOULDBLOCK && errno != EINPROGRESS)
 			{
+                mysocket->write_blocked = OS_TRUE;
 				goto getout;
 			}
 			rval = 0;
@@ -783,6 +730,14 @@ osalStatus osal_socket_read(
 
 		rval = recv(handle, buf, (int)n, 0);
 
+        /* If other end has gracefylly closed.
+         */
+        if (rval == 0)
+        {
+            *n_read = rval;
+            return OSAL_STATUS_SOCKET_CLOSED;
+        }
+
         if (rval == -1)
 		{
             if (errno != EWOULDBLOCK && errno != EINPROGRESS)
@@ -798,7 +753,7 @@ osalStatus osal_socket_read(
 
 getout:
 	*n_read = 0;
-	return OSAL_STATUS_FAILED;
+    return OSAL_STATUS_FAILED;
 }
 
 
@@ -880,9 +835,7 @@ osalStatus osal_socket_select(
 	osalSocket *mysocket;
     osalSocket *sockets[OSAL_SOCKET_SELECT_MAX+1];
     fd_set rdset, wrset, exset;
-//	WSAEVENT events[OSAL_SOCKET_SELECT_MAX+1];
 	os_int ixtable[OSAL_SOCKET_SELECT_MAX+1];
-//	WSANETWORKEVENTS network_events;
     os_int i, j, n_sockets, n_events, event_nr, eventflags, errorcode, rval, maxfd;
     
     os_memclear(selectdata, sizeof(osalSelectData));
@@ -902,24 +855,14 @@ osalStatus osal_socket_select(
         if (mysocket)
         {
             sockets[n_sockets] = mysocket;
-//            events[n_sockets] = mysocket->event;
             FD_SET(mysocket->handle, &rdset);
-            FD_SET(mysocket->handle, &wrset);
+            if (mysocket->write_blocked) FD_SET(mysocket->handle, &wrset);
             FD_SET(mysocket->handle, &exset);
-                     // myfds[j] is readable
             ixtable[n_sockets++] = i;
             if (mysocket->handle > maxfd) maxfd = mysocket->handle;
         }
     }
     n_events = n_sockets;
-
-    /* If we have event, add it to wait.
-     */
-    /* if (evnt)
-    {
-        events[n_events++] = evnt;
-    }
-    */
 
     errorcode = OSAL_SUCCESS;
     if (select(maxfd+1, &rdset, &wrset, &exset, NULL) < 0)
@@ -928,51 +871,43 @@ osalStatus osal_socket_select(
         errorcode = OSAL_STATUS_FAILED;
     }
 
-
     eventflags = 0;
-
-    for (i = 0; i <= maxfd; i++)
+    for (i = 0; i < n_sockets; i++)
     {
-        if (FD_ISSET (i, &rdset))
+        mysocket = (osalSocket*)streams[i];
+        if (mysocket)
         {
-            eventflags = OSAL_STREAM_READ_EVENT;
-            printf ("Read %d\n", (int)i);
-            FD_CLR (i, &rdset);
-            break;
-        }
+            j = mysocket->handle;
 
-        if (FD_ISSET (i, &wrset))
-        {
-            eventflags = OSAL_STREAM_WRITE_EVENT;
-            printf ("Write %d\n", (int)i);
-            FD_CLR (i, &wrset);
-            break;
-        }
-
-        if (FD_ISSET (i, &exset))
-        {
-            eventflags = OSAL_STREAM_CONNECT_EVENT;
-            printf ("Control %d\n", (int)i);
-            FD_CLR (i, &exset);
-            break;
-        }
-    }
-
-
-    event_nr = -1;
-    if (i <= maxfd)
-    {
-        for (j = 0; j < n_sockets; j++)
-        {
-            if (sockets[j]->handle == i)
+            if (FD_ISSET (i, &exset))
             {
-                event_nr = (os_int)j;
+                eventflags = OSAL_STREAM_CLOSE_EVENT;
+                printf ("Control %d\n", (int)i);
+                FD_CLR (j, &exset);
+                break;
+            }
+
+            if (FD_ISSET (j, &rdset))
+            {
+                eventflags = OSAL_STREAM_READ_EVENT;
+                printf ("Read %d\n", (int)i);
+                FD_CLR (j, &rdset);
+                break;
+            }
+
+            if (mysocket->write_blocked) if (FD_ISSET (j, &wrset))
+            {
+                eventflags = OSAL_STREAM_WRITE_EVENT;
+                printf ("Write %d\n", (int)i);
+                FD_CLR (j, &wrset);
                 break;
             }
         }
     }
+    event_nr = i;
 
-    if (eventflags == OSAL_STREAM_READ_EVENT && event_nr >= 0)
+
+    if (eventflags == OSAL_STREAM_READ_EVENT && event_nr < n_sockets)
     {
         if (sockets[event_nr]->open_flags & OSAL_STREAM_LISTEN)
         {
@@ -1048,9 +983,7 @@ osalStatus osal_socket_select(
 
     selectdata->eventflags = eventflags;
     selectdata->errorcode = errorcode;
-    selectdata->stream_nr = event_nr >= 0 ? ixtable[event_nr] : -0;
-
-    // ResetEvent(event[event_nr]);  ??????
+    selectdata->stream_nr = event_nr < n_sockets ? ixtable[event_nr] : -0;
 
     return OSAL_SUCCESS;
 }
@@ -1106,44 +1039,6 @@ getout:
 void osal_socket_initialize(
 	void)
 {
-#if 0
-    /** Windows socket library version information.
-     */
-    WSADATA osal_wsadata;
-
-	/* If socket library is already initialized, do nothing.
-	 */
-	if (osal_global->sockets_shutdown_func) return;
-
-	/* Lock the system mutex to syncronize.
-	 */
-	os_lock();
-
-	/* If socket library is already initialized, do nothing. Double checked here
-	   for thread synchronization.
-	 */
-	if (!osal_global->sockets_shutdown_func) 
-	{
-		/* Initialize winsock.
-		 */
-		if (WSAStartup(MAKEWORD(2,2), &osal_wsadata))
-		{
-			osal_debug_error("WSAStartup() failed");
-			return;
-		}
-
-		/* Mark that socket library has been initialized by setting shutdown function pointer.
-           Now the pointer is shared on windows by main program and DLL. If this needs to
-           be separated, move sockets_shutdown_func pointer from global structure to
-           plain global variable.
-		 */
-		osal_global->sockets_shutdown_func = osal_socket_shutdown;
-	}
-
-	/* End synchronization.
-	 */
-	os_unlock();
-#endif
 }
 
 
@@ -1162,23 +1057,6 @@ void osal_socket_initialize(
 void osal_socket_shutdown(
 	void)
 {
-#if 0
-	/* If socket library is not initialized, do nothing.
-	 */
-	if (!osal_global->sockets_shutdown_func) return;
-
-	/* Initialize winsock.
-	 */
-	if (WSACleanup())
-	{
-		osal_debug_error("WSACleanup() failed");
-		return;
-	}
-
-	/* Mark that socket library is no longer initialized.
-	 */
-    osal_global->sockets_shutdown_func = OS_NULL;
-#endif
 }
 
 

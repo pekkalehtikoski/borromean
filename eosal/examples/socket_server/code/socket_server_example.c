@@ -105,10 +105,18 @@ os_int osal_main(
             os_memclear(buf, sizeof(buf));
             status = osal_stream_read(handle[selectdata.stream_nr], 
                 buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
-            osal_console_write(buf);
-            osal_console_write("\n");
-            /* status = osal_stream_write(handle[selectdata.stream_nr],
-                mystr, os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT); */
+            if (status)
+            {
+                osal_stream_close(handle[selectdata.stream_nr]);
+                handle[selectdata.stream_nr] = OS_NULL;
+            }
+            else
+            {
+                osal_console_write(buf);
+                osal_console_write("\n");
+                /* status = osal_stream_write(handle[selectdata.stream_nr],
+                    mystr, os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT); */
+            }
         }
 
         if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
