@@ -883,7 +883,7 @@ osalStatus osal_socket_select(
 //	WSAEVENT events[OSAL_SOCKET_SELECT_MAX+1];
 	os_int ixtable[OSAL_SOCKET_SELECT_MAX+1];
 //	WSANETWORKEVENTS network_events;
-    os_int i, n_sockets, n_events, event_nr, eventflags, errorcode, rval;
+    os_int i, j, n_sockets, n_events, event_nr, eventflags, errorcode, rval, maxfd;
     
     os_memclear(selectdata, sizeof(osalSelectData));
 
@@ -895,6 +895,7 @@ osalStatus osal_socket_select(
     FD_ZERO(&wrset);
     FD_ZERO(&exset);
 
+    maxfd = 0;
     for (i = 0; i < nstreams; i++)
     {
         mysocket = (osalSocket*)streams[i];
@@ -907,6 +908,7 @@ osalStatus osal_socket_select(
             FD_SET(mysocket->handle, &exset);
                      // myfds[j] is readable
             ixtable[n_sockets++] = i;
+            if (mysocket->handle > maxfd) maxfd = mysocket->handle;
         }
     }
     n_events = n_sockets;
@@ -919,22 +921,62 @@ osalStatus osal_socket_select(
     }
     */
 
-    if (select(n_sockets, &rdset, &wrset, &exset, NULL) < 0)
+    errorcode = OSAL_SUCCESS;
+    if (select(maxfd+1, &rdset, &wrset, &exset, NULL) < 0)
     {
         printf ("select failed\n");
+        errorcode = OSAL_STATUS_FAILED;
     }
 
 
-    for (i = 0; i < nstreams; i++)
+    eventflags = 0;
+
+    for (i = 0; i <= maxfd; i++)
     {
         if (FD_ISSET (i, &rdset))
         {
+            eventflags = OSAL_STREAM_READ_EVENT;
             printf ("Read %d\n", (int)i);
+            FD_CLR (i, &rdset);
+            break;
         }
 
         if (FD_ISSET (i, &wrset))
         {
+            eventflags = OSAL_STREAM_WRITE_EVENT;
             printf ("Write %d\n", (int)i);
+            FD_CLR (i, &wrset);
+            break;
+        }
+
+        if (FD_ISSET (i, &exset))
+        {
+            eventflags = OSAL_STREAM_CONNECT_EVENT;
+            printf ("Control %d\n", (int)i);
+            FD_CLR (i, &exset);
+            break;
+        }
+    }
+
+
+    event_nr = -1;
+    if (i <= maxfd)
+    {
+        for (j = 0; j < n_sockets; j++)
+        {
+            if (sockets[j]->handle == i)
+            {
+                event_nr = (os_int)j;
+                break;
+            }
+        }
+    }
+
+    if (eventflags == OSAL_STREAM_READ_EVENT && event_nr >= 0)
+    {
+        if (sockets[event_nr]->open_flags & OSAL_STREAM_LISTEN)
+        {
+            eventflags = OSAL_STREAM_ACCEPT_EVENT;
         }
     }
 
@@ -1006,7 +1048,7 @@ osalStatus osal_socket_select(
 
     selectdata->eventflags = eventflags;
     selectdata->errorcode = errorcode;
-    selectdata->stream_nr = ixtable[event_nr];
+    selectdata->stream_nr = event_nr >= 0 ? ixtable[event_nr] : -0;
 
     // ResetEvent(event[event_nr]);  ??????
 

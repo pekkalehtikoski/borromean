@@ -87,6 +87,10 @@ os_int osal_main(
     mythread = osal_thread_create(mythread_func, &mythreadprm,
 	    OSAL_THREAD_ATTACHED, 0, "mythread");
 
+    status = osal_stream_write(handle, mystr,
+        os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT);
+
+
     while (OS_TRUE)
     {
         if (mystr[0]++ == '9') mystr[0] = '0';
@@ -101,12 +105,12 @@ os_int osal_main(
         if (selectdata.eventflags & OSAL_STREAM_CUSTOM_EVENT)
         {
             osal_console_write("custom event\n");
-            status = osal_stream_write(handle, mystr,
+            /* status = osal_stream_write(handle, mystr,
                 os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT);
             os_memclear(buf, sizeof(buf));
             status = osal_stream_read(handle, buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
             osal_console_write(buf);
-            osal_console_write("\n");
+            osal_console_write("\n"); */
         }
 
         if (selectdata.eventflags & OSAL_STREAM_ACCEPT_EVENT)
@@ -142,8 +146,8 @@ os_int osal_main(
 
         if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
         {
-            osal_console_write("write event\n");
-            status = osal_stream_write(handle, mystr, os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT);
+            /* osal_console_write("write event\n");
+            status = osal_stream_write(handle, mystr, os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT); */
         }
     }
 

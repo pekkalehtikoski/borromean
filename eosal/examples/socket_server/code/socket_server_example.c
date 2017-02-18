@@ -107,8 +107,8 @@ os_int osal_main(
                 buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
             osal_console_write(buf);
             osal_console_write("\n");
-            status = osal_stream_write(handle[selectdata.stream_nr], 
-                mystr, os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT);
+            /* status = osal_stream_write(handle[selectdata.stream_nr],
+                mystr, os_strlen(mystr)-1, &n_written, OSAL_STREAM_DEFAULT); */
         }
 
         if (selectdata.eventflags & OSAL_STREAM_WRITE_EVENT)
