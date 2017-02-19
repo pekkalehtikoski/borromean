@@ -106,6 +106,16 @@ osalStatus osal_event_wait(
     osalEvent evnt,
     os_int timeout_ms);
 
+/* Get pipe fd. (linux only)
+ */
+int osal_event_pipefd(
+    osalEvent evnt);
+
+/* Clear data buffered in pipe. (linux only)
+ */
+void osal_event_clearpipe(
+    osalEvent evnt);
+
 /*@}*/
 
 #else

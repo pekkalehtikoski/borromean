@@ -816,7 +816,11 @@ void osal_socket_set_parameter(
   @anchor osal_socket_select
 
   The osal_socket_select() function blocks execution of the calling thread until something
-  happens with listed sockets, or interrupt select is called.
+  happens with listed sockets, or event given as argument is triggered.
+
+  Interrupting select: The easiest way is probably to use pipe(2) to create a pipe and add the
+  read end to readfds. When the other thread wants to interrupt the select() just write a byte
+  to it, then consume it afterward.
 
   @param   streams Array of stream pointers to wait for.
   @param   n_streams Number of stream pointers in array.
@@ -836,7 +840,7 @@ osalStatus osal_socket_select(
     osalSocket *sockets[OSAL_SOCKET_SELECT_MAX+1];
     fd_set rdset, wrset, exset;
 	os_int ixtable[OSAL_SOCKET_SELECT_MAX+1];
-    os_int i, j, n_sockets, n_events, event_nr, eventflags, errorcode, rval, maxfd;
+    os_int i, j, n_sockets, socket_nr, eventflags, errorcode, rval, maxfd, pipefd;
     
     os_memclear(selectdata, sizeof(osalSelectData));
 
@@ -862,7 +866,14 @@ osalStatus osal_socket_select(
             if (mysocket->handle > maxfd) maxfd = mysocket->handle;
         }
     }
-    n_events = n_sockets;
+
+    pipefd = -1;
+    if (evnt)
+    {
+        pipefd = osal_event_pipefd(evnt);
+        if (pipefd > maxfd) maxfd = pipefd;
+        FD_SET(pipefd, &rdset);
+    }
 
     errorcode = OSAL_SUCCESS;
     if (select(maxfd+1, &rdset, &wrset, &exset, NULL) < 0)
@@ -872,17 +883,27 @@ osalStatus osal_socket_select(
     }
 
     eventflags = 0;
-    for (i = 0; i < n_sockets; i++)
+
+    if (pipefd >= 0) if (FD_ISSET(pipefd, &rdset))
     {
-        mysocket = (osalSocket*)streams[i];
+        osal_event_clearpipe(evnt);
+
+        selectdata->eventflags = OSAL_STREAM_CUSTOM_EVENT;
+        selectdata->stream_nr = OSAL_STREAM_NR_CUSTOM_EVENT;
+        return OSAL_SUCCESS;
+    }
+
+    for (socket_nr = 0; socket_nr < n_sockets; socket_nr++)
+    {
+        mysocket = (osalSocket*)streams[socket_nr];
         if (mysocket)
         {
             j = mysocket->handle;
 
-            if (FD_ISSET (i, &exset))
+            if (FD_ISSET (j, &exset))
             {
                 eventflags = OSAL_STREAM_CLOSE_EVENT;
-                printf ("Control %d\n", (int)i);
+                printf ("Control %d\n", (int)socket_nr);
                 FD_CLR (j, &exset);
                 break;
             }
@@ -890,7 +911,7 @@ osalStatus osal_socket_select(
             if (FD_ISSET (j, &rdset))
             {
                 eventflags = OSAL_STREAM_READ_EVENT;
-                printf ("Read %d\n", (int)i);
+                printf ("Read %d\n", (int)socket_nr);
                 FD_CLR (j, &rdset);
                 break;
             }
@@ -898,18 +919,17 @@ osalStatus osal_socket_select(
             if (mysocket->write_blocked) if (FD_ISSET (j, &wrset))
             {
                 eventflags = OSAL_STREAM_WRITE_EVENT;
-                printf ("Write %d\n", (int)i);
+                printf ("Write %d\n", (int)socket_nr);
                 FD_CLR (j, &wrset);
                 break;
             }
         }
     }
-    event_nr = i;
 
 
-    if (eventflags == OSAL_STREAM_READ_EVENT && event_nr < n_sockets)
+    if (eventflags == OSAL_STREAM_READ_EVENT && socket_nr < n_sockets)
     {
-        if (sockets[event_nr]->open_flags & OSAL_STREAM_LISTEN)
+        if (sockets[socket_nr]->open_flags & OSAL_STREAM_LISTEN)
         {
             eventflags = OSAL_STREAM_ACCEPT_EVENT;
         }
@@ -980,10 +1000,9 @@ osalStatus osal_socket_select(
 	{
         eventflags |= OSAL_STREAM_WRITE_EVENT;
     } */
-
     selectdata->eventflags = eventflags;
     selectdata->errorcode = errorcode;
-    selectdata->stream_nr = event_nr < n_sockets ? ixtable[event_nr] : -0;
+    selectdata->stream_nr = socket_nr < n_sockets ? ixtable[socket_nr] : 0;
 
     return OSAL_SUCCESS;
 }

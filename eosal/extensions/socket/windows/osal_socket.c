@@ -865,7 +865,7 @@ void osal_socket_set_parameter(
   @anchor osal_socket_select
 
   The osal_socket_select() function blocks execution of the calling thread until something
-  happens with listed sockets, or interrupt select is called.
+  happens with listed sockets, or or event given as argument is triggered.
 
   @param   streams Array of stream pointers to wait for.
   @param   n_streams Number of stream pointers in array.

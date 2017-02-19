@@ -17,15 +17,25 @@
 ****************************************************************************************************
 */
 #include "eosal/eosal.h"
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <pthread.h>
+#include <fcntl.h>
+#include <unistd.h>
 // #include <semaphore.h>
+
+/* THIS SHOULE NOT BE NEEDED, WHY NEEDED ? */
+int pipe2(int pipefd[2], int flags);
 
 typedef struct osalPosixEvent
 {
     pthread_cond_t cond;
     pthread_mutex_t mutex;
     os_boolean signaled;
+
+    /** Pipe file descriptors to use event to interrupt socket select().
+     */
+    int pipefd[2];
 }
 osalPosixEvent;
 
@@ -54,10 +64,12 @@ osalEvent osal_event_create(
     osalPosixEvent *pe;
     pthread_condattr_t attrib;
 
-    /* Allocate event handle stricture and mark it initially not signaled.
+    /* Allocate event handle stricture and mark it initially not signaled. Pipes are not
+     * created by default.
      */
     pe = malloc(sizeof(osalPosixEvent));
     pe->signaled = OS_FALSE;
+    pe->pipefd[0] = pe->pipefd[1] =  -1;
 
     /* Create mutex to access the event
      */
@@ -81,6 +93,7 @@ osalEvent osal_event_create(
     }
 
     pthread_condattr_destroy(&attrib);
+
 
     /* Inform resource monitor that event has been created and return the event pointer.
      */
@@ -116,6 +129,14 @@ void osal_event_delete(
     }
 
     pe = (osalPosixEvent*)evnt;
+
+    /* If we have pipe, close it.
+     */
+    if (pe->pipefd[0] != -1)
+    {
+        close(pe->pipefd[0]);
+        close(pe->pipefd[1]);
+    }
 
     /* Delete condition variable.
      */
@@ -186,6 +207,13 @@ void osal_event_set(
     /* Mark event as signaled.
      */
     pe->signaled = OS_TRUE;
+
+    /* If we are interrupting socket select().
+     */
+    if (pe->pipefd[0] != -1)
+    {
+        write(pe->pipefd[1], "\n", 1);
+    }
 
     /* Set condition variable
      */
@@ -269,6 +297,88 @@ osalStatus osal_event_wait(
     pe->signaled = OS_FALSE;
     pthread_mutex_unlock(&pe->mutex);
     return OSAL_SUCCESS;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get pipe fd.
+  @anchor osal_event_pipefd
+
+  The osal_event_pipefd() function..
+
+  @param   evnt Event pointer returned by osal_event_create() function.
+  @return  Pipe fd (handle) which can be used to interrupt socket() select when event
+           is triggered. -1 if the function failed.
+
+****************************************************************************************************
+*/
+int osal_event_pipefd(
+    osalEvent evnt)
+{
+    osalPosixEvent *pe;
+    osalStatus s;
+
+    if (evnt == OS_NULL)
+    {
+        osal_debug_error("osal_event_pipefd: NULL argument");
+        return -1;
+    }
+
+    /* Cast posix event pointer.
+     */
+    pe = (osalPosixEvent*)evnt;
+
+    if (pe->pipefd[0] == -1)
+    {
+        // if (pipe(pe->pipefd) == -1)
+        if (pipe2(pe->pipefd, O_NONBLOCK) == -1)
+        {
+            osal_debug_error("osal_event_pipefd: pipe2() failed");
+            return -1;
+        }
+        write(pe->pipefd[1], "\n", 1);
+    }
+
+    return pe->pipefd[0];
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Clear data buffered in pipe.
+  @anchor osal_event_clearpipe
+
+  The osal_event_clearpipe() function..
+
+  @param   evnt Event pointer returned by osal_event_create() function.
+  @return  None.
+
+****************************************************************************************************
+*/
+void osal_event_clearpipe(
+    osalEvent evnt)
+{
+    osalPosixEvent *pe;
+    osalStatus s;
+    char c;
+
+    if (evnt == OS_NULL)
+    {
+        osal_debug_error("osal_event_pipefd: NULL argument");
+        return;
+    }
+
+    /* Cast posix event pointer.
+     */
+    pe = (osalPosixEvent*)evnt;
+
+    if (pe->pipefd[0] != -1)
+    {
+        while (read(pe->pipefd[0], &c, 1) > 0);
+    }
 }
 
 #endif
