@@ -315,7 +315,7 @@ void eConnection::initialize(
 */
 void eConnection::run()
 {
-    eStatus s;
+//    eStatus s;
     osalSelectData selectdata;
     os_long try_again_ms = osal_rand(3000, 4000);
 
