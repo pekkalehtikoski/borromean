@@ -495,7 +495,7 @@ public:
 
     /* Read object from JSON stream.
      */
-    eObject *eObject::json_read(
+    eObject *json_read(
         eStream *stream, 
         os_int sflags = EOBJ_SERIALIZE_DEFAULT);
 
@@ -891,13 +891,13 @@ protected:
      */
     eStatus json_puts(
         eStream *stream, 
-        os_char *str);
+        const os_char *str);
 
     /* Write quoted string to JSON output.
      */
-    eStatus eObject::json_putqs(
+    eStatus json_putqs(
         eStream *stream, 
-        os_char *str);
+        const os_char *str);
 
     /* Write long integer to JSON output.
      */
@@ -918,7 +918,7 @@ protected:
      */
     void json_append_list_item(
         eVariable *list, 
-        os_char *item,
+        const os_char *item,
         os_int flags,
         os_int bit);
 #endif

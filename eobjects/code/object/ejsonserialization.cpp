@@ -327,7 +327,7 @@ eStatus eObject::json_indent(
 */
 eStatus eObject::json_puts(
     eStream *stream, 
-    os_char *str)
+    const os_char *str)
 {
     os_memsz len;
     len = os_strlen(str);
@@ -353,7 +353,7 @@ eStatus eObject::json_puts(
 */
 eStatus eObject::json_putqs(
     eStream *stream, 
-    os_char *str)
+    const os_char *str)
 {
     if (json_puts(stream, "\"")) return ESTATUS_FAILED;
     if (json_puts(stream, str)) return ESTATUS_FAILED;
@@ -483,7 +483,7 @@ eStatus eObject::json_putv(
 */
 void eObject::json_append_list_item(
     eVariable *list, 
-    os_char *item,
+    const os_char *item,
     os_int flags,
     os_int bit)
 {

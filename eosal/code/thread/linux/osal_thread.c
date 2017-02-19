@@ -156,6 +156,7 @@ osalThreadHandle *osal_thread_create(
 		handle = OS_NULL;
 	}
 
+    pthread_attr_init(&attrib);
     pthread_attr_setschedpolicy(&attrib, SCHED_OTHER);
     pthread_attr_setdetachstate(&attrib,
         handle ? PTHREAD_CREATE_JOINABLE : PTHREAD_CREATE_DETACHED);

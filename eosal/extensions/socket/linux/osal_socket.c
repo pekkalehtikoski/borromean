@@ -69,7 +69,11 @@ typedef struct osalSocket
     /** OS_TRUE if last write to socket has been blocked.
      */
     os_boolean write_blocked;
-} 
+
+    /** OS_TRUE if connection has been reported by select.
+     */
+    os_boolean connected;
+}
 osalSocket;
 
 
@@ -734,7 +738,7 @@ osalStatus osal_socket_read(
          */
         if (rval == 0)
         {
-            *n_read = rval;
+            *n_read = 0;
             return OSAL_STATUS_SOCKET_CLOSED;
         }
 
@@ -860,7 +864,10 @@ osalStatus osal_socket_select(
         {
             sockets[n_sockets] = mysocket;
             FD_SET(mysocket->handle, &rdset);
-            if (mysocket->write_blocked) FD_SET(mysocket->handle, &wrset);
+            if (mysocket->write_blocked || !mysocket->connected)
+            {
+                FD_SET(mysocket->handle, &wrset);
+            }
             FD_SET(mysocket->handle, &exset);
             ixtable[n_sockets++] = i;
             if (mysocket->handle > maxfd) maxfd = mysocket->handle;
@@ -904,23 +911,40 @@ osalStatus osal_socket_select(
             {
                 eventflags = OSAL_STREAM_CLOSE_EVENT;
                 printf ("Control %d\n", (int)socket_nr);
-                FD_CLR (j, &exset);
+                // FD_CLR (j, &exset);
                 break;
             }
 
             if (FD_ISSET (j, &rdset))
             {
-                eventflags = OSAL_STREAM_READ_EVENT;
-                printf ("Read %d\n", (int)socket_nr);
-                FD_CLR (j, &rdset);
+                if (sockets[socket_nr]->open_flags & OSAL_STREAM_LISTEN)
+                {
+                    eventflags = OSAL_STREAM_ACCEPT_EVENT;
+                    printf ("Accept %d\n", (int)socket_nr);
+                }
+                else
+                {
+                    eventflags = OSAL_STREAM_READ_EVENT;
+                    printf ("Read %d\n", (int)socket_nr);
+                }
+                // FD_CLR (j, &rdset);
                 break;
             }
 
-            if (mysocket->write_blocked) if (FD_ISSET (j, &wrset))
+            if (mysocket->write_blocked || !mysocket->connected) if (FD_ISSET (j, &wrset))
             {
-                eventflags = OSAL_STREAM_WRITE_EVENT;
-                printf ("Write %d\n", (int)socket_nr);
-                FD_CLR (j, &wrset);
+                if (mysocket->connected)
+                {
+                    eventflags = OSAL_STREAM_WRITE_EVENT;
+                    printf ("Write %d\n", (int)socket_nr);
+                }
+                else
+                {
+                    eventflags = OSAL_STREAM_CONNECT_EVENT;
+                    mysocket->connected = OS_TRUE;
+                    printf ("Write %d\n", (int)socket_nr);
+                }
+                // FD_CLR (j, &wrset);
                 break;
             }
         }
@@ -935,71 +959,6 @@ osalStatus osal_socket_select(
         }
     }
 
-    /* rval = WSAWaitForMultipleEvents(n_events,
-        events, FALSE, WSA_INFINITE, FALSE); */
-
-    /* event_nr = (os_int)(rval - WSA_WAIT_EVENT_0);
-
-    if (evnt && event_nr == n_sockets)
-    {
-        selectdata->eventflags = OSAL_STREAM_CUSTOM_EVENT;
-        selectdata->stream_nr = OSAL_STREAM_NR_CUSTOM_EVENT;
-		return OSAL_SUCCESS;
-    }
-
-    if (event_nr < 0 || event_nr >= n_sockets)
-    {
-		return OSAL_STATUS_FAILED;
-    }
-
-    if (WSAEnumNetworkEvents(sockets[event_nr]->handle,
-        events[event_nr], &network_events) == SOCKET_ERROR)
-    {
-		return OSAL_STATUS_FAILED;
-    }
-
-    eventflags = 0;
-    errorcode = OSAL_SUCCESS;
-	if (network_events.lNetworkEvents & FD_ACCEPT)
-	{
-        eventflags |= OSAL_STREAM_ACCEPT_EVENT;
-        if (network_events.iErrorCode[FD_ACCEPT_BIT])
-        {
-            errorcode = OSAL_STATUS_FAILED;
-        }
-	}
-
-	if (network_events.lNetworkEvents & FD_CONNECT)
-	{
-        eventflags |= OSAL_STREAM_CONNECT_EVENT;
-        if (network_events.iErrorCode[FD_CONNECT_BIT])
-        {
-            errorcode = OSAL_STATUS_FAILED;
-        }
-	}
-
-	if (network_events.lNetworkEvents & FD_CLOSE)
-	{
-        eventflags |= OSAL_STREAM_CLOSE_EVENT;
-        if (network_events.iErrorCode[FD_CLOSE_BIT])
-        {
-            errorcode = OSAL_STATUS_FAILED;
-        }
-	}
-
-	if (network_events.lNetworkEvents & FD_READ)
-	{
-        eventflags |= OSAL_STREAM_READ_EVENT;
-        if (network_events.iErrorCode[FD_READ_BIT])
-        {
-            errorcode = OSAL_STATUS_FAILED;
-        }
-	}
-
-	if (network_events.lNetworkEvents & FD_WRITE)
-	{
-        eventflags |= OSAL_STREAM_WRITE_EVENT;
-    } */
     selectdata->eventflags = eventflags;
     selectdata->errorcode = errorcode;
     selectdata->stream_nr = socket_nr < n_sockets ? ixtable[socket_nr] : 0;

@@ -140,6 +140,7 @@ os_int osal_main(
             osal_console_write("read event\n");
             os_memclear(buf, sizeof(buf));
             status = osal_stream_read(handle, buf, sizeof(buf) - 1, &n_read, OSAL_STREAM_DEFAULT);
+            if (status) break;
             osal_console_write(buf);
             osal_console_write("\n");
         }
