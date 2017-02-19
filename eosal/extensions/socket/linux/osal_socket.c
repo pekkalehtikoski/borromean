@@ -938,14 +938,16 @@ osalStatus osal_socket_select(
                 {
                     eventflags = OSAL_STREAM_WRITE_EVENT;
                     printf ("Write %d\n", (int)socket_nr);
+                    mysocket->write_blocked = OS_FALSE;
                 }
                 else
                 {
                     eventflags = OSAL_STREAM_CONNECT_EVENT;
                     mysocket->connected = OS_TRUE;
-                    printf ("Write %d\n", (int)socket_nr);
+                    mysocket->write_blocked = OS_TRUE;
+                    printf ("Connect %d\n", (int)socket_nr);
                 }
-                // FD_CLR (j, &wrset);
+                FD_CLR (j, &wrset);
                 break;
             }
         }
