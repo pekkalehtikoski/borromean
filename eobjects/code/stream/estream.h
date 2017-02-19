@@ -309,14 +309,13 @@ public:
 
     /* Wait for stream or thread event.
      */
-	virtual eStatus select(
+    virtual void select(
 		eStream **streams,
         os_int nstreams,
 		osalEvent evnt,
 		osalSelectData *selectdata,
 		os_int flags)
     {
-        return ESTATUS_FAILED;
     }
 
     /* Accept incoming connection.

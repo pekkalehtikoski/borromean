@@ -150,7 +150,7 @@ public:
 
     /* Wait for socket or thread event.
      */
-	virtual eStatus select(
+    virtual void select(
 		eStream **streams,
         os_int nstreams,
 		osalEvent evnt,

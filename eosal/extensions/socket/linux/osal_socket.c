@@ -910,6 +910,7 @@ osalStatus osal_socket_select(
             if (FD_ISSET (j, &exset))
             {
                 eventflags = OSAL_STREAM_CLOSE_EVENT;
+                errorcode = OSAL_STATUS_SOCKET_CLOSED;
                 printf ("Control %d\n", (int)socket_nr);
                 // FD_CLR (j, &exset);
                 break;

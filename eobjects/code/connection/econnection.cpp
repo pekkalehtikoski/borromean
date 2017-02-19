@@ -341,7 +341,14 @@ void eConnection::run()
                return code, for example read and close can be returned at same time,
                and thread event with anything else.
              */
-            s = m_stream->select(&m_stream, 1, trigger(), &selectdata, OSAL_STREAM_DEFAULT);
+            m_stream->select(&m_stream, 1, trigger(), &selectdata, OSAL_STREAM_DEFAULT);
+
+            if (selectdata.errorcode)
+            {
+osal_console_write("socket broken\n");
+                close();
+                continue;
+            }
 
             /* Handle thread events. If thread's message queue is becomes empty, we
                flush the socket writes.
@@ -366,14 +373,10 @@ void eConnection::run()
              */
             if (selectdata.eventflags & OSAL_STREAM_CONNECT_EVENT)
             {
-                if (!selectdata.errorcode)
+                if (connected())
                 {
-osal_console_write("connect event\n");
-                    if (connected()) 
-                    {
-                        close();
-                        continue;
-                    }
+                    close();
+                    continue;
                 }
             }
 
@@ -402,11 +405,12 @@ osal_console_write("connect event\n");
 
             /* Opening stream has failed or stream has been disconnected.
              */
-            if (s) 
+/*             if (s)
             {
 osal_console_write("osal_stream_select failed\n");
                 close();
             }
+*/
         }
 
         /* No socket, wait for thread events and process them. Try periodically to open

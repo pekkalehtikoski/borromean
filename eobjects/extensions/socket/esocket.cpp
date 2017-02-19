@@ -166,6 +166,7 @@ eStatus eSocket::close()
     if (m_socket == OS_NULL) return ESTATUS_FAILED;
 
     osal_socket_close(m_socket);
+    m_socket = OS_NULL;
 
     return ESTATUS_SUCCESS;
 }
@@ -196,8 +197,8 @@ eStatus eSocket::flush(
         /* Let select handle data transfers
          */
         strm = this;
-        s = select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
-        if (s) return s;
+        select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (selectdata.errorcode) return ESTATUS_FAILED;
     }
 
     osal_stream_flush(m_socket, OSAL_STREAM_DEFAULT);
@@ -271,11 +272,11 @@ eStatus eSocket::read(
         /* Let select handle data transfers
          */
         strm = this;
-        s = select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
-        if (s) 
+        select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (selectdata.errorcode)
         {
             if (nread) *nread = n;
-            return s;
+            return ESTATUS_FAILED;
         }
     }
 
@@ -331,8 +332,8 @@ os_int eSocket::readchar()
         /* Let select handle data transfers.
          */
         strm = this;
-        s = select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
-        if (s) return E_STREM_END_OF_DATA;
+        select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (selectdata.errorcode) return E_STREM_END_OF_DATA;
     }
 }
     
@@ -352,14 +353,14 @@ os_int eSocket::readchar()
   @oaram  nstreams Number of items in streams array.
   @param  evnt Operating system event to wait for.
   @param  selectdata Pointer to structure in which to fill information about the event.
+          This includes error code.
   @param  flags Reserved, set 0 for now.
   
-  @return If no error detected, the function returns ESTATUS_SUCCESS. 
-          Other return values indicate an error and that socket is to be disconnected.
+  @return None.
 
 ****************************************************************************************************
 */
-eStatus eSocket::select(
+void eSocket::select(
 	eStream **streams,
     os_int nstreams,
 	osalEvent evnt,
@@ -367,7 +368,9 @@ eStatus eSocket::select(
 	os_int flags)
 {
     osalStatus s;
-	eSocket **sockets;
+    eSocket **sockets, *so;
+    osalStream osalsock[OSAL_SOCKET_SELECT_MAX];
+    os_int i;
 
     sockets = (eSocket**)streams;
 
@@ -378,26 +381,28 @@ eStatus eSocket::select(
     }
     else
     {
-        osalStream osalsock[OSAL_SOCKET_SELECT_MAX];
-        os_int i;
 
         for (i = 0; i<nstreams; i++)
         {
             osalsock[i] = sockets[i]->m_socket;
         }
-        s = osal_stream_select(osalsock, nstreams, evnt, 
+        osal_stream_select(osalsock, nstreams, evnt,
             selectdata, OSAL_STREAM_DEFAULT); 
     }
 
-    if (s == OSAL_SUCCESS) 
+    i = selectdata->stream_nr;
+    if (selectdata->errorcode == OSAL_SUCCESS &&
+        i >= 0 && i < nstreams)
     {
+        so = sockets[i];
+
         if (selectdata->eventflags & OSAL_STREAM_READ_EVENT)
         {
 osal_console_write("read event 2\n");
-            read_socket();
+            selectdata->errorcode = so->read_socket();
         }
 
-        if (selectdata->eventflags & OSAL_STREAM_CLOSE_EVENT)
+        /* if (selectdata->eventflags & OSAL_STREAM_CLOSE_EVENT)
         {
 osal_console_write("close event 2\n");
             return ESTATUS_FAILED;
@@ -410,16 +415,16 @@ osal_console_write("close event 2\n");
 osal_console_write("connect failed 2\n");
                 return ESTATUS_FAILED;
             }
-        } 
+        } */
 
         if (selectdata->eventflags & OSAL_STREAM_WRITE_EVENT)
         {
 osal_console_write("write event\n");
-            write_socket(OS_TRUE);
+            selectdata->errorcode = so->write_socket(OS_TRUE);
         }
     }
 
-    return s ? ESTATUS_FAILED : ESTATUS_SUCCESS;
+//    return s ? ESTATUS_FAILED : ESTATUS_SUCCESS;
 }
 
 

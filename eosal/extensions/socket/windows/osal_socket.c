@@ -953,13 +953,15 @@ osalStatus osal_socket_select(
         eventflags |= OSAL_STREAM_CONNECT_EVENT;
         if (network_events.iErrorCode[FD_CONNECT_BIT])
         {
-            errorcode = OSAL_STATUS_FAILED;
+            eventflags |= OSAL_STREAM_CLOSE_EVENT;
+            errorflags = OSAL_STATUS_SOCKET_CLOSED;
         }
 	}
 
 	if (network_events.lNetworkEvents & FD_CLOSE)
 	{
         eventflags |= OSAL_STREAM_CLOSE_EVENT;
+        errorflags = OSAL_STATUS_SOCKET_CLOSED;
         if (network_events.iErrorCode[FD_CLOSE_BIT])
         {
             errorcode = OSAL_STATUS_FAILED;
