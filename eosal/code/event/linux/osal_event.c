@@ -24,6 +24,9 @@
 #include <unistd.h>
 // #include <semaphore.h>
 
+
+#include <stdio.h> // FOR TESTING
+
 /* THIS SHOULE NOT BE NEEDED, WHY NEEDED ? */
 int pipe2(int pipefd[2], int flags);
 
@@ -212,7 +215,10 @@ void osal_event_set(
      */
     if (pe->pipefd[0] != -1)
     {
+printf ("Writing pipe...");
+
         write(pe->pipefd[1], "\n", 1);
+printf ("OK\n");
     }
 
     /* Set condition variable
@@ -332,14 +338,19 @@ int osal_event_pipefd(
 
     if (pe->pipefd[0] == -1)
     {
+        printf ("Initializing pipe...");
+
         // if (pipe(pe->pipefd) == -1)
         if (pipe2(pe->pipefd, O_NONBLOCK) == -1)
         {
             osal_debug_error("osal_event_pipefd: pipe2() failed");
             return -1;
         }
-        write(pe->pipefd[1], "\n", 1);
+        /* write(pe->pipefd[1], "\n", 1); */
+
+        printf ("OK\n");
     }
+
 
     return pe->pipefd[0];
 }
@@ -375,10 +386,14 @@ void osal_event_clearpipe(
      */
     pe = (osalPosixEvent*)evnt;
 
+printf ("Clearing pipe...");
+
     if (pe->pipefd[0] != -1)
     {
         while (read(pe->pipefd[0], &c, 1) > 0);
     }
+
+printf ("OK\n");
 }
 
 #endif

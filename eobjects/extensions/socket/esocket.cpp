@@ -399,7 +399,8 @@ void eSocket::select(
         if (selectdata->eventflags & OSAL_STREAM_READ_EVENT)
         {
 osal_console_write("read event 2\n");
-            selectdata->errorcode = so->read_socket();
+
+selectdata->errorcode = so->read_socket();
         }
 
         /* if (selectdata->eventflags & OSAL_STREAM_CLOSE_EVENT)
@@ -515,6 +516,7 @@ eStatus eSocket::write_socket(
         }
    
         m_out->read(buf, m_frame_sz, &nread, OSAL_STREAM_PEEK);
+        if (nread == 0) break;
 
         os = osal_stream_write(m_socket, (os_uchar*)buf, 
             nread, &nwritten, OSAL_STREAM_DEFAULT);
@@ -525,7 +527,7 @@ eStatus eSocket::write_socket(
         }
         if (nwritten <= 0) break;
 
-osal_console_write("writing socket\n");
+// printf("%d bytes written to socket\n", (int)nbytes);
 
         m_out->read(OS_NULL, nwritten, &nread);
     }

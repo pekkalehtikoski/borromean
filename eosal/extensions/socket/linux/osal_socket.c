@@ -159,7 +159,8 @@ osalStream osal_socket_open(
        unless if host is OS_NULL (unpecified).
 	 */
     port_nr = OSAL_DEFAULT_SOCKET_PORT;
-	host = hostbuf = osal_socket_get_host_name_and_port(parameters, &port_nr, &host_sz, &is_ipv6);
+    host = hostbuf = osal_socket_get_host_name_and_port(parameters,
+        &port_nr, &host_sz, &is_ipv6);
     udp = (flags & OSAL_STREAM_UDP_MULTICAST) ? OS_TRUE : OS_FALSE;
 
     af = is_ipv6 ? AF_INET6 : AF_INET;
@@ -314,7 +315,8 @@ osalStream osal_socket_open(
 	return (osalStream)mysocket;
 
 getout:
-	/* Opt out on error. First Release memory allocated for the host name or address.
+    /* Opt out on error. First release memory allocated for the host
+       name or address.
 	 */
 	os_free(hostbuf, host_sz);
 
@@ -496,6 +498,9 @@ osalStream osal_socket_accept(
 			return OS_NULL;
 		}
 
+printf ("osal_socket_accept ACCEPTING\n");
+
+
         /* Set socket reuse flag.
          */
         if ((flags & OSAL_STREAM_NO_REUSEADDR) == 0)
@@ -512,7 +517,7 @@ osalStream osal_socket_accept(
 	     */
         if ((flags & OSAL_STREAM_BLOCKING) == 0)
         {
-            osal_socket_blocking_mode(handle, OS_FALSE);
+            osal_socket_blocking_mode(new_handle, OS_FALSE);
         }
 
 		/* Allocate and clear socket structure.
@@ -541,6 +546,9 @@ osalStream osal_socket_accept(
 	    /* Set 0 timeouts.
 	     */
 		newsocket->hdr.write_timeout_ms = newsocket->hdr.read_timeout_ms = 0;
+
+printf ("osal_socket_accept OK\n");
+
 
 		/* Success set status code and cast socket structure pointer to stream pointer 
 		   and return it.
@@ -627,6 +635,8 @@ osalStatus osal_socket_write(
 	osalSocket *mysocket;
     int handle;
 
+    printf ("osal_socket_write\n");
+
 	if (stream)
 	{
 		/* Cast stream pointer to socket structure pointer.
@@ -641,6 +651,8 @@ osalStatus osal_socket_write(
 			*n_written = 0;
 			return OSAL_SUCCESS;
 		}
+
+        printf ("osal_socket_write trying %d\n", (int)n);
 
 		/* Lock socket and get OS socket handle.
 		 */
@@ -670,12 +682,14 @@ osalStatus osal_socket_write(
 		}
 
 		*n_written = rval;
-		return OSAL_SUCCESS;
+        printf ("osal_socket_write %d bytes OK\n", (int)rval);
+        return OSAL_SUCCESS;
 	}
 
 getout:
 	*n_written = 0;
-	return OSAL_STATUS_FAILED;
+    printf ("osal_socket_write FAILED\n");
+    return OSAL_STATUS_FAILED;
 }
 
 
@@ -748,8 +762,10 @@ osalStatus osal_socket_read(
 			{
 				goto getout;
 			}
-			rval = 0;
-		}
+            rval = 0;
+        }
+
+printf ("osal_socket_read(), %d bytes OK\n", (int)rval);
 
 		*n_read = rval;
 		return OSAL_SUCCESS;
@@ -851,6 +867,8 @@ osalStatus osal_socket_select(
     if (nstreams < 1 || nstreams > OSAL_SOCKET_SELECT_MAX)
         return OSAL_STATUS_FAILED;
 
+printf ("osal_socket_select()\n");
+
     n_sockets = 0;
     FD_ZERO(&rdset);
     FD_ZERO(&wrset);
@@ -897,6 +915,7 @@ osalStatus osal_socket_select(
 
         selectdata->eventflags = OSAL_STREAM_CUSTOM_EVENT;
         selectdata->stream_nr = OSAL_STREAM_NR_CUSTOM_EVENT;
+printf ("osal_socket_select() CUSTOM EVENT\n");
         return OSAL_SUCCESS;
     }
 
@@ -965,6 +984,8 @@ osalStatus osal_socket_select(
     selectdata->eventflags = eventflags;
     selectdata->errorcode = errorcode;
     selectdata->stream_nr = socket_nr < n_sockets ? ixtable[socket_nr] : 0;
+
+printf ("osal_socket_select() SOCKET EVENT\n");
 
     return OSAL_SUCCESS;
 }
