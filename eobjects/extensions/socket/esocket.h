@@ -186,7 +186,7 @@ protected:
      */
     osalStream m_socket;
 
-    /* Frame size in bytes
+    /* Frame size in bytes.
      */
     os_int m_frame_sz;
 };

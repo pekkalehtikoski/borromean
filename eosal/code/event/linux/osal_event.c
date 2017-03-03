@@ -215,7 +215,7 @@ void osal_event_set(
      */
     if (pe->pipefd[0] != -1)
     {
-printf ("Writing pipe...");
+printf ("Signaling pipe...");
 
         write(pe->pipefd[1], "\n", 1);
 printf ("OK\n");
@@ -346,7 +346,7 @@ int osal_event_pipefd(
             osal_debug_error("osal_event_pipefd: pipe2() failed");
             return -1;
         }
-        /* write(pe->pipefd[1], "\n", 1); */
+        write(pe->pipefd[1], "\n", 1);
 
         printf ("OK\n");
     }

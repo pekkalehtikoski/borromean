@@ -582,6 +582,14 @@ eStatus eConnection::connected()
 
     m_connected = OS_TRUE;
     setpropertyl(ECONNP_ISOPEN, OS_TRUE);
+
+    if (m_new_writes)
+    {
+        m_stream->writechar(E_STREAM_FLUSH);
+        m_stream->flush();
+        m_new_writes = OS_FALSE;
+    }
+
     return ESTATUS_SUCCESS;
 }
 
@@ -720,9 +728,6 @@ eStatus eConnection::write(
     if (!s) m_new_writes = OS_TRUE;
     return s;
 }
-
-
-
 
 
 /**

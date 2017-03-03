@@ -173,6 +173,8 @@ void connection_example_1()
 //    c.setpropertys_msg("//myconnection/myclass1",
 //         "message from connection_example1", "A");
 
+//    os_sleep(2000);
+
     /* Create and start thread named "thread2".
      */
     t = new eMyClass2();

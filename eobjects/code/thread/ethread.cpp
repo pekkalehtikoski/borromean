@@ -321,10 +321,13 @@ void eThread::alive(
 
     /* Wait for thread to be trigged.
      */
-    if (flags & EALIVE_WAIT_FOR_EVENT) 
+    /* if (flags & EALIVE_WAIT_FOR_EVENT)
     {
         osal_event_wait(m_trigger, OSAL_EVENT_INFINITE);
-    }
+    } */
+    osal_event_wait(m_trigger, flags & EALIVE_WAIT_FOR_EVENT
+        ? OSAL_EVENT_INFINITE : OSAL_EVENT_NO_WAIT);
+
 
     while (OS_TRUE)
     {

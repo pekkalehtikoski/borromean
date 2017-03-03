@@ -408,14 +408,11 @@ selectdata->errorcode = so->read_socket();
 osal_console_write("close event 2\n");
             return ESTATUS_FAILED;
         }
-
-        if (selectdata->eventflags & OSAL_STREAM_CONNECT_EVENT)
+*/
+        /* if (selectdata->eventflags & OSAL_STREAM_CONNECT_EVENT)
         {
-            if (selectdata->errorcode)
-            {
-osal_console_write("connect failed 2\n");
-                return ESTATUS_FAILED;
-            }
+            read_socket();
+            write_socket(OS_FALSE);
         } */
 
         if (selectdata->eventflags & OSAL_STREAM_WRITE_EVENT)

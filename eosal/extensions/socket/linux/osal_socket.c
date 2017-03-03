@@ -942,6 +942,13 @@ printf ("osal_socket_select() CUSTOM EVENT\n");
                     eventflags = OSAL_STREAM_ACCEPT_EVENT;
                     printf ("Accept %d\n", (int)socket_nr);
                 }
+                else if (!mysocket->connected)
+                {
+                    eventflags = OSAL_STREAM_CONNECT_EVENT;
+                    mysocket->connected = OS_TRUE;
+                    mysocket->write_blocked = OS_TRUE;
+                    printf ("R Connect %d\n", (int)socket_nr);
+                }
                 else
                 {
                     eventflags = OSAL_STREAM_READ_EVENT;
@@ -953,33 +960,34 @@ printf ("osal_socket_select() CUSTOM EVENT\n");
 
             if (mysocket->write_blocked || !mysocket->connected) if (FD_ISSET (j, &wrset))
             {
-                if (mysocket->connected)
+                if (!mysocket->connected)
+                {
+                    eventflags = OSAL_STREAM_CONNECT_EVENT;
+                    mysocket->connected = OS_TRUE;
+                    mysocket->write_blocked = OS_TRUE;
+                    printf ("W Connect %d\n", (int)socket_nr);
+                }
+                else
                 {
                     eventflags = OSAL_STREAM_WRITE_EVENT;
                     printf ("Write %d\n", (int)socket_nr);
                     mysocket->write_blocked = OS_FALSE;
                 }
-                else
-                {
-                    eventflags = OSAL_STREAM_CONNECT_EVENT;
-                    mysocket->connected = OS_TRUE;
-                    mysocket->write_blocked = OS_TRUE;
-                    printf ("Connect %d\n", (int)socket_nr);
-                }
-                FD_CLR (j, &wrset);
+                // FD_CLR (j, &wrset);
                 break;
             }
         }
     }
 
 
-    if (eventflags == OSAL_STREAM_READ_EVENT && socket_nr < n_sockets)
+    /*
+     * if (eventflags == OSAL_STREAM_READ_EVENT && socket_nr < n_sockets)
     {
         if (sockets[socket_nr]->open_flags & OSAL_STREAM_LISTEN)
         {
             eventflags = OSAL_STREAM_ACCEPT_EVENT;
         }
-    }
+    } */
 
     selectdata->eventflags = eventflags;
     selectdata->errorcode = errorcode;
