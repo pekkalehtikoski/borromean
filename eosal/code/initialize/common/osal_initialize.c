@@ -60,6 +60,10 @@ void osal_initialize(
      */
     os_memclear(osal_global, sizeof(osalGlobalStruct));
 
+    /* Operating system specific initialization.
+     */
+    osal_init_os_specific(flags);
+
     /* Initialize memory management.
      */
 #if OSAL_MEMORY_MANAGER
@@ -75,10 +79,6 @@ void osal_initialize(
 	/* Initialize timers.
 	 */
     osal_timer_initialize();
-
-    /* Operating system specific initialization.
-     */
-    osal_init_os_specific(flags);
 
     /* Mark that OSAL library is initialized
      */
@@ -115,6 +115,10 @@ void osal_shutdown(
         osal_global->sockets_shutdown_func();
     }
 #endif
+
+    /* Shut down operating system specific functionality.
+     */
+    osal_shutdown_os_specific();
 
 	/* Shut down mutexes. Releases system mutex.
 	 */

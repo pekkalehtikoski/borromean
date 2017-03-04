@@ -18,9 +18,9 @@
   or eSerial, and uses it to pass data over socket or serial port.
   The eConnection is class derived from eThread. It always runs at it's own thread.
 
-  Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
+  Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used,
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
-  or distribute this file you indicate that you have read the license and understand and accept 
+  or distribute this file you indicate that you have read the license and understand and accept
   it fully.
 
 ****************************************************************************************************
@@ -47,9 +47,9 @@ os_char
 ****************************************************************************************************
 */
 eConnection::eConnection(
-	eObject *parent,
-	e_oid oid,
-	os_int flags)
+    eObject *parent,
+    e_oid oid,
+    os_int flags)
     : eThread(parent, oid, flags)
 {
     m_stream_classid = ECLASSID_SOCKET;
@@ -94,7 +94,7 @@ eConnection::~eConnection()
   @brief Add eConnection to class list and class'es properties to it's property set.
 
   The eConnection::setupclass function adds eConnection to class list and class'es properties to
-  it's property set. The class list enables creating new objects dynamically by class identifier, 
+  it's property set. The class list enables creating new objects dynamically by class identifier,
   which is used for serialization reader functions. The property set stores static list of
   class'es properties and metadata for those.
 
@@ -109,11 +109,11 @@ void eConnection::setupclass()
      */
     os_lock();
     eclasslist_add(cls, (eNewObjFunc)newobj, "eConnection");
-    addproperty(cls, ECONNP_CLASSID, econnp_classid, 
+    addproperty(cls, ECONNP_CLASSID, econnp_classid,
         EPRO_PERSISTENT|EPRO_SIMPLE, "class ID");
-    addproperty(cls, ECONNP_IPADDR, econnp_ipaddr, 
+    addproperty(cls, ECONNP_IPADDR, econnp_ipaddr,
         EPRO_PERSISTENT|EPRO_SIMPLE, "IP");
-    p = addpropertyl(cls, ECONNP_ISOPEN, econnp_isopen, 
+    p = addpropertyl(cls, ECONNP_ISOPEN, econnp_isopen,
         EPRO_NOONPRCH, "is open", OS_FALSE);
     p->setpropertys(EVARP_ATTR, "rdonly;chkbox");
     os_unlock();
@@ -126,7 +126,7 @@ void eConnection::setupclass()
   @brief Called to inform the class about property value change (override).
 
   The onpropertychange() function is called when class'es property changes, unless the
-  property is flagged with EPRO_NOONPRCH. 
+  property is flagged with EPRO_NOONPRCH.
   If property is flagged as EPRO_SIMPLE, this function shuold save the property value
   in class members and and return it when simpleproperty() is called.
 
@@ -138,8 +138,8 @@ void eConnection::setupclass()
 ****************************************************************************************************
 */
 void eConnection::onpropertychange(
-    os_int propertynr, 
-    eVariable *x, 
+    os_int propertynr,
+    eVariable *x,
     os_int flags)
 {
     switch (propertynr)
@@ -159,7 +159,7 @@ void eConnection::onpropertychange(
             break;
 
         default:
-            eThread::onpropertychange(propertynr, x, flags); 
+            eThread::onpropertychange(propertynr, x, flags);
             break;
     }
 }
@@ -181,7 +181,7 @@ void eConnection::onpropertychange(
 ****************************************************************************************************
 */
 eStatus eConnection::simpleproperty(
-    os_int propertynr, 
+    os_int propertynr,
     eVariable *x)
 {
     switch (propertynr)
@@ -193,7 +193,7 @@ eStatus eConnection::simpleproperty(
         case ECONNP_IPADDR:
             x->setv(m_ipaddr);
             break;
-   
+
         default:
             return eThread::simpleproperty(propertynr, x);
     }
@@ -213,10 +213,10 @@ eStatus eConnection::simpleproperty(
   If connection (socket, etc) has been closed, this function tries periodically to reopen it.
   First connection attempt is already done when IP address has been set and connection is
   being initialized.
-  
+
   @param   envelope Message envelope. Contains command, target and source paths and
            message content, etc.
-  @return  None. 
+  @return  None.
 
 ****************************************************************************************************
 */
@@ -228,7 +228,7 @@ void eConnection::onmessage(
     /* If this is envelope to be routed trough connection.
      */
     c = *envelope->target();
-    if (c != '_' && c != '\0') 
+    if (c != '_' && c != '\0')
     {
         /* If currently connected, write envelope immediately.
          */
@@ -289,12 +289,20 @@ void eConnection::onmessage(
     {
         /* If stream is open, send keepalive.
          */
-        if (m_stream)
+        if (m_connected)
         {
             if (os_elapsed(&m_last_send, 20000))
             {
-                m_stream->writechar(E_STREAM_KEEPALIVE);
-                m_stream->flush();
+                if (m_stream->writechar(E_STREAM_KEEPALIVE))
+                {
+                    close();
+                    return;
+                }
+                if (m_stream->flush())
+                {
+                    close();
+                    return;
+                }
                 os_timer(&m_last_send);
             }
         }
@@ -402,8 +410,16 @@ void eConnection::run()
                  */
                 if (m_message_queue->first() == OS_NULL && m_new_writes)
                 {
-                    m_stream->writechar(E_STREAM_FLUSH);
-                    m_stream->flush();
+                    if (m_stream->writechar(E_STREAM_FLUSH))
+                    {
+                        close();
+                        continue;
+                    }
+                    if (m_stream->flush())
+                    {
+                        close();
+                        continue;
+                    }
                     os_timer(&m_last_send);
                     m_new_writes = OS_FALSE;
                 }
@@ -428,10 +444,10 @@ void eConnection::run()
                 /* Read objects, as long we have whole objects to read.
                  */
                 while (m_stream->flushcount() > 0)
-                { 
+                {
                     if (read())
                     {
-                        close(); 
+                        close();
                         break;
                     }
                 }
@@ -455,9 +471,9 @@ void eConnection::run()
             if (m_connectetion_failed_once && m_delete_on_error)
             {
                 break;
-            } 
-            
-            alive(EALIVE_WAIT_FOR_EVENT); 
+            }
+
+            alive(EALIVE_WAIT_FOR_EVENT);
         }
     }
 }
@@ -476,7 +492,7 @@ void eConnection::run()
 ****************************************************************************************************
 */
 void eConnection::accepted(
-    eStream *stream) 
+    eStream *stream)
 {
     if (m_stream) delete m_stream;
 
@@ -512,7 +528,7 @@ void eConnection::open()
     /* If we are socket exists, initialize() has not been called or we do not have IP address,
        then do nothing.
      */
-    if (m_stream || !m_initialized || m_ipaddr->isempty()) 
+    if (m_stream || !m_initialized || m_ipaddr->isempty())
     {
         return;
     }
@@ -526,7 +542,7 @@ void eConnection::open()
     s = m_stream->open(m_ipaddr->gets(), OSAL_STREAM_CONNECT);
     if (s)
     {
-	    osal_console_write("osal_stream_open failed\n");
+        osal_console_write("osal_stream_open failed\n");
         delete m_stream;
         m_stream = OS_NULL;
         return;
@@ -789,7 +805,7 @@ eStatus eConnection::read()
 {
     eStatus s;
 
-    if (m_stream == OS_NULL) return ESTATUS_FAILED;;
+    if (m_stream == OS_NULL) return ESTATUS_FAILED;
 
     if (m_envelope == OS_NULL)
     {
@@ -801,7 +817,7 @@ eStatus eConnection::read()
     {
         return ESTATUS_SUCCESS;
     }
-    if (s) 
+    if (s)
     {
         delete(m_envelope);
         return s;

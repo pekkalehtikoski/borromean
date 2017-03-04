@@ -247,8 +247,8 @@ eStatus eSocket::flush(
         if (selectdata.errorcode) return ESTATUS_FAILED;
     }
 
-    osal_stream_flush(m_socket, OSAL_STREAM_DEFAULT);
-    return ESTATUS_SUCCESS;
+    return osal_stream_flush(m_socket, OSAL_STREAM_DEFAULT)
+        ? ESTATUS_FAILED : ESTATUS_SUCCESS;
 }
 
 
@@ -532,6 +532,7 @@ void eSocket::select(
         if (selectdata->eventflags & OSAL_STREAM_READ_EVENT)
         {
             selectdata->errorcode = so->read_socket();
+            if (selectdata->errorcode) return;
         }
 
         if (selectdata->eventflags & OSAL_STREAM_WRITE_EVENT)

@@ -383,14 +383,10 @@ void osal_event_clearpipe(
      */
     pe = (osalPosixEvent*)evnt;
 
-printf ("Clearing pipe...");
-
     if (pe->pipefd[0] != -1)
     {
         while (read(pe->pipefd[0], &c, 1) > 0);
     }
-
-printf ("OK\n");
 }
 
 #endif

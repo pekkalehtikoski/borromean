@@ -71,6 +71,11 @@ void osal_shutdown(
 void osal_init_os_specific(
     os_int flags);
 
+/* Operating system specific OSAL shutdown code.
+ */
+void osal_shutdown_os_specific(
+    void);
+
 /*@}*/
 
 #endif

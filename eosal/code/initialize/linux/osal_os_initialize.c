@@ -16,6 +16,7 @@
 ****************************************************************************************************
 */
 #include "eosal/eosal.h"
+#include <signal.h>
 
 
 /**
@@ -37,6 +38,12 @@
 void osal_init_os_specific(
     os_int flags)
 {
+    if ((flags & OSAL_INIT_NO_LINUX_SIGNAL_INIT) == 0)
+    {
+        /* Do not terminate progream when socket breaks.
+         */
+        signal (SIGPIPE, SIG_IGN);
+    }
 }
 
 

@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <signal.h>
 
 
 #include <stdio.h> // FOR TESTING
@@ -921,12 +922,12 @@ osalStatus osal_socket_select(
                 {
                     eventflags = OSAL_STREAM_ACCEPT_EVENT;
                 }
-                else if (!mysocket->connected)
+                /* else if (!mysocket->connected)
                 {
                     eventflags = OSAL_STREAM_CONNECT_EVENT;
                     mysocket->connected = OS_TRUE;
                     mysocket->write_blocked = OS_TRUE;
-                }
+                } */
                 else
                 {
                     eventflags = OSAL_STREAM_READ_EVENT;
@@ -1010,6 +1011,7 @@ getout:
 void osal_socket_initialize(
 	void)
 {
+    signal (SIGPIPE, SIG_IGN);
 }
 
 
