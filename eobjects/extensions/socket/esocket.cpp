@@ -41,6 +41,7 @@ eSocket::eSocket(
     m_in = m_out = OS_NULL;
     m_socket = OS_NULL;
     m_frame_sz = 1400;
+    m_flushnow = OS_FALSE;
 }
 
 
@@ -229,16 +230,16 @@ eStatus eSocket::flush(
         return ESTATUS_FAILED;
     }
 
+    /* Try to write data to socket.
+     */
+    s = write_socket(OS_TRUE);
+    if (s) return s;
+
+    /* Let select handle resut of data transfers. This can also read socket so socket cannot
+       get blocked by simultaneous writes from both ends.
+     */
     while (m_out->bytes())
     {
-        /* Try to write data to socket.
-         */
-        s = write_socket(OS_TRUE);
-        if (s) return s;
-        if (!m_out->bytes()) break;
-
-        /* Let select handle data transfers
-         */
         strm = this;
         select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
         if (selectdata.errorcode) return ESTATUS_FAILED;
@@ -452,31 +453,14 @@ void eSocket::select(
 
         if (selectdata->eventflags & OSAL_STREAM_READ_EVENT)
         {
-osal_console_write("read event 2\n");
-
-selectdata->errorcode = so->read_socket();
+            selectdata->errorcode = so->read_socket();
         }
-
-        /* if (selectdata->eventflags & OSAL_STREAM_CLOSE_EVENT)
-        {
-osal_console_write("close event 2\n");
-            return ESTATUS_FAILED;
-        }
-*/
-        /* if (selectdata->eventflags & OSAL_STREAM_CONNECT_EVENT)
-        {
-            read_socket();
-            write_socket(OS_FALSE);
-        } */
 
         if (selectdata->eventflags & OSAL_STREAM_WRITE_EVENT)
         {
-osal_console_write("write event\n");
-            selectdata->errorcode = so->write_socket(OS_TRUE);
+            selectdata->errorcode = so->write_socket(OS_FALSE);
         }
     }
-
-//    return s ? ESTATUS_FAILED : ESTATUS_SUCCESS;
 }
 
 
@@ -495,8 +479,6 @@ osal_console_write("write event\n");
 
 ****************************************************************************************************
 */
-/* Accept incoming connection.
- */
 eStatus eSocket::accept(
     eStream *newstream,
     os_int flags)
@@ -534,9 +516,10 @@ eStatus eSocket::accept(
   @brief Write to socket.
 
   The eSocket::write_socket() function writes data from m_out queue to socket.
-  Unless flushnow is set, the function does nothing until m_out holds enough data for at least
+  If flushnow is not set, the function does nothing until m_out holds enough data for at least
   one ethernet frame. All data from m_out queue which can be sent immediately without wait,
   is written to socket. 
+  If flushnow writing data
 
   @param  flushnow If  OS_TRUE, even single buffered byte is written. Otherwise waits until 
           enough bytes for ethernet frame are buffered before writing.
@@ -553,11 +536,14 @@ eStatus eSocket::write_socket(
     eStatus s = ESTATUS_SUCCESS;
     osalStatus os;
 
+    m_flushnow |= flushnow;
+
     while (OS_TRUE)
     {
         n = m_out->bytes();
-        if ((n < m_frame_sz && !flushnow) || n < 1) 
+        if ((n < m_frame_sz && !m_flushnow) || n < 1)
         {
+            if (n < 1) m_flushnow = OS_FALSE;
             break;
         }
 
@@ -577,8 +563,6 @@ eStatus eSocket::write_socket(
             break;
         }
         if (nwritten <= 0) break;
-
-// printf("%d bytes written to socket\n", (int)nbytes);
 
         m_out->read(OS_NULL, nwritten, &nread);
     }

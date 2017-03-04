@@ -188,6 +188,10 @@ protected:
     /* Frame size in bytes.
      */
     os_int m_frame_sz;
+
+    /** Flush all data from output buffer until output buffer is empty
+     */
+    os_boolean m_flushnow;
 };
 
 #endif
