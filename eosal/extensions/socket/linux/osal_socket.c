@@ -498,9 +498,6 @@ osalStream osal_socket_accept(
 			return OS_NULL;
 		}
 
-printf ("osal_socket_accept ACCEPTING\n");
-
-
         /* Set socket reuse flag.
          */
         if ((flags & OSAL_STREAM_NO_REUSEADDR) == 0)
@@ -546,9 +543,6 @@ printf ("osal_socket_accept ACCEPTING\n");
 	    /* Set 0 timeouts.
 	     */
 		newsocket->hdr.write_timeout_ms = newsocket->hdr.read_timeout_ms = 0;
-
-printf ("osal_socket_accept OK\n");
-
 
 		/* Success set status code and cast socket structure pointer to stream pointer 
 		   and return it.
@@ -635,8 +629,6 @@ osalStatus osal_socket_write(
 	osalSocket *mysocket;
     int handle;
 
-    printf ("osal_socket_write\n");
-
 	if (stream)
 	{
 		/* Cast stream pointer to socket structure pointer.
@@ -651,8 +643,6 @@ osalStatus osal_socket_write(
 			*n_written = 0;
 			return OSAL_SUCCESS;
 		}
-
-        printf ("osal_socket_write trying %d\n", (int)n);
 
 		/* Lock socket and get OS socket handle.
 		 */
@@ -682,13 +672,11 @@ osalStatus osal_socket_write(
 		}
 
 		*n_written = rval;
-        printf ("osal_socket_write %d bytes OK\n", (int)rval);
         return OSAL_SUCCESS;
 	}
 
 getout:
 	*n_written = 0;
-    printf ("osal_socket_write FAILED\n");
     return OSAL_STATUS_FAILED;
 }
 
@@ -764,8 +752,6 @@ osalStatus osal_socket_read(
 			}
             rval = 0;
         }
-
-printf ("osal_socket_read(), %d bytes OK\n", (int)rval);
 
 		*n_read = rval;
 		return OSAL_SUCCESS;
@@ -867,8 +853,6 @@ osalStatus osal_socket_select(
     if (nstreams < 1 || nstreams > OSAL_SOCKET_SELECT_MAX)
         return OSAL_STATUS_FAILED;
 
-printf ("osal_socket_select()\n");
-
     n_sockets = 0;
     FD_ZERO(&rdset);
     FD_ZERO(&wrset);
@@ -903,7 +887,6 @@ printf ("osal_socket_select()\n");
     errorcode = OSAL_SUCCESS;
     if (select(maxfd+1, &rdset, &wrset, &exset, NULL) < 0)
     {
-        printf ("select failed\n");
         errorcode = OSAL_STATUS_FAILED;
     }
 
@@ -915,7 +898,6 @@ printf ("osal_socket_select()\n");
 
         selectdata->eventflags = OSAL_STREAM_CUSTOM_EVENT;
         selectdata->stream_nr = OSAL_STREAM_NR_CUSTOM_EVENT;
-printf ("osal_socket_select() CUSTOM EVENT\n");
         return OSAL_SUCCESS;
     }
 
@@ -930,8 +912,6 @@ printf ("osal_socket_select() CUSTOM EVENT\n");
             {
                 eventflags = OSAL_STREAM_CLOSE_EVENT;
                 errorcode = OSAL_STATUS_SOCKET_CLOSED;
-                printf ("Control %d\n", (int)socket_nr);
-                // FD_CLR (j, &exset);
                 break;
             }
 
@@ -940,21 +920,17 @@ printf ("osal_socket_select() CUSTOM EVENT\n");
                 if (sockets[socket_nr]->open_flags & OSAL_STREAM_LISTEN)
                 {
                     eventflags = OSAL_STREAM_ACCEPT_EVENT;
-                    printf ("Accept %d\n", (int)socket_nr);
                 }
                 else if (!mysocket->connected)
                 {
                     eventflags = OSAL_STREAM_CONNECT_EVENT;
                     mysocket->connected = OS_TRUE;
                     mysocket->write_blocked = OS_TRUE;
-                    printf ("R Connect %d\n", (int)socket_nr);
                 }
                 else
                 {
                     eventflags = OSAL_STREAM_READ_EVENT;
-                    printf ("Read %d\n", (int)socket_nr);
                 }
-                // FD_CLR (j, &rdset);
                 break;
             }
 
@@ -965,35 +941,20 @@ printf ("osal_socket_select() CUSTOM EVENT\n");
                     eventflags = OSAL_STREAM_CONNECT_EVENT;
                     mysocket->connected = OS_TRUE;
                     mysocket->write_blocked = OS_TRUE;
-                    printf ("W Connect %d\n", (int)socket_nr);
                 }
                 else
                 {
                     eventflags = OSAL_STREAM_WRITE_EVENT;
-                    printf ("Write %d\n", (int)socket_nr);
                     mysocket->write_blocked = OS_FALSE;
                 }
-                // FD_CLR (j, &wrset);
                 break;
             }
         }
     }
 
-
-    /*
-     * if (eventflags == OSAL_STREAM_READ_EVENT && socket_nr < n_sockets)
-    {
-        if (sockets[socket_nr]->open_flags & OSAL_STREAM_LISTEN)
-        {
-            eventflags = OSAL_STREAM_ACCEPT_EVENT;
-        }
-    } */
-
     selectdata->eventflags = eventflags;
     selectdata->errorcode = errorcode;
     selectdata->stream_nr = socket_nr < n_sockets ? ixtable[socket_nr] : 0;
-
-printf ("osal_socket_select() SOCKET EVENT\n");
 
     return OSAL_SUCCESS;
 }

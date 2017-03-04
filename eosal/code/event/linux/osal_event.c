@@ -215,13 +215,10 @@ void osal_event_set(
      */
     if (pe->pipefd[0] != -1)
     {
-printf ("Signaling pipe...");
-
         write(pe->pipefd[1], "\n", 1);
-printf ("OK\n");
     }
 
-    /* Set condition variable
+    /* Set condition variable.
      */
     if (pthread_cond_signal(&pe->cond))
     {

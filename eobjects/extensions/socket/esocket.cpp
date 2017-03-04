@@ -211,8 +211,12 @@ eStatus eSocket::close()
 
   @brief Flush written data to socket.
 
-  The eSocket::flush function writes all data in output queue to socket.
+  The eSocket::flush function writes all data in output queue to socket. This uses
+  eSocket::select() function, which can also read received data while writing.
+  This prevents the socket from getting stick if both ends are writing large amount of data
+  at same time.
 
+  @param  flags Ignored for now.
   @return If succesfull, the function returns ESTATUS_SUCCESS (0). Otherwise if socket is not
           open returns ESTATUS failed.
 
@@ -253,9 +257,11 @@ eStatus eSocket::flush(
 /**
 ****************************************************************************************************
 
-  @brief Write data to soket output buffer and to socket if it would not block.
+  @brief Write data to soket output buffer and complete frames to.
 
-  The eSocket::write function...
+  The eSocket::write function writes data first to output buffer. Then attempts to write
+  data from output buffer into socket, as long as there are full frames and socket would
+  not block.
 
   @return If succesfull, the function returns ESTATUS_SUCCESS (0). Otherwise if socket is not
           open returns ESTATUS failed.
@@ -283,8 +289,19 @@ eStatus eSocket::write(
 }
 
 
-/* Read data from stream.
- */
+/**
+****************************************************************************************************
+
+  @brief Read data to soket input buffer, fill in by readinf from socket.
+
+  The eSocket::read function first tries to read data from socket input buffer.
+  XXXXXX
+
+  @return If succesfull, the function returns ESTATUS_SUCCESS (0). Otherwise if error
+          the function returns ESTATUS_FAILED.
+
+****************************************************************************************************
+*/
 eStatus eSocket::read(
     os_char *buf, 
     os_memsz buf_sz, 
@@ -305,7 +322,7 @@ eStatus eSocket::read(
     n = 0;
     while (OS_TRUE)
     {
-        /* Try to get from queue.
+        /* Try to get from queue. XXXXXXXXXXXXXXXXXXXXXXXXXXXX THIS NEEDS TO BE SIMPLIFIED
          */
         m_in->read(buf, buf_sz, &nrd);
         buf_sz -= nrd;
@@ -436,11 +453,11 @@ void eSocket::select(
     }
     else
     {
-
         for (i = 0; i<nstreams; i++)
         {
             osalsock[i] = sockets[i]->m_socket;
         }
+
         osal_stream_select(osalsock, nstreams, evnt,
             selectdata, OSAL_STREAM_DEFAULT); 
     }
