@@ -59,7 +59,7 @@ int main(
 
     /* Initialize operating system abstraction layer.
      */
-    osal_initialize();
+    osal_initialize(OSAL_INIT_DEFAULT);
 
     /* Set normal thread priority.
      */

@@ -51,15 +51,25 @@ extern osalGlobalStruct *osal_global;
  */
 /*@{*/
 
+/* Flags for osal_initialize() function.
+ */
+#define OSAL_INIT_DEFAULT 0
+#define OSAL_INIT_NO_LINUX_SIGNAL_INIT 1
+
 /* Initialize OSAL library for use.
  */
 void osal_initialize(
-    void);
+    os_int flags);
 
 /* Shut down OSAL libeary, clean up.
  */
 void osal_shutdown(
     void);
+
+/* Operating system specific OSAL library initialization.
+ */
+void osal_init_os_specific(
+    os_int flags);
 
 /*@}*/
 

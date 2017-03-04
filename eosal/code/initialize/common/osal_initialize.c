@@ -42,12 +42,15 @@ osalGlobalStruct *osal_global = &osal_global_static;
   be the first OSAL function called. The osal_shutdown() function cleans up resources
   used by the OSAL library.
 
+  @param  flags Bit fields. OSAL_INIT_DEFAULT (0) for normal initalization.
+          OSAL_INIT_NO_LINUX_SIGNAL_INIT not to initialize linux signals.
+
   @return  None.
 
 ****************************************************************************************************
 */
 void osal_initialize(
-    void)
+    os_int flags)
 {
     /* If OSAL library is already initialized, then do nothing.
      */
@@ -71,7 +74,11 @@ void osal_initialize(
 
 	/* Initialize timers.
 	 */
-	osal_timer_initialize();
+    osal_timer_initialize();
+
+    /* Operating system specific initialization.
+     */
+    osal_init_os_specific(flags);
 
     /* Mark that OSAL library is initialized
      */

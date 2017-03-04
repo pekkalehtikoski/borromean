@@ -48,7 +48,7 @@ void eobjects_initialize(
 
     /* Initialize operating system abstraction layer.
      */
-    osal_initialize();
+    osal_initialize(OSAL_INIT_DEFAULT);
 
     /* Initialize handle tables.
      */

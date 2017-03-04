@@ -36,8 +36,6 @@ eSocket::eSocket(
 	os_int flags)
     : eStream(parent, oid, flags)
 {
-    /* Clear member variables.
-     */
     m_in = m_out = OS_NULL;
     m_socket = OS_NULL;
     m_frame_sz = 1400;
@@ -257,7 +255,7 @@ eStatus eSocket::flush(
 /**
 ****************************************************************************************************
 
-  @brief Write data to soket output buffer and complete frames to.
+  @brief Write data to socket output buffer/to socket.
 
   The eSocket::write function writes data first to output buffer. Then attempts to write
   data from output buffer into socket, as long as there are full frames and socket would
@@ -295,7 +293,15 @@ eStatus eSocket::write(
   @brief Read data to soket input buffer, fill in by readinf from socket.
 
   The eSocket::read function first tries to read data from socket input buffer.
-  XXXXXX
+  It there is not enough data in input buffer, the function tries to read more
+  data from the socket.
+
+  @param  buf Ponter to buffer where to place the data read.
+  @param  buf_sz Buffer size in bytes.
+  @param  nread Pointer integer into which number of bytes read is stored.
+          OS_NULL if not needed.
+          Less or equal to buf_sz.
+  @param  flags Ignored, set zero for now.
 
   @return If succesfull, the function returns ESTATUS_SUCCESS (0). Otherwise if error
           the function returns ESTATUS_FAILED.
@@ -319,6 +325,37 @@ eStatus eSocket::read(
         return ESTATUS_FAILED;
     }
 
+#if 0
+
+    /* Try to read socket.
+     */
+    s = read_socket();
+    if (s) return s;
+
+    while (OS_TRUE)
+    {
+        /* Try to get from queue.
+         */
+        m_in->read(buf, buf_sz, &nrd);
+        buf_sz -= nrd;
+        n  += nrd;
+        if (buf_sz <= 0) break;
+
+        /* Let select handle data transfers.
+         */
+        strm = this;
+        select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
+        if (selectdata.errorcode)
+        {
+            if (nread) *nread = n;
+            return ESTATUS_FAILED;
+        }
+    }
+
+    if (nread) *nread = n;
+    return ESTATUS_SUCCESS;
+
+#else
     n = 0;
     while (OS_TRUE)
     {
@@ -354,6 +391,7 @@ eStatus eSocket::read(
 
     if (nread) *nread = n;
     return ESTATUS_SUCCESS;
+#endif
 }
 
 
