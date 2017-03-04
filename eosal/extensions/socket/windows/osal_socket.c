@@ -986,8 +986,6 @@ osalStatus osal_socket_select(
     selectdata->errorcode = errorcode;
     selectdata->stream_nr = ixtable[event_nr];
 
-    // ResetEvent(event[event_nr]);  ??????
-
     return OSAL_SUCCESS;
 }
 
