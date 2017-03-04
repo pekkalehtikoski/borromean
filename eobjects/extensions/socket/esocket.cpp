@@ -6,8 +6,8 @@
   @version 1.0
   @date    17.5.2016
 
-  TCP socket class encodes and buffers data and calls OSAL's stream functions to read/write the
-  socket.
+  TCP socket class eSocket encodes and buffers data and calls OSAL's stream functions to
+  read/write the socket. This class is used by eConnection and eEndPoint classes.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -24,7 +24,7 @@
 
   @brief Constructor.
 
-  X...
+  Clears member variables.
 
   @return  None.
 
@@ -49,7 +49,7 @@ eSocket::eSocket(
 
   @brief Virtual destructor.
 
-  X...
+  Closes the OS socket if it is open.
 
   @return  None.
 
@@ -122,6 +122,8 @@ eStatus eSocket::open(
 {
     osalStatus s;
 
+    /* If socket is already open.
+     */
     if (m_socket) return ESTATUS_FAILED;
 
     /* If we are listening, delete any queues. If connecting, create and open input and 
@@ -129,19 +131,34 @@ eStatus eSocket::open(
      */
     setup(flags);
 
-    /* Open socket
+    /* Open socket and return ESTATUS_SUCCESS or ESTATUS_FAILED.
      */
     m_socket = osal_socket_open(parameters, OS_NULL, &s, flags);
-    
     return s ? ESTATUS_FAILED : ESTATUS_SUCCESS;
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Setup queues for buffering.
+
+  The eSocket::setup function either sets up read and write queues for the socket. T
+  If we are setting up for listening socket, delete any queues (normally we do not have any).
+  If setting up for connecting or accepting a socket, create and open input and output queues.
+  This clears the queues if they were already open.
+
+  @param  flags  Set OSAL_STREAM_CONNECT (0) to set up for connecting socket or accepting socket
+          connection. Set bit OSAL_STREAM_LISTEN to set up for listening socket connections
+          as end point.
+  @return None.
+
+****************************************************************************************************
+*/
 void eSocket::setup(
     os_int flags)
 {
-    /* If we are listening, delete any queues. If connecting, create and open input and 
-       output queues. This clears the queues if they were already open.
+    /* If we are listening, delete any queues.
      */
     if (flags & OSAL_STREAM_LISTEN)
     {
@@ -149,6 +166,9 @@ void eSocket::setup(
         delete m_out;
         m_in = m_out = OS_NULL;
     }
+
+    /* Otherwise connecting or accepting a socket, create the queues.
+     */
     else
     {
         if (m_in == OS_NULL) m_in = new eQueue(this);
@@ -161,7 +181,20 @@ void eSocket::setup(
 }
 
 
-eStatus eSocket::close() 
+/**
+****************************************************************************************************
+
+  @brief Close a socket.
+
+  The eSocket::close function closes underlaying operating system socket. If socket is not open
+  function returns ESTATUS_FAILED and does nothing.
+
+  @return If succesfull, the function returns ESTATUS_SUCCESS (0). Otherwise if socket is not
+          open returns ESTATUS failed.
+
+****************************************************************************************************
+*/
+eStatus eSocket::close()
 {
     if (m_socket == OS_NULL) return ESTATUS_FAILED;
 
@@ -172,8 +205,18 @@ eStatus eSocket::close()
 }
 
 
-/* Flush written data to socket.
- */
+/**
+****************************************************************************************************
+
+  @brief Flush written data to socket.
+
+  The eSocket::flush function writes all data in output queue to socket.
+
+  @return If succesfull, the function returns ESTATUS_SUCCESS (0). Otherwise if socket is not
+          open returns ESTATUS failed.
+
+****************************************************************************************************
+*/
 eStatus eSocket::flush(
     os_int flags)
 {
@@ -205,8 +248,19 @@ eStatus eSocket::flush(
     return ESTATUS_SUCCESS;
 }
 
-/* Write data to stream.
- */
+
+/**
+****************************************************************************************************
+
+  @brief Write data to soket output buffer and to socket if it would not block.
+
+  The eSocket::write function...
+
+  @return If succesfull, the function returns ESTATUS_SUCCESS (0). Otherwise if socket is not
+          open returns ESTATUS failed.
+
+****************************************************************************************************
+*/
 eStatus eSocket::write(
     const os_char *buf, 
     os_memsz buf_sz, 
@@ -460,7 +514,7 @@ eStatus eSocket::accept(
         
         /* Create and open input and output queues. 
          */
-        sck->setup(OSAL_STREAM_DEFAULT);
+        sck->setup(OSAL_STREAM_CONNECT);
 
         /* Save OSAL socket handle
          */

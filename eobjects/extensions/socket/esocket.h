@@ -37,7 +37,7 @@ class eSocket : public eStream
 	/** 
 	************************************************************************************************
 
-	  @name Constructors and destructor
+      @name Constructor, destructor, etc.
 
 	  X...
 
@@ -92,7 +92,7 @@ public:
 	/** 
 	************************************************************************************************
 
-	  @name Socket functions for writing to socket.
+      @name Socket functions.
 
 	  X...
 
@@ -146,7 +146,6 @@ public:
         if (m_in) return m_in->flushcount();
         return -1;
     }
-
 
     /* Wait for socket or thread event.
      */
