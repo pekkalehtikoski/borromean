@@ -75,7 +75,7 @@ eEndPoint::~eEndPoint()
 
   The eEndPoint::setupclass function adds eEndPoint to class list and class'es properties to
   it's property set. The class list enables creating new objects dynamically by class identifier, 
-  which is used for serialization functions. The property stet stores static list of
+  which is used for serialization functions. The property set stores static list of
   class'es properties and metadata for those.
 
 ****************************************************************************************************
@@ -158,8 +158,8 @@ void eEndPoint::onpropertychange(
   The simpleproperty() function stores current value of simple property into variable x.
 
   @param   propertynr Property number to get.
-  @param   x Variable info which to store the property value.
-  @return  If fproperty with property number was stored in x, the function returns 
+  @param   x Variable into which to store the property value.
+  @return  If property with property number was stored in x, the function returns
            ESTATUS_SUCCESS (0). Nonzero return values indicate that property with
            given number was not among simple properties.
 

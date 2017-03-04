@@ -84,7 +84,7 @@ eQueue::~eQueue()
 
   The eVariable::setupclass function adds the class to class list and class'es properties to
   it's property set. The class list enables creating new objects dynamically by class identifier, 
-  which is used for serialization reader functions. The property stet stores static list of
+  which is used for serialization reader functions. The property set stores static list of
   class'es properties and metadata for those.
 
 ****************************************************************************************************
@@ -761,6 +761,10 @@ eStatus eQueue::writechar(
             c = E_STREAM_CTRLCH_FLUSH;
             break;
 
+        case E_STREAM_KEEPALIVE:
+            c = E_STREAM_CTRLCH_KEEPALIVE;
+            break;
+
         default:
             putcharacter(c);
             m_bytes++;
@@ -853,7 +857,7 @@ os_int eQueue::readchar()
                 m_rd_prevc = m_rd_prev2c = EQUEUE_NO_PREVIOUS_CHAR;
                 switch (cc)
                 {
-                    /** Control character in data.
+                    /* Control character in data.
                      */
                     case E_STREAM_CTRLCH_IN_DATA:
                         m_rd_repeat_char = E_STREAM_CTRL_CHAR;
@@ -865,8 +869,13 @@ os_int eQueue::readchar()
                     case E_STREAM_CTRLCH_FLUSH:
                         m_flush_count--;
                         return E_STREAM_CTRL_BASE + c;
+
+                    /* Completely ignore keepalive characters.
+                     */
+                    case E_STREAM_CTRLCH_KEEPALIVE:
+                        break;
         
-                    /** Beginning/end of object or stream has been disconnected. 
+                    /* Beginning/end of object or stream has been disconnected.
                      */
                     default:
                         return E_STREAM_CTRL_BASE + c;

@@ -58,6 +58,10 @@
  */
 #define E_STREAM_CTRLCH_FLUSH 0xA0
 
+/** Keep alive character.
+ */
+#define E_STREAM_CTRLCH_KEEPALIVE 0xC0
+
 /** Mask for separating control character from or repeat count or version number.
  */
 #define E_STREAM_CTRLCH_MASK 0xE0
@@ -100,6 +104,10 @@
 /** Stream flushed, contains whole objects. 
  */
 #define E_STREAM_FLUSH (E_STREAM_CTRL_BASE + E_STREAM_CTRLCH_FLUSH)
+
+/** Keep alive mark, to be ignored by recepient.
+ */
+#define E_STREAM_KEEPALIVE (E_STREAM_CTRL_BASE + E_STREAM_CTRLCH_KEEPALIVE)
 
 /** Special return values for readchar() to indicate that buffer has no more data.
  */

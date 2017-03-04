@@ -6,7 +6,8 @@
   @version 1.0
   @date    17.5.2016
 
-  Connection base class sets up general way to interace with different types of connections.
+  eConnection class, related to message envelope transport betweeen processes. See econnection.cpp
+  for more information.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -19,7 +20,7 @@
 #define ECONNECTION_INCLUDED
 
 
-/* Enumeration of connection properties.
+/* Enumeration of connection's properties.
  */
 #define ECONNP_CLASSID 2
 #define ECONNP_IPADDR 4
@@ -38,7 +39,7 @@ extern os_char
 
   @brief Connection class.
 
-  The eConnection passes message to other process trough TCP/IP socket.
+  The eConnection passes message to other process trough TCP/IP socket or serial port.
 
 ****************************************************************************************************
 */
@@ -164,6 +165,10 @@ protected:
      */
     os_int m_stream_classid;
 
+    /* Timer for last send, used to generate keepalives.
+     */
+    os_int64 m_last_send;
+
     /** IP address and optionally port number to connect to.
      */
     eVariable *m_ipaddr;
@@ -200,9 +205,9 @@ protected:
      */
     os_boolean m_connectetion_failed_once;
 
-    /** Reconnect timer enabled.
+    /** Reconnect timer enabled. -1 = not set, 0 = slow timer, 1 = fast timer.
      */
-    os_boolean  m_timer_enabled;
+    os_char m_fast_timer_enabled;
 
     /** New data has been written to stream, but the stream has not been
         flushed yet.

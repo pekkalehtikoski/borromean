@@ -54,7 +54,7 @@ eConsole::~eConsole()
 
   The eVariable::setupclass function adds the class to class list and class'es properties to
   it's property set. The class list enables creating new objects dynamically by class identifier, 
-  which is used for serialization reader functions. The property stet stores static list of
+  which is used for serialization reader functions. The property set stores static list of
   class'es properties and metadata for those.
 
 ****************************************************************************************************

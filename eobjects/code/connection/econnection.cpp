@@ -6,7 +6,17 @@
   @version 1.0
   @date    17.5.2016
 
-  Connection base class sets up general way to interace with different types of connections.
+  The eConnection class is part of message envelope transport from process to another, either
+  within computer or in network. For a process to listen for connections from an another process
+  it created eEndPoint object. When the second process connects to it it creates eConnection,
+  which actively connects to the eEndPoint IP/port of the first process. When eEndPoint accepts
+  the connection, it creates a connection object for the accepted socket, etc. Both of the two
+  processes connected together, have their own eConnection object.
+  eConnection object is visible in process'es object tree. When eConnection receives a message,
+  it passes it trough the socket, etc, and the eConnection in the second forwards it as if
+  the envelope came from the eConnection itself. The eConnectio wraps a stream, either eSocket
+  or eSerial, and uses it to pass data over socket or serial port.
+  The eConnection is class derived from eThread. It always runs at it's own thread.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -34,8 +44,6 @@ os_char
   address, and eContainer for first initialization bufffer and eContainers for memorised client
   and server bindings.
 
-  @return  None.
-
 ****************************************************************************************************
 */
 eConnection::eConnection(
@@ -52,13 +60,14 @@ eConnection::eConnection(
     m_connected = OS_FALSE;
     m_connectetion_failed_once = OS_FALSE;
     m_new_writes = OS_FALSE;
-    m_timer_enabled = OS_FALSE;
+    m_fast_timer_enabled = -1;
     m_delete_on_error = OS_FALSE;
     m_envelope = OS_NULL;
     m_client_bindings = new eContainer(this);
     m_client_bindings->ns_create();
     m_server_bindings = new eContainer(this);
     m_server_bindings->ns_create();
+    os_timer(&m_last_send);
 }
 
 
@@ -67,7 +76,7 @@ eConnection::eConnection(
 
   @brief Virtual destructor.
 
-  X...
+  Closes the connection, if it is open.
 
   @return  None.
 
@@ -86,7 +95,7 @@ eConnection::~eConnection()
 
   The eConnection::setupclass function adds eConnection to class list and class'es properties to
   it's property set. The class list enables creating new objects dynamically by class identifier, 
-  which is used for serialization reader functions. The property stet stores static list of
+  which is used for serialization reader functions. The property set stores static list of
   class'es properties and metadata for those.
 
 ****************************************************************************************************
@@ -121,12 +130,8 @@ void eConnection::setupclass()
   If property is flagged as EPRO_SIMPLE, this function shuold save the property value
   in class members and and return it when simpleproperty() is called.
 
-  Notice for change logging: Previous value is still valid when this function is called.
-  You can get the old value by calling property() function inside onpropertychange()
-  function.
-
-  @param   propertynr Property number of changed property.
-  @param   x Variable containing the new value.
+  @param   propertynr Property number of the changed property.
+  @param   x eVariable containing the new value.
   @param   flags
   @return  None.
 
@@ -165,11 +170,11 @@ void eConnection::onpropertychange(
 
   @brief Get value of simple property (override).
 
-  The simpleproperty() function stores current value of simple property into variable x.
+  The simpleproperty() function stores the current value of a simple property into variable x.
 
-  @param   propertynr Property number to get.
-  @param   x Variable info which to store the property value.
-  @return  If fproperty with property number was stored in x, the function returns 
+  @param   propertynr Property number.
+  @param   x eVariable into which to store the property value.
+  @return  If property with property number was stored in x, the function returns
            ESTATUS_SUCCESS (0). Nonzero return values indicate that property with
            given number was not among simple properties.
 
@@ -187,8 +192,6 @@ eStatus eConnection::simpleproperty(
 
         case ECONNP_IPADDR:
             x->setv(m_ipaddr);
-            close();
-            open();
             break;
    
         default:
@@ -201,9 +204,15 @@ eStatus eConnection::simpleproperty(
 /**
 ****************************************************************************************************
 
-  @brief Function to process incoming messages. 
+  @brief Process messages.
 
-  The onmessage function handles messages received by object. 
+  The onmessage function handles message envelopes received by the eConnection. If message
+  envelope is not message to eConnection (has path, etc), it to be forwarded tough the
+  socket, ect, to another process.
+
+  If connection (socket, etc) has been closed, this function tries periodically to reopen it.
+  First connection attempt is already done when IP address has been set and connection is
+  being initialized.
   
   @param   envelope Message envelope. Contains command, target and source paths and
            message content, etc.
@@ -216,7 +225,7 @@ void eConnection::onmessage(
 {
     os_char c;
 
-    /* If this is envelope to be routed trough connection
+    /* If this is envelope to be routed trough connection.
      */
     c = *envelope->target();
     if (c != '_' && c != '\0') 
@@ -225,10 +234,13 @@ void eConnection::onmessage(
          */
         if (m_connected)
         {
-            /* Check for binding related messages, memorize bindings through this connection.
+            /* Check for binding related messages, memorize bindings through
+               this connection.
              */
             monitor_binds(envelope);
 
+            /* Write the envelope to socket. Close socket if writing fails.
+             */
             if (write(envelope)) close();
         }
 
@@ -236,7 +248,8 @@ void eConnection::onmessage(
          */
         else
         {
-            /* If connection has not failed yet, buffer messages.
+            /* If connection has not failed yet, buffer message envelopes
+               to be sent when connection is established for the first time.
              */
             if (!m_connectetion_failed_once)
             {
@@ -250,15 +263,19 @@ void eConnection::onmessage(
                 }
             }
 
-            /* Otherwise connection has failed already, reply with 
-               notarget.
+            /* Otherwise connection has been tied and failed already,
+               reply with notarget message.
              */
             else
             {
-                /* Check for binding related messages, memorize bindings through this connection.
+                /* Check for binding related messages, memorize bindings
+                   through this connection.
                  */
                 monitor_binds(envelope);
 
+                /* Send notaget message to indicate the messagecannot
+                   be sent now.
+                 */
                 notarget(envelope);
             }
         }
@@ -266,14 +283,34 @@ void eConnection::onmessage(
         return;
     }
 
-    /* If timer message to try to open connection
+    /* If this is periodic timer message to this object.
      */
     if (c == '\0') if (envelope->command() == ECMD_TIMER)
     {
-        open();
+        /* If stream is open, send keepalive.
+         */
+        if (m_stream)
+        {
+            if (os_elapsed(&m_last_send, 20000))
+            {
+                m_stream->writechar(E_STREAM_KEEPALIVE);
+                m_stream->flush();
+                os_timer(&m_last_send);
+            }
+        }
+
+        /* Otherwise try to reopen the socket if it is closed.
+         */
+        else
+        {
+            open();
+        }
+
         return;
     }
- 
+
+    /* Call base class'es message handling.
+     */
     eThread::onmessage(envelope);
 }
 
@@ -284,8 +321,9 @@ void eConnection::onmessage(
   @brief Initialize the object.
 
   The initialize() function is called when new object is fully constructed.
-  It marks end point object initialized, and opens listening end point if ip address
-  for it is already set.
+
+  The function eConnection initialized by setting m_initialized flag, and if IP address is known
+  tries to open connection (socket, etc) to listening end point of another process.
 
   @param   params Parameters for the new thread.
   @return  None.
@@ -295,8 +333,6 @@ void eConnection::onmessage(
 void eConnection::initialize(
     eContainer *params)
 {
-    osal_console_write("initializing worker\n");
-
     m_initialized = OS_TRUE;
     open();
 }
@@ -307,7 +343,10 @@ void eConnection::initialize(
 
   @brief Run the connection.
 
-  The eConnection::run() function...
+  The eConnection::run() function keeps moves data trough the connection.
+  For most of the time function waits in select call, until data should be read from/written
+  to socket, or the eConnection object receives message, either to itself or one to be forwarded
+  trough the connection.
 
   @return  None.
 
@@ -315,7 +354,6 @@ void eConnection::initialize(
 */
 void eConnection::run()
 {
-//    eStatus s;
     osalSelectData selectdata;
     os_long try_again_ms = osal_rand(3000, 4000);
 
@@ -323,17 +361,19 @@ void eConnection::run()
      */
     while (!exitnow())
     {
-        /* If we have listening socket, wait for socket or thread event. 
-           Call alive() to process thread events.
+        /* If we have connected socket, wait for socket or thread event.
          */
         if (m_stream)
         {
-            /* Disable timer 
+            /* Set slow timer for keepalive messages. About 1 per 30 seconds.
+               This allows socket library to detect dead socket, and keeps
+               sockets which are connected trough system which disconnects
+               at inactivity enabled.
              */
-            if (m_timer_enabled)
+            if (m_fast_timer_enabled != 0)
             {
-                timer(0);
-                m_timer_enabled = OS_FALSE;
+                timer(try_again_ms + 27000);
+                m_fast_timer_enabled = 0;
             }
 
             /* Wait for socket or thread event. The function will return error if
@@ -345,7 +385,6 @@ void eConnection::run()
 
             if (selectdata.errorcode)
             {
-osal_console_write("socket broken\n");
                 close();
                 continue;
             }
@@ -355,7 +394,7 @@ osal_console_write("socket broken\n");
              */
             if (selectdata.eventflags & OSAL_STREAM_CUSTOM_EVENT)
             {
-                /* Process messages.
+                /* Call alive() to process messages.
                  */
                 alive(EALIVE_RETURN_IMMEDIATELY);
 
@@ -365,6 +404,7 @@ osal_console_write("socket broken\n");
                 {
                     m_stream->writechar(E_STREAM_FLUSH);
                     m_stream->flush();
+                    os_timer(&m_last_send);
                     m_new_writes = OS_FALSE;
                 }
             }
@@ -385,32 +425,17 @@ osal_console_write("socket broken\n");
              */
             if (selectdata.eventflags & OSAL_STREAM_READ_EVENT)
             {
-//osal_console_write("read event\n");
-                
                 /* Read objects, as long we have whole objects to read.
                  */
                 while (m_stream->flushcount() > 0)
                 { 
-//osal_console_write("r\n");
                     if (read())
                     {
                         close(); 
                         break;
                     }
-//osal_console_write("r done\n");
                 }
-
-//osal_console_write("read done\n");
             }
-
-            /* Opening stream has failed or stream has been disconnected.
-             */
-/*             if (s)
-            {
-osal_console_write("osal_stream_select failed\n");
-                close();
-            }
-*/
         }
 
         /* No socket, wait for thread events and process them. Try periodically to open
@@ -418,12 +443,13 @@ osal_console_write("osal_stream_select failed\n");
          */
         else
         {
-            /* Enable timer 
+            /* Enable faster timer, about once per 3 seconds to try to reconnect
+               broken sockets.
              */
-            if (!m_timer_enabled)
+            if (!m_fast_timer_enabled != 1)
             {
                 timer(try_again_ms);
-                m_timer_enabled = OS_TRUE;
+                m_fast_timer_enabled = 1;
             }
 
             if (m_connectetion_failed_once && m_delete_on_error)
@@ -466,9 +492,14 @@ void eConnection::accepted(
 /**
 ****************************************************************************************************
 
-  @brief Open the connechtion.
+  @brief Open the socket, etc. connechtion.
 
-  The eConnection::open() connects underlying stream.
+  The eConnection::open() connects socket, etc, to listening end point of another process.
+  If the socket is already open, this object has not been initialized or IP address has
+  not been set, this function.
+
+  Memver variable m_socket points to socket, etc. if the eSocket oject exists and is connected
+  (or being connected). If there is not open socket, the m_stream is OS_NULL.
 
   @return  None.
 
@@ -478,15 +509,20 @@ void eConnection::open()
 {
     eStatus s;
 
+    /* If we are socket exists, initialize() has not been called or we do not have IP address,
+       then do nothing.
+     */
     if (m_stream || !m_initialized || m_ipaddr->isempty()) 
     {
         return;
     }
 
-    /* New by class ID.
+    /* New by class ID. Usually eSocket.
      */
     m_stream = (eStream*)newchild(m_stream_classid);
 
+    /* Open the socket, etc.
+     */
     s = m_stream->open(m_ipaddr->gets(), OSAL_STREAM_CONNECT);
     if (s)
     {
@@ -496,6 +532,8 @@ void eConnection::open()
         return;
     }
 
+    /* No new writes to socket, etc. yet
+     */
     m_new_writes = OS_FALSE;
 }
 
@@ -570,6 +608,8 @@ eStatus eConnection::connected()
         message(ECMD_REBIND, name->gets());
     }
 
+    /* Write everything in initialization buffer.
+     */
     while ((envelope = eEnvelope::cast(m_initbuffer->first())))
     {
         /* Check for binding related messages, memorize bindings through this connection.
@@ -580,13 +620,18 @@ eStatus eConnection::connected()
         delete envelope;
     }
 
+    /* Mark that we are connected and update indicator.
+     */
     m_connected = OS_TRUE;
     setpropertyl(ECONNP_ISOPEN, OS_TRUE);
 
+    /* If we have something to write, flush it now.
+     */
     if (m_new_writes)
     {
         m_stream->writechar(E_STREAM_FLUSH);
         m_stream->flush();
+        os_timer(&m_last_send);
         m_new_writes = OS_FALSE;
     }
 
@@ -704,10 +749,9 @@ void eConnection::monitor_binds(
 /**
 ****************************************************************************************************
 
-  @brief Write an envelope to the connection.
+  @brief Send an envelope to another process.
 
-  The eConnection::write() function...
-  .... maintains memorized client and server bindings.
+  The eConnection::write() function writes an envelope to socket, etc. stream.
 
   @param  envelope Envelope to write to connection.
   @return If successfull, the function returns ESTATUS_SUCCESS. Other return values indicate
@@ -720,8 +764,6 @@ eStatus eConnection::write(
 {
     eStatus s;
 
-// envelope->json_write(&econsole);
-
     if (m_stream == OS_NULL) return ESTATUS_FAILED;
 
     s = envelope->writer(m_stream, EOBJ_SERIALIZE_DEFAULT);
@@ -733,9 +775,10 @@ eStatus eConnection::write(
 /**
 ****************************************************************************************************
 
-  @brief Read an envelope from connection and pass it as messages.
+  @brief Read an envelope received from another process and pass it as messages.
 
-  The eConnection::read() function...
+  The eConnection::read() function reads an envelope from socket, etc. stream and forwards the
+  envelope trough mormal messaging.
 
   @return If successfull, the function returns ESTATUS_SUCCESS. Other return values indicate
           an error and stream is to be closed.
@@ -764,8 +807,6 @@ eStatus eConnection::read()
         return s;
     }
 
-// m_envelope->json_write(&econsole);
-   
     m_envelope->prependtarget("/");
 
     if ((m_envelope->mflags() & EMSG_NO_REPLIES) == 0)
@@ -784,7 +825,8 @@ eStatus eConnection::read()
 
   @brief Not connected and connection has failed once, reply with notarget.
 
-  The eConnection::notarget() function sends notarget message
+  The eConnection::notarget() function sends notarget message. The notarget messages can be use
+  by object which sent the message to detect it did not go trough.
 
   @return  None.
 
@@ -799,5 +841,3 @@ void eConnection::notarget(
             OS_NULL, EMSG_NO_REPLIES, envelope->context());
     }
 }
-
-
