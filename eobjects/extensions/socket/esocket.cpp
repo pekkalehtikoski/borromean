@@ -334,14 +334,14 @@ eStatus eSocket::read(
         s = read_socket();
         if (s) return s;
 
-        /* Try to get from queue
+        /* Try to get from queue.
          */
         m_in->read(buf, buf_sz, &nrd);
         buf_sz -= nrd;
         n  += nrd;
         if (buf_sz <= 0) break;
 
-        /* Let select handle data transfers
+        /* Let select handle data transfers.
          */
         strm = this;
         select(&strm, 1, OS_NULL, &selectdata, OSAL_STREAM_DEFAULT);
@@ -356,22 +356,45 @@ eStatus eSocket::read(
     return ESTATUS_SUCCESS;
 }
 
-/** Write character, typically control code.
- */
+
+/**
+****************************************************************************************************
+
+  @brief Write character, typically control code.
+
+  The eSocket::writechar function writes character or control code.
+
+  @param  c Character 0-255 or control code > 255 to write.
+  @return If succesfull, the function returns ESTATUS_SUCCESS (0). Other return values indicate
+          an error.
+
+****************************************************************************************************
+*/
 eStatus eSocket::writechar(
     os_int c)
 {
-    /* Write all data to queue.
+    /* Write the character to output queue.
      */
     m_out->writechar(c);
 
-    /* If we have one frame buffered, try to write data to socket frame at a time.
+    /* If we have whole frame buffered, try to write data to socket.
      */
     return write_socket(OS_FALSE);
 }
 
-/* Read character or control code.
- */    
+
+/**
+****************************************************************************************************
+
+  @brief Read character or control code.
+
+  The eSocket::readchar function reads character or control code.
+
+  @return If succesfull, the function returns Character 0-255. Return value
+          E_STREM_END_OF_DATA indicates broken socket.
+
+****************************************************************************************************
+*/
 os_int eSocket::readchar()
 {
     os_int c;
@@ -536,7 +559,6 @@ eStatus eSocket::accept(
   If flushnow is not set, the function does nothing until m_out holds enough data for at least
   one ethernet frame. All data from m_out queue which can be sent immediately without wait,
   is written to socket. 
-  If flushnow writing data
 
   @param  flushnow If  OS_TRUE, even single buffered byte is written. Otherwise waits until 
           enough bytes for ethernet frame are buffered before writing.
@@ -599,7 +621,7 @@ eStatus eSocket::write_socket(
   @brief Read from socket.
 
   The eSocket::read_socket() function reads data from socket and places it to m_in queue.
-  All data from socket buffers is read.
+  All available data from socket is read.
 
   @return If no error detected, the function returns ESTATUS_SUCCESS. 
           Other return values indicate an error and that socket is to be disconnected.
