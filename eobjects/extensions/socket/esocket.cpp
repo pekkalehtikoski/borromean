@@ -325,20 +325,22 @@ eStatus eSocket::read(
         return ESTATUS_FAILED;
     }
 
-#if 0
+#if 1
 
     /* Try to read socket.
      */
     s = read_socket();
     if (s) return s;
 
+    n = 0;
     while (OS_TRUE)
     {
         /* Try to get from queue.
          */
-        m_in->read(buf, buf_sz, &nrd);
+        m_in->read(buf + n, buf_sz, &nrd);
         buf_sz -= nrd;
-        n  += nrd;
+        n += nrd;
+        buf += nrd;
         if (buf_sz <= 0) break;
 
         /* Let select handle data transfers.
@@ -361,7 +363,7 @@ eStatus eSocket::read(
     {
         /* Try to get from queue. XXXXXXXXXXXXXXXXXXXXXXXXXXXX THIS NEEDS TO BE SIMPLIFIED
          */
-        m_in->read(buf, buf_sz, &nrd);
+        m_in->read(buf + n, buf_sz, &nrd);
         buf_sz -= nrd;
         n  += nrd;
         if (buf_sz <= 0) break;
