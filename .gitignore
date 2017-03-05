@@ -40,3 +40,6 @@ CMakeLists.txt.user
 # Binaries
 bin/mint18/*
 
+# Misc
+*.cbp
+

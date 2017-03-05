@@ -18,6 +18,18 @@ eobjects/eobjects.h
 
 /coderoot/borromean/eobjects/code/binding/epropertybinding.h
 
+/coderoot/borromean/eobjects/code/connection/econnection.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/code/connection/eobjects/eobjects.h
+
+/coderoot/borromean/eobjects/code/connection/econnection.h
+
+/coderoot/borromean/eobjects/code/connection/eendpoint.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/code/connection/eobjects/eobjects.h
+
+/coderoot/borromean/eobjects/code/connection/eendpoint.h
+
 /coderoot/borromean/eobjects/code/container/econtainer.cpp
 eobjects/eobjects.h
 /coderoot/borromean/eobjects/code/container/eobjects/eobjects.h
@@ -92,6 +104,10 @@ eobjects/eobjects.h
 
 /coderoot/borromean/eobjects/code/object/ehandletable.h
 
+/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/code/object/eobjects/eobjects.h
+
 /coderoot/borromean/eobjects/code/object/eobject.cpp
 eobjects/eobjects.h
 /coderoot/borromean/eobjects/code/object/eobjects/eobjects.h
@@ -116,6 +132,18 @@ eobjects/eobjects.h
 
 /coderoot/borromean/eobjects/code/set/eset.h
 
+/coderoot/borromean/eobjects/code/stream/econsole.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/code/stream/eobjects/eobjects.h
+
+/coderoot/borromean/eobjects/code/stream/econsole.h
+
+/coderoot/borromean/eobjects/code/stream/equeue.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/code/stream/eobjects/eobjects.h
+
+/coderoot/borromean/eobjects/code/stream/equeue.h
+
 /coderoot/borromean/eobjects/code/stream/estream.cpp
 eobjects/eobjects.h
 /coderoot/borromean/eobjects/code/stream/eobjects/eobjects.h
@@ -133,6 +161,12 @@ eobjects/eobjects.h
 /coderoot/borromean/eobjects/code/thread/eobjects/eobjects.h
 
 /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+
+/coderoot/borromean/eobjects/code/timer/etimer.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/code/timer/eobjects/eobjects.h
+
+/coderoot/borromean/eobjects/code/timer/etimer.h
 
 /coderoot/borromean/eobjects/code/variable/evariable.cpp
 eobjects/eobjects.h
@@ -185,14 +219,32 @@ eobjects/code/thread/ethreadhandle.h
 /coderoot/borromean/eobjects/eobjects/code/thread/ethreadhandle.h
 eobjects/code/thread/ethread.h
 /coderoot/borromean/eobjects/eobjects/code/thread/ethread.h
+eobjects/code/timer/etimer.h
+/coderoot/borromean/eobjects/eobjects/code/timer/etimer.h
 eobjects/code/global/eprocess.h
 /coderoot/borromean/eobjects/eobjects/code/global/eprocess.h
 eobjects/code/global/eglobal.h
 /coderoot/borromean/eobjects/eobjects/code/global/eglobal.h
 eobjects/code/stream/estream.h
 /coderoot/borromean/eobjects/eobjects/code/stream/estream.h
+eobjects/code/stream/equeue.h
+/coderoot/borromean/eobjects/eobjects/code/stream/equeue.h
+eobjects/code/stream/econsole.h
+/coderoot/borromean/eobjects/eobjects/code/stream/econsole.h
+eobjects/code/connection/econnection.h
+/coderoot/borromean/eobjects/eobjects/code/connection/econnection.h
+eobjects/code/connection/eendpoint.h
+/coderoot/borromean/eobjects/eobjects/code/connection/eendpoint.h
 eobjects/code/main/emain.h
 /coderoot/borromean/eobjects/eobjects/code/main/emain.h
+eobjects/extensions/socket/esocket.h
+/coderoot/borromean/eobjects/eobjects/extensions/socket/esocket.h
+
+/coderoot/borromean/eobjects/extensions/socket/esocket.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/extensions/socket/eobjects/eobjects.h
+
+/coderoot/borromean/eobjects/extensions/socket/esocket.h
 
 /coderoot/borromean/eosal/code/console/common/osal_console.h
 
@@ -297,8 +349,8 @@ eosal/code/utf32/common/osal_utf32.h
 /coderoot/borromean/eosal/eosalx.h
 eosal/eosal.h
 /coderoot/borromean/eosal/eosal/eosal.h
-eosal/extensions/clock/common/osal_clock.h
-/coderoot/borromean/eosal/eosal/extensions/clock/common/osal_clock.h
+eosal/extensions/time/common/osal_time.h
+/coderoot/borromean/eosal/eosal/extensions/time/common/osal_time.h
 eosal/extensions/rand/common/osal_rand.h
 /coderoot/borromean/eosal/eosal/extensions/rand/common/osal_rand.h
 eosal/extensions/main/common/osal_main.h
@@ -311,26 +363,26 @@ eosal/extensions/stringx/common/osal_stringx.h
 /coderoot/borromean/eosal/eosal/extensions/stringx/common/osal_stringx.h
 eosal/extensions/typeid/common/osal_typeid.h
 /coderoot/borromean/eosal/eosal/extensions/typeid/common/osal_typeid.h
-eosal/extensions/socket/common/osal_socket_worker.h
-/coderoot/borromean/eosal/eosal/extensions/socket/common/osal_socket_worker.h
 eosal/extensions/socket/common/osal_socket.h
 /coderoot/borromean/eosal/eosal/extensions/socket/common/osal_socket.h
-
-/coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
+eosal/extensions/serialize/common/osal_serialize.h
+/coderoot/borromean/eosal/eosal/extensions/serialize/common/osal_serialize.h
 
 /coderoot/borromean/eosal/extensions/main/common/osal_main.h
 
 /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
 
-/coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
+/coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
 
-/coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
+/coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
 
 /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
 
 /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
 
 /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+
+/coderoot/borromean/eosal/extensions/time/common/osal_time.h
 
 /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 

@@ -5,6 +5,8 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.cpp
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -24,11 +26,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -54,19 +60,21 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.cpp
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -86,11 +94,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybindin
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -116,18 +128,156 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybindin
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
+ /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o
+ /coderoot/borromean/eobjects/code/binding/ebinding.h
+ /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.cpp
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
+ /coderoot/borromean/eobjects/code/container/econtainer.h
+ /coderoot/borromean/eobjects/code/defs/eclassid.h
+ /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/eoid.h
+ /coderoot/borromean/eobjects/code/defs/estatus.h
+ /coderoot/borromean/eobjects/code/envelope/eenvelope.h
+ /coderoot/borromean/eobjects/code/global/eglobal.h
+ /coderoot/borromean/eobjects/code/global/eprocess.h
+ /coderoot/borromean/eobjects/code/main/emain.h
+ /coderoot/borromean/eobjects/code/name/ename.h
+ /coderoot/borromean/eobjects/code/name/enamespace.h
+ /coderoot/borromean/eobjects/code/object/eclasslist.h
+ /coderoot/borromean/eobjects/code/object/ehandle.h
+ /coderoot/borromean/eobjects/code/object/ehandleroot.h
+ /coderoot/borromean/eobjects/code/object/ehandletable.h
+ /coderoot/borromean/eobjects/code/object/eobject.h
+ /coderoot/borromean/eobjects/code/pointer/epointer.h
+ /coderoot/borromean/eobjects/code/root/eroot.h
+ /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
+ /coderoot/borromean/eobjects/code/stream/estream.h
+ /coderoot/borromean/eobjects/code/thread/ethread.h
+ /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
+ /coderoot/borromean/eobjects/code/variable/evariable.h
+ /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
+ /coderoot/borromean/eosal/code/console/common/osal_console.h
+ /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
+ /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
+ /coderoot/borromean/eosal/code/defs/common/osal_common_defs.h
+ /coderoot/borromean/eosal/code/defs/common/osal_global.h
+ /coderoot/borromean/eosal/code/defs/common/osal_status.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_types.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_types.h
+ /coderoot/borromean/eosal/code/event/common/osal_event.h
+ /coderoot/borromean/eosal/code/initialize/common/osal_initialize.h
+ /coderoot/borromean/eosal/code/int64/common/osal_int64.h
+ /coderoot/borromean/eosal/code/memory/common/osal_memory.h
+ /coderoot/borromean/eosal/code/memory/common/osal_sysmem.h
+ /coderoot/borromean/eosal/code/mutex/common/osal_mutex.h
+ /coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.h
+ /coderoot/borromean/eosal/code/string/common/osal_char.h
+ /coderoot/borromean/eosal/code/string/common/osal_string.h
+ /coderoot/borromean/eosal/code/thread/common/osal_thread.h
+ /coderoot/borromean/eosal/code/timer/common/osal_timer.h
+ /coderoot/borromean/eosal/code/utf16/common/osal_utf16.h
+ /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
+ /coderoot/borromean/eosal/eosal.h
+ /coderoot/borromean/eosal/eosalx.h
+ /coderoot/borromean/eosal/extensions/main/common/osal_main.h
+ /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
+ /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
+ /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
+ /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
+ /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
+ /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o
+ /coderoot/borromean/eobjects/code/binding/ebinding.h
+ /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.cpp
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
+ /coderoot/borromean/eobjects/code/container/econtainer.h
+ /coderoot/borromean/eobjects/code/defs/eclassid.h
+ /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/eoid.h
+ /coderoot/borromean/eobjects/code/defs/estatus.h
+ /coderoot/borromean/eobjects/code/envelope/eenvelope.h
+ /coderoot/borromean/eobjects/code/global/eglobal.h
+ /coderoot/borromean/eobjects/code/global/eprocess.h
+ /coderoot/borromean/eobjects/code/main/emain.h
+ /coderoot/borromean/eobjects/code/name/ename.h
+ /coderoot/borromean/eobjects/code/name/enamespace.h
+ /coderoot/borromean/eobjects/code/object/eclasslist.h
+ /coderoot/borromean/eobjects/code/object/ehandle.h
+ /coderoot/borromean/eobjects/code/object/ehandleroot.h
+ /coderoot/borromean/eobjects/code/object/ehandletable.h
+ /coderoot/borromean/eobjects/code/object/eobject.h
+ /coderoot/borromean/eobjects/code/pointer/epointer.h
+ /coderoot/borromean/eobjects/code/root/eroot.h
+ /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
+ /coderoot/borromean/eobjects/code/stream/estream.h
+ /coderoot/borromean/eobjects/code/thread/ethread.h
+ /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
+ /coderoot/borromean/eobjects/code/variable/evariable.h
+ /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
+ /coderoot/borromean/eosal/code/console/common/osal_console.h
+ /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
+ /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
+ /coderoot/borromean/eosal/code/defs/common/osal_common_defs.h
+ /coderoot/borromean/eosal/code/defs/common/osal_global.h
+ /coderoot/borromean/eosal/code/defs/common/osal_status.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_types.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_types.h
+ /coderoot/borromean/eosal/code/event/common/osal_event.h
+ /coderoot/borromean/eosal/code/initialize/common/osal_initialize.h
+ /coderoot/borromean/eosal/code/int64/common/osal_int64.h
+ /coderoot/borromean/eosal/code/memory/common/osal_memory.h
+ /coderoot/borromean/eosal/code/memory/common/osal_sysmem.h
+ /coderoot/borromean/eosal/code/mutex/common/osal_mutex.h
+ /coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.h
+ /coderoot/borromean/eosal/code/string/common/osal_char.h
+ /coderoot/borromean/eosal/code/string/common/osal_string.h
+ /coderoot/borromean/eosal/code/thread/common/osal_thread.h
+ /coderoot/borromean/eosal/code/timer/common/osal_timer.h
+ /coderoot/borromean/eosal/code/utf16/common/osal_utf16.h
+ /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
+ /coderoot/borromean/eosal/eosal.h
+ /coderoot/borromean/eosal/eosalx.h
+ /coderoot/borromean/eosal/extensions/main/common/osal_main.h
+ /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
+ /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
+ /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
+ /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
+ /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.cpp
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
@@ -148,11 +298,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cp
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -178,18 +332,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cp
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -210,11 +366,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -240,18 +400,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -272,11 +434,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -302,18 +468,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -334,11 +502,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -364,18 +536,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -396,11 +570,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -426,18 +604,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -458,11 +638,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -488,18 +672,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -520,11 +706,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -550,18 +740,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -582,11 +774,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -612,18 +808,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -644,11 +842,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -674,18 +876,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -706,11 +910,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -736,18 +944,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -768,11 +978,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -798,18 +1012,88 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
+ /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o
+ /coderoot/borromean/eobjects/code/binding/ebinding.h
+ /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
+ /coderoot/borromean/eobjects/code/container/econtainer.h
+ /coderoot/borromean/eobjects/code/defs/eclassid.h
+ /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/eoid.h
+ /coderoot/borromean/eobjects/code/defs/estatus.h
+ /coderoot/borromean/eobjects/code/envelope/eenvelope.h
+ /coderoot/borromean/eobjects/code/global/eglobal.h
+ /coderoot/borromean/eobjects/code/global/eprocess.h
+ /coderoot/borromean/eobjects/code/main/emain.h
+ /coderoot/borromean/eobjects/code/name/ename.h
+ /coderoot/borromean/eobjects/code/name/enamespace.h
+ /coderoot/borromean/eobjects/code/object/eclasslist.h
+ /coderoot/borromean/eobjects/code/object/ehandle.h
+ /coderoot/borromean/eobjects/code/object/ehandleroot.h
+ /coderoot/borromean/eobjects/code/object/ehandletable.h
+ /coderoot/borromean/eobjects/code/object/ejsonserialization.cpp
+ /coderoot/borromean/eobjects/code/object/eobject.h
+ /coderoot/borromean/eobjects/code/pointer/epointer.h
+ /coderoot/borromean/eobjects/code/root/eroot.h
+ /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
+ /coderoot/borromean/eobjects/code/stream/estream.h
+ /coderoot/borromean/eobjects/code/thread/ethread.h
+ /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
+ /coderoot/borromean/eobjects/code/variable/evariable.h
+ /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
+ /coderoot/borromean/eosal/code/console/common/osal_console.h
+ /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
+ /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
+ /coderoot/borromean/eosal/code/defs/common/osal_common_defs.h
+ /coderoot/borromean/eosal/code/defs/common/osal_global.h
+ /coderoot/borromean/eosal/code/defs/common/osal_status.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_types.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_types.h
+ /coderoot/borromean/eosal/code/event/common/osal_event.h
+ /coderoot/borromean/eosal/code/initialize/common/osal_initialize.h
+ /coderoot/borromean/eosal/code/int64/common/osal_int64.h
+ /coderoot/borromean/eosal/code/memory/common/osal_memory.h
+ /coderoot/borromean/eosal/code/memory/common/osal_sysmem.h
+ /coderoot/borromean/eosal/code/mutex/common/osal_mutex.h
+ /coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.h
+ /coderoot/borromean/eosal/code/string/common/osal_char.h
+ /coderoot/borromean/eosal/code/string/common/osal_string.h
+ /coderoot/borromean/eosal/code/thread/common/osal_thread.h
+ /coderoot/borromean/eosal/code/timer/common/osal_timer.h
+ /coderoot/borromean/eosal/code/utf16/common/osal_utf16.h
+ /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
+ /coderoot/borromean/eosal/eosal.h
+ /coderoot/borromean/eosal/eosalx.h
+ /coderoot/borromean/eosal/extensions/main/common/osal_main.h
+ /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
+ /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
+ /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
+ /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
+ /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -830,11 +1114,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -860,18 +1148,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -892,11 +1182,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -922,18 +1216,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -954,11 +1250,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o
  /coderoot/borromean/eobjects/code/root/eroot.cpp
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -984,18 +1284,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -1016,11 +1318,15 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.cpp
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -1046,18 +1352,156 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
+ /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o
+ /coderoot/borromean/eobjects/code/binding/ebinding.h
+ /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
+ /coderoot/borromean/eobjects/code/container/econtainer.h
+ /coderoot/borromean/eobjects/code/defs/eclassid.h
+ /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/eoid.h
+ /coderoot/borromean/eobjects/code/defs/estatus.h
+ /coderoot/borromean/eobjects/code/envelope/eenvelope.h
+ /coderoot/borromean/eobjects/code/global/eglobal.h
+ /coderoot/borromean/eobjects/code/global/eprocess.h
+ /coderoot/borromean/eobjects/code/main/emain.h
+ /coderoot/borromean/eobjects/code/name/ename.h
+ /coderoot/borromean/eobjects/code/name/enamespace.h
+ /coderoot/borromean/eobjects/code/object/eclasslist.h
+ /coderoot/borromean/eobjects/code/object/ehandle.h
+ /coderoot/borromean/eobjects/code/object/ehandleroot.h
+ /coderoot/borromean/eobjects/code/object/ehandletable.h
+ /coderoot/borromean/eobjects/code/object/eobject.h
+ /coderoot/borromean/eobjects/code/pointer/epointer.h
+ /coderoot/borromean/eobjects/code/root/eroot.h
+ /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.cpp
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
+ /coderoot/borromean/eobjects/code/stream/estream.h
+ /coderoot/borromean/eobjects/code/thread/ethread.h
+ /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
+ /coderoot/borromean/eobjects/code/variable/evariable.h
+ /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
+ /coderoot/borromean/eosal/code/console/common/osal_console.h
+ /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
+ /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
+ /coderoot/borromean/eosal/code/defs/common/osal_common_defs.h
+ /coderoot/borromean/eosal/code/defs/common/osal_global.h
+ /coderoot/borromean/eosal/code/defs/common/osal_status.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_types.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_types.h
+ /coderoot/borromean/eosal/code/event/common/osal_event.h
+ /coderoot/borromean/eosal/code/initialize/common/osal_initialize.h
+ /coderoot/borromean/eosal/code/int64/common/osal_int64.h
+ /coderoot/borromean/eosal/code/memory/common/osal_memory.h
+ /coderoot/borromean/eosal/code/memory/common/osal_sysmem.h
+ /coderoot/borromean/eosal/code/mutex/common/osal_mutex.h
+ /coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.h
+ /coderoot/borromean/eosal/code/string/common/osal_char.h
+ /coderoot/borromean/eosal/code/string/common/osal_string.h
+ /coderoot/borromean/eosal/code/thread/common/osal_thread.h
+ /coderoot/borromean/eosal/code/timer/common/osal_timer.h
+ /coderoot/borromean/eosal/code/utf16/common/osal_utf16.h
+ /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
+ /coderoot/borromean/eosal/eosal.h
+ /coderoot/borromean/eosal/eosalx.h
+ /coderoot/borromean/eosal/extensions/main/common/osal_main.h
+ /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
+ /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
+ /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
+ /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
+ /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
+ /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o
+ /coderoot/borromean/eobjects/code/binding/ebinding.h
+ /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
+ /coderoot/borromean/eobjects/code/container/econtainer.h
+ /coderoot/borromean/eobjects/code/defs/eclassid.h
+ /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/eoid.h
+ /coderoot/borromean/eobjects/code/defs/estatus.h
+ /coderoot/borromean/eobjects/code/envelope/eenvelope.h
+ /coderoot/borromean/eobjects/code/global/eglobal.h
+ /coderoot/borromean/eobjects/code/global/eprocess.h
+ /coderoot/borromean/eobjects/code/main/emain.h
+ /coderoot/borromean/eobjects/code/name/ename.h
+ /coderoot/borromean/eobjects/code/name/enamespace.h
+ /coderoot/borromean/eobjects/code/object/eclasslist.h
+ /coderoot/borromean/eobjects/code/object/ehandle.h
+ /coderoot/borromean/eobjects/code/object/ehandleroot.h
+ /coderoot/borromean/eobjects/code/object/ehandletable.h
+ /coderoot/borromean/eobjects/code/object/eobject.h
+ /coderoot/borromean/eobjects/code/pointer/epointer.h
+ /coderoot/borromean/eobjects/code/root/eroot.h
+ /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.cpp
+ /coderoot/borromean/eobjects/code/stream/equeue.h
+ /coderoot/borromean/eobjects/code/stream/estream.h
+ /coderoot/borromean/eobjects/code/thread/ethread.h
+ /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
+ /coderoot/borromean/eobjects/code/variable/evariable.h
+ /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
+ /coderoot/borromean/eosal/code/console/common/osal_console.h
+ /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
+ /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
+ /coderoot/borromean/eosal/code/defs/common/osal_common_defs.h
+ /coderoot/borromean/eosal/code/defs/common/osal_global.h
+ /coderoot/borromean/eosal/code/defs/common/osal_status.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_types.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_types.h
+ /coderoot/borromean/eosal/code/event/common/osal_event.h
+ /coderoot/borromean/eosal/code/initialize/common/osal_initialize.h
+ /coderoot/borromean/eosal/code/int64/common/osal_int64.h
+ /coderoot/borromean/eosal/code/memory/common/osal_memory.h
+ /coderoot/borromean/eosal/code/memory/common/osal_sysmem.h
+ /coderoot/borromean/eosal/code/mutex/common/osal_mutex.h
+ /coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.h
+ /coderoot/borromean/eosal/code/string/common/osal_char.h
+ /coderoot/borromean/eosal/code/string/common/osal_string.h
+ /coderoot/borromean/eosal/code/thread/common/osal_thread.h
+ /coderoot/borromean/eosal/code/timer/common/osal_timer.h
+ /coderoot/borromean/eosal/code/utf16/common/osal_utf16.h
+ /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
+ /coderoot/borromean/eosal/eosal.h
+ /coderoot/borromean/eosal/eosalx.h
+ /coderoot/borromean/eosal/extensions/main/common/osal_main.h
+ /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
+ /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
+ /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
+ /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
+ /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -1077,12 +1521,16 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.cpp
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -1108,18 +1556,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -1139,12 +1589,16 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.cpp
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -1170,18 +1624,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -1201,12 +1657,16 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cp
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -1232,18 +1692,20 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cp
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
-CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o
  /coderoot/borromean/eobjects/code/binding/ebinding.h
  /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
@@ -1263,12 +1725,16 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.
  /coderoot/borromean/eobjects/code/pointer/epointer.h
  /coderoot/borromean/eobjects/code/root/eroot.h
  /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
  /coderoot/borromean/eobjects/code/stream/estream.h
  /coderoot/borromean/eobjects/code/thread/ethread.h
  /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
- /coderoot/borromean/eobjects/code/variable/evariable.cpp
+ /coderoot/borromean/eobjects/code/timer/etimer.cpp
+ /coderoot/borromean/eobjects/code/timer/etimer.h
  /coderoot/borromean/eobjects/code/variable/evariable.h
  /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
  /coderoot/borromean/eosal/code/console/common/osal_console.h
  /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
  /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
@@ -1294,12 +1760,148 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.
  /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
  /coderoot/borromean/eosal/eosal.h
  /coderoot/borromean/eosal/eosalx.h
- /coderoot/borromean/eosal/extensions/clock/common/osal_clock.h
  /coderoot/borromean/eosal/extensions/main/common/osal_main.h
  /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
  /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
- /coderoot/borromean/eosal/extensions/socket/common/osal_socket_worker.h
  /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
  /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
  /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
+ /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o
+ /coderoot/borromean/eobjects/code/binding/ebinding.h
+ /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
+ /coderoot/borromean/eobjects/code/container/econtainer.h
+ /coderoot/borromean/eobjects/code/defs/eclassid.h
+ /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/eoid.h
+ /coderoot/borromean/eobjects/code/defs/estatus.h
+ /coderoot/borromean/eobjects/code/envelope/eenvelope.h
+ /coderoot/borromean/eobjects/code/global/eglobal.h
+ /coderoot/borromean/eobjects/code/global/eprocess.h
+ /coderoot/borromean/eobjects/code/main/emain.h
+ /coderoot/borromean/eobjects/code/name/ename.h
+ /coderoot/borromean/eobjects/code/name/enamespace.h
+ /coderoot/borromean/eobjects/code/object/eclasslist.h
+ /coderoot/borromean/eobjects/code/object/ehandle.h
+ /coderoot/borromean/eobjects/code/object/ehandleroot.h
+ /coderoot/borromean/eobjects/code/object/ehandletable.h
+ /coderoot/borromean/eobjects/code/object/eobject.h
+ /coderoot/borromean/eobjects/code/pointer/epointer.h
+ /coderoot/borromean/eobjects/code/root/eroot.h
+ /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
+ /coderoot/borromean/eobjects/code/stream/estream.h
+ /coderoot/borromean/eobjects/code/thread/ethread.h
+ /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
+ /coderoot/borromean/eobjects/code/variable/evariable.cpp
+ /coderoot/borromean/eobjects/code/variable/evariable.h
+ /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
+ /coderoot/borromean/eosal/code/console/common/osal_console.h
+ /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
+ /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
+ /coderoot/borromean/eosal/code/defs/common/osal_common_defs.h
+ /coderoot/borromean/eosal/code/defs/common/osal_global.h
+ /coderoot/borromean/eosal/code/defs/common/osal_status.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_types.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_types.h
+ /coderoot/borromean/eosal/code/event/common/osal_event.h
+ /coderoot/borromean/eosal/code/initialize/common/osal_initialize.h
+ /coderoot/borromean/eosal/code/int64/common/osal_int64.h
+ /coderoot/borromean/eosal/code/memory/common/osal_memory.h
+ /coderoot/borromean/eosal/code/memory/common/osal_sysmem.h
+ /coderoot/borromean/eosal/code/mutex/common/osal_mutex.h
+ /coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.h
+ /coderoot/borromean/eosal/code/string/common/osal_char.h
+ /coderoot/borromean/eosal/code/string/common/osal_string.h
+ /coderoot/borromean/eosal/code/thread/common/osal_thread.h
+ /coderoot/borromean/eosal/code/timer/common/osal_timer.h
+ /coderoot/borromean/eosal/code/utf16/common/osal_utf16.h
+ /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
+ /coderoot/borromean/eosal/eosal.h
+ /coderoot/borromean/eosal/eosalx.h
+ /coderoot/borromean/eosal/extensions/main/common/osal_main.h
+ /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
+ /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
+ /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
+ /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
+ /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
+ /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o
+ /coderoot/borromean/eobjects/code/binding/ebinding.h
+ /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+ /coderoot/borromean/eobjects/code/connection/econnection.h
+ /coderoot/borromean/eobjects/code/connection/eendpoint.h
+ /coderoot/borromean/eobjects/code/container/econtainer.h
+ /coderoot/borromean/eobjects/code/defs/eclassid.h
+ /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/eoid.h
+ /coderoot/borromean/eobjects/code/defs/estatus.h
+ /coderoot/borromean/eobjects/code/envelope/eenvelope.h
+ /coderoot/borromean/eobjects/code/global/eglobal.h
+ /coderoot/borromean/eobjects/code/global/eprocess.h
+ /coderoot/borromean/eobjects/code/main/emain.h
+ /coderoot/borromean/eobjects/code/name/ename.h
+ /coderoot/borromean/eobjects/code/name/enamespace.h
+ /coderoot/borromean/eobjects/code/object/eclasslist.h
+ /coderoot/borromean/eobjects/code/object/ehandle.h
+ /coderoot/borromean/eobjects/code/object/ehandleroot.h
+ /coderoot/borromean/eobjects/code/object/ehandletable.h
+ /coderoot/borromean/eobjects/code/object/eobject.h
+ /coderoot/borromean/eobjects/code/pointer/epointer.h
+ /coderoot/borromean/eobjects/code/root/eroot.h
+ /coderoot/borromean/eobjects/code/set/eset.h
+ /coderoot/borromean/eobjects/code/stream/econsole.h
+ /coderoot/borromean/eobjects/code/stream/equeue.h
+ /coderoot/borromean/eobjects/code/stream/estream.h
+ /coderoot/borromean/eobjects/code/thread/ethread.h
+ /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+ /coderoot/borromean/eobjects/code/timer/etimer.h
+ /coderoot/borromean/eobjects/code/variable/evariable.h
+ /coderoot/borromean/eobjects/eobjects.h
+ /coderoot/borromean/eobjects/extensions/socket/esocket.cpp
+ /coderoot/borromean/eobjects/extensions/socket/esocket.h
+ /coderoot/borromean/eosal/code/console/common/osal_console.h
+ /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
+ /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
+ /coderoot/borromean/eosal/code/defs/common/osal_common_defs.h
+ /coderoot/borromean/eosal/code/defs/common/osal_global.h
+ /coderoot/borromean/eosal/code/defs/common/osal_status.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/linux/osal_types.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_defs.h
+ /coderoot/borromean/eosal/code/defs/windows/osal_types.h
+ /coderoot/borromean/eosal/code/event/common/osal_event.h
+ /coderoot/borromean/eosal/code/initialize/common/osal_initialize.h
+ /coderoot/borromean/eosal/code/int64/common/osal_int64.h
+ /coderoot/borromean/eosal/code/memory/common/osal_memory.h
+ /coderoot/borromean/eosal/code/memory/common/osal_sysmem.h
+ /coderoot/borromean/eosal/code/mutex/common/osal_mutex.h
+ /coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.h
+ /coderoot/borromean/eosal/code/string/common/osal_char.h
+ /coderoot/borromean/eosal/code/string/common/osal_string.h
+ /coderoot/borromean/eosal/code/thread/common/osal_thread.h
+ /coderoot/borromean/eosal/code/timer/common/osal_timer.h
+ /coderoot/borromean/eosal/code/utf16/common/osal_utf16.h
+ /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
+ /coderoot/borromean/eosal/eosal.h
+ /coderoot/borromean/eosal/eosalx.h
+ /coderoot/borromean/eosal/extensions/main/common/osal_main.h
+ /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+ /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
+ /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
+ /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
+ /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
+ /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+ /coderoot/borromean/eosal/extensions/time/common/osal_time.h
  /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h

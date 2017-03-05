@@ -113,7 +113,6 @@ eObject *ePointer::get()
     /* If not set.
      */
     if (m_ref.ref.ucnt <= 0) return OS_NULL;
-
     
     handle = eget_handle(m_ref.ref.oix);
     if (m_ref.ref.ucnt != handle->m_ucnt)

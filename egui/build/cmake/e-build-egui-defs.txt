@@ -2,16 +2,16 @@
 # 23.12.2016/pekka
 
 # Include path.
-set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/glm-0.9.7.4/glm;$ENV{E_ROOT}/egui/tools/glew-1.13.0/include;$ENV{E_ROOT}/egui/tools/assimp-3.2/include")
-set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/freeglut-3.0.0/include;$ENV{E_ROOT}/egui/tools/SOIL/src")
+if(WIN32)
+  set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/glm-0.9.7.4/glm;$ENV{E_ROOT}/egui/tools/glew-1.13.0/include;$ENV{E_ROOT}/egui/tools/assimp-3.2/include")
+  set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/freeglut-3.0.0/include;$ENV{E_ROOT}/egui/tools/SOIL/src")
+else()
+  set(ENV{E_INCLUDE} "$ENV{E_INCLUDE};$ENV{E_ROOT}/egui/tools/glm-0.9.7.4/glm;$ENV{E_ROOT}/egui/tools/assimp-3.2/include;$ENV{E_ROOT}/egui/tools/SOIL/src")
+endif()
 
 # Commonly used libraries for objects console application.
-set(ENV{E_COMMON_GUI_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};egui${E_POSTFIX};assimp-vc130-mt;zlibstatic;libglew32;OpenGL32")
-
-# Commonly used libraries for eosal console application.
-# set(ENV{OSAL_CONSOLE_APP_LIBS} "eosal")
-
-# if(WIN32)
-#   set(ENV{E_COMMON_CONSOLE_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};WS2_32")
-#   set(ENV{OSAL_CONSOLE_APP_LIBS} "$ENV{OSAL_CONSOLE_APP_LIBS};WS2_32")
-# endif()
+if(WIN32)
+  set(ENV{E_COMMON_GUI_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};egui${E_POSTFIX};assimp-vc130-mt;zlibstatic;libglew32;OpenGL32")
+else()
+  set(ENV{E_COMMON_GUI_APP_LIBS} "egui${E_POSTFIX};$ENV{E_COMMON_CONSOLE_APP_LIBS};assimp;z;glut;GLEW;GL")
+endif()

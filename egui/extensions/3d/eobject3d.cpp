@@ -63,6 +63,78 @@ eObject3D::~eObject3D()
 {
 }
 
+/**
+****************************************************************************************************
+
+  @brief Clone object
+
+  The clone function clones and object including object's children.
+  Names will be left detached in clone if EOBJ_NO_MAP flag is given.
+
+  @param  parent Parent for the clone.
+  @param  oid Object identifier for the clone.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names.
+  @return Pointer to the clone.
+
+****************************************************************************************************
+*/
+eObject *eObject3D::clone(
+    eObject *parent,
+    e_oid oid,
+    os_int aflags)
+{
+    eObject3D *clonedobj;
+
+    /* Clone must have parent object.
+     */
+    osal_debug_assert(parent);
+
+    clonedobj = new eObject3D(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
+
+    /** Clone specific stuff.
+     */
+    /* clonedobj->m_command = m_command;
+    clonedobj->m_mflags = m_mflags;
+    clonedobj->settarget(target());
+    clonedobj->prependsource(source()); */
+
+    /* Copy all clonable children.
+     */
+    clonegeneric(clonedobj, aflags|EOBJ_CLONE_ALL_CHILDREN);
+    return clonedobj;
+}
+
+#if 0
+/**
+****************************************************************************************************
+
+  @brief Add the class to class list and class'es properties to it's property set.
+
+  The eVariable::setupclass function adds the class to class list and class'es properties to
+  it's property set. The class list enables creating new objects dynamically by class identifier,
+  which is used for serialization reader functions. The property set stores static list of
+  class'es properties and metadata for those.
+
+****************************************************************************************************
+*/
+void eEnvelope::setupclass()
+{
+    const os_int cls = ECLASSID_ENVELOPE;
+
+    /* Add the class to class list.
+     */
+    os_lock();
+    eclasslist_add(cls, (eNewObjFunc)newobj, "eEnvelope");
+
+    addpropertyl(cls, EENVP_COMMAND, eenvp_command, EPRO_PERSISTENT|EPRO_SIMPLE, "command");
+    addpropertys(cls, EENVP_TARGET, eenvp_target, EPRO_PERSISTENT|EPRO_SIMPLE, "target");
+    addpropertys(cls, EENVP_SOURCE, eenvp_source, EPRO_PERSISTENT|EPRO_SIMPLE, "source");
+    addproperty (cls, EENVP_CONTENT, eenvp_content, EPRO_PERSISTENT|EPRO_SIMPLE, "content");
+    addproperty (cls, EENVP_CONTEXT, eenvp_context, EPRO_PERSISTENT|EPRO_SIMPLE, "context");
+    os_unlock();
+}
+#endif
+
 
 /**
 ****************************************************************************************************
