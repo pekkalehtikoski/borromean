@@ -35,7 +35,7 @@
 ****************************************************************************************************
 
   @brief Constructor.
-  Constructs and initializes an empty queue object.
+  The constructore clears member variables, constructs and initializes an empty queue object.
 
 ****************************************************************************************************
 */
@@ -45,8 +45,6 @@ eQueue::eQueue(
 	os_int flags)
     : eStream(parent, oid, flags)
 {
-    /* Clear member variables.
-     */
     m_oldest = m_newest = OS_NULL;
     m_wr_prevc = EQUEUE_NO_PREVIOUS_CHAR;
     m_wr_count = 0;
@@ -76,6 +74,7 @@ eQueue::~eQueue()
         delblock();
     }
 }
+
 
 /**
 ****************************************************************************************************
@@ -259,10 +258,11 @@ void eQueue::delblock()
 
   @brief Write data to queue.
 
-  The write () function releases places data into queue. The data can be coded.
+  The write() function releases places data into queue. The data can be encoded, if flag
+  OSAL_STREAM_ENCODE_ON_WRITE was given to open().
 
   @param  buf Pointer to data to write.
-  @param  buf_sz Bumber of bytes to write. 
+  @param  buf_sz Number of bytes to write.
   @param  nwritten Pointer to integer where to store number of bytes written to queue. This is
           always same as byte_sz. Can be set to  to OS_NULL, if not needed.
 
@@ -296,6 +296,24 @@ eStatus eQueue::write(
     return ESTATUS_SUCCESS;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Write encoded data to queue.
+
+  The write_encoded() function encodes data while writing into queue. TThe encoding means packing
+  control characters with data (here just appending E_STREAM_CTRLCH_IN_DATA after control
+  character E_STREAM_CTRL_CHAR.
+  This write function is used, if OSAL_STREAM_ENCODE_ON_WRITE flag was given to open() function,
+  when the queue was opened.
+
+  @param  buf Pointer to data to write.
+  @param  buf_sz Number of bytes to write.
+  @return None
+
+****************************************************************************************************
+*/
 void eQueue::write_encoded(
     const os_char *buf, 
     os_memsz buf_sz)
@@ -356,6 +374,21 @@ void eQueue::write_encoded(
     }
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Write plain data to queue.
+
+  The write_plain() function stores data to queue as is, without encoding. This write function
+  is used, if OSAL_STREAM_ENCODE_ON_WRITE flag was NOT given to open().
+
+  @param  buf Pointer to data to write.
+  @param  buf_sz Number of bytes to write.
+  @return None
+
+****************************************************************************************************
+*/
 void eQueue::write_plain(
     const os_char *buf, 
     os_memsz buf_sz)
@@ -366,7 +399,7 @@ void eQueue::write_plain(
 
     m_bytes += buf_sz;
 
-    /* If we need to calculate incoming flush controls
+    /* If we need to calculate incoming flush controls.
      */
     if (buf_sz > 0 && (m_flags & OSAL_FLUSH_CTRL_COUNT))
     {
@@ -394,7 +427,6 @@ void eQueue::write_plain(
 
         m_flushctrl_last_c = (os_uchar)buf[buf_sz - 1];
     }
-
 
     while (buf_sz > 0)
     {
@@ -541,6 +573,24 @@ eStatus eQueue::read(
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Read and decode data from queue.
+
+  The read_decoded() function decodes data while reading from queue. TThe decoding means
+  restoring data to plain format, without control character markings nor run length encoding.
+  This read function is used, if OSAL_STREAM_DECODE_ON_READ flag was given to open() or
+  accept() function.
+
+  @param  buf Pointer to data to write.
+  @param  buf_sz Number of bytes to write.
+  @param  nread Pointer to integer where to store number of bytes actually read.
+          OS_NULL if not needed.
+  @return None
+
+****************************************************************************************************
+*/
 void eQueue::read_decoded(
     os_char *buf, 
     os_memsz buf_sz, 
@@ -573,7 +623,8 @@ void eQueue::read_decoded(
 
         /* If previous character is control we are processing repeat count
          */
-        if (m_rd_prev2c == E_STREAM_CTRL_CHAR) if ((m_rd_prevc & E_STREAM_CTRLCH_MASK) == 0)
+        if (m_rd_prev2c == E_STREAM_CTRL_CHAR)
+            if ((m_rd_prevc & E_STREAM_CTRLCH_MASK) == 0)
         {
             m_rd_repeat_char = c;
             m_rd_repeat_count = m_rd_prevc;
@@ -625,6 +676,25 @@ void eQueue::read_decoded(
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Read data from queue "as is"
+
+  The read_plain() function reads data from queue without modifying the data. This read
+  function is used, if OSAL_STREAM_DECODE_ON_READ flag was NOT given to open() or accept()
+  function.
+
+  @param  buf Pointer to data to write.
+  @param  buf_sz Number of bytes to write.
+  @param  nread Pointer to integer where to store number of bytes actually read.
+          OS_NULL if not needed.
+  @param  flags Zero for default operation. OSAL_STREAM_PEEK to read data without removing it
+          from the queue.
+  @return None
+
+****************************************************************************************************
+*/
 void eQueue::read_plain(
     os_char *buf, 
     os_memsz buf_sz, 
@@ -906,6 +976,16 @@ os_int eQueue::readchar()
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Get number of bytes in queue including what is half written.
+
+  Get how much data there is in the queue.
+  @return Number of bytes in queue + what is beging generated.
+
+****************************************************************************************************
+*/
 os_memsz eQueue::bytes()
 {
     os_int missing;

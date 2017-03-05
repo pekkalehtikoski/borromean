@@ -26,11 +26,10 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
-
 #include <signal.h>
 
+// #include <stdio.h> // FOR TESTING
 
-#include <stdio.h> // FOR TESTING
 
 /**
 ****************************************************************************************************
@@ -53,10 +52,6 @@ typedef struct osalSocket
 	/** Operating system's socket handle.
 	 */
     int handle;
-
-    /** Set to use for select.
-	 */
-//    fd_set *set;
 
 	/** Stream open flags. Flags which were given to osal_socket_open() or osal_socket_accept()
         function. 
@@ -922,7 +917,8 @@ osalStatus osal_socket_select(
                 {
                     eventflags = OSAL_STREAM_ACCEPT_EVENT;
                 }
-                /* else if (!mysocket->connected)
+                /* IT SEEMS THAT THIS CANNOT BE HERE, CHECK WHY, COMMENTED.
+                 * else if (!mysocket->connected)
                 {
                     eventflags = OSAL_STREAM_CONNECT_EVENT;
                     mysocket->connected = OS_TRUE;
@@ -1054,6 +1050,9 @@ void osal_socket_shutdown(
 
 #if OSAL_FUNCTION_POINTER_SUPPORT
 
+/** Stream interface for OSAL sockets. This is structure osalStreamInterface filled with
+    function pointers to OSAL sockets implementation.
+ */
 osalStreamInterface osal_socket_iface
  = {osal_socket_open,
 	osal_socket_close,

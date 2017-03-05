@@ -126,7 +126,7 @@ eStatus eConsole::close()
   The write () function releases places data into console. The data can be coded.
 
   @param  buf Pointer to data to write.
-  @param  buf_sz Bumber of bytes to write. 
+  @param  buf_sz Number of bytes to write.
   @param  nwritten Pointer to integer where to store number of bytes written to console. This is
           always same as byte_sz. Can be set to  to OS_NULL, if not needed.
 

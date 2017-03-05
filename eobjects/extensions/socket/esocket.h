@@ -38,8 +38,7 @@ class eSocket : public eStream
 	************************************************************************************************
 
       @name Constructor, destructor, etc.
-
-	  X...
+      Generic object functionality.
 
 	************************************************************************************************
 	*/
@@ -93,8 +92,7 @@ public:
 	************************************************************************************************
 
       @name Socket functions.
-
-	  X...
+      Open, close, read, write, select soecke, etc. These implement eStream functionality.
 
 	************************************************************************************************
 	*/
@@ -164,32 +162,47 @@ public:
 
     /*@}*/
 
+
+    /**
+    ************************************************************************************************
+
+      @name Internal for the class.
+      Member variables and protected functions.
+
+    ************************************************************************************************
+    */
 protected:
+    /* Setup queues/buffering.
+     */
     void setup(
         os_int flags);
 
+    /* Write from intenal buffer m_out to OSAL socket.
+     */
     eStatus write_socket(
         os_boolean flushnow);
 
+    /* Read from OSAL socket into intenal buffer m_in.
+     */
     eStatus read_socket();
 
-    /* Input queue (buffer)
+    /** Input queue (buffer).
      */
     eQueue *m_in;
 
-    /* Output queue (buffer)
+    /** Output queue (buffer).
      */
     eQueue *m_out;
 
-    /* Osal socket handle.
+    /** Operating system abstraction layer (OSAL) socket handle.
      */
     osalStream m_socket;
 
-    /* Frame size in bytes.
+    /** TCP Frame size in bytes (estimate, optimal is real payload size or slightly below).
      */
     os_int m_frame_sz;
 
-    /** Flush all data from output buffer until output buffer is empty
+    /** Flush all data from output buffer until output buffer is empty.
      */
     os_boolean m_flushnow;
 };

@@ -6,7 +6,8 @@
   @version 1.0
   @date    17.5.2016
 
-  Queue buffers data, typically for reading from or writing to stream.
+  Queue buffers data, typically for reading from or writing to stream. See equeue.cpp for more
+  information.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -45,7 +46,6 @@ typedef struct eQueueBlock
 eQueueBlock;
 
 
-
 /**
 ****************************************************************************************************
 
@@ -59,16 +59,15 @@ eQueueBlock;
 */
 class eQueue : public eStream
 {
-	/** 
-	************************************************************************************************
+    /**
+    ************************************************************************************************
 
-	  @name Constructors and destructor
+      @name Constructor, destructor, etc.
+      Generic object functionality.
 
-	  X...
-
-	************************************************************************************************
-	*/
-	/*@{*/
+    ************************************************************************************************
+    */
+    /*@{*/
 public:
 	/** Constructor.
      */
@@ -114,34 +113,42 @@ public:
     /*@}*/
 
 
-	/** 
-	************************************************************************************************
+    /**
+    ************************************************************************************************
 
-	  @name Queue functions for writing to queue.
+      @name Queue functions.
+      Open, close, read, write, select soecke, etc. These implement eStream functionality.
 
-	  X...
+    ************************************************************************************************
+    */
+    /*@{*/
 
-	************************************************************************************************
-	*/
-	/*@{*/
+    /* Open the queue.
+     */
     virtual eStatus open(
 	    os_char *parameters,
         os_int flags = 0);
 
+    /* Close the queue.
+     */
     virtual eStatus close();
 
+    /* Write data to queue.
+     */
     virtual eStatus write(
         const os_char *buf, 
         os_memsz buf_sz, 
         os_memsz *nwritten = OS_NULL);
 
+    /* Read data from queue.
+     */
     virtual eStatus read(
         os_char *buf, 
         os_memsz buf_sz, 
         os_memsz *nread = OS_NULL,
         os_int flags = 0);
 
-	/** Write character, typically control code.
+    /* Write character to queue, typically control code.
      */
     virtual eStatus writechar(
         os_int c);
@@ -162,6 +169,14 @@ public:
 
     /*@}*/
 
+    /**
+    ************************************************************************************************
+
+      @name Internal for the class.
+      Member variables and protected functions.
+
+    ************************************************************************************************
+    */
 private:
     /* Allocate new block and join it to queue.
      */
@@ -183,7 +198,7 @@ private:
         const os_char *buf, 
         os_memsz buf_sz);
 
-    /* Put character to queue.
+    /** Put character to queue.
      */
     inline void putcharacter(
         os_int c)
@@ -227,7 +242,7 @@ private:
         os_memsz *nread,
         os_int flags);
 
-    /* Check if queue has data.
+    /** Check if queue has data.
      */
     inline os_char hasedata()
     {
@@ -235,7 +250,7 @@ private:
         return m_oldest->head != m_oldest->tail;
     }
 
-    /* Get character from queue.
+    /** Get character from queue.
      */
     inline os_char getcharacter()
     {
@@ -305,7 +320,7 @@ private:
      */
     os_int m_flush_count;
 
-    /* Last character of previous write_plain() call.
+    /** Last character of previous write_plain() call.
      */
     os_uchar m_flushctrl_last_c;
 };

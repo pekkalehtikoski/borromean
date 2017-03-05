@@ -23,10 +23,7 @@
 ****************************************************************************************************
 
   @brief Constructor.
-
   Clears member variables.
-
-  @return  None.
 
 ****************************************************************************************************
 */
@@ -47,10 +44,7 @@ eSocket::eSocket(
 ****************************************************************************************************
 
   @brief Virtual destructor.
-
   Closes the OS socket if it is open.
-
-  @return  None.
 
 ****************************************************************************************************
 */
@@ -140,7 +134,7 @@ eStatus eSocket::open(
 /**
 ****************************************************************************************************
 
-  @brief Setup queues for buffering.
+  @brief Setup queues/buffering.
 
   The eSocket::setup function either sets up read and write queues for the socket. T
   If we are setting up for listening socket, delete any queues (normally we do not have any).
@@ -594,7 +588,7 @@ eStatus eSocket::accept(
 /**
 ****************************************************************************************************
 
-  @brief Write to socket.
+  @brief Write from intenal buffer m_out to OSAL socket.
 
   The eSocket::write_socket() function writes data from m_out queue to socket.
   If flushnow is not set, the function does nothing until m_out holds enough data for at least
@@ -659,7 +653,7 @@ eStatus eSocket::write_socket(
 /**
 ****************************************************************************************************
 
-  @brief Read from socket.
+  @brief Read from OSAL socket into intenal buffer m_in.
 
   The eSocket::read_socket() function reads data from socket and places it to m_in queue.
   All available data from socket is read.
