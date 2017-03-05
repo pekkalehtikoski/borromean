@@ -462,7 +462,7 @@ void eConnection::run()
             /* Enable faster timer, to try to reconnect about once per 3 seconds.
                broken sockets.
              */
-            if (!m_fast_timer_enabled != 1)
+            if (m_fast_timer_enabled != 1)
             {
                 timer(try_again_ms);
                 m_fast_timer_enabled = 1;
