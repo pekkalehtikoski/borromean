@@ -127,7 +127,7 @@ class eEnvelope : public eObject
 	*/
 	/*@{*/
 public:
-    /** Constructor.
+    /* Constructor.
 	 */
 	eEnvelope(
 		eObject *parent = OS_NULL,

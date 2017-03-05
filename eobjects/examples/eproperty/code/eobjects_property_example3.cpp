@@ -48,7 +48,7 @@ static os_char emyclassp_opinion[] = "opinion";
 class eMyClass : public eObject
 {
 public:
-	/** Constructor. It is here just to initialize properties to default values.s
+    /* Constructor.
      */
     eMyClass(
 		eObject *parent = OS_NULL,

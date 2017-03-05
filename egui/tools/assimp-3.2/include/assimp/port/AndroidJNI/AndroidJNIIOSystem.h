@@ -62,7 +62,7 @@ public:
 	std::string mApkWorkspacePath;
 	AAssetManager* mApkAssetManager;
 
-	/** Constructor. */
+	/* Constructor. */
 	AndroidJNIIOSystem(ANativeActivity* activity);
 
 	/** Destructor. */

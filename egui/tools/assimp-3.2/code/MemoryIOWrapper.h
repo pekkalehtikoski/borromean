@@ -146,7 +146,7 @@ private:
 class MemoryIOSystem : public IOSystem
 {
 public:
-    /** Constructor. */
+    /* Constructor. */
     MemoryIOSystem (const uint8_t* buff, size_t len)
         : buffer (buff), length(len) {
     }

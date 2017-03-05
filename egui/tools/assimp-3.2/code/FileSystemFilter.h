@@ -62,7 +62,7 @@ inline bool IsHex(char s) {
 class FileSystemFilter : public IOSystem
 {
 public:
-    /** Constructor. */
+    /* Constructor. */
     FileSystemFilter(const std::string& file, IOSystem* old)
         : wrapped  (old)
         , src_file (file)

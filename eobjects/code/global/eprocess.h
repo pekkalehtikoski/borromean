@@ -42,7 +42,7 @@ class eProcess : public eThread
 	*/
 	/*@{*/
 public:
-    /** Constructor.
+    /* Constructor.
 	 */
 	eProcess(
 		eObject *parent = OS_NULL,

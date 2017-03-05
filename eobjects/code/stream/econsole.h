@@ -45,7 +45,7 @@ public:
 	*/
 	/*@{*/
 
-	/** Constructor.
+	/* Constructor.
      */
 	eConsole(
 		eObject *parent = OS_NULL,

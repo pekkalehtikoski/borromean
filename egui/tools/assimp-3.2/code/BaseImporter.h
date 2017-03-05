@@ -119,7 +119,7 @@ class ASSIMP_API BaseImporter
 
 public:
 
-    /** Constructor to be privately used by #Importer */
+    /* Constructor to be privately used by #Importer */
     BaseImporter();
 
     /** Destructor, private as well */

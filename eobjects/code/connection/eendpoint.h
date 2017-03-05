@@ -44,7 +44,7 @@ extern os_char
 class eEndPoint : public eThread
 {
 public:
-	/** Constructor.
+    /* Constructor.
      */
 	eEndPoint(
 		eObject *parent = OS_NULL,

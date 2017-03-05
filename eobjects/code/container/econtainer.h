@@ -32,7 +32,7 @@
 class eContainer : public eObject
 {
 public:
-    /** Constructor.
+    /* Constructor.
 	 */
 	eContainer(
 		eObject *parent = OS_NULL,

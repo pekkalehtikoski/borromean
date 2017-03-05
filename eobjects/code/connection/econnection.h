@@ -46,7 +46,7 @@ extern os_char
 class eConnection : public eThread
 {
 public:
-	/** Constructor.
+    /* Constructor.
      */
 	eConnection(
 		eObject *parent = OS_NULL,

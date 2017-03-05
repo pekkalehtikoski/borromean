@@ -43,7 +43,7 @@ class eSet : public eObject
 	*/
 	/*@{*/
 public:
-    /** Constructor.
+    /* Constructor.
 	 */
 	eSet(
 		eObject *parent = OS_NULL,

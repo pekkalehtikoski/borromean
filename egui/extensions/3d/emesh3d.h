@@ -67,18 +67,13 @@ class eMesh3D : public eObject
 	*/
 	/*@{*/
 
-protected:
-	    /** Cwonstructor.
+public:
+        /* Constructor.
 		 */
 		eMesh3D(
 			eObject *parent,
 			os_int oid = EOID_ITEM,
-			os_int flags = EOBJ_DEFAULT);
-
-public:
-		/** Public constructor.
- 		 */
-		inline eMesh3D() : eMesh3D(OS_NULL) {}
+            os_int flags = EOBJ_DEFAULT);
 
 		/* Virtual destructor.
 		 */
@@ -89,18 +84,23 @@ public:
 		inline static eMesh3D *cast(
 			eObject *o) 
 		{ 
-			return (eMesh3D*)o;
+            e_assert_type(o, EGUICLASSID_MESH3D)
+            return (eMesh3D*)o;
 		}
 
 		/* Get class identifier.
-		*/
+         */
 		virtual os_int getclassid() 
         { 
             return EGUICLASSID_MESH3D; 
         }
 
+        /* Static function to add class to propertysets and class list.
+         */
+        static void setupclass();
+
 		/* Static constructor function for generating instance by class list.
-		*/
+         */
 		static eMesh3D *newobj(
 			eObject *parent,
 			os_int oid = EOID_ITEM,

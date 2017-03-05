@@ -43,7 +43,7 @@ class ePropertyBinding : public eBinding
 	*/
 	/*@{*/
 public:
-    /** Constructor.
+    /* Constructor.
 	 */
 	ePropertyBinding(
 		eObject *parent = OS_NULL,

@@ -69,7 +69,7 @@ class eQueue : public eStream
     */
     /*@{*/
 public:
-	/** Constructor.
+    /* Constructor.
      */
 	eQueue(
 		eObject *parent = OS_NULL,

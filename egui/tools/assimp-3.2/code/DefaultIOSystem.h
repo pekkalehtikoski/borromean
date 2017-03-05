@@ -51,7 +51,7 @@ namespace Assimp    {
 class DefaultIOSystem : public IOSystem
 {
 public:
-    /** Constructor. */
+    /* Constructor. */
     DefaultIOSystem();
 
     /** Destructor. */

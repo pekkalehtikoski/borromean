@@ -55,7 +55,7 @@ static os_char emyclass2p_y[] = "Y";
 class eMyClass1 : public eThread
 {
 public:
-	/** Constructor. It is here just to initialize properties to default values.s
+    /* Constructor.
      */
     eMyClass1(
 		eObject *parent = OS_NULL,
@@ -124,7 +124,7 @@ public:
 class eMyClass2 : public eThread
 {
 public:
-	/** Constructor. It is here just to initialize properties to default values.s
+    /* Constructor.
      */
     eMyClass2(
 		eObject *parent = OS_NULL,

@@ -34,7 +34,7 @@
 class eTimer : public eThread
 {
 public:
-	/** Constructor.
+	/* Constructor.
      */
 	eTimer(
 		eObject *parent = OS_NULL,

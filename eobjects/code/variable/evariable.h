@@ -126,7 +126,7 @@ class eVariable : public eObject
 	*/
 	/*@{*/
 public:
-	/** Constructor.
+	/* Constructor.
      */
 	eVariable(
 		eObject *parent = OS_NULL,

@@ -1,4 +1,4 @@
-# e-build-defs.txt - Set cmake build environment variables common to all projects.
+# e-build-egui-defs.txt - Set cmake build environment variables common to all projects.
 # 23.12.2016/pekka
 
 # Include path.

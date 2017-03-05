@@ -77,7 +77,7 @@ class eBinding : public eObject
 	*/
 	/*@{*/
 public:
-    /** Constructor.
+    /* Constructor.
 	 */
 	eBinding(
 		eObject *parent = OS_NULL,

@@ -4,7 +4,10 @@
 # 3) Add libassimp using the file lists (eliminates duplication of file names between
 #    source groups and library command)
 #
-cmake_minimum_required( VERSION 2.6 )
+# PEKKA CHANGED
+cmake_minimum_required(VERSION 2.8.11)
+# cmake_minimum_required( VERSION 2.6 )
+
 SET( HEADER_PATH ../include/assimp )
 
 SET( ASSIMP_LIB_INSTALL_DIR lib )
@@ -763,6 +766,9 @@ if (UNZIP_FOUND)
 else (UNZIP_FOUND)
   INCLUDE_DIRECTORIES("../contrib/unzip")
 endif (UNZIP_FOUND)
+
+# PEKKA: include path added, for some reason linux build needs this
+INCLUDE_DIRECTORIES( ../include )
 
 INSTALL( TARGETS assimp
   LIBRARY DESTINATION ${ASSIMP_LIB_INSTALL_DIR}

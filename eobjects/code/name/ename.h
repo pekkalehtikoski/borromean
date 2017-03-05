@@ -66,7 +66,7 @@ class eName : public eVariable
 	*/
 	/*@{*/
 public:
-	/** Constructor.
+	/* Constructor.
      */
 	eName(
 		eObject *parent = OS_NULL,

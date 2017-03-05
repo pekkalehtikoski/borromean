@@ -75,34 +75,44 @@ class eObject3D : public eObject
 	*/
 	/*@{*/
 
-protected:
-	/** Constructor.
+public:
+        /* Constructor.
 		 */
 		eObject3D(
 			eObject *parent,
 			os_int oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
 
-public:
-		/** Public constructor.
-		*/
-		inline eObject3D() : eObject3D(OS_NULL) {}
 
 		/* Virtual destructor.
 		 */
 		virtual ~eObject3D();
+
+        /* Clone object.
+         */
+        virtual eObject *clone(
+            eObject *parent,
+            e_oid oid = EOID_CHILD,
+            os_int aflags = 0);
 
         /* Casting eObject pointer to eObject3D pointer.
          */
 		inline static eObject3D *cast(
 			eObject *o) 
 		{ 
-			return (eObject3D*)o;
+            return (eObject3D*)o;
 		}
 
-		/* Get class identifier.
-		*/
-		// virtual os_int getclassid() { return ECLASSID_E?; }
+        /* Get class identifier.
+        */
+        virtual os_int getclassid()
+        {
+            return EGUICLASSID_OBJECT3D;
+        }
+
+        /* Static function to add class to propertysets and class list.
+         */
+        /* static void setupclass(); */
 
 		/* Static constructor function.
 		*/

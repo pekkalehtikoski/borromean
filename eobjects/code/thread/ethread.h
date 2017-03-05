@@ -48,7 +48,7 @@ class eThread : public eObject
 	*/
 	/*@{*/
 public:
-    /** Constructor.
+    /* Constructor.
 	 */
 	eThread(
 		eObject *parent = OS_NULL,

@@ -45,7 +45,7 @@ class DragoWorld : public eObject
 	*/
 	/*@{*/
 
-		/** Constructor.
+		/* Constructor.
 		 */
 		DragoWorld(
 			eObject *parent = OS_NULL,

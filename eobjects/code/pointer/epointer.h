@@ -60,7 +60,7 @@ class ePointer : public eObject
 	*/
 	/*@{*/
 public:
-	/** Constructor.
+	/* Constructor.
 		*/
 	ePointer(
 		eObject *parent = OS_NULL,

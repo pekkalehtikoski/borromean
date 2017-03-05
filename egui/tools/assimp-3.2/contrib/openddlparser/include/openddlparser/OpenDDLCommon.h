@@ -55,7 +55,7 @@ BEGIN_ODDLPARSER_NS
 // We will use C++11 optional
 #ifndef OPENDDL_NO_USE_CPP11
     // All C++11 constructs
-#   define ddl_nullptr nullptr
+#   define ddl_nullptr NULL
 #else
     // Fall-back for older compilers
 #   define ddl_nullptr NULL

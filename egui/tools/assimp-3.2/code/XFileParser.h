@@ -65,7 +65,7 @@ namespace Assimp
 class XFileParser
 {
 public:
-    /** Constructor. Creates a data structure out of the XFile given in the memory block.
+    /* Constructor. Creates a data structure out of the XFile given in the memory block.
      * @param pBuffer Null-terminated memory buffer containing the XFile
      */
     explicit XFileParser( const std::vector<char>& pBuffer);

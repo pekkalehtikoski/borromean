@@ -120,7 +120,7 @@ struct aiNode
     C_STRUCT aiMetadata* mMetaData;
 
 #ifdef __cplusplus
-    /** Constructor */
+    /* Constructor */
     aiNode()
         // set all members to zero by default
         : mName("")

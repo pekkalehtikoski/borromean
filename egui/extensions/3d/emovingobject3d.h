@@ -45,20 +45,15 @@ class eMovingObject3D : public eObject3D
 	************************************************************************************************
 	*/
 	/*@{*/
-protected:
-		/** Constructor.
+public:
+        /* Constructor.
 		 */
 		eMovingObject3D(
 			eObject *parent,
 			os_int oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
 
-public:
-		/** Public constructor.
-		*/
-		inline eMovingObject3D() : eMovingObject3D(OS_NULL) {}
-
-		/* Virtual destructor.
+        /* Virtual destructor.
 		 */
 		virtual ~eMovingObject3D();
 
@@ -67,15 +62,23 @@ public:
 		inline static eMovingObject3D *cast(
 			eObject *o) 
 		{ 
-			return (eMovingObject3D*)o;
+            e_assert_type(o, EGUICLASSID_MOVINGOBJECT3D)
+            return (eMovingObject3D*)o;
 		}
 
 		/* Get class identifier.
-		*/
-		// virtual os_int getclassid() { return ECLASSID_E?; }
+         */
+        virtual os_int getclassid()
+        {
+            return EGUICLASSID_MOVINGOBJECT3D;
+        }
+
+        /* Static function to add class to propertysets and class list.
+         */
+        static void setupclass();
 
 		/* Static constructor function for generating instance by class list.
-		*/
+         */
 		static eMovingObject3D *newobj(
 			eObject *parent,
 			os_int oid = EOID_ITEM,

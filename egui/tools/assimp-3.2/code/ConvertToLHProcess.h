@@ -122,7 +122,7 @@ class FlipWindingOrderProcess : public BaseProcess
     friend class Importer;
 
 public:
-    /** Constructor to be privately used by Importer */
+    /* Constructor to be privately used by Importer */
     FlipWindingOrderProcess();
 
     /** Destructor, private as well */
@@ -146,7 +146,7 @@ class FlipUVsProcess : public BaseProcess
     friend class Importer;
 
 public:
-    /** Constructor to be privately used by Importer */
+    /* Constructor to be privately used by Importer */
     FlipUVsProcess();
 
     /** Destructor, private as well */

@@ -40,7 +40,7 @@ class eRoot : public eObject
 	*/
 	/*@{*/
 public:
-	/** Constructor.
+	/* Constructor.
      */
 	eRoot(
 		eObject *parent = OS_NULL,

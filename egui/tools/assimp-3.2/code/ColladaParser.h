@@ -64,7 +64,7 @@ namespace Assimp
         friend class ColladaLoader;
         
     protected:
-        /** Constructor from XML file */
+        /* Constructor from XML file */
         ColladaParser( IOSystem* pIOHandler, const std::string& pFile);
         
         /** Destructor */

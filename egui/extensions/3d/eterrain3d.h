@@ -37,18 +37,13 @@ class eTerrain3D : public eObject3D
 	************************************************************************************************
 	*/
 	/*@{*/
-protected:
-		/** Constructor.
+public:
+        /* Constructor.
 		 */
 		eTerrain3D(
 			eObject *parent,
 			os_int oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
-
-public:
-		/** Public constructor.
-		*/
-		inline eTerrain3D() : eTerrain3D(OS_NULL) {}
 
 		/* Virtual destructor.
 		 */
@@ -59,12 +54,20 @@ public:
 		inline static eTerrain3D *cast(
 			eObject *o) 
 		{ 
-			return (eTerrain3D*)o;
+            e_assert_type(o, EGUICLASSID_TERRAIN3D)
+            return (eTerrain3D*)o;
 		}
 
-		/* Get class identifier.
-		*/
-		// virtual os_int getclassid() { return ECLASSID_E?; }
+        /* Get class identifier.
+         */
+        virtual os_int getclassid()
+        {
+            return EGUICLASSID_MESH3D;
+        }
+
+        /* Static function to add class to propertysets and class list.
+         */
+        static void setupclass();
 
 		/* Static constructor function.
 		*/
@@ -104,7 +107,7 @@ public:
             os_double drop_m,
             os_int limit_dist);
 
-        void eTerrain3D::above_sea_level(
+        void above_sea_level(
             os_double above_precents,
             os_double step_m);
 

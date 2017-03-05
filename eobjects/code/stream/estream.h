@@ -195,7 +195,7 @@ class eStream : public eObject
 	*/
 	/*@{*/
 public:
-	/** Constructor.
+    /* Constructor.
      */
 	eStream(
 		eObject *parent = OS_NULL,

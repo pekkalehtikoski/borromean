@@ -40,18 +40,13 @@ class eWorld3D : public eObject3D
 	************************************************************************************************
 	*/
 	/*@{*/
-protected:
-		/** Constructor.
+public:
+        /* Constructor.
 		 */
 		eWorld3D(
 			eObject *parent = OS_NULL,
 			os_int oid = EOID_ITEM,
 			os_int flags = EOBJ_DEFAULT);
-
-public:
-		/** Public constructor.
-		*/
-		inline eWorld3D() : eWorld3D(OS_NULL) {}
 
 		/* Virtual destructor.
 		 */
@@ -62,12 +57,20 @@ public:
 		inline static eWorld3D *cast(
 			eObject *o) 
 		{ 
-			return (eWorld3D*)o;
+            e_assert_type(o, EGUICLASSID_WORLD3D)
+            return (eWorld3D*)o;
 		}
 
-		/* Get class identifier.
-		*/
-		// virtual os_int getclassid() { return ECLASSID_E?; }
+        /* Get class identifier.
+         */
+        virtual os_int getclassid()
+        {
+            return EGUICLASSID_WORLD3D;
+        }
+
+        /* Static function to add class to propertysets and class list.
+         */
+        static void setupclass();
 
 		/* Static constructor function.
 		*/

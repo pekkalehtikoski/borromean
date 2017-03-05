@@ -137,7 +137,7 @@ struct aiMetadata
 
 #ifdef __cplusplus
 
-    /** Constructor */
+    /* Constructor */
     aiMetadata()
         // set all members to zero by default
         : mNumProperties(0)

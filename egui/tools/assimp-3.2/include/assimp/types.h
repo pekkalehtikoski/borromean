@@ -272,7 +272,7 @@ struct aiString
         data[length] = '\0';
     }
 
-    /** Constructor from std::string */
+    /* Constructor from std::string */
     explicit aiString(const std::string& pString) :
         length(pString.length())
     {

@@ -217,7 +217,7 @@ class ASSIMP_API_WINONLY BaseProcess
 
 public:
 
-    /** Constructor to be privately used by Importer */
+    /* Constructor to be privately used by Importer */
     BaseProcess();
 
     /** Destructor, private as well */

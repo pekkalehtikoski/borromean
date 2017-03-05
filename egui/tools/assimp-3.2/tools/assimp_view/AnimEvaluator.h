@@ -54,7 +54,7 @@ namespace AssimpView
 class AnimEvaluator
 {
 public:
-    /** Constructor on a given animation. The animation is fixed throughout the lifetime of
+    /* Constructor on a given animation. The animation is fixed throughout the lifetime of
      * the object.
      * @param pAnim The animation to calculate poses for. Ownership of the animation object stays
      *   at the caller, the evaluator just keeps a reference to it as long as it persists.

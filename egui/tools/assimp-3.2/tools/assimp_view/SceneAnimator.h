@@ -104,7 +104,7 @@ class SceneAnimator
 public:
 
     // ----------------------------------------------------------------------------
-    /** Constructor for a given scene.
+    /* Constructor for a given scene.
      *
      * The object keeps a reference to the scene during its lifetime, but
      * ownership stays at the caller.

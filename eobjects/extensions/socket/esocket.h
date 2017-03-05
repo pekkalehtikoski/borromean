@@ -44,7 +44,7 @@ class eSocket : public eStream
 	*/
 	/*@{*/
 public:
-	/** Constructor.
+    /* Constructor.
      */
 	eSocket(
 		eObject *parent = OS_NULL,
