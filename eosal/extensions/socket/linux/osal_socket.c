@@ -399,7 +399,7 @@ void osal_socket_close(
 		 */
 		do
 		{
-			n = recv(handle, buf, sizeof(buf), 0);
+            n = recv(handle, buf, sizeof(buf), MSG_NOSIGNAL);
             if (n == -1)
 			{
     #if OSAL_DEBUG
@@ -660,7 +660,7 @@ osalStatus osal_socket_write(
          */
         if (n > 0x7FFFFFFFFFFFFFFE) n = 0x7FFFFFFFFFFFFFFF;
         
-		rval = send(handle, buf, (int)n, 0);
+        rval = send(handle, buf, (int)n, MSG_NOSIGNAL);
 
         if (rval == -1)
 		{
@@ -735,7 +735,7 @@ osalStatus osal_socket_read(
          */
         if (n > 0x7FFFFFFFFFFFFFFE) n = 0x7FFFFFFFFFFFFFFF;
 
-		rval = recv(handle, buf, (int)n, 0);
+        rval = recv(handle, buf, (int)n, MSG_NOSIGNAL);
 
         /* If other end has gracefylly closed.
          */
@@ -999,6 +999,23 @@ getout:
 /**
 ****************************************************************************************************
 
+  @brief SIGPIPE handler
+  @anchor osal_pipe_signal_handler
+
+  The osal_pipe_signal_handler() handles SIGPIPE without terminating the process.
+  @return  None.
+
+****************************************************************************************************
+*/
+void osal_pipe_signal_handler(int signum)
+{
+    osal_debug_error("osal_socket.c: SIGPIPE");
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Initialize sockets.
   @anchor osal_socket_initialize
 
@@ -1011,7 +1028,9 @@ getout:
 void osal_socket_initialize(
 	void)
 {
-    signal (SIGPIPE, SIG_IGN);
+    /* Do not terminate program if socket breaks.
+     */
+    signal(SIGPIPE, osal_pipe_signal_handler);
 }
 
 

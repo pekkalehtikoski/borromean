@@ -40,9 +40,9 @@ void osal_init_os_specific(
 {
     if ((flags & OSAL_INIT_NO_LINUX_SIGNAL_INIT) == 0)
     {
-        /* Do not terminate progream when socket breaks.
+        /* Do not terminate program if socket breaks.
          */
-        signal (SIGPIPE, SIG_IGN);
+        /* signal (SIGPIPE, SIG_IGN); */
     }
 }
 

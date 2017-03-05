@@ -184,7 +184,7 @@ void connection_example_1()
 
 //    c.setpropertyd_msg("//thread2/_p/Y", 11.5);
 
-    os_sleep(150000);
+    os_sleep(1500000);
 
     /* Wait for the threads to terminate.
      */
