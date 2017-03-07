@@ -72,7 +72,10 @@ public:
 
     /* Get class identifier.
      */
-    virtual os_int classid() {return ECLASSID_SET;}
+    virtual os_int classid()
+    {
+        return ECLASSID_SET;
+    }
 
     /* Static function to add class to propertysets and class list.
      */
