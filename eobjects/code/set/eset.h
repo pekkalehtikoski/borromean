@@ -140,7 +140,7 @@ public:
 
     /* Store value into set.
      */
-    virtual void set(
+    /* virtual */ void set(
         os_int id,
         eVariable *x,
         os_int sflags = 0);
@@ -180,7 +180,7 @@ public:
 
     /* Get value from set.
      */
-    virtual os_boolean get(
+    /* virtual */ os_boolean get(
         os_int id,
         eVariable *x);
 

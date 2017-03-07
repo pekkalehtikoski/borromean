@@ -1,7 +1,7 @@
 /**
 
-  @file    etable.h
-  @brief   Table interface.
+  @file    ematrix.h
+  @brief   Matrix class.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
@@ -13,8 +13,8 @@
 
 ****************************************************************************************************
 */
-#ifndef ETABLE_INCLUDED
-#define ETABLE_INCLUDED
+#ifndef EMATRIX_INCLUDED
+#define EMATRIX_INCLUDED
 
 
 /**
@@ -22,18 +22,18 @@
 
   @brief Table interface.
 
-  The eTable is base class for tables. Underlying table can be eMatrix, eSelection or database
+  The eMatrix is base class for tables. Underlying table can be eMatrix, eSelection or database
   table class.
 
 
 ****************************************************************************************************
 */
-class eTable : public eObject
+class eMatrix : public eObject
 {
 	/** 
 	************************************************************************************************
 
-      @name Generic eObject functionality for eTable.
+      @name Generic eObject functionality for eMatrix.
 
 	  X...
 
@@ -43,14 +43,14 @@ class eTable : public eObject
 public:
     /* Constructor.
 	 */
-    eTable(
+    eMatrix(
 		eObject *parent = OS_NULL,
         e_oid oid = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
  	 */
-    virtual ~eTable();
+    virtual ~eMatrix();
 
     /* Clone object.
      */
@@ -59,20 +59,20 @@ public:
         e_oid oid = EOID_CHILD,
         os_int aflags = 0); */
 
-    /* Casting eObject pointer to eTable pointer.
+    /* Casting eObject pointer to eMatrix pointer.
         */
-    inline static eTable *cast(
+    inline static eMatrix *cast(
 		eObject *o) 
 	{ 
-        e_assert_type(o, ECLASSID_TABLE)
-        return (eTable*)o;
+        e_assert_type(o, ECLASSID_MATRIX)
+        return (eMatrix*)o;
 	}
 
     /* Get class identifier.
      */
     virtual os_int classid()
     {
-        return ECLASSID_TABLE;
+        return ECLASSID_MATRIX;
     }
 
     /* Static function to add class to propertysets and class list.
@@ -81,12 +81,12 @@ public:
 
     /* Static constructor function for generating instance by class list.
      */
-    static eTable *newobj(
+    static eMatrix *newobj(
         eObject *parent,
         e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eTable(parent, oid, flags);
+        return new eMatrix(parent, oid, flags);
     }
 
     /* Write set content to stream.
@@ -118,7 +118,7 @@ public:
 	/** 
 	************************************************************************************************
 
-      @name Table functions.
+      @name Table function overrides.
 
 	  A value can be stored into set using set() function. If the value with this id exists,
       it is overwritten. Values are retrieved by get() function.
@@ -164,10 +164,88 @@ public:
         os_int tflags)
     {}
 
-    /* Clear all data in the table.
+
+    /**
+    ************************************************************************************************
+
+      @name Matrix functions.
+
+      These function treat matrix as organized to rows and columns.
+
+    ************************************************************************************************
+    */
+
+    /* Allocate matrix.
      */
-    // void clear()
-    // {}
+    void allocate(
+        osalTypeId type,
+        os_int width,
+        os_int height,
+        os_int mflags);
+
+    /* Get matrix width.
+     */
+    os_int width();
+
+    /* Get matrix height.
+     */
+    os_int height();
+
+    /* Store value into matrix.
+     */
+    void set(
+        os_int row,
+        os_int column,
+        eVariable *x,
+        os_int mflags = 0);
+
+    /* Store integer value into matrix.
+     */
+    inline void setl(
+        os_int row,
+        os_int column,
+        os_long x);
+
+    /* Store double value into matrix.
+     */
+    void setd(
+        os_int row,
+        os_int column,
+        os_double x);
+
+    /* Store string value into matrix.
+     */
+    void sets(
+        os_int row,
+        os_int column,
+        const os_char *x);
+
+    /* Clear matrix value to be empty.
+     */
+    void clear(
+        os_int row,
+        os_int column);
+
+    /* Get value from matrix.
+     */
+    os_boolean get(
+        os_int row,
+        os_int column,
+        eVariable *x);
+
+    /* Get value from matrix as integer.
+     */
+    os_long getl(
+        os_int row,
+        os_int column,
+        os_boolean *hasvalue = OS_NULL);
+
+    /* Get value from matrix as double.
+     */
+    os_double getd(
+        os_int row,
+        os_int column,
+        os_boolean *hasvalue = OS_NULL);
 
     /*@}*/
 };

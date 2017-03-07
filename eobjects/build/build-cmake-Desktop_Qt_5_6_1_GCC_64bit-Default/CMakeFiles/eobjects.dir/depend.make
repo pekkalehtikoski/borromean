@@ -15,6 +15,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o:
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -84,6 +85,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybindin
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybinding.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -153,6 +155,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -222,6 +225,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cp
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -291,6 +295,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cp
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -360,6 +365,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -429,6 +435,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: /codero
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -498,6 +505,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o: /
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -567,6 +575,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.cpp
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -622,6 +631,76 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: /coderoot/borromean/eosal/extensions/time/common/osal_time.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o: /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
 
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/binding/ebinding.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/binding/epropertybinding.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/connection/econnection.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/connection/eendpoint.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/container/econtainer.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/defs/eclassid.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/defs/edefs.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/defs/eoid.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/defs/estatus.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/envelope/eenvelope.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.cpp
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/object/ehandle.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/object/ehandleroot.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/object/ehandletable.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/object/eobject.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/pointer/epointer.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/root/eroot.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/set/eset.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/stream/econsole.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/stream/equeue.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/stream/estream.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/table/etable.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/thread/ethread.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/thread/ethreadhandle.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/timer/etimer.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/code/variable/evariable.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/eobjects.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eobjects/extensions/socket/esocket.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/console/common/osal_console.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/console/common/osal_sysconsole.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/debugcode/common/osal_debug.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/defs/common/osal_common_defs.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/defs/common/osal_global.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/defs/common/osal_status.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/defs/linux/osal_defs.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/defs/linux/osal_types.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/defs/windows/osal_defs.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/defs/windows/osal_types.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/event/common/osal_event.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/initialize/common/osal_initialize.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/int64/common/osal_int64.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/memory/common/osal_memory.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/memory/common/osal_sysmem.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/mutex/common/osal_mutex.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/resmon/common/osal_resource_monitor.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/string/common/osal_char.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/string/common/osal_string.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/thread/common/osal_thread.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/timer/common/osal_timer.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/utf16/common/osal_utf16.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/code/utf32/common/osal_utf32.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/eosal.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/eosalx.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/extensions/main/common/osal_main.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/extensions/rand/common/osal_rand.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/extensions/serialize/common/osal_serialize.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/extensions/socket/common/osal_socket.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/extensions/strcnv/common/osal_strcnv.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/extensions/stream/common/osal_stream.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/extensions/stringx/common/osal_stringx.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/extensions/time/common/osal_time.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o: /coderoot/borromean/eosal/extensions/typeid/common/osal_typeid.h
+
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/binding/ebinding.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/binding/epropertybinding.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/connection/econnection.h
@@ -635,6 +714,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /code
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/name/ename.cpp
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
@@ -704,6 +784,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.cpp
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
@@ -773,6 +854,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.cpp
@@ -842,6 +924,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: /
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -911,6 +994,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -980,6 +1064,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1049,6 +1134,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserializati
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserialization.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1118,6 +1204,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: /
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1187,6 +1274,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o:
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1256,6 +1344,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: /code
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1325,6 +1414,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: /codero
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1394,6 +1484,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: 
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1463,6 +1554,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: /c
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1532,6 +1624,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o: /
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1601,6 +1694,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o: /co
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1670,6 +1764,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: /
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1739,6 +1834,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cp
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1808,6 +1904,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: /co
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1877,6 +1974,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h
@@ -1946,6 +2044,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cp
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o: /coderoot/borromean/eobjects/code/global/eglobal.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o: /coderoot/borromean/eobjects/code/global/eprocess.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o: /coderoot/borromean/eobjects/code/main/emain.h
+CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o: /coderoot/borromean/eobjects/code/matrix/ematrix.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o: /coderoot/borromean/eobjects/code/name/ename.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o: /coderoot/borromean/eobjects/code/name/enamespace.h
 CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cpp.o: /coderoot/borromean/eobjects/code/object/eclasslist.h

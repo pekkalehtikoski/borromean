@@ -1,7 +1,7 @@
 /**
 
-  @file    etable.cpp
-  @brief   Table interface.
+  @file    ematrix.cpp
+  @brief   Matrix class.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
@@ -27,7 +27,7 @@
 
 ****************************************************************************************************
 */
-eTable::eTable(
+eMatrix::eMatrix(
 	eObject *parent,
 	e_oid oid,
 	os_int flags)
@@ -47,7 +47,7 @@ eTable::eTable(
 
 ****************************************************************************************************
 */
-eTable::~eTable()
+eMatrix::~eMatrix()
 {
 }
 
@@ -55,21 +55,21 @@ eTable::~eTable()
 /**
 ****************************************************************************************************
 
-  @brief Add eTable to class list.
+  @brief Add eMatrix to class list.
 
-  The eTable::setupclass function adds newobj function pointer to class list. This enables creating
+  The eMatrix::setupclass function adds newobj function pointer to class list. This enables creating
   new objects dynamically by class identifier, which is used for serialization reader()
   functions.
 
 ****************************************************************************************************
 */
-void eTable::setupclass()
+void eMatrix::setupclass()
 {
-    const os_int cls = ECLASSID_TABLE;
+    const os_int cls = ECLASSID_MATRIX;
 
     /* Add the class to class list.
      */
     os_lock();
-    eclasslist_add(cls, (eNewObjFunc)newobj, "eTable");
+    eclasslist_add(cls, (eNewObjFunc)newobj, "eMatrix");
     os_unlock();
 }

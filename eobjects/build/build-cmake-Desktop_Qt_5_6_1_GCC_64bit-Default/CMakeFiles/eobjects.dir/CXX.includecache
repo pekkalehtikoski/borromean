@@ -68,6 +68,12 @@ eobjects/eobjects.h
 
 /coderoot/borromean/eobjects/code/main/emain.h
 
+/coderoot/borromean/eobjects/code/matrix/ematrix.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/code/matrix/eobjects/eobjects.h
+
+/coderoot/borromean/eobjects/code/matrix/ematrix.h
+
 /coderoot/borromean/eobjects/code/name/ename.cpp
 eobjects/eobjects.h
 /coderoot/borromean/eobjects/code/name/eobjects/eobjects.h
@@ -223,6 +229,8 @@ eobjects/code/envelope/eenvelope.h
 /coderoot/borromean/eobjects/eobjects/code/envelope/eenvelope.h
 eobjects/code/table/etable.h
 /coderoot/borromean/eobjects/eobjects/code/table/etable.h
+eobjects/code/matrix/ematrix.h
+/coderoot/borromean/eobjects/eobjects/code/matrix/ematrix.h
 eobjects/code/thread/ethreadhandle.h
 /coderoot/borromean/eobjects/eobjects/code/thread/ethreadhandle.h
 eobjects/code/thread/ethread.h
