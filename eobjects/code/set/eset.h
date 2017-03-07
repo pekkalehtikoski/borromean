@@ -35,7 +35,7 @@ class eSet : public eObject
 	/** 
 	************************************************************************************************
 
-	  @name Constructors and destructor
+      @name Generic eObject functionality.
 
 	  X...
 
@@ -62,7 +62,7 @@ public:
 		os_int aflags = 0);
 
     /* Casting eObject pointer to eSet pointer.
-        */
+     */
 	inline static eSet *cast(
 		eObject *o) 
 	{ 
@@ -91,18 +91,6 @@ public:
         return new eSet(parent, oid, flags);
     }
 
-    /*@}*/
-
-	/** 
-	************************************************************************************************
-
-	  @name eObject virtual function implementations
-
-	  X... 
-
-	************************************************************************************************
-	*/
-	/*@{*/
     /* Write set content to stream.
      */
     virtual eStatus writer(
@@ -129,7 +117,7 @@ public:
 	/** 
 	************************************************************************************************
 
-	  @name eObject Setting and getting item values.
+      @name Setting and getting item values.
 
 	  A value can be stored into set using set() function. If the value with this id exists,
       it is overwritten. Values are retrieved by get() function.

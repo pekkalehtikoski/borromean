@@ -60,7 +60,7 @@ public:
         os_int aflags = 0); */
 
     /* Casting eObject pointer to eMatrix pointer.
-        */
+     */
     inline static eMatrix *cast(
 		eObject *o) 
 	{ 
@@ -120,8 +120,7 @@ public:
 
       @name Table function overrides.
 
-	  A value can be stored into set using set() function. If the value with this id exists,
-      it is overwritten. Values are retrieved by get() function.
+      X...
 
 	************************************************************************************************
 	*/

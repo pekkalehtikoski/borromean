@@ -60,7 +60,7 @@ public:
         os_int aflags = 0); */
 
     /* Casting eObject pointer to eTable pointer.
-        */
+     */
     inline static eTable *cast(
 		eObject *o) 
 	{ 
@@ -120,8 +120,7 @@ public:
 
       @name Table functions.
 
-	  A value can be stored into set using set() function. If the value with this id exists,
-      it is overwritten. Values are retrieved by get() function.
+      X...
 
 	************************************************************************************************
 	*/
@@ -142,7 +141,7 @@ public:
         os_int tflags)
     {}
 
-    /* Update a row or rows of a table.
+    /* Update a row or rows of a table or insert a row to the table.
      */
     virtual void update(
         eVariable *where,
@@ -163,11 +162,6 @@ public:
         eVariable *where,
         os_int tflags)
     {}
-
-    /* Clear all data in the table.
-     */
-    // void clear()
-    // {}
 
     /*@}*/
 };
