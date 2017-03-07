@@ -152,6 +152,12 @@
       <Unit filename="/coderoot/borromean/eobjects/code/main/emain.h">
          <Option target="eobjects"/>
       </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/matrix/ematrix.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/matrix/ematrix.h">
+         <Option target="eobjects"/>
+      </Unit>
       <Unit filename="/coderoot/borromean/eobjects/code/name/ename.cpp">
          <Option target="eobjects"/>
       </Unit>
@@ -231,6 +237,12 @@
          <Option target="eobjects"/>
       </Unit>
       <Unit filename="/coderoot/borromean/eobjects/code/stream/estream.h">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/table/etable.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/table/etable.h">
          <Option target="eobjects"/>
       </Unit>
       <Unit filename="/coderoot/borromean/eobjects/code/thread/ethread.cpp">

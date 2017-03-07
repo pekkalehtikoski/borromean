@@ -150,6 +150,12 @@ eobjects/eobjects.h
 
 /coderoot/borromean/eobjects/code/stream/estream.h
 
+/coderoot/borromean/eobjects/code/table/etable.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/code/table/eobjects/eobjects.h
+
+/coderoot/borromean/eobjects/code/table/etable.h
+
 /coderoot/borromean/eobjects/code/thread/ethread.cpp
 eobjects/eobjects.h
 /coderoot/borromean/eobjects/code/thread/eobjects/eobjects.h
@@ -215,6 +221,8 @@ eobjects/code/binding/epropertybinding.h
 /coderoot/borromean/eobjects/eobjects/code/binding/epropertybinding.h
 eobjects/code/envelope/eenvelope.h
 /coderoot/borromean/eobjects/eobjects/code/envelope/eenvelope.h
+eobjects/code/table/etable.h
+/coderoot/borromean/eobjects/eobjects/code/table/etable.h
 eobjects/code/thread/ethreadhandle.h
 /coderoot/borromean/eobjects/eobjects/code/thread/ethreadhandle.h
 eobjects/code/thread/ethread.h

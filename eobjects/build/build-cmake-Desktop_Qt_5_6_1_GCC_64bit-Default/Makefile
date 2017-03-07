@@ -366,6 +366,33 @@ coderoot/borromean/eobjects/code/global/eprocess.cpp.s:
 	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.s
 .PHONY : coderoot/borromean/eobjects/code/global/eprocess.cpp.s
 
+coderoot/borromean/eobjects/code/matrix/ematrix.o: coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/code/matrix/ematrix.o
+
+# target to build an object file
+coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o
+.PHONY : coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o
+
+coderoot/borromean/eobjects/code/matrix/ematrix.i: coderoot/borromean/eobjects/code/matrix/ematrix.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/code/matrix/ematrix.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/code/matrix/ematrix.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.i
+.PHONY : coderoot/borromean/eobjects/code/matrix/ematrix.cpp.i
+
+coderoot/borromean/eobjects/code/matrix/ematrix.s: coderoot/borromean/eobjects/code/matrix/ematrix.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/code/matrix/ematrix.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/code/matrix/ematrix.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.s
+.PHONY : coderoot/borromean/eobjects/code/matrix/ematrix.cpp.s
+
 coderoot/borromean/eobjects/code/name/ename.o: coderoot/borromean/eobjects/code/name/ename.cpp.o
 
 .PHONY : coderoot/borromean/eobjects/code/name/ename.o
@@ -744,6 +771,33 @@ coderoot/borromean/eobjects/code/stream/estream.cpp.s:
 	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.s
 .PHONY : coderoot/borromean/eobjects/code/stream/estream.cpp.s
 
+coderoot/borromean/eobjects/code/table/etable.o: coderoot/borromean/eobjects/code/table/etable.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/code/table/etable.o
+
+# target to build an object file
+coderoot/borromean/eobjects/code/table/etable.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o
+.PHONY : coderoot/borromean/eobjects/code/table/etable.cpp.o
+
+coderoot/borromean/eobjects/code/table/etable.i: coderoot/borromean/eobjects/code/table/etable.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/code/table/etable.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/code/table/etable.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.i
+.PHONY : coderoot/borromean/eobjects/code/table/etable.cpp.i
+
+coderoot/borromean/eobjects/code/table/etable.s: coderoot/borromean/eobjects/code/table/etable.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/code/table/etable.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/code/table/etable.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.s
+.PHONY : coderoot/borromean/eobjects/code/table/etable.cpp.s
+
 coderoot/borromean/eobjects/code/thread/ethread.o: coderoot/borromean/eobjects/code/thread/ethread.cpp.o
 
 .PHONY : coderoot/borromean/eobjects/code/thread/ethread.o
@@ -915,6 +969,9 @@ help:
 	@echo "... coderoot/borromean/eobjects/code/global/eprocess.o"
 	@echo "... coderoot/borromean/eobjects/code/global/eprocess.i"
 	@echo "... coderoot/borromean/eobjects/code/global/eprocess.s"
+	@echo "... coderoot/borromean/eobjects/code/matrix/ematrix.o"
+	@echo "... coderoot/borromean/eobjects/code/matrix/ematrix.i"
+	@echo "... coderoot/borromean/eobjects/code/matrix/ematrix.s"
 	@echo "... coderoot/borromean/eobjects/code/name/ename.o"
 	@echo "... coderoot/borromean/eobjects/code/name/ename.i"
 	@echo "... coderoot/borromean/eobjects/code/name/ename.s"
@@ -957,6 +1014,9 @@ help:
 	@echo "... coderoot/borromean/eobjects/code/stream/estream.o"
 	@echo "... coderoot/borromean/eobjects/code/stream/estream.i"
 	@echo "... coderoot/borromean/eobjects/code/stream/estream.s"
+	@echo "... coderoot/borromean/eobjects/code/table/etable.o"
+	@echo "... coderoot/borromean/eobjects/code/table/etable.i"
+	@echo "... coderoot/borromean/eobjects/code/table/etable.s"
 	@echo "... coderoot/borromean/eobjects/code/thread/ethread.o"
 	@echo "... coderoot/borromean/eobjects/code/thread/ethread.i"
 	@echo "... coderoot/borromean/eobjects/code/thread/ethread.s"
