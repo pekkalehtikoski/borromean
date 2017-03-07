@@ -44,14 +44,12 @@ class eNameSpace : public eObject
 {
 	friend class eName;
 
-    public:
-
-    /** 
+    /**
     ************************************************************************************************
 
-      @name Constructors and destructor
+      @name Generic object functionality.
 
-      When object is constructed it may be placed within thread's. 
+      These functions enable using objects of this class as a generic eObject.
 
     ************************************************************************************************
     */
@@ -107,9 +105,9 @@ public:
     /** 
     ************************************************************************************************
 
-      @name Object hierarcy
+      @name Name space specific functions
 
-      When object is constructed it may be placed within thread's. 
+      X...
 
     ************************************************************************************************
     */

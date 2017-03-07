@@ -34,6 +34,16 @@
 class eTimer : public eThread
 {
 public:
+    /**
+    ************************************************************************************************
+
+      @name Generic object functionality.
+
+      These functions enable using objects of this class as generic eObjects.
+
+    ************************************************************************************************
+    */
+
 	/* Constructor.
      */
 	eTimer(

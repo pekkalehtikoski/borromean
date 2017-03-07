@@ -55,16 +55,16 @@ class eName : public eVariable
 {
 	friend class eNameSpace;
 
-	/** 
-	************************************************************************************************
+    /**
+    ************************************************************************************************
 
-	  @name Constructors and destructor
+      @name Generic object functionality.
 
-	  X...
+      These functions enable using objects of this class as a generic eObject.
 
-	************************************************************************************************
-	*/
-	/*@{*/
+    ************************************************************************************************
+    */
+    /*@{*/
 public:
 	/* Constructor.
      */
@@ -121,19 +121,6 @@ public:
 		return m_namespace;
 	}
 
-    /*@}*/
-
-
-	/** 
-	************************************************************************************************
-
-	  @name eObject virtual function implementations
-
-	  X... 
-
-	************************************************************************************************
-	*/
-	/*@{*/
     /* Write name to stream.
      */
     virtual eStatus writer(
@@ -145,13 +132,14 @@ public:
     virtual eStatus reader(
         eStream *stream, 
         os_int flags);
+
     /*@}*/
 
 
 	/** 
 	************************************************************************************************
 
-	  @name map names and identify name space
+      @name Name specific fuunctions
 
 	  X... 
 

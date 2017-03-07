@@ -34,16 +34,18 @@ class eQueue;
 */
 class eSocket : public eStream
 {
-	/** 
-	************************************************************************************************
-
-      @name Constructor, destructor, etc.
-      Generic object functionality.
-
-	************************************************************************************************
-	*/
-	/*@{*/
 public:
+    /**
+    ************************************************************************************************
+
+      @name Generic object functionality.
+
+      These functions enable using objects of this class as generic eObjects.
+
+    ************************************************************************************************
+    */
+    /*@{*/
+
     /* Constructor.
      */
 	eSocket(

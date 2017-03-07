@@ -59,16 +59,18 @@ eQueueBlock;
 */
 class eQueue : public eStream
 {
+public:
     /**
     ************************************************************************************************
 
-      @name Constructor, destructor, etc.
-      Generic object functionality.
+      @name Generic object functionality.
+
+      These functions enable using objects of this class as generic eObjects.
 
     ************************************************************************************************
     */
     /*@{*/
-public:
+
     /* Constructor.
      */
 	eQueue(

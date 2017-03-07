@@ -31,17 +31,16 @@
 */
 class ePropertyBinding : public eBinding
 {
-	/** 
-	************************************************************************************************
+    /**
+    ************************************************************************************************
 
-	  @name eObject function overrides.
+      @name Generic object functionality.
 
-      Override functions for eObject base class functions to implement generic object properties
-      for bindings.
+      These functions enable using objects of this class as generic eObjects.
 
-	************************************************************************************************
-	*/
-	/*@{*/
+    ************************************************************************************************
+    */
+    /*@{*/
 public:
     /* Constructor.
 	 */
