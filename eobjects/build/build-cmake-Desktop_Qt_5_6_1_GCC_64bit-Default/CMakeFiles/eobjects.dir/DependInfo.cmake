@@ -25,6 +25,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/coderoot/borromean/eobjects/code/pointer/epointer.cpp" "/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o"
   "/coderoot/borromean/eobjects/code/root/eroot.cpp" "/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o"
   "/coderoot/borromean/eobjects/code/set/eset.cpp" "/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o"
+  "/coderoot/borromean/eobjects/code/stream/ebuffer.cpp" "/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/ebuffer.cpp.o"
   "/coderoot/borromean/eobjects/code/stream/econsole.cpp" "/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o"
   "/coderoot/borromean/eobjects/code/stream/equeue.cpp" "/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o"
   "/coderoot/borromean/eobjects/code/stream/estream.cpp" "/coderoot/borromean/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default/CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o"

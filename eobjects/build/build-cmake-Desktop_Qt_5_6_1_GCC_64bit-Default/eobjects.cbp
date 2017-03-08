@@ -221,6 +221,12 @@
       <Unit filename="/coderoot/borromean/eobjects/code/set/eset.h">
          <Option target="eobjects"/>
       </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/stream/ebuffer.cpp">
+         <Option target="eobjects"/>
+      </Unit>
+      <Unit filename="/coderoot/borromean/eobjects/code/stream/ebuffer.h">
+         <Option target="eobjects"/>
+      </Unit>
       <Unit filename="/coderoot/borromean/eobjects/code/stream/econsole.cpp">
          <Option target="eobjects"/>
       </Unit>

@@ -22,15 +22,13 @@
 /**
 ****************************************************************************************************
 
-  @brief Object base class.
+  @brief Buffer Class.
 
-  The eObject is base class for all eobject library objects. It defines basic functionality for
-  networked objects.
-
+  The eBuffer class is flat byte buffer, which can also be used as a stream.
 
 ****************************************************************************************************
 */
-class eQueue : public eStream
+class eBuffer : public eStream
 {
 public:
     /**
@@ -46,29 +44,29 @@ public:
 
     /* Constructor.
      */
-	eQueue(
+    eBuffer(
 		eObject *parent = OS_NULL,
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
      */
-	virtual ~eQueue();
+    virtual ~eBuffer();
 
-    /* Casting eObject pointer to eQueue pointer.
+    /* Casting eObject pointer to eBuffer pointer.
      */
-	inline static eQueue *cast(
+    inline static eBuffer *cast(
 		eObject *o) 
 	{ 
-        e_assert_type(o, ECLASSID_QUEUE)
-		return (eQueue*)o;
+        e_assert_type(o, ECLASSID_BUFFER)
+        return (eBuffer*)o;
 	}
 
 	/* Get class identifier.
 	*/
 	virtual os_int classid() 
     { 
-        return ECLASSID_QUEUE; 
+        return ECLASSID_BUFFER;
     }
 
     /* Static function to add class to propertysets and class list.
@@ -77,12 +75,12 @@ public:
 
 	/* Static constructor function.
 	*/
-	static eQueue *newobj(
+    static eBuffer *newobj(
 		eObject *parent,
 		e_oid oid = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
 	{
-		return new eQueue(parent, oid, flags);
+        return new eBuffer(parent, oid, flags);
 	}
 
     /*@}*/
@@ -132,18 +130,61 @@ public:
      */    
     virtual os_int readchar();
 
-    os_memsz bytes();
-
-    /** Number of incoming flush controls in queue at the moment. Requires OSAL_FLUSH_CTRL_COUNT 
-        and OSAL_STREAM_DECODE_ON_READ flags for open().
-     */
-    virtual os_int flushcount() 
-    {
-        return m_flush_count;
-    }
 
     /*@}*/
 
+    /**
+    ************************************************************************************************
+
+      @name Buffer functions.
+      Functionality as plain buffer.
+
+    ************************************************************************************************
+    */
+    /*@{*/
+
+    /* Allocate/reallocate memory buffer.
+     */
+    os_char *allocate(
+        os_memsz sz,
+        os_int bflags = 0);
+
+    /* Get pointer to buffer
+     */
+    inline os_char *ptr()
+    {
+        return m_ptr;
+    }
+
+    /* Get allocated size, may be larger than sz given to allocate().
+     */
+    inline os_memsz allocated()
+    {
+        return m_allocated;
+    }
+
+    /* Get used size, either set bu setused() or by writing to stream.
+     */
+    inline os_memsz used()
+    {
+        return m_used;
+    }
+
+    /* Set used size.
+     */
+    inline void setused(
+        os_memsz sz)
+    {
+        m_used = sz;
+    }
+
+    /* Free allocated buffer.
+     */
+    void clear();
+
+    /*@}*/
+
+private:
     /**
     ************************************************************************************************
 
@@ -152,152 +193,22 @@ public:
 
     ************************************************************************************************
     */
-private:
-    /* Allocate new block and join it to queue.
+
+    /** Pointer to allocated buffer, oe_NULL if none.
      */
-    void newblock();
+    os_char *m_ptr;
 
-    /* Detach oldest block from queue and free memory allocatd for it.
+    /** Size of allocated buffer in bytes.
      */
-    void delblock();
+    os_memsz m_allocated;
 
-    /* Write data to queue, encode while writing.
+    /** Number of used bytes in buffer.
      */
-    void write_encoded(
-        const os_char *buf, 
-        os_memsz buf_sz);
+    os_memsz m_used;
 
-    /* Write data to queue without modification.
+    /** Current stream read position within buffer.
      */
-    void write_plain(
-        const os_char *buf, 
-        os_memsz buf_sz);
-
-    /** Put character to queue.
-     */
-    inline void putcharacter(
-        os_int c)
-    {
-        os_int nexthead;
-
-        /* Get next head.
-         */
-        nexthead = m_newest->head + 1;
-        if (nexthead >= m_newest->sz) nexthead = 0;
-    
-        /* If this block is full, move on to next block
-         */
-        if (nexthead == m_newest->tail)
-        {
-            newblock();
-            nexthead = 1;
-        }
-
-        *(((os_char*)m_newest) + sizeof(eQueueBlock) + m_newest->head) = (os_char)c;
-        m_newest->head = nexthead;
-    }
-
-    /* Finish with last write so also previous character has been
-       processed.
-     */
-    void complete_last_write();
-
-    /* Read and decode data.
-     */
-    void read_decoded(
-        os_char *buf, 
-        os_memsz buf_sz, 
-        os_memsz *nread);
-
-    /* Read data as is.
-     */
-    void read_plain(
-        os_char *buf, 
-        os_memsz buf_sz, 
-        os_memsz *nread,
-        os_int flags);
-
-    /** Check if queue has data.
-     */
-    inline os_char hasedata()
-    {
-        if (m_newest != m_oldest) return OS_TRUE;
-        return m_oldest->head != m_oldest->tail;
-    }
-
-    /** Get character from queue.
-     */
-    inline os_char getcharacter()
-    {
-        os_char c;
-        os_int nexttail;
-
-        c = *(((os_char*)m_oldest) + sizeof(eQueueBlock) + m_oldest->tail);
-
-        /* Get next head.
-         */
-        nexttail = m_oldest->tail + 1;
-        if (nexttail >= m_oldest->sz) nexttail = 0;
-        m_oldest->tail = nexttail;
-
-        /* If this block is now empty, and it is not only block, delete it.
-         */
-        if (nexttail == m_oldest->head)
-        {
-            if (m_oldest != m_newest) delblock();
-        }
-
-        return c;
-    }
-
-    /** Oldest block in the queue.
-     */
-    eQueueBlock *m_oldest;
-
-    /** Latest block added to queue.
-     */
-    eQueueBlock *m_newest;
-
-    /** Number of bytes in the queue.
-     */
-    os_memsz m_bytes;
-
-    /** Flags for the queue. Flags OSAL_STREAM_ENCODE_ON_WRITE and
-        OSAL_STREAM_DECODE_ON_READ are observed.
-     */
-    os_int m_flags;
-
-    /** Previous character
-     */
-    os_int m_wr_prevc;
-
-    /** Number of times same has repeated afterwards (0 = character has occurred once).
-     */
-    os_int m_wr_count;
-
-    /** Repeat count when unpacking repeated character (RLE).
-     */
-    os_int m_rd_repeat_count;
-
-    /** Repeated character.
-     */
-    os_int m_rd_repeat_char;
-
-    /** Previous character, while reading.
-     */
-    os_int m_rd_prevc;
-
-    /** The character before that one.
-     */
-    os_int m_rd_prev2c;
-
-    /** Number of incoming flush controls in queue at the moment. 
-     */
-    os_int m_flush_count;
-
-    /** Last character of previous write_plain() call.
-     */
-    os_uchar m_flushctrl_last_c;
+    os_memsz m_pos;
 };
 
 #endif

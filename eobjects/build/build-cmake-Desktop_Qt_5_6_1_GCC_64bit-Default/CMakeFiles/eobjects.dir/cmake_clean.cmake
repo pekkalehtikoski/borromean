@@ -2,6 +2,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o"
   "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o"
   "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o"
+  "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/ebuffer.cpp.o"
   "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o"
   "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o"
   "CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o"

@@ -76,7 +76,12 @@ typedef enum
         the flush count to zero (no more whole objects buffered in stream). 
         Only returned by eEnvelope::reader().
      */
-    ESTATUS_NO_WHOLE_MESSAGES_TO_READ = 402
+    ESTATUS_NO_WHOLE_MESSAGES_TO_READ = 402,
+
+    /** No more data available from stream. Like end of file or
+     *  end of memory buffer.
+     */
+    ESTATUS_STREAM_END = 403
 } 
 eStatus;
 

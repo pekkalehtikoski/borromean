@@ -138,6 +138,12 @@ eobjects/eobjects.h
 
 /coderoot/borromean/eobjects/code/set/eset.h
 
+/coderoot/borromean/eobjects/code/stream/ebuffer.cpp
+eobjects/eobjects.h
+/coderoot/borromean/eobjects/code/stream/eobjects/eobjects.h
+
+/coderoot/borromean/eobjects/code/stream/ebuffer.h
+
 /coderoot/borromean/eobjects/code/stream/econsole.cpp
 eobjects/eobjects.h
 /coderoot/borromean/eobjects/code/stream/eobjects/eobjects.h
@@ -245,6 +251,8 @@ eobjects/code/stream/estream.h
 /coderoot/borromean/eobjects/eobjects/code/stream/estream.h
 eobjects/code/stream/equeue.h
 /coderoot/borromean/eobjects/eobjects/code/stream/equeue.h
+eobjects/code/stream/ebuffer.h
+/coderoot/borromean/eobjects/eobjects/code/stream/ebuffer.h
 eobjects/code/stream/econsole.h
 /coderoot/borromean/eobjects/eobjects/code/stream/econsole.h
 eobjects/code/connection/econnection.h

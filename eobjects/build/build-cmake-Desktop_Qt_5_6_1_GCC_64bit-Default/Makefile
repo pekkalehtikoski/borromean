@@ -690,6 +690,33 @@ coderoot/borromean/eobjects/code/set/eset.cpp.s:
 	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.s
 .PHONY : coderoot/borromean/eobjects/code/set/eset.cpp.s
 
+coderoot/borromean/eobjects/code/stream/ebuffer.o: coderoot/borromean/eobjects/code/stream/ebuffer.cpp.o
+
+.PHONY : coderoot/borromean/eobjects/code/stream/ebuffer.o
+
+# target to build an object file
+coderoot/borromean/eobjects/code/stream/ebuffer.cpp.o:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/ebuffer.cpp.o
+.PHONY : coderoot/borromean/eobjects/code/stream/ebuffer.cpp.o
+
+coderoot/borromean/eobjects/code/stream/ebuffer.i: coderoot/borromean/eobjects/code/stream/ebuffer.cpp.i
+
+.PHONY : coderoot/borromean/eobjects/code/stream/ebuffer.i
+
+# target to preprocess a source file
+coderoot/borromean/eobjects/code/stream/ebuffer.cpp.i:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/ebuffer.cpp.i
+.PHONY : coderoot/borromean/eobjects/code/stream/ebuffer.cpp.i
+
+coderoot/borromean/eobjects/code/stream/ebuffer.s: coderoot/borromean/eobjects/code/stream/ebuffer.cpp.s
+
+.PHONY : coderoot/borromean/eobjects/code/stream/ebuffer.s
+
+# target to generate assembly for a file
+coderoot/borromean/eobjects/code/stream/ebuffer.cpp.s:
+	$(MAKE) -f CMakeFiles/eobjects.dir/build.make CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/ebuffer.cpp.s
+.PHONY : coderoot/borromean/eobjects/code/stream/ebuffer.cpp.s
+
 coderoot/borromean/eobjects/code/stream/econsole.o: coderoot/borromean/eobjects/code/stream/econsole.cpp.o
 
 .PHONY : coderoot/borromean/eobjects/code/stream/econsole.o
@@ -1005,6 +1032,9 @@ help:
 	@echo "... coderoot/borromean/eobjects/code/set/eset.o"
 	@echo "... coderoot/borromean/eobjects/code/set/eset.i"
 	@echo "... coderoot/borromean/eobjects/code/set/eset.s"
+	@echo "... coderoot/borromean/eobjects/code/stream/ebuffer.o"
+	@echo "... coderoot/borromean/eobjects/code/stream/ebuffer.i"
+	@echo "... coderoot/borromean/eobjects/code/stream/ebuffer.s"
 	@echo "... coderoot/borromean/eobjects/code/stream/econsole.o"
 	@echo "... coderoot/borromean/eobjects/code/stream/econsole.i"
 	@echo "... coderoot/borromean/eobjects/code/stream/econsole.s"
