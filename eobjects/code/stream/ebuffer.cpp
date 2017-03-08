@@ -263,3 +263,97 @@ os_int eBuffer::readchar()
      */
     return (os_uchar)m_ptr[m_pos++];
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Allocate/reallocate memory buffer.
+
+  The allocate function allocates buffer to hold at least sz bytes. Old data in buffer, if any,
+  is preserved. Allocated buffer is initialized with zeroes.
+
+  @param  sz Minimum size for buffer to allocate.
+  @param  bflags Ignored, set 0 for now.
+  @return Pointer to buffer, as returned by ptr() function. OS_NULL if sz is negative or zero.
+
+****************************************************************************************************
+*/
+os_char *eBuffer::allocate(
+    os_memsz sz,
+    os_int bflags)
+{
+    os_char
+        *newbuf;
+
+    os_memsz
+        newallocation,
+        copysz,
+        clearsz;
+
+    /* If we want to delete the buffer.
+     */
+    if (sz <= 0)
+    {
+        clear();
+        return OS_NULL;
+    }
+
+    /* Allocate new buffer
+     */
+    newbuf = os_malloc(sz, &newallocation);
+
+    /* Decide on number of bytes to copy and number to clear.
+     */
+    copysz = sz;
+    if (copysz > m_allocated) copysz = m_allocated;
+    clearsz = newallocation - copysz;
+
+    /* Copy and clear.
+     */
+    if (copysz) os_memcpy(newbuf, m_ptr, copysz);
+    if (clearsz) os_memclear(newbuf+copysz, clearsz);
+
+    /* Free old buffer.
+     */
+    if (m_ptr)
+    {
+        os_free(m_ptr, m_allocated);
+        m_ptr = OS_NULL;
+    }
+
+    /* Take new buffer to use.
+     */
+    m_ptr = newbuf;
+    m_allocated = newallocation;
+    if (m_used > copysz) m_used = copysz;
+    if (m_pos > m_used) m_pos = m_used;
+
+    /* Return pointer to buffer.
+     */
+    return m_ptr;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Free allocated buffer.
+
+  The clear function releases memory allocated for the buffer, clears read position and
+  used size.
+
+  @return None.
+
+****************************************************************************************************
+*/
+void eBuffer::clear()
+{
+    if (m_ptr)
+    {
+        os_free(m_ptr, m_allocated);
+        m_ptr = OS_NULL;
+    }
+
+    m_allocated = m_used = m_pos = 0;
+}
