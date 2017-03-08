@@ -53,9 +53,9 @@ static void ethread_func(
 */
 eThread::eThread(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eObject(parent, oid, flags)
+    : eObject(parent, id, flags)
 {
     /* Create thread triggger. 
      */

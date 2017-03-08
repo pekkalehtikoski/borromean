@@ -44,7 +44,7 @@ public:
      */
 	eRoot(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -68,10 +68,10 @@ public:
      */
     static eRoot *newobj(
         eObject *parent,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eRoot(parent, oid, flags);
+        return new eRoot(parent, id, flags);
     }
     /*@}*/
 
@@ -91,7 +91,7 @@ public:
     void newhandle(
 		eObject *obj,
 		eObject *parent,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
     /* Free handle of object obj.

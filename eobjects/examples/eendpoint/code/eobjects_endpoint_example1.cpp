@@ -49,9 +49,9 @@ public:
      */
     eMyClass1(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
-	    : eThread(parent, oid, flags)
+        : eThread(parent, id, flags)
     {
         initproperties();
     }
@@ -73,10 +73,10 @@ public:
      */
     static eMyClass1 *newobj(
         eObject *parent,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eMyClass1(parent, oid, flags);
+        return new eMyClass1(parent, id, flags);
     }
 
     /* Get class identifier.

@@ -31,9 +31,9 @@
 */
 eThreadHandle::eThreadHandle(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eObject(parent, oid, flags)
+    : eObject(parent, id, flags)
 {
     m_osal_handle = OS_NULL;
     m_unique_thread_name[0] = '\0';

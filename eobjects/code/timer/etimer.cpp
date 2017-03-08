@@ -65,9 +65,9 @@ void eObject::timer(
 */
 eTimer::eTimer(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eThread(parent, oid, flags)
+    : eThread(parent, id, flags)
 {
 	addname("//_timer");
     ns_create();
@@ -244,7 +244,7 @@ void eTimer::run()
     eVariable *t, *nextt, context;
     eName *name;
     os_long step = 1;
-    e_oid oid;
+    e_oid id;
 
     while (!exitnow())
     {
@@ -253,10 +253,10 @@ void eTimer::run()
         for (t = firstv(); t; t = nextt)
         {
             nextt = t->nextv();
-            oid = t->oid();
-            if (oid < 1) continue;
+            id = t->oid();
+            if (id < 1) continue;
 
-            if ((step % oid) == 0) 
+            if ((step % id) == 0)
             {
                 name = t->firstn(EOID_NAME);
                 context = *name;

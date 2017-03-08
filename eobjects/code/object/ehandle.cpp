@@ -71,7 +71,7 @@
   The eHandle::childcount() function returns pointer number of children. Argument oid specified
   wether to count attachment in or to count children only with specific id.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to count a child objects,
 		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
            child objects, regardless wether these are attachment or not. Other values
 		   specify object identifier, only children with that specified object identifier 
@@ -82,7 +82,7 @@
 ****************************************************************************************************
 */
 os_long eHandle::childcount(
-    e_oid oid)
+    e_oid id)
 {
     os_long 
         count;
@@ -92,9 +92,9 @@ os_long eHandle::childcount(
 
     count = 0;
 
-    for (child = first(oid);
+    for (child = first(id);
          child;
-         child = child->next(oid))
+         child = child->next(id))
     {
         count++;
     }
@@ -111,7 +111,7 @@ os_long eHandle::childcount(
   The eHandle::first() function returns pointer to the first child object selected by object 
   identifier oid given as argument. 
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to get a child object, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to get a child object,
 		   which is not flagged as an attachment. Value EOID_ALL specifies to get pointer to
 		   the first child object, regardless wether it is attachment or not. Other values
 		   specify object identifier, only pointer to object with specified object
@@ -122,7 +122,7 @@ os_long eHandle::childcount(
 ****************************************************************************************************
 */
 eHandle *eHandle::first(
-    e_oid oid)
+    e_oid id)
 {
     eHandle 
         *n,
@@ -135,7 +135,7 @@ eHandle *eHandle::first(
     /* Handle special object identifiers to get first child object
        of any id, with or without attachments.
      */
-    if (oid == EOID_CHILD || oid == EOID_ALL) 
+    if (id == EOID_CHILD || id == EOID_ALL)
     {
 		/* If no child objects, just return null.
 		*/
@@ -148,13 +148,13 @@ eHandle *eHandle::first(
         /* If we are including attachments, or first object is
            not attachment, return pointer to the first object.
          */
-        if (oid == EOID_ALL || !n->isattachment()) return n;
+        if (id == EOID_ALL || !n->isattachment()) return n;
         
         /* Attachments not included and first object is attachment. 
            Call next to get first child object which is not 
            an attachment.
          */
-        return n->next(oid);
+        return n->next(id);
     }
     
     /* Handle normal case where child object is searched by exactly
@@ -165,17 +165,17 @@ eHandle *eHandle::first(
         /* If object identifier matches, check if there
            is earlier match.
          */
-        if (oid == n->m_oid) 
+        if (id == n->m_oid)
         {
             m = n->m_left;
             if (m == OS_NULL) break;
-            if (m->m_oid != oid) break;
+            if (m->m_oid != id) break;
             n = m;
         } 
 
         /* Smaller, search to the left.
          */
-        else if (oid < n->m_oid) 
+        else if (id < n->m_oid)
         {
             n = n->m_left;
         } 
@@ -202,7 +202,7 @@ eHandle *eHandle::first(
   The eHandle::last() function returns pointer to the last child object selected by object 
   identifier oid given as argument. 
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to get a child object, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to get a child object,
 		   which is not flagged as an attachment. Value EOID_ALL specifies to get pointer to
 		   the last child object, regardless wether it is attachment or not. Other values
 		   specify object identifier, only pointer to object with specified object
@@ -213,7 +213,7 @@ eHandle *eHandle::first(
 ****************************************************************************************************
 */
 eHandle *eHandle::last(
-    e_oid oid)
+    e_oid id)
 {
     eHandle 
         *n,
@@ -226,7 +226,7 @@ eHandle *eHandle::last(
     /* Handle special object identifiers to get first child object
        of any id, with or without attachments.
      */
-    if (oid == EOID_CHILD || oid == EOID_ALL) 
+    if (id == EOID_CHILD || id == EOID_ALL)
     {
 		/* If no child objects, just return null.
 		*/
@@ -239,13 +239,13 @@ eHandle *eHandle::last(
         /* If we are including attachments, or last object is
            not attachment, return pointer to the first object.
          */
-        if (oid == EOID_ALL || !n->isattachment()) return n;
+        if (id == EOID_ALL || !n->isattachment()) return n;
 
         /* Attachments not included and the last object is an attachment. 
            Call prev() to get previous child object which is not 
            an attachment.
          */
-        return n->prev(oid);
+        return n->prev(id);
     }
 
     /* Handle normal case where child object is searched by exactly
@@ -256,17 +256,17 @@ eHandle *eHandle::last(
         /* If object identifier matches, check if there
            is later match.
          */
-        if (oid == n->m_oid) 
+        if (id == n->m_oid)
         {
             m = n->m_right;
             if (m == OS_NULL) break;
-            if (m->m_oid != oid) break;
+            if (m->m_oid != id) break;
             n = m;
         } 
 
         /* Smaller, search to the left.
          */
-        else if (oid < n->m_oid) 
+        else if (id < n->m_oid)
         {
             n = n->m_left;
         } 
@@ -294,7 +294,7 @@ eHandle *eHandle::last(
   as this object (it could be called sibling). The object is selected by object identifier oid 
   given as argument.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to get a child object, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to get a child object,
 		   which is not flagged as an attachment. Value EOID_ALL specifies to get pointer to
 		   the next child object, regardless wether it is attachment or not. Other values
 		   specify object identifier, only pointer to object with specified object
@@ -305,7 +305,7 @@ eHandle *eHandle::last(
 ****************************************************************************************************
 */
 eHandle *eHandle::next(
-    e_oid oid)
+    e_oid id)
 {
     eHandle
         *n,
@@ -319,13 +319,13 @@ try_again:
         n = n->m_right;
         while (n->m_left) n = n->m_left;
 
-        if (oid == EOID_ALL) return n;
-        if (oid == EOID_CHILD) 
+        if (id == EOID_ALL) return n;
+        if (id == EOID_CHILD)
         {
             if (!n->isattachment()) return n;
             goto try_again;
         }
-        return (n->m_oid == oid) ? n : OS_NULL;
+        return (n->m_oid == id) ? n : OS_NULL;
     }
     else
     {
@@ -339,15 +339,15 @@ try_again:
             m = n->m_up;
         }
 
-        if (oid == EOID_ALL) return m;
-        if (oid == EOID_CHILD)
+        if (id == EOID_ALL) return m;
+        if (id == EOID_CHILD)
         {
             if (!m->isattachment()) return m;
             n = m; // PEKKA 2.1.2017
             goto try_again;
         }
         
-        return (m->m_oid == oid) ? m : OS_NULL;
+        return (m->m_oid == id) ? m : OS_NULL;
     }
 }
 
@@ -361,7 +361,7 @@ try_again:
   as this object (it could be called sibling). The object is selected by object identifier oid 
   given as argument.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to get a child object, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to get a child object,
 		   which is not flagged as an attachment. Value EOID_ALL specifies to get pointer to
 		   the previous child object, regardless wether it is attachment or not. Other values
 		   specify object identifier, only pointer to object with specified object
@@ -372,7 +372,7 @@ try_again:
 ****************************************************************************************************
 */
 eHandle *eHandle::prev(
-    e_oid oid)
+    e_oid id)
 {
     eHandle
         *n,
@@ -386,13 +386,13 @@ try_again:
         n = n->m_left;
         while (n->m_right) n = n->m_right;
 
-        if (oid == EOID_ALL) return n;
-        if (oid == EOID_CHILD) 
+        if (id == EOID_ALL) return n;
+        if (id == EOID_CHILD)
         {
             if (!n->isattachment()) return n;
             goto try_again;
         }
-        return (n->m_oid == oid) ? n : OS_NULL;
+        return (n->m_oid == id) ? n : OS_NULL;
     }
     else
     {
@@ -406,15 +406,15 @@ try_again:
             m = n->m_up;
         }
 
-        if (oid == EOID_ALL) return m;
-        if (oid == EOID_CHILD)
+        if (id == EOID_ALL) return m;
+        if (id == EOID_CHILD)
         {
             if (!m->isattachment()) return m;
             n = m; // PEKKA 2.1.2017
             goto try_again;
         }
         
-        return (m->m_oid == oid) ? m : OS_NULL;
+        return (m->m_oid == id) ? m : OS_NULL;
     }
 }
 

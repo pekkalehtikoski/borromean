@@ -38,9 +38,9 @@ os_char
 */
 eEndPoint::eEndPoint(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eThread(parent, oid, flags)
+    : eThread(parent, id, flags)
 {
     /** Clear member variables and allocate eVariable for IP address.
      */

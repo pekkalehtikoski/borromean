@@ -53,7 +53,7 @@ public:
 	 */
 	eThread(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_RITEM,
+        e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -96,10 +96,10 @@ public:
      */
     static eThread *newobj(
         eObject *parent,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eThread(parent, oid, flags);
+        return new eThread(parent, id, flags);
     } 
 
     virtual void onmessage(

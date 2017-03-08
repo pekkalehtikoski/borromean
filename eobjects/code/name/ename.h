@@ -70,7 +70,7 @@ public:
      */
 	eName(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -98,16 +98,16 @@ public:
      */
     static eName *newobj(
         eObject *parent,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eName(parent, oid, flags);
+        return new eName(parent, id, flags);
     }
 
     /* Get next child name identified by oid.
      */
     eName *nextn(
-	    e_oid oid = EOID_NAME);
+        e_oid id = EOID_NAME);
 
 	/* Get next name in namespace.
      */

@@ -71,11 +71,11 @@ eContainer::~eContainer()
 */
 eObject *eContainer::clone(
     eObject *parent, 
-    e_oid oid,
+    e_oid id,
     os_int aflags)
 {
     eObject *clonedobj;
-    clonedobj = new eContainer(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
+    clonedobj = new eContainer(parent, id == EOID_CHILD ? oid() : id, flags());
     clonegeneric(clonedobj, aflags|EOBJ_CLONE_ALL_CHILDREN);
     return clonedobj;
 }
@@ -112,7 +112,7 @@ void eContainer::setupclass()
 
   The eVariable::nextc() function returns pointer to the next child container of this object.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to count a child objects,
 		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
            child objects, regardless wether these are attachment or not. Other values
 		   specify object identifier, only children with that specified object identifier 
@@ -123,16 +123,16 @@ void eContainer::setupclass()
 ****************************************************************************************************
 */
 eContainer *eContainer::nextc(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->next(oid);
+    eHandle *h = mm_handle->next(id);
     while (h)
     {
         if (h->object()->classid() == ECLASSID_CONTAINER) 
             return eContainer::cast(h->object());
 
-        h = h->next(oid);
+        h = h->next(id);
     }
     return OS_NULL;
 }

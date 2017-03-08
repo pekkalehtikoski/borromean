@@ -41,9 +41,9 @@
 */
 eQueue::eQueue(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eStream(parent, oid, flags)
+    : eStream(parent, id, flags)
 {
     m_oldest = m_newest = OS_NULL;
     m_wr_prevc = EQUEUE_NO_PREVIOUS_CHAR;

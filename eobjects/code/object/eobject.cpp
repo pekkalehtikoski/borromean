@@ -42,7 +42,7 @@
 
   @param   parent Pointer to parent object, or OS_NULL if the object is an orphan. If parent
            object is specified, the object will be deleted when parent is deleted.
-  @param   oid Object identifier for new object. If not specified, defauls to EOID_ITEM (-1), 
+  @param   id Object identifier for new object. If not specified, defauls to EOID_ITEM (-1),
 		   which is generic list item. 
   
   @param   flags 
@@ -53,7 +53,7 @@
 */
 eObject::eObject(
     eObject *parent,
-    e_oid oid,
+    e_oid id,
 	os_int flags)
 {
     eRoot *root;
@@ -63,7 +63,7 @@ eObject::eObject(
 
 	/* If this if not primitive object? 
 	 */
-	if (oid != EOID_ITEM || parent != OS_NULL)
+    if (id != EOID_ITEM || parent != OS_NULL)
 	{
 		/* No parent, allocate root object?
 		 */
@@ -71,14 +71,14 @@ eObject::eObject(
 		{
 			/* Allocate root helper object hand two handles. 
 			 */
-            makeroot(oid, flags);
+            makeroot(id, flags);
 		}
 
 		/* If not root object constructor?
 		   Otherwise normal child object.  Copy parent's root object pointer
 		   and allocate handle for the new child object object.
 		*/
-		else if (oid != EOID_ROOT_HELPER)
+        else if (id != EOID_ROOT_HELPER)
 		{
             /* If parent has no root helper object, create one
              */
@@ -88,7 +88,7 @@ eObject::eObject(
             }
 
 			root = parent->mm_handle->m_root;
-			root->newhandle(this, parent, oid, flags);
+            root->newhandle(this, parent, id, flags);
 		}
 	}
 }
@@ -107,7 +107,7 @@ eObject::eObject(
 ****************************************************************************************************
 */
 void eObject::makeroot(
-    e_oid oid,
+    e_oid id,
 	os_int flags)
 {
     eRoot *root;
@@ -119,7 +119,7 @@ void eObject::makeroot(
 
 	/* Allocate handle for this object
 	 */
-	root->newhandle(this, OS_NULL, oid, flags);
+    root->newhandle(this, OS_NULL, id, flags);
 
 	/* Allocate handle for the root helper object.
 	 */
@@ -189,7 +189,7 @@ eObject::~eObject()
 */
 eObject *eObject::clone(
     eObject *parent, 
-    e_oid oid,
+    e_oid id,
     os_int aflags)
 {
 	osal_debug_error("clone() not supported for the class");
@@ -263,7 +263,7 @@ void eObject::clonegeneric(
 eObject *eObject::newobject(
     eObject *parent,
     os_int cid,
-    e_oid oid,
+    e_oid id,
 	os_int flags) 
 {
     eNewObjFunc func;
@@ -275,7 +275,7 @@ eObject *eObject::newobject(
 
     /* Create new object of the class.
      */
-    return func(parent, oid, flags);
+    return func(parent, id, flags);
 }
 
 
@@ -350,7 +350,7 @@ void eObject::operator delete(
 ****************************************************************************************************
 */
 	/* os_long childcount(
-		e_oid oid = EOID_CHILD)
+        e_oid id = EOID_CHILD)
 	{
 		if (mm_handle) return mm_handle->childcount(oid);
 		return 0;
@@ -478,7 +478,7 @@ eThread *eObject::thread()
 
   The eObject::first() function returns pointer to the first child object of this object.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to count a child objects,
 		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
            child objects, regardless wether these are attachment or not. Other values
 		   specify object identifier, only children with that specified object identifier 
@@ -489,10 +489,10 @@ eThread *eObject::thread()
 ****************************************************************************************************
 */
 eObject *eObject::first(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->first(oid);
+    eHandle *h = mm_handle->first(id);
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
@@ -505,7 +505,7 @@ eObject *eObject::first(
 
   The eObject::firstv() function returns pointer to the first child variable of this object.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to count a child objects,
 		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
            child objects, regardless wether these are attachment or not. Other values
 		   specify object identifier, only children with that specified object identifier 
@@ -516,16 +516,16 @@ eObject *eObject::first(
 ****************************************************************************************************
 */
 eVariable *eObject::firstv(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->first(oid);
+    eHandle *h = mm_handle->first(id);
     while (h)
     {
         if (h->m_object->classid() == ECLASSID_VARIABLE) 
             return eVariable::cast(h->m_object);
 
-        h = h->next(oid);
+        h = h->next(id);
     }
     return OS_NULL;
 }
@@ -538,7 +538,7 @@ eVariable *eObject::firstv(
 
   The eObject::firstc() function returns pointer to the first child container of this object.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to count a child objects,
 		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
            child objects, regardless wether these are attachment or not. Other values
 		   specify object identifier, only children with that specified object identifier 
@@ -549,16 +549,16 @@ eVariable *eObject::firstv(
 ****************************************************************************************************
 */
 eContainer *eObject::firstc(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->first(oid);
+    eHandle *h = mm_handle->first(id);
     while (h)
     {
         if (h->object()->classid() == ECLASSID_CONTAINER) 
             return eContainer::cast(h->m_object);
 
-        h = h->next(oid);
+        h = h->next(id);
     }
     return OS_NULL;
 }
@@ -571,7 +571,7 @@ eContainer *eObject::firstc(
 
   The eObject::firstn() function returns pointer to the first child name of this object.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to count a child objects,
 		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
            child objects, regardless wether these are attachment or not. Other values
 		   specify object identifier, only children with that specified object identifier 
@@ -582,16 +582,16 @@ eContainer *eObject::firstc(
 ****************************************************************************************************
 */
 eName *eObject::firstn(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->first(oid);
+    eHandle *h = mm_handle->first(id);
     while (h)
     {
         if (h->object()->classid() == ECLASSID_NAME) 
             return eName::cast(h->m_object);
 
-        h = h->next(oid);
+        h = h->next(id);
     }
     return OS_NULL;
 }
@@ -600,10 +600,10 @@ eName *eObject::firstn(
 /* Get last child object identified by oid.
 */
 eObject *eObject::last(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->last(oid);
+    eHandle *h = mm_handle->last(id);
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
@@ -616,7 +616,7 @@ eObject *eObject::last(
 
   The eObject::next() function returns pointer to the next child object of this object.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to count a child objects,
 		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
            child objects, regardless wether these are attachment or not. Other values
 		   specify object identifier, only children with that specified object identifier 
@@ -627,10 +627,10 @@ eObject *eObject::last(
 ****************************************************************************************************
 */
 eObject *eObject::next(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->next(oid);
+    eHandle *h = mm_handle->next(id);
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
@@ -639,10 +639,10 @@ eObject *eObject::next(
 /* Get previous object identified by oid.
 */
 eObject *eObject::prev(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->prev(oid);
+    eHandle *h = mm_handle->prev(id);
 	if (h == OS_NULL) return OS_NULL;
 	return h->m_object;
 }
@@ -656,7 +656,7 @@ eObject *eObject::prev(
   The eObject::adopt() function moves on object from it's position in tree structure to
   an another. 
   
-  @param   oid EOID_CHILD object identifier unchanged.
+  @param   id EOID_CHILD object identifier unchanged.
   @param   aflags EOBJ_BEFORE_THIS Adopt before this object. EOBJ_NO_MAP not to map names.
   @return  None.
 
@@ -664,7 +664,7 @@ eObject *eObject::prev(
 */
 void eObject::adopt(
     eObject *child, 
-    e_oid oid,
+    e_oid id,
     os_int aflags)
 {
     os_boolean sync;
@@ -684,7 +684,7 @@ void eObject::adopt(
         sync = OS_FALSE; // || m_root->is_process ???????????????????????????????????????????????????????????????????????
         if (sync) os_lock();
 
-        mm_handle->m_root->newhandle(child, this, oid, 0);
+        mm_handle->m_root->newhandle(child, this, id, 0);
 
         if (sync) os_unlock();
     }
@@ -719,7 +719,7 @@ void eObject::adopt(
 // childh->m_parent->verify_whole_tree();
         }
 
-        if (oid != EOID_CHILD) childh->m_oid = oid;
+        if (id != EOID_CHILD) childh->m_oid = id;
 		childh->m_oflags |= EOBJ_IS_RED;
 		childh->m_left = childh->m_right = childh->m_up = OS_NULL;
 		mm_handle->rbtree_insert(childh);

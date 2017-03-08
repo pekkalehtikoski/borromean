@@ -48,7 +48,7 @@ public:
      */
 	eEndPoint(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_RITEM,
+        e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -79,10 +79,10 @@ public:
 	*/
 	static eEndPoint *newobj(
 		eObject *parent,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
 	{
-		return new eEndPoint(parent, oid, flags);
+        return new eEndPoint(parent, id, flags);
 	}
 
     /* Called when property value changes.

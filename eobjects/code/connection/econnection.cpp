@@ -48,9 +48,9 @@ os_char
 */
 eConnection::eConnection(
     eObject *parent,
-    e_oid oid,
+    e_oid id,
     os_int flags)
-    : eThread(parent, oid, flags)
+    : eThread(parent, id, flags)
 {
     m_stream_classid = ECLASSID_SOCKET;
     m_ipaddr = new eVariable(this);

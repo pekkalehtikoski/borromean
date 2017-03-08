@@ -46,12 +46,19 @@ public:
      */
     eBuffer(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
      */
     virtual ~eBuffer();
+
+    /* Clone object.
+     */
+    virtual eObject *clone(
+        eObject *parent,
+        e_oid id = EOID_CHILD,
+        os_int aflags = 0);
 
     /* Casting eObject pointer to eBuffer pointer.
      */
@@ -77,11 +84,32 @@ public:
 	*/
     static eBuffer *newobj(
 		eObject *parent,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
 	{
-        return new eBuffer(parent, oid, flags);
+        return new eBuffer(parent, id, flags);
 	}
+
+    /* Write set content to stream.
+     */
+    virtual eStatus writer(
+        eStream *stream,
+        os_int flags);
+
+    /* Read set content from stream.
+     */
+    virtual eStatus reader(
+        eStream *stream,
+        os_int flags);
+
+#if E_SUPPROT_JSON
+    /* Write set to stream as JSON.
+     */
+    eStatus json_writer(
+        eStream *stream,
+        os_int sflags,
+        os_int indent);
+#endif
 
     /*@}*/
 

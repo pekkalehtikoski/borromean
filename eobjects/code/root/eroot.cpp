@@ -29,9 +29,9 @@
 */
 eRoot::eRoot(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-	: eObject(parent, oid, flags)
+    : eObject(parent, id, flags)
 {
 	/* No free handles reserved yet. Set number of handles to reserver to zero.
 	   This means that empty default is used.
@@ -73,7 +73,7 @@ eRoot::~eRoot()
 void eRoot::newhandle(
 	eObject *obj,
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
 {
 	eHandle
@@ -109,7 +109,7 @@ void eRoot::newhandle(
 	/* Save object identifier, clear flags, mark new node as red,
 	   join to tree hierarchy, no children yet.
 	 */
-	handle->clear(obj, oid, flags);
+    handle->clear(obj, id, flags);
     handle->m_root = this;
 	obj->mm_handle = handle;
     if (parent) 

@@ -75,7 +75,7 @@ public:
      */
 	eQueue(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -106,10 +106,10 @@ public:
 	*/
 	static eQueue *newobj(
 		eObject *parent,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
 	{
-		return new eQueue(parent, oid, flags);
+        return new eQueue(parent, id, flags);
 	}
 
     /*@}*/

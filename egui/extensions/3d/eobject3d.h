@@ -92,7 +92,7 @@ public:
          */
         virtual eObject *clone(
             eObject *parent,
-            e_oid oid = EOID_CHILD,
+            e_oid id = EOID_CHILD,
             os_int aflags = 0);
 
         /* Casting eObject pointer to eObject3D pointer.

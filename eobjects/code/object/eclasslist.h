@@ -20,7 +20,7 @@
 
 typedef eObject *(*eNewObjFunc)(
     eObject *parent,
-    e_oid oid,
+    e_oid id,
 	os_int flags);
 
 /* Add class to class list.

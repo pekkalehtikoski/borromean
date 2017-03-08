@@ -36,9 +36,9 @@
 */
 eBuffer::eBuffer(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eStream(parent, oid, flags)
+    : eStream(parent, id, flags)
 {
     m_ptr = OS_NULL;
     m_allocated = m_used = m_pos = 0;
@@ -81,6 +81,201 @@ void eBuffer::setupclass()
     eclasslist_add(cls, (eNewObjFunc)newobj, "eBuffer");
     os_unlock();
 }
+
+
+/**
+****************************************************************************************************
+
+  @brief Clone object
+
+  The eBuffer::clone function clones an eBuffer.
+
+  @param  parent Parent for the clone.
+  @param  id Object identifier for the clone.
+  @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names.
+  @return Pointer to the clone.
+
+****************************************************************************************************
+*/
+eObject *eBuffer::clone(
+    eObject *parent,
+    e_oid id,
+    os_int aflags)
+{
+    eBuffer
+        *clonedobj;
+
+    clonedobj = new eBuffer(parent, id == EOID_CHILD ? oid() : id, flags());
+
+    clonedobj->allocate(m_allocated);
+    if (m_ptr) os_memcpy(clonedobj->m_ptr, m_ptr, m_allocated);
+    clonedobj->setused(used());
+
+    clonegeneric(clonedobj, aflags);
+    return clonedobj;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Write buffer to stream.
+
+  The eBuffer::writer() function serializes the eBuffer to stream. This writes only the
+  content, use eObject::write() to save also class information, attachements, etc.
+
+  @param  stream The stream to write to.
+  @param  flags Serialization flags.
+
+  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
+          fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
+          indicate an error.
+
+****************************************************************************************************
+*/
+eStatus eBuffer::writer(
+    eStream *stream,
+    os_int flags)
+{
+    os_memsz nwritten;
+
+    /* Version number. Increment if new serialized items are added to the object,
+       and check for new version's items in read() function.
+     */
+    const os_int version = 0;
+
+    /* Begin the object and write version number.
+     */
+    if (stream->write_begin_block(version)) goto failed;
+
+    /* Write number of used bytes.
+     */
+    if (stream->putl(m_used)) goto failed;
+
+    /* Write used buffer content.
+     */
+    if (m_used > 0)
+    {
+        stream->write(m_ptr, m_used, &nwritten);
+        if (nwritten != m_used) goto failed;
+    }
+
+    /* End the object.
+     */
+    if (stream->write_end_block()) goto failed;
+
+    /* Object succesfully written.
+     */
+    return ESTATUS_SUCCESS;
+
+    /* Writing object failed.
+     */
+failed:
+    return ESTATUS_WRITING_OBJ_FAILED;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Read the buffer from stream.
+
+  The eBuffer::reader() function reads serialized eBuffer from stream. This function
+  reads only the object content. To read whole object including attachments, names, etc,
+  use eObject::read().
+
+  @param  stream The stream to read from.
+  @param  flags Serialization flags.
+
+  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
+          fails, value ESTATUS_READING_OBJ_FAILED is returned. Assume that all nonzero values
+          indicate an error.
+
+****************************************************************************************************
+*/
+eStatus eBuffer::reader(
+    eStream *stream,
+    os_int flags)
+{
+    /* Version number. Used to check which versions item's are in serialized data.
+     */
+    os_long tmp;
+    os_memsz nbytes, nread;
+    os_int version;
+
+    /* If we have old data, delete it.
+     */
+    clear();
+
+    /* Read object start mark and version number.
+     */
+    if (stream->read_begin_block(&version)) goto failed;
+
+    /* Read number of bytes.
+     */
+    if (stream->getl(&tmp)) goto failed;
+    nbytes = (os_memsz)tmp;
+
+    /* Allocate buffer and set used size.
+     */
+    allocate(nbytes);
+    setused(nbytes);
+
+    /* Read buffer content.
+     */
+    if (nbytes > 0)
+    {
+        stream->read(m_ptr, nbytes, &nread);
+        if (nread != nbytes) goto failed;
+    }
+
+    /* End the object.
+     */
+    if (stream->read_end_block()) goto failed;
+
+    /* Object succesfully read.
+     */
+    return ESTATUS_SUCCESS;
+
+    /* Reading object failed.
+     */
+failed:
+    return ESTATUS_READING_OBJ_FAILED;
+}
+
+
+#if E_SUPPROT_JSON
+/**
+****************************************************************************************************
+
+  @brief Write set to stream as JSON.
+
+  The eBuffer::json_writer() function writes class specific object content to stream as JSON.
+
+  @param  stream The stream to write to.
+  @param  sflags Serialization flags. Typically EOBJ_SERIALIZE_DEFAULT.
+  @param  indent Indentation depth, 0, 1... Writes 2x this spaces at beginning of a line.
+
+  @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
+          fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
+          indicate an error.
+
+****************************************************************************************************
+*/
+eStatus eSet::json_writer(
+    eStream *stream,
+    os_int sflags,
+    os_int indent)
+{
+    if (json_putl(stream, m_used)) goto failed;
+
+    return ESTATUS_SUCCESS;
+
+failed:
+    return ESTATUS_FAILED;
+}
+#endif
+
 
 
 /**

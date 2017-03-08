@@ -28,9 +28,9 @@
 */
 eConsole::eConsole(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eStream(parent, oid, flags)
+    : eStream(parent, id, flags)
 {
 }
 

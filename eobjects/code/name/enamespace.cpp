@@ -81,13 +81,13 @@
 */
 eNameSpace::eNameSpace(
     eObject *parent,
-    e_oid oid,
+    e_oid id,
 	os_int flags)
-	: eObject(parent, oid, flags)
+    : eObject(parent, id, flags)
 {
 	/* If this is name space.
 	 */
-	if (oid == EOID_NAMESPACE)
+    if (id == EOID_NAMESPACE)
 	{
 		/* Flag this as attachment.
 		 */
@@ -156,7 +156,7 @@ eNameSpace::~eNameSpace()
   Names will be left detached in clone if EOBJ_NO_MAP flag is given.
 
   @param  parent Parent for the clone.
-  @param  oid Object identifier for the clone.
+  @param  id Object identifier for the clone.
   @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names. 
   @return Pointer to the clone.
 
@@ -164,11 +164,11 @@ eNameSpace::~eNameSpace()
 */
 eObject *eNameSpace::clone(
     eObject *parent, 
-    e_oid oid,
+    e_oid id,
     os_int aflags)
 {
     eNameSpace *clonedobj;
-    clonedobj = new eNameSpace(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
+    clonedobj = new eNameSpace(parent, id == EOID_CHILD ? oid() : id, flags());
 
     if (m_namespace_id)
     {

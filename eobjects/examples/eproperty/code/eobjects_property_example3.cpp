@@ -52,9 +52,9 @@ public:
      */
     eMyClass(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
-	    : eObject(parent, oid, flags)
+        : eObject(parent, id, flags)
     {
         initproperties();
     }

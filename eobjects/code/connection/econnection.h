@@ -50,7 +50,7 @@ public:
      */
 	eConnection(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_RITEM,
+        e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -81,10 +81,10 @@ public:
 	*/
 	static eConnection *newobj(
 		eObject *parent,
-		e_oid oid = EOID_RITEM,
+        e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT)
 	{
-		return new eConnection(parent, oid, flags);
+        return new eConnection(parent, id, flags);
 	}
 
     /* Called when property value changes.

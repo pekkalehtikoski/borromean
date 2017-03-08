@@ -130,7 +130,7 @@ public:
      */
 	eVariable(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -141,7 +141,7 @@ public:
      */
     virtual eObject *clone(
         eObject *parent, 
-        e_oid oid = EOID_CHILD,
+        e_oid id = EOID_CHILD,
 		os_int aflags = 0);
 
     /* Casting eObject pointer to eVariable pointer.
@@ -173,16 +173,16 @@ public:
      */
     static eVariable *newobj(
         eObject *parent,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eVariable(parent, oid, flags);
+        return new eVariable(parent, id, flags);
     }
 
 	/* Get next object identified by oid.
      */
 	eVariable *nextv(
-		e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
     /* Called when property value changes.
      */

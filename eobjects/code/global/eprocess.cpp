@@ -31,9 +31,9 @@
 */
 eProcess::eProcess(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eThread(parent, oid, flags)
+    : eThread(parent, id, flags)
 {
     eglobal->process_ns = new eNameSpace(this, EOID_NAMESPACE);
 }
