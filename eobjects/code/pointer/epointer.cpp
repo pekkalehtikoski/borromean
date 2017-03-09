@@ -121,5 +121,4 @@ eObject *ePointer::get()
     }
 
     return handle->object();
-
 }
