@@ -18,10 +18,21 @@
 
 class eBuffer;
 
+/* Cache which can be used to avoid looking buffer again.
+ */
+typedef struct eMatrixCache
+{
+    eBuffer *buffer;
+
+    os_int buffer_nr;
+}
+eMatrixCache;
+
+
 /**
 ****************************************************************************************************
 
-  @brief Table interface.
+  @brief Matrix class.
 
   The eMatrix is base class for tables. Underlying table can be eMatrix, eSelection or database
   table class.
@@ -197,7 +208,7 @@ public:
 
     /* Store value into matrix.
      */
-    void set(
+    void setv(
         os_int row,
         os_int column,
         eVariable *x,
@@ -240,7 +251,7 @@ public:
 
     /* Get value from matrix.
      */
-    os_boolean get(
+    os_boolean getv(
         os_int row,
         os_int column,
         eVariable *x);
@@ -287,6 +298,14 @@ protected:
         }
         return ESTATUS_SUCCESS;
     }
+
+    /* Write consequent non-empty matrix elements to stream.
+     */
+    eStatus elementwrite(
+        eStream *stream,
+        os_int first_full_ix,
+        os_int full_count,
+        os_int sflags);
 
     /* Resize the matrix.
      */
@@ -343,14 +362,6 @@ protected:
     /* Number of elements per block.
      */
     os_short m_elems_per_block;
-
-    /** Small matrix data buffer. OS_NULL if none.
-     */
-    // os_char *m_smallbuf;
-
-    /** Size of small matrix data buffer in bytes.
-     */
-    // os_int m_smallbuf_sz;
 
     /*@}*/
 };

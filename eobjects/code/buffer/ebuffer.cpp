@@ -124,7 +124,7 @@ eObject *eBuffer::clone(
   content, use eObject::write() to save also class information, attachements, etc.
 
   @param  stream The stream to write to.
-  @param  flags Serialization flags.
+  @param  sflags Serialization flags.
 
   @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
           fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
@@ -134,7 +134,7 @@ eObject *eBuffer::clone(
 */
 eStatus eBuffer::writer(
     eStream *stream,
-    os_int flags)
+    os_int sflags)
 {
     os_memsz nwritten;
 
@@ -184,7 +184,7 @@ failed:
   use eObject::read().
 
   @param  stream The stream to read from.
-  @param  flags Serialization flags.
+  @param  sflags Serialization flags.
 
   @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
           fails, value ESTATUS_READING_OBJ_FAILED is returned. Assume that all nonzero values
@@ -194,7 +194,7 @@ failed:
 */
 eStatus eBuffer::reader(
     eStream *stream,
-    os_int flags)
+    os_int sflags)
 {
     /* Version number. Used to check which versions item's are in serialized data.
      */

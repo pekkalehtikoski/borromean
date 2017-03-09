@@ -94,13 +94,13 @@ public:
      */
     virtual eStatus writer(
         eStream *stream,
-        os_int flags);
+        os_int sflags);
 
     /* Read set content from stream.
      */
     virtual eStatus reader(
         eStream *stream,
-        os_int flags);
+        os_int sflags);
 
 #if E_SUPPROT_JSON
     /* Write set to stream as JSON.

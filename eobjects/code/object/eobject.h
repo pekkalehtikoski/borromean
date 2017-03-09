@@ -444,7 +444,7 @@ public:
      */
     eObject *read(
         eStream *stream, 
-        os_int flags);
+        os_int sflags);
 
     /* Called by write() to write class specific object content.
         The eObject base class provides just dummy place holder

@@ -125,16 +125,16 @@ eObject *eMatrix::clone(
     clonedobj = new eMatrix(parent, id == EOID_CHILD ? oid() : id, flags());
     tmp = new eVariable(this);
 
-    /* Slow but simple clone. Optimize later.
+    /* Slightly slow but simple clone. Optimize later if time.
      */
     clonedobj->allocate(m_datatype, m_nrows, m_ncolumns);
     for (row = 0; row < m_nrows; row++)
     {
         for (column = 0; column < m_ncolumns; column++)
         {
-            if (get(row, column, tmp))
+            if (getv(row, column, tmp))
             {
-                clonedobj->set(row, column, tmp);
+                clonedobj->setv(row, column, tmp);
             }
         }
     }
@@ -155,7 +155,7 @@ eObject *eMatrix::clone(
   content, use eObject::write() to save also class information, attachements, etc.
 
   @param  stream The stream to write to.
-  @param  flags Serialization flags.
+  @param  sflags Serialization flags.
 
   @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
           fails, value ESTATUS_WRITING_OBJ_FAILED is returned. Assume that all nonzero values
@@ -165,9 +165,17 @@ eObject *eMatrix::clone(
 */
 eStatus eMatrix::writer(
     eStream *stream,
-    os_int flags)
+    os_int sflags)
 {
+    eBuffer *buffer;
+    os_char *dataptr, *typeptr;
     os_memsz nwritten;
+    os_long l;
+    os_double d;
+    os_float f;
+    e_oid id;
+    os_int first_elem_ix, elem_ix, first_full_ix, full_count, i;
+    os_boolean prev_isempty, isempty;
 
     /* Version number. Increment if new serialized items are added to the object,
        and check for new version's items in read() function.
@@ -178,23 +186,278 @@ eStatus eMatrix::writer(
      */
     if (stream->write_begin_block(version)) goto failed;
 
-#if 0
-    /* Write number of used bytes.
+    /* Write matrix data type and size.
      */
-    if (stream->putl(m_used)) goto failed;
+    if (stream->putl(m_datatype)) goto failed;
+    if (stream->putl(m_nrows)) goto failed;
+    if (stream->putl(m_ncolumns)) goto failed;
 
-    /* Write used buffer content.
+    /* Write data as "full groups".
      */
-    if (m_used > 0)
+    prev_isempty = OS_TRUE;
+    first_full_ix = full_count = 0;
+
+    for (buffer = eBuffer::cast(first());
+         buffer;
+         buffer = eBuffer::cast(buffer->next()))
     {
-        stream->write(m_ptr, m_used, &nwritten);
-        if (nwritten != m_used) goto failed;
+        id = buffer->oid();
+        if (id <= 0) continue;
+
+        first_elem_ix = (id - 1) * m_elems_per_block;
+
+        dataptr = buffer->ptr();
+        typeptr = dataptr + m_elems_per_block * m_typesz;
+
+        for (i = 0; i < m_elems_per_block; i++)
+        {
+            elem_ix = first_elem_ix + i;
+
+            /* If element is empty
+             */
+            isempty = OS_TRUE;
+            switch (m_datatype)
+            {
+                case OS_OBJECT:
+                    switch (typeptr[i])
+                    {
+                        case OS_LONG:
+                        case OS_DOUBLE:
+                        case OS_STRING:
+                        case OS_OBJECT:
+                            isempty = OS_FALSE;
+                        break;
+
+                        default:
+                            break;
+                    }
+                    break;
+
+                case OS_CHAR:
+                    l = *((os_char*)dataptr);
+                    isempty = (os_boolean)(l == OS_CHAR_MAX);
+                    break;
+
+                case OS_SHORT:
+                    l = *((os_short*)dataptr);
+                    isempty = (os_boolean)(l == OS_SHORT_MAX);
+                    break;
+
+                case OS_INT:
+                    l = *((os_int*)dataptr);
+                    isempty = (os_boolean)(l == OS_INT_MAX);
+                    break;
+
+                case OS_LONG:
+                    l = *((os_long*)dataptr);
+                    isempty = (os_boolean)(l == OS_INT_MAX);
+                    break;
+
+                case OS_FLOAT:
+                    f = *((os_float*)dataptr);
+                    isempty = (os_boolean)(f == OS_FLOAT_MAX);
+                    break;
+
+                case OS_DOUBLE:
+                    d = *((os_double*)dataptr);
+                    isempty = (os_boolean)(d == OS_DOUBLE_MAX);
+                    break;
+
+                default:
+                    break;
+            }
+
+            if (isempty)
+            {
+                if (!prev_isempty)
+                {
+                    if (elementwrite(stream, first_full_ix,
+                        full_count, sflags)) goto failed;
+                    prev_isempty = OS_TRUE;
+                }
+            }
+            else
+            {
+                if (prev_isempty)
+                {
+                    first_full_ix = elem_ix;
+                    full_count = 1;
+                    prev_isempty = OS_FALSE;
+                }
+                else
+                {
+                    full_count++;
+                }
+            }
+        }
     }
-#endif
+
+    /* Last group.
+     */
+    if (!prev_isempty)
+    {
+        if (elementwrite(stream, first_full_ix, full_count, sflags))
+            goto failed;
+    }
+
+    /* Write -1 to indicate end of data.
+     */
+    if (stream->putl(-1)) goto failed;
 
     /* End the object.
      */
     if (stream->write_end_block()) goto failed;
+
+    /* Object succesfully written.
+     */
+    return ESTATUS_SUCCESS;
+
+    /* Writing object failed.
+     */
+failed:
+    return ESTATUS_WRITING_OBJ_FAILED;
+}
+
+/* Write consequent non-empty matrix elements to stream.
+ */
+eStatus eMatrix::elementwrite(
+    eStream *stream,
+    os_int first_full_ix,
+    os_int full_count,
+    os_int sflags)
+{
+    eBuffer *buffer = OS_NULL;
+    eMatrixObj *mo;
+    eObject *o;
+    os_char *s, *dataptr, *typeptr;
+    os_long l;
+    os_double d;
+    os_float f;
+    osalTypeId datatype;
+    os_int i, prev_buffer_nr, buffer_nr, elem_ix;
+
+    if (stream->putl(first_full_ix)) goto failed;
+    if (stream->putl(full_count)) goto failed;
+
+    prev_buffer_nr = -1;
+
+    for (i = 0; i<full_count; i++)
+    {
+        elem_ix = first_full_ix + i;
+        buffer_nr =  elem_ix / m_elems_per_block + 1;
+        if (buffer_nr != prev_buffer_nr)
+        {
+            buffer = eBuffer::cast(first(buffer_nr));
+            if (buffer == OS_NULL)
+            {
+                osal_debug_error("ematrix.cpp: progerr 1.");
+                return ESTATUS_FAILED;
+            }
+
+            prev_buffer_nr = buffer_nr;
+        }
+
+        datatype = OS_UNDEFINED_TYPE;
+        switch (m_datatype)
+        {
+            case OS_OBJECT:
+                mo = ((eMatrixObj*)dataptr) + i;
+                switch (typeptr[i])
+                {
+                    case OS_LONG:
+                        l = mo->l;
+                        datatype = OS_LONG;
+                        break;
+
+                    case OS_DOUBLE:
+                        l = mo->l;
+                        datatype = OS_DOUBLE;
+                        break;
+
+                    case OS_STRING:
+                        s = mo->s;
+                        datatype = OS_STRING;
+                        break;
+
+                    case OS_OBJECT:
+                        o = mo->o;
+                        datatype = OS_OBJECT;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case OS_CHAR:
+                l = *((os_char*)dataptr);
+                datatype = OS_LONG;
+                break;
+
+            case OS_SHORT:
+                l = *((os_short*)dataptr);
+                datatype = OS_LONG;
+                break;
+
+            case OS_INT:
+                l = *((os_int*)dataptr);
+                datatype = OS_LONG;
+                break;
+
+            case OS_LONG:
+                l = *((os_long*)dataptr);
+                datatype = OS_LONG;
+                break;
+
+            case OS_FLOAT:
+                f = *((os_float*)dataptr);
+                datatype = OS_FLOAT;
+                break;
+
+            case OS_DOUBLE:
+                d = *((os_double*)dataptr);
+                datatype = OS_DOUBLE;
+                break;
+
+            default:
+                break;
+        }
+
+        if (m_datatype == OS_OBJECT)
+        {
+            if (stream->putl(datatype)) goto failed;
+        }
+
+        switch (datatype)
+        {
+            case OS_LONG:
+                if (stream->putl(l)) goto failed;
+                break;
+
+            case OS_FLOAT:
+                if (stream->putf(f)) goto failed;
+                break;
+
+            case OS_DOUBLE:
+                if (stream->putd(d)) goto failed;
+                break;
+
+            case OS_STRING:
+                osal_debug_assert(s);
+                if (stream->puts(s)) goto failed;
+                break;
+
+            case OS_OBJECT:
+                osal_debug_assert(o);
+                if (o->write(stream, sflags)) goto failed;
+                break;
+
+            default:
+                osal_debug_error("ematrix.cpp: progerr 2.");
+                break;
+        }
+    }
+
 
     /* Object succesfully written.
      */
@@ -217,7 +480,7 @@ failed:
   use eObject::read().
 
   @param  stream The stream to read from.
-  @param  flags Serialization flags.
+  @param  sflags Serialization flags.
 
   @return If successfull the function returns ESTATUS_SUCCESS (0). If writing object to stream
           fails, value ESTATUS_READING_OBJ_FAILED is returned. Assume that all nonzero values
@@ -227,13 +490,17 @@ failed:
 */
 eStatus eMatrix::reader(
     eStream *stream,
-    os_int flags)
+    os_int sflags)
 {
     /* Version number. Used to check which versions item's are in serialized data.
      */
-    os_long tmp;
+    eObject *o;
+    eVariable tmp;
+    os_long datatype, nrows, ncolumns, first_full_ix, full_count, l;
     os_memsz nbytes, nread;
-    os_int version;
+    os_double d;
+    os_float f;
+    os_int version, elem_ix, i, row, column;
 
     /* If we have old data, delete it.
      */
@@ -243,25 +510,71 @@ eStatus eMatrix::reader(
      */
     if (stream->read_begin_block(&version)) goto failed;
 
-#if 0
-    /* Read number of bytes.
+    /* Read matrix data type and size, allocate matrix.
      */
-    if (stream->getl(&tmp)) goto failed;
-    nbytes = (os_memsz)tmp;
+    if (stream->getl(&datatype)) goto failed;
+    if (stream->getl(&nrows)) goto failed;
+    if (stream->getl(&ncolumns)) goto failed;
+    allocate((osalTypeId)datatype, (os_int)nrows, (os_int)ncolumns);
 
-    /* Allocate buffer and set used size.
+    /* Read data
      */
-    allocate(nbytes);
-    setused(nbytes);
-
-    /* Read buffer content.
-     */
-    if (nbytes > 0)
+    while (OS_TRUE)
     {
-        stream->read(m_ptr, nbytes, &nread);
-        if (nread != nbytes) goto failed;
+        /* Read first full index. -1 indicates end of data.
+         */
+        if (stream->getl(&first_full_ix)) goto failed;
+        if (first_full_ix == -1) break;
+
+        /* Read number of full elements.
+         */
+        if (stream->getl(&full_count)) goto failed;
+
+        /* Read elements
+         */
+        for (i = 0; i<first_full_ix; i++)
+        {
+            elem_ix = (os_int)first_full_ix + i;
+            row = elem_ix / m_ncolumns;
+            column = elem_ix % m_ncolumns;
+
+            /* If we have datatype, read it.
+             */
+            if (m_datatype == OS_OBJECT)
+            {
+                if (stream->getl(&datatype)) goto failed;
+            }
+
+            switch (datatype)
+            {
+                case OS_LONG:
+                    if (stream->getl(&l)) goto failed;
+                    setl(row, column, l);
+                    break;
+
+                case OS_FLOAT:
+                    if (stream->getf(&f)) goto failed;
+                    setd(row, column, f);               // SHOULD SETF BE IMPLEMETED
+                    break;
+
+                case OS_DOUBLE:
+                    if (stream->getd(&d)) goto failed;
+                    setd(row, column, d);
+                    break;
+
+                case OS_STRING:
+                    if (stream->gets(&tmp)) goto failed;
+                    setv(row, column, &tmp);
+                    break;
+
+                case OS_OBJECT:
+                    o = read(stream, sflags);
+                    seto(row, column, o);  // HERE WE SHOULD USE ADOPT
+                    delete o;
+                    break;
+            }
+        }
     }
-#endif
 
     /* End the object.
      */
@@ -286,7 +599,6 @@ void eMatrix::allocate(
     os_int ncolumns,
     os_int mflags)
 {
-
     /* Make sure that data type is known.
      */
     switch (datatype)
@@ -362,7 +674,7 @@ void eMatrix::clear()
 
 ****************************************************************************************************
 */
-void eMatrix::set(
+void eMatrix::setv(
     os_int row,
     os_int column,
     eVariable *x,
@@ -724,11 +1036,10 @@ void eMatrix::clear(
 
 ****************************************************************************************************
 */
-os_boolean eMatrix::get(
+os_boolean eMatrix::getv(
     os_int row,
     os_int column,
     eVariable *x)
-
 {
     os_char *dataptr, *typeptr;
     eMatrixObj *mo;
@@ -1058,8 +1369,8 @@ void eMatrix::resize(
     eMatrix *m;
     os_int elem_ix, buffer_nr, minrows, mincolumns, row, column;
 
-    /* If we need to reorganize, do it the hard way. This is very slow,
-       application should be written in such way that this is never needed.
+    /* If we need to reorganize, do it the hard way. This is slow, application
+       should be written in such way that this is not needed repeatedly.
      */
     if (ncolumns != m_ncolumns && m_nrows > 1 && m_ncolumns > 0)
     {
@@ -1074,9 +1385,9 @@ void eMatrix::resize(
         {
             for (column = 0; column < mincolumns; column++)
             {
-                if (get(row, column, tmp))
+                if (getv(row, column, tmp))
                 {
-                    m->set(row, column, tmp);
+                    m->setv(row, column, tmp);
                 }
             }
         }
