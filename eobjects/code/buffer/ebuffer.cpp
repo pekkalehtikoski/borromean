@@ -17,7 +17,7 @@
 */
 #include "eobjects/eobjects.h"
 
-/* Default queu block size.
+/** Default queue block size.
  */
 #define eBuffer_DEFALT_BLOCK_SZ 512
 
