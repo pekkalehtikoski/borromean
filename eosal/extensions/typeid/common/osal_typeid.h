@@ -106,7 +106,6 @@ typedef enum
 }
 osalTypeId;
 
-
 /* Convert type name string to type identifier (integer).
  */
 osalTypeId osal_typeid_from_name(

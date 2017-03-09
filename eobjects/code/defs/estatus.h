@@ -35,7 +35,7 @@ typedef enum
 	 */
 	ESTATUS_SUCCESS = 0,
 
-	/** Unidentified failyre.
+    /** Unidentified failure.
 	 */
 	ESTATUS_FAILED = 1,
 
