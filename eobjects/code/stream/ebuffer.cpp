@@ -102,8 +102,7 @@ eObject *eBuffer::clone(
     e_oid id,
     os_int aflags)
 {
-    eBuffer
-        *clonedobj;
+    eBuffer *clonedobj;
 
     clonedobj = new eBuffer(parent, id == EOID_CHILD ? oid() : id, flags());
 

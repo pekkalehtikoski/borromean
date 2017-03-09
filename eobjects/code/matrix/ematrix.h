@@ -55,10 +55,10 @@ public:
 
     /* Clone object.
      */
-/*    virtual eObject *clone(
+    virtual eObject *clone(
         eObject *parent, 
         e_oid id = EOID_CHILD,
-        os_int aflags = 0); */
+        os_int aflags = 0);
 
     /* Casting eObject pointer to eMatrix pointer.
      */
@@ -90,19 +90,17 @@ public:
         return new eMatrix(parent, id, flags);
     }
 
-    /* Write set content to stream.
+    /* Write matrix content to stream.
      */
-/*    virtual eStatus writer(
+    virtual eStatus writer(
         eStream *stream, 
         os_int flags);
- */
 
-    /* Read set content from stream.
+    /* Read matrix content from stream.
      */
-/*    virtual eStatus reader(
+    virtual eStatus reader(
         eStream *stream, 
         os_int flags);
- */
 
 #if E_SUPPROT_JSON
     /* Write set to stream as JSON.
