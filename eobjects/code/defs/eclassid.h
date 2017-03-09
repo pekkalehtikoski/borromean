@@ -55,7 +55,8 @@
 #define ECLASSID_ENDPOINT 30
 #define ECLASSID_TIMER 31
 #define ECLASSID_TABLE 32
-#define ECLASSID_BINDING 33
+#define ECLASSID_WHERE 33
+#define ECLASSID_BINDING 34
 
 /* First class id referved for application applications. All positive 32 bit integers
   starting from ECLASSID_APP_BASE can be used by application.
