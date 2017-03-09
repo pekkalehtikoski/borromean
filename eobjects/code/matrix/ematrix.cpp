@@ -1036,8 +1036,19 @@ return_empty:
 }
 
 
-/* Resize the matrix.
- */
+/**
+****************************************************************************************************
+
+  @brief Resize the matrix.
+
+  The eMatrix::resize function changes matrix size. Data in matrix is preserved.
+
+  @param  nrows New number of rows.
+  @param  ncolumns New number of columns.
+  @return None.
+
+****************************************************************************************************
+*/
 void eMatrix::resize(
     os_int nrows,
     os_int ncolumns)
@@ -1117,8 +1128,30 @@ void eMatrix::resize(
 }
 
 
-/* Get pointer to data for element and if m_type is OS_OBJECT also type for element.
- */
+/**
+****************************************************************************************************
+
+  @brief Get pointer to data.
+
+  The eMatrix::getptrs function retrieves pointer to data for element and if m_type is
+  OS_OBJECT also element type pointer.
+
+  If isset is OS_TRUE: New eBuffer objects are allocated as needed. The matrix is expanded
+  if row/column is outside the matrix and matrix element is emptied.
+
+  If isset is OS_FALSE: No new eBuffer objects are allocated, matrix is not expanded and
+  the element value is not emptied.
+
+  @param  row Row number, 0...
+  @param  column Column number, 0...
+  @param  typeptr Where to store pointer to data type.
+  @param  isset Controls how this function works.
+  @param  pbuffer Pointer to eBuffer containing the matrix element is stored here.
+          OS_NULL if not needed.
+  @return Pointer to element data.
+
+****************************************************************************************************
+*/
 os_char *eMatrix::getptrs(
     os_int row,
     os_int column,
