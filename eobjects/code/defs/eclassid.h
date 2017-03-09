@@ -37,10 +37,10 @@
 #define ECLASSID_NAMESPACE 4
 #define ECLASSID_ENVELOPE 5
 #define ECLASSID_SET 6
-#define ECLASSID_BINDING 7
 #define ECLASSID_PROPERTY_BINDING 8
 #define ECLASSID_POINTER 9
 #define ECLASSID_MATRIX 10
+#define ECLASSID_BUFFER 11
 
 #define ECLASSID_OBJECT 20
 #define ECLASSID_ROOT 21
@@ -54,8 +54,8 @@
 #define ECLASSID_CONNECTION 29
 #define ECLASSID_ENDPOINT 30
 #define ECLASSID_TIMER 31
-
 #define ECLASSID_TABLE 32
+#define ECLASSID_BINDING 33
 
 /* First class id referved for application applications. All positive 32 bit integers
   starting from ECLASSID_APP_BASE can be used by application.

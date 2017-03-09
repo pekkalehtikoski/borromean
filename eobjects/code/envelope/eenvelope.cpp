@@ -106,9 +106,9 @@ void eenvelope_clear_path(
 */
 eEnvelope::eEnvelope(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eObject(parent, oid, flags)
+    : eObject(parent, id, flags)
 {
     /** Clear member variables.
      */
@@ -164,7 +164,7 @@ eEnvelope::~eEnvelope()
 */
 eObject *eEnvelope::clone(
     eObject *parent, 
-    e_oid oid,
+    e_oid id,
     os_int aflags)
 {
     eEnvelope *clonedobj;
@@ -173,7 +173,7 @@ eObject *eEnvelope::clone(
      */
     osal_debug_assert(parent);
 
-    clonedobj = new eEnvelope(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
+    clonedobj = new eEnvelope(parent, id == EOID_CHILD ? oid() : id, flags());
   
     /** Clone envelope specific stuff.
      */

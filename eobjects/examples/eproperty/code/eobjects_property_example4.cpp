@@ -59,9 +59,9 @@ public:
      */
     eMyClass1(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
-	    : eThread(parent, oid, flags)
+        : eThread(parent, id, flags)
     {
         initproperties();
     }

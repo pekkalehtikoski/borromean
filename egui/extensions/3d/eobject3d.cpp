@@ -72,7 +72,7 @@ eObject3D::~eObject3D()
   Names will be left detached in clone if EOBJ_NO_MAP flag is given.
 
   @param  parent Parent for the clone.
-  @param  oid Object identifier for the clone.
+  @param  id Object identifier for the clone.
   @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names.
   @return Pointer to the clone.
 
@@ -80,7 +80,7 @@ eObject3D::~eObject3D()
 */
 eObject *eObject3D::clone(
     eObject *parent,
-    e_oid oid,
+    e_oid id,
     os_int aflags)
 {
     eObject3D *clonedobj;
@@ -89,7 +89,7 @@ eObject *eObject3D::clone(
      */
     osal_debug_assert(parent);
 
-    clonedobj = new eObject3D(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
+    clonedobj = new eObject3D(parent, id == EOID_CHILD ? oid() : id, flags());
 
     /** Clone specific stuff.
      */

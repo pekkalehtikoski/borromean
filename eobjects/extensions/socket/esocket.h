@@ -50,7 +50,7 @@ public:
      */
 	eSocket(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -81,10 +81,10 @@ public:
 	*/
 	static eSocket *newobj(
 		eObject *parent,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
 	{
-		return new eSocket(parent, oid, flags);
+        return new eSocket(parent, id, flags);
 	}
 
     /*@}*/

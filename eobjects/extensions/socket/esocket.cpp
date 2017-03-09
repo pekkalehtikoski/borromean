@@ -29,9 +29,9 @@
 */
 eSocket::eSocket(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eStream(parent, oid, flags)
+    : eStream(parent, id, flags)
 {
     m_in = m_out = OS_NULL;
     m_socket = OS_NULL;

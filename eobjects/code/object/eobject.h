@@ -120,7 +120,7 @@ protected:
      */
     eObject(
         eObject *parent = OS_NULL,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 private:
@@ -134,7 +134,7 @@ private:
     /* Create root helper object and handles for root and root helper.
      */
     void makeroot(
-        e_oid oid,
+        e_oid id,
 	    os_int flags);
 
 public:
@@ -147,7 +147,7 @@ public:
      */
     virtual eObject *clone(
         eObject *parent, 
-        e_oid oid = EOID_CHILD,
+        e_oid id = EOID_CHILD,
 		os_int aflags = 0);
 
     /* Helper function for clone functionality.
@@ -174,10 +174,10 @@ public:
      */
     inline eObject *newchild( 
         os_int cid,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return newobject(this, cid, oid, flags);
+        return newobject(this, cid, id, flags);
     }
 
     /* Allocate new object by class identifier.
@@ -185,7 +185,7 @@ public:
     static eObject *newobject(
         eObject *parent,
         os_int cid,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
     inline eHandle *handle()
@@ -328,9 +328,9 @@ public:
     /* Get number of childern.
      */
 	inline os_long childcount(
-		e_oid oid = EOID_CHILD)
+        e_oid id = EOID_CHILD)
 	{
-		if (mm_handle) return mm_handle->childcount(oid);
+        if (mm_handle) return mm_handle->childcount(id);
 		return 0;
 	}
 
@@ -368,48 +368,48 @@ public:
 	/* Get the first child object identified by oid.
      */
 	eObject *first(
-		e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
 	/* Get the first child variable identified by oid.
      */
     eVariable *firstv(
-	    e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
 	/* Get the first child container identified by oid.
      */
     eContainer *firstc(
-	    e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
 	/* Get the first child name identified by oid.
      */
     eName *firstn(
-	    e_oid oid = EOID_NAME);
+        e_oid id = EOID_NAME);
 
 	/* Get last child object identified by oid.
      */
 	eObject *last(
-		e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
 	/* Get next object identified by oid.
      */
 	eObject *next(
-		e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
 	/* Get previous object identified by oid.
      */
 	eObject *prev(
-		e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
     /** Adopting object as child of this object.
      */
 	void adopt(
 		eObject *child,
-		e_oid oid = EOID_CHILD,
+        e_oid id = EOID_CHILD,
 		os_int aflags = 0);
 
     void adoptat(
         eObject *beforethis, 
-        e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
     /* Verify whole object tree.
      */

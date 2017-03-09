@@ -48,7 +48,7 @@ public:
      */
 	eTimer(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_RITEM,
+        e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -79,10 +79,10 @@ public:
 	*/
 	static eTimer *newobj(
 		eObject *parent,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
 	{
-		return new eTimer(parent, oid, flags);
+        return new eTimer(parent, id, flags);
 	}
 
     /* Function to process incoming messages. 

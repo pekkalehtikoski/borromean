@@ -59,7 +59,7 @@ public:
      */
     eNameSpace(
         eObject *parent = OS_NULL,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
     /* Delete eObject, virtual destructor.
@@ -70,7 +70,7 @@ public:
      */
     virtual eObject *clone(
         eObject *parent, 
-        e_oid oid,
+        e_oid id,
         os_int aflags);
 
     /* Cast eObject pointer to eNameSpace pointer. 
@@ -93,7 +93,7 @@ public:
      */
     /* static eNameSpace *newobj(
         eObject *parent,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
         return new eNameSpace(parent, oid, flags);

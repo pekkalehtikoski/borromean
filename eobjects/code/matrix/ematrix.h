@@ -16,6 +16,7 @@
 #ifndef EMATRIX_INCLUDED
 #define EMATRIX_INCLUDED
 
+class eBuffer;
 
 /**
 ****************************************************************************************************
@@ -45,7 +46,7 @@ public:
 	 */
     eMatrix(
 		eObject *parent = OS_NULL,
-        e_oid oid = EOID_RITEM,
+        e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -54,10 +55,10 @@ public:
 
     /* Clone object.
      */
-/*    virtual eObject *clone(
+    virtual eObject *clone(
         eObject *parent, 
-        e_oid oid = EOID_CHILD,
-        os_int aflags = 0); */
+        e_oid id = EOID_CHILD,
+        os_int aflags = 0);
 
     /* Casting eObject pointer to eMatrix pointer.
      */
@@ -83,25 +84,23 @@ public:
      */
     static eMatrix *newobj(
         eObject *parent,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eMatrix(parent, oid, flags);
+        return new eMatrix(parent, id, flags);
     }
 
-    /* Write set content to stream.
+    /* Write matrix content to stream.
      */
-/*    virtual eStatus writer(
+    virtual eStatus writer(
         eStream *stream, 
         os_int flags);
- */
 
-    /* Read set content from stream.
+    /* Read matrix content from stream.
      */
-/*    virtual eStatus reader(
+    virtual eStatus reader(
         eStream *stream, 
         os_int flags);
- */
 
 #if E_SUPPROT_JSON
     /* Write set to stream as JSON.
@@ -162,6 +161,7 @@ public:
         eVariable *where,
         os_int tflags)
     {}
+    /*@}*/
 
 
     /**
@@ -173,14 +173,19 @@ public:
 
     ************************************************************************************************
     */
+    /*@{*/
 
     /* Allocate matrix.
      */
     void allocate(
         osalTypeId type,
-        os_int width,
-        os_int height,
-        os_int mflags);
+        os_int nrows = 0,
+        os_int ncolumns = 0,
+        os_int mflags = 0);
+
+    /* Release all allocated data, empty the matrix.
+     */
+    void clear();
 
     /* Get matrix width.
      */
@@ -200,7 +205,7 @@ public:
 
     /* Store integer value into matrix.
      */
-    inline void setl(
+    void setl(
         os_int row,
         os_int column,
         os_long x);
@@ -218,6 +223,14 @@ public:
         os_int row,
         os_int column,
         const os_char *x);
+
+    /* Store value into matrix.
+     */
+    void seto(
+        os_int row,
+        os_int column,
+        eObject *x,
+        os_int mflags = 0);
 
     /* Clear matrix value to be empty.
      */
@@ -245,6 +258,99 @@ public:
         os_int row,
         os_int column,
         os_boolean *hasvalue = OS_NULL);
+
+    /*@}*/
+
+
+protected:
+    /**
+    ************************************************************************************************
+
+      @name Internal to matrix.
+
+      Protected functions and member variables.
+
+    ************************************************************************************************
+    */
+    /*@{*/
+
+    /* Make sure that neither row or column number is negative.
+     */
+    inline eStatus checknegative(
+        os_int row,
+        os_int column)
+    {
+        if (row < 0 || column < 0)
+        {
+            osal_debug_error("ematrix.cpp: row or column number is negative.");
+            return ESTATUS_FAILED;
+        }
+        return ESTATUS_SUCCESS;
+    }
+
+    /* Resize the matrix.
+     */
+    void resize(
+        os_int nrows,
+        os_int ncolumns);
+
+    /* Get pointer to data for element and if m_type is OS_OBJECT also type for element.
+     */
+    os_char *getptrs(
+        os_int row,
+        os_int column,
+        os_char **typeptr,
+        os_boolean isset,
+        eBuffer **pbuffer = OS_NULL);
+
+    /* Get or allocate eBuffer by buffer number (oid).
+     */
+    eBuffer *getbuffer(
+        os_int buffer_nr,
+        os_boolean isset);
+
+    /* Free memory buffer and any objects and strings allocated for it.
+     */
+    void releasebuffer(
+        eBuffer *buffer);
+
+    void emptyobject(
+        os_char *dataptr,
+        os_char *typeptr);
+
+    /* How many bytes are needed for matrix datatype
+     */
+    os_short typesz(
+        osalTypeId datatype);
+
+
+    /** Matrix data type.
+     */
+    osalTypeId m_datatype;
+
+    /** Number of rows.
+     */
+    os_int m_nrows;
+
+    /** Number of columns.
+     */
+    os_int m_ncolumns;
+
+    /** Matrix data size in bytes.
+     */
+    os_short m_typesz;
+
+    /* Number of elements per block.
+     */
+    os_short m_elems_per_block;
+
+    /** Small matrix data buffer. OS_NULL if none.
+     */
+    // os_char *m_smallbuf;
+
+    /** Size of small matrix data buffer in bytes.
+     */
+    // os_int m_smallbuf_sz;
 
     /*@}*/
 };

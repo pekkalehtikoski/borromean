@@ -28,9 +28,9 @@
 */
 eConsole::eConsole(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eStream(parent, oid, flags)
+    : eStream(parent, id, flags)
 {
 }
 
@@ -123,12 +123,12 @@ eStatus eConsole::close()
 
   @brief Write data to console.
 
-  The write () function releases places data into console. The data can be coded.
+  The write() function writes data to console. The data can be coded.
 
   @param  buf Pointer to data to write.
   @param  buf_sz Number of bytes to write.
   @param  nwritten Pointer to integer where to store number of bytes written to console. This is
-          always same as byte_sz. Can be set to  to OS_NULL, if not needed.
+          always same as byte_sz. Can be set to OS_NULL, if not needed.
 
   @return  If successfull, the function returns ESTATUS_SUCCESS. Other return values
            indicate an error. eConsole class cannot fail, so return value is always 

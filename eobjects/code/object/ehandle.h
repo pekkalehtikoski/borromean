@@ -225,7 +225,7 @@ public:
     /* Get number of childern.
      */
     os_long childcount(
-        e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
     /** Get parent object's handle.
      */
@@ -245,34 +245,44 @@ public:
 	/* Get first child object identified by oid.
      */
     eHandle *first(
-        e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
 	/* Get last child object identified by oid.
      */
     eHandle *last(
-        e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
 	/* Get next object identified by oid.
      */
     eHandle *next(
-        e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
 	/* Get previous object identified by oid.
      */
     eHandle *prev(
-        e_oid oid = EOID_CHILD);
+        e_oid id = EOID_CHILD);
 
 	/* Right pointer is used to manage linked lists of reserved but unused handles.
      */
-	inline eHandle *right() { return m_right; }
-	inline void setright(eHandle *h) { m_right = h; }
+    inline eHandle *right()
+    {
+        return m_right;
+    }
+
+    inline void setright(eHandle *h)
+    {
+        m_right = h;
+    }
 
 	/** Save object identifier, clear flags, mark new node as red,
 		not part of object hierarcy, nor no children yet.
      */
-	inline void clear(eObject *obj, e_oid oid, os_int flags)
+    inline void clear(
+        eObject *obj,
+        e_oid id,
+        os_int flags)
 	{
-		m_oid = oid;
+        m_oid = id;
 		m_oflags = EOBJ_IS_RED | flags;
 		m_parent = m_left = m_right = m_up = m_children = OS_NULL;
 		m_object = obj;

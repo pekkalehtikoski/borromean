@@ -131,7 +131,7 @@ public:
 	 */
 	eEnvelope(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -142,7 +142,7 @@ public:
      */
     virtual eObject *clone(
         eObject *parent, 
-        e_oid oid = EOID_CHILD,
+        e_oid id = EOID_CHILD,
 		os_int aflags = 0);
 
     /* Casting eObject pointer to eEnvelope pointer.
@@ -166,10 +166,10 @@ public:
      */
     static eEnvelope *newobj(
         eObject *parent,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eEnvelope(parent, oid, flags);
+        return new eEnvelope(parent, id, flags);
     }
 
     /* Called when property value changes.

@@ -35,15 +35,15 @@
 ****************************************************************************************************
 
   @brief Constructor.
-  The constructore clears member variables, constructs and initializes an empty queue object.
+  The constructor clears member variables for an empty eQueue object.
 
 ****************************************************************************************************
 */
 eQueue::eQueue(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eStream(parent, oid, flags)
+    : eStream(parent, id, flags)
 {
     m_oldest = m_newest = OS_NULL;
     m_wr_prevc = EQUEUE_NO_PREVIOUS_CHAR;
@@ -258,13 +258,13 @@ void eQueue::delblock()
 
   @brief Write data to queue.
 
-  The write() function releases places data into queue. The data can be encoded, if flag
+  The write() function appends data to queue. The data can be encoded, if flag
   OSAL_STREAM_ENCODE_ON_WRITE was given to open().
 
   @param  buf Pointer to data to write.
   @param  buf_sz Number of bytes to write.
   @param  nwritten Pointer to integer where to store number of bytes written to queue. This is
-          always same as byte_sz. Can be set to  to OS_NULL, if not needed.
+          always same as byte_sz. Can be set to OS_NULL, if not needed.
 
   @return  If successfull, the function returns ESTATUS_SUCCESS. Other return values
            indicate an error. eQueue class cannot fail, so return value is always 

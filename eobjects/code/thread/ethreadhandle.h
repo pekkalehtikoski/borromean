@@ -49,7 +49,7 @@ public:
 	 */
 	eThreadHandle(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
@@ -73,7 +73,7 @@ public:
      */
     /* static eThreadHandle *newobj(
         eObject *parent,
-        e_oid oid = EOID_ITEM,
+        e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
         return new eThreadHandle(parent, oid, flags);

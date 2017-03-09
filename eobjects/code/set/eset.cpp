@@ -31,9 +31,9 @@
 */
 eSet::eSet(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eObject(parent, oid, flags)
+    : eObject(parent, id, flags)
 {
     m_items = OS_NULL;
     m_used = m_alloc = 0;
@@ -94,7 +94,7 @@ void eSet::setupclass()
   The eSet::clone function clones and object including object's children. 
 
   @param  parent Parent for the clone.
-  @param  oid Object identifier for the clone.
+  @param  id Object identifier for the clone.
   @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names.
   @return Pointer to the clone.
 
@@ -102,7 +102,7 @@ void eSet::setupclass()
 */
 eObject *eSet::clone(
     eObject *parent, 
-    e_oid oid,
+    e_oid id,
     os_int aflags)
 {
     eSet *clonedobj;
@@ -114,7 +114,7 @@ eObject *eSet::clone(
     os_memsz sz;
     eHandle *handle;
 
-    clonedobj = new eSet(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
+    clonedobj = new eSet(parent, id == EOID_CHILD ? oid() : id, flags());
 
     if (m_items)
     {
@@ -197,7 +197,7 @@ eObject *eSet::clone(
 
   @brief Write set content to stream.
 
-  The eSet::writer() function serialized the set to stream. This writes only the 
+  The eSet::writer() function serializes the eSet to stream. This writes only the
   content, use eObject::write() to save also class information, attachements, etc.
   
   @param  stream The stream to write to.

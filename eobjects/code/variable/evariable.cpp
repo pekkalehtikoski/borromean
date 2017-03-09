@@ -50,9 +50,9 @@ os_char
 */
 eVariable::eVariable(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-	: eObject(parent, oid, flags)
+    : eObject(parent, id, flags)
 {
     /* No type, number 2 digits after decimal point for doubles.
      */
@@ -89,7 +89,7 @@ eVariable::~eVariable()
   in clone if EOBJ_NO_MAP flag is given.
 
   @param  parent Parent for the clone.
-  @param  oid Object identifier for the clone.
+  @param  id Object identifier for the clone.
   @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names. 
   @return Pointer to the clone.
 
@@ -97,11 +97,11 @@ eVariable::~eVariable()
 */
 eObject *eVariable::clone(
     eObject *parent, 
-    e_oid oid,
+    e_oid id,
     os_int aflags)
 {
     eVariable *clonedobj;
-    clonedobj = new eVariable(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
+    clonedobj = new eVariable(parent, id == EOID_CHILD ? oid() : id, flags());
   
     /** Copy variable value. 
      */
@@ -190,7 +190,7 @@ void eVariable::setupproperties(
 
   The eVariable::nextv() function returns pointer to the next child object of this object.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to count a child objects,
 		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
            child objects, regardless wether these are attachment or not. Other values
 		   specify object identifier, only children with that specified object identifier 
@@ -201,16 +201,16 @@ void eVariable::setupproperties(
 ****************************************************************************************************
 */
 eVariable *eVariable::nextv(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->next(oid);
+    eHandle *h = mm_handle->next(id);
     while (h)
     {
         if (h->object()->classid() == ECLASSID_VARIABLE) 
             return eVariable::cast(h->object());
 
-        h = h->next(oid);
+        h = h->next(id);
     }
     return OS_NULL;
 }

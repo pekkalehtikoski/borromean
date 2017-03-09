@@ -32,9 +32,9 @@
 */
 eName::eName(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-	: eVariable(parent, oid, flags)
+    : eVariable(parent, id, flags)
 {
     /* Clear member variables to initial state.
      */
@@ -44,7 +44,7 @@ eName::eName(
 
 	/* If this is name space.
 	 */
-	if (oid == EOID_NAME)
+    if (id == EOID_NAME)
 	{
 		/* Flag this as attachment.
 		 */
@@ -129,7 +129,7 @@ void eName::clear_members()
 
   The eVariable::nextn() function returns pointer to the next child name of this object.
 
-  @param   oid Object idenfifier. Default value EOID_CHILD specifies to count a child objects, 
+  @param   id Object idenfifier. Default value EOID_CHILD specifies to count a child objects,
 		   which are not flagged as an attachment. Value EOID_ALL specifies to get count all 
            child objects, regardless wether these are attachment or not. Other values
 		   specify object identifier, only children with that specified object identifier 
@@ -140,16 +140,16 @@ void eName::clear_members()
 ****************************************************************************************************
 */
 eName *eName::nextn(
-	e_oid oid)
+    e_oid id)
 {
 	if (mm_handle == OS_NULL) return OS_NULL;
-	eHandle *h = mm_handle->next(oid);
+    eHandle *h = mm_handle->next(id);
     while (h)
     {
         if (h->object()->classid() == ECLASSID_NAME) 
             return eName::cast(h->object());
 
-        h = h->next(oid);
+        h = h->next(id);
     }
     return OS_NULL;
 }
@@ -160,7 +160,7 @@ eName *eName::nextn(
 
   @brief Write name to stream.
 
-  The eName::writer() function serialized name to stream. This writes only content, 
+  The eName::writer() function serializes eName to stream. This writes only content,
   use eObject::write() to save also class information, attachements, etc.
   
   @param  stream The stream to write to.

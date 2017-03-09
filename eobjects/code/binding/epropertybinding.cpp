@@ -30,9 +30,9 @@
 */
 ePropertyBinding::ePropertyBinding(
 	eObject *parent,
-	e_oid oid,
+    e_oid id,
 	os_int flags)
-    : eBinding(parent, oid, flags)
+    : eBinding(parent, id, flags)
 {
     /* Clear member variables.
      */
@@ -66,7 +66,7 @@ ePropertyBinding::~ePropertyBinding()
   Names will be left detached in clone.
 
   @param  parent Parent for the clone.
-  @param  oid Object identifier for the clone.
+  @param  id Object identifier for the clone.
   @param  aflags 0 for default operation. EOBJ_NO_MAP not to map names.
   @return Pointer to the clone.
 
@@ -74,14 +74,14 @@ ePropertyBinding::~ePropertyBinding()
 */
 eObject *ePropertyBinding::clone(
     eObject *parent, 
-    e_oid oid,
+    e_oid id,
     os_int aflags)
 {
     eObject
         *clonedobj,
         *child;
 
-    clonedobj = new ePropertyBinding(parent, oid == EOID_CHILD ? parent->oid() : oid, flags());
+    clonedobj = new ePropertyBinding(parent, id == EOID_CHILD ? oid() : id, flags());
 
     for (child = first(EOID_ALL); child; child = child->next(EOID_ALL))
     {

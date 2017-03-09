@@ -46,7 +46,7 @@ public:
 	 */
 	eProcess(
 		eObject *parent = OS_NULL,
-		e_oid oid = EOID_RITEM,
+        e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
