@@ -166,9 +166,12 @@ void eclasslist_initialize()
     ePropertyBinding::setupclass();
     eTimer::setupclass(); 
     eQueue::setupclass(); 
-    eConnection::setupclass(); 
+    eBuffer::setupclass();
+    eTable::setupclass();
+    eMatrix::setupclass();
+    eConnection::setupclass();
     eEndPoint::setupclass(); 
-    eThread::setupclass(); 
+    eThread::setupclass();
 }
 
 
