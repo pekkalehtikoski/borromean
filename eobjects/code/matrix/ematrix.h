@@ -302,7 +302,8 @@ protected:
         os_int row,
         os_int column,
         os_char **typeptr,
-        os_boolean isset);
+        os_boolean isset,
+        eBuffer **pbuffer = OS_NULL);
 
     /* Get or allocate eBuffer by buffer number (oid).
      */
@@ -323,12 +324,6 @@ protected:
      */
     os_short typesz(
         osalTypeId datatype);
-
-
-
-
-//        return os_memsz osal_typeid_size(
-  //      osalTypeId type_id)
 
 
     /** Matrix data type.

@@ -54,7 +54,7 @@ os_long osal_string_get_item_int(
 /* Convert string to integer.
  */
 os_long osal_string_to_int(
-    os_char *str,
+    const os_char *str,
 	os_memsz *count);
 
 /*@}*/

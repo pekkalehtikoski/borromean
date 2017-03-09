@@ -370,6 +370,238 @@ void eMatrix::setd(
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Store string value into matrix.
+
+  The eMatrix::sets stores string value to matrix. Row and column specify
+  position in matrix. The first row is 0 and first columns is 0. The matrix is expanded if
+  row/column specify position outside current matrix size.
+
+  @param  row Row number, 0...
+  @param  column Column number, 0...
+  @param  x Value to store.
+  @return None.
+
+****************************************************************************************************
+*/
+void eMatrix::sets(
+    os_int row,
+    os_int column,
+    const os_char *x)
+{
+    os_char *dataptr, *typeptr, *p;
+    os_long l;
+    os_memsz sz;
+
+    if (x == 0) x = "";
+    if (*x == '\0')
+    {
+        clear(row, column);
+        return;
+    }
+
+    /* Make sure that row and column are not negative.
+     */
+    if (checknegative(row, column)) return;
+
+    /* Get pointer to data and if matrix data type is OS_OBJECT, also to
+       data type of item.
+     */
+    dataptr = getptrs(row, column, &typeptr, OS_TRUE);
+    if (dataptr == OS_NULL) return;
+
+    switch (m_datatype)
+    {
+        case OS_OBJECT:
+            sz = os_strlen(x);
+            p = os_malloc(sz, OS_NULL);
+            os_memcpy(p, x, sz);
+            ((eMatrixObj*)dataptr)->s = p;
+            *typeptr = OS_DOUBLE;
+            break;
+
+        case OS_CHAR:
+        case OS_SHORT:
+        case OS_INT:
+        case OS_LONG:
+            /* Convert string to integer.
+             */
+            l = osal_string_to_int(x, OS_NULL);
+            setl(row, column, l);
+            break;
+
+        case OS_FLOAT:
+        case OS_DOUBLE:
+            /* Convert string to float. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX MISSING CONV.
+             */
+            l = osal_string_to_int(x, OS_NULL);
+            setl(row, column, l);
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Store object into matrix.
+
+  The eMatrix::seto stores object to matrix. Row and column specify position in matrix.
+  The first row is 0 and first columns is 0. The matrix is expanded if row/column specify
+  position outside current matrix size.
+
+  @param  row Row number, 0...
+  @param  column Column number, 0...
+  @param  x Value to store.
+  @param  mflags Reserved for future, set 0 for now.
+  @return None.
+
+****************************************************************************************************
+*/
+void eMatrix::seto(
+    os_int row,
+    os_int column,
+    eObject *x,
+    os_int mflags)
+{
+    os_char *dataptr, *typeptr;
+    eBuffer *buffer;
+    eObject *o;
+
+    /* Make sure that row and column are not negative.
+     */
+    if (checknegative(row, column)) return;
+
+    /* Objects can be stored only if matrix data type is OS_OBJECT.
+     */
+    if (m_datatype != OS_OBJECT)
+    {
+        osal_debug_error("ematrix.cpp: cannot store object to matrix with fixed type.");
+        return;
+    }
+
+    dataptr = getptrs(row, column, &typeptr, OS_TRUE, &buffer);
+    if (dataptr == OS_NULL) return;
+
+    o = x->clone(buffer, EOID_INTERNAL);
+    o->setflags(EOBJ_IS_ATTACHMENT|EOBJ_NOT_CLONABLE|EOBJ_NOT_SERIALIZABLE);
+    ((eMatrixObj*)dataptr)->o = o;
+    *typeptr = OS_OBJECT;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Get integer value from matrix.
+
+  The eMatrix::getl retrieves on integer value frp, matrix. Row and column specify position in
+  matrix. The first row is 0 and first columns is 0. If row/column specify position outside
+  current matrix size, hasvalue is set to OS_FALSE and function returns zero.
+
+  @param  row Row number, 0...
+  @param  column Column number, 0...
+  @param  hasvalue Set to OS_TRUE if matrix element has value, ot to oe_FALSE if element is empty.
+  @return Value.
+
+****************************************************************************************************
+*/
+os_long eMatrix::getl(
+    os_int row,
+    os_int column,
+    os_boolean *hasvalue)
+{
+    os_char *dataptr, *typeptr;
+    eMatrixObj *mo;
+    os_long l;
+    os_double d;
+    os_float f;
+
+    if (hasvalue) *hasvalue = OS_FALSE;
+
+    /* Make sure that row and column are not negative.
+     */
+    if (checknegative(row, column)) return 0;
+
+    /* Get pointer to data and if matrix data type is OS_OBJECT, also to
+       data type of item.
+     */
+    dataptr = getptrs(row, column, &typeptr, OS_FALSE);
+    if (dataptr == OS_NULL) return 0;
+
+    switch (m_datatype)
+    {
+        case OS_OBJECT:
+            mo = (eMatrixObj*)dataptr;
+            switch (*typeptr)
+            {
+                case OS_LONG:
+                    l = mo->l;
+                    break;
+
+                case OS_DOUBLE:
+                    l = eround_double_to_long(mo->d);
+                    break;
+
+                case OS_STRING:
+                    l = osal_string_to_int(mo->s, OS_NULL);
+                break;
+
+                default:
+                    goto return_empty;
+            }
+            break;
+
+        case OS_CHAR:
+            l = *((os_char*)dataptr);
+            if (l == OS_CHAR_MAX) goto return_empty;
+            break;
+
+        case OS_SHORT:
+            l = *((os_short*)dataptr);
+            if (l == OS_SHORT_MAX) goto return_empty;
+            break;
+
+        case OS_INT:
+            l = *((os_int*)dataptr);
+            if (l == OS_INT_MAX) goto return_empty;
+            break;
+
+        case OS_LONG:
+            l = *((os_long*)dataptr);
+            if (l == OS_INT_MAX) goto return_empty;
+            break;
+
+        case OS_FLOAT:
+            f = *((os_float*)dataptr);
+            if (f == OS_FLOAT_MAX) goto return_empty;
+            l = eround_float_to_long(f);
+            break;
+
+        case OS_DOUBLE:
+            d = *((os_double*)dataptr);
+            if (d == OS_DOUBLE_MAX) goto return_empty;
+            l = eround_double_to_long(d);
+            break;
+
+        default:
+            goto return_empty;
+    }
+
+    if (hasvalue) *hasvalue = OS_TRUE;
+    return l;
+
+return_empty:
+    return 0;
+}
+
+
+
 /* Resize the matrix.
  */
 void eMatrix::resize(
@@ -457,7 +689,8 @@ os_char *eMatrix::getptrs(
     os_int row,
     os_int column,
     os_char **typeptr,
-    os_boolean isset)
+    os_boolean isset,
+    eBuffer **pbuffer)
 {
     eBuffer *buffer;
     os_char *dataptr;
@@ -504,6 +737,7 @@ os_char *eMatrix::getptrs(
     {
         emptyobject(dataptr, *typeptr);
     }
+    if (pbuffer) *pbuffer = buffer;
     return dataptr;
 }
 

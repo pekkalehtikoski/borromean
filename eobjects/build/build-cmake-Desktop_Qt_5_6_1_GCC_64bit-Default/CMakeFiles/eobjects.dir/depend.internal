@@ -10,6 +10,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/ebinding.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -81,6 +82,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/binding/epropertybindin
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -152,6 +154,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/econnection.
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -223,6 +226,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/connection/eendpoint.cp
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -294,6 +298,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/container/econtainer.cp
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -364,6 +369,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/envelope/eenvelope.cpp.
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.cpp
@@ -435,6 +441,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/eobjects.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -506,6 +513,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eglobal.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -577,6 +585,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/global/eprocess.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -648,6 +657,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/matrix/ematrix.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -719,6 +729,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/ename.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -790,6 +801,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/name/enamespace.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -861,6 +873,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eclasslist.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -932,6 +945,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandle.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1003,6 +1017,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandleroot.cpp.
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1074,6 +1089,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ehandletable.cpp
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1145,6 +1161,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/ejsonserializati
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1216,6 +1233,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/object/eobject.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1287,6 +1305,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/pointer/epointer.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1358,6 +1377,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/root/eroot.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1429,6 +1449,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/set/eset.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1500,6 +1521,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/ebuffer.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1571,6 +1593,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/econsole.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1642,6 +1665,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/equeue.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1713,6 +1737,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/stream/estream.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1784,6 +1809,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/table/etable.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1855,6 +1881,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethread.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1926,6 +1953,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/thread/ethreadhandle.cp
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -1997,6 +2025,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/timer/etimer.cpp.o
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -2068,6 +2097,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/code/variable/evariable.cpp.
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h
@@ -2139,6 +2169,7 @@ CMakeFiles/eobjects.dir/coderoot/borromean/eobjects/extensions/socket/esocket.cp
  /coderoot/borromean/eobjects/code/container/econtainer.h
  /coderoot/borromean/eobjects/code/defs/eclassid.h
  /coderoot/borromean/eobjects/code/defs/edefs.h
+ /coderoot/borromean/eobjects/code/defs/emacros.h
  /coderoot/borromean/eobjects/code/defs/eoid.h
  /coderoot/borromean/eobjects/code/defs/estatus.h
  /coderoot/borromean/eobjects/code/envelope/eenvelope.h

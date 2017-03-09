@@ -40,6 +40,8 @@ eobjects/eobjects.h
 
 /coderoot/borromean/eobjects/code/defs/edefs.h
 
+/coderoot/borromean/eobjects/code/defs/emacros.h
+
 /coderoot/borromean/eobjects/code/defs/eoid.h
 
 /coderoot/borromean/eobjects/code/defs/estatus.h
@@ -203,6 +205,8 @@ eobjects/code/defs/eoid.h
 /coderoot/borromean/eobjects/eobjects/code/defs/eoid.h
 eobjects/code/defs/eclassid.h
 /coderoot/borromean/eobjects/eobjects/code/defs/eclassid.h
+eobjects/code/defs/emacros.h
+/coderoot/borromean/eobjects/eobjects/code/defs/emacros.h
 eobjects/code/object/ehandle.h
 /coderoot/borromean/eobjects/eobjects/code/object/ehandle.h
 eobjects/code/object/eobject.h

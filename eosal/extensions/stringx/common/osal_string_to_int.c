@@ -34,14 +34,15 @@
 ****************************************************************************************************
 */
 os_long osal_string_to_int(
-    os_char *str,
+    const os_char *str,
 	os_memsz *count)
 {
-    os_char c, *p;
+    os_char c;
+    const os_char *p;
     os_long x;
     os_boolean negative;
 
-	/* Check that str is not NULL pointer.
+    /* Check that str is not NULL pointer.
 	 */
 	if (str == OS_NULL) goto getout;
 
