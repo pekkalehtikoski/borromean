@@ -44,3 +44,4 @@ bin/mint18/*
 *.cbp
 
 build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default
+/eobjects/build/build-cmake-Desktop_Qt_5_6_1_GCC_64bit-Default
