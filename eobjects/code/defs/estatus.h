@@ -39,6 +39,10 @@ typedef enum
 	 */
 	ESTATUS_FAILED = 1,
 
+    /** General purpose FALSE.
+     */
+    ESTATUS_FALSE = 2,
+
 	/** Object properties, properties not supported for the class.
 	 */
     ESTATUS_NO_CLASS_PROPERTY_SUPPORT = 90,

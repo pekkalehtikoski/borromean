@@ -95,29 +95,6 @@ eWhereOp;
 #define EOP_VARIABLE_BASE 10000
 #define EOP_CONSTANT_BASE 20000
 
-/** Execution stack item
- */
-typedef struct eStackItem
-{
-    /** Value in stack.
-     */
-    union
-    {
-        os_double d;
-        os_long l;
-        os_char *s;
-    }
-    value;
-
-    /** Data type for value, one of: OS_LONG, OS_DOUBLE or OS_STRING.
-     */
-    osalTypeId datatype;
-
-    /** OS_FALSE if value is from constant, OS_TRUE if from variable.
-     */
-    os_boolean is_variable;
-}
-eStackItem;
 
 
 /**
@@ -211,6 +188,7 @@ eStatus eWhere::compile(
 */
 eStatus eWhere::evaluate()
 {
+    eStackItem *stackitem;
     os_short *code, op;
     os_int count;
 
@@ -246,11 +224,11 @@ eStatus eWhere::evaluate()
         {
             case EOP_IS_NULL:
             case EOP_IS_NOTNULL:
-                if (unaryop(op)) return ESTATUS_FAILED;
+                if (evalunaryop(op)) return ESTATUS_FAILED;
                 break;
 
             default:
-                if (binaryop(op)) return ESTATUS_FAILED;
+                if (evalbinaryop(op)) return ESTATUS_FAILED;
                 break;
         }
     }
@@ -263,7 +241,14 @@ eStatus eWhere::evaluate()
         return ESTATUS_FAILED;
     }
 
-    return ESTATUS_SUCCESS;
+    /* Get the final result from stack.
+     */
+    stackitem = (eStackItem*)m_stack->ptr();
+    if (stackitem->datatype != OS_LONG)
+    {
+        changedatatype(stackitem, OS_LONG);
+    }
+    return stackitem->value.l ? ESTATUS_SUCCESS : ESTATUS_FALSE;
 }
 
 
@@ -594,6 +579,13 @@ os_short eWhere::addstring(
     v = new eVariable(m_constants, ++m_nconstants);
     v->sets(str, len);
 
+    /* TEST Convert to long or double, if string can
+     * be converted. Here we prettu much ignore
+     * type set by quotes.
+     *
+    v->autotype(OS_TRUE);
+    */
+
     /* Return object index for constant.
      */
     return m_nconstants + EOP_CONSTANT_BASE;
@@ -678,22 +670,27 @@ void eWhere::pushconstant(
         case OS_LONG:
             stackitem->value.l = v->getl();
             stackitem->datatype = OS_LONG;
+            stackitem->is_empty = OS_FALSE;
             break;
 
         case OS_DOUBLE:
             stackitem->value.d = v->getd();
             stackitem->datatype = OS_DOUBLE;
+            stackitem->is_empty = OS_FALSE;
             break;
 
         case OS_STRING:
             stackitem->value.s = v->gets();
             stackitem->datatype = OS_STRING;
+            stackitem->is_empty = (os_boolean)(stackitem->value.s == '\0');
             break;
 
         default:
             osal_debug_error("ewhere.cpp: pushconstant error 2");
             stackitem->value.l = 0;
             stackitem->datatype = OS_LONG;
+            stackitem->is_empty = OS_TRUE;
+            break;
     }
 
     stackitem->is_variable = OS_FALSE;
@@ -710,7 +707,7 @@ void eWhere::pushvariable(
     v = m_vars->firstv(id);
     if (v == OS_NULL)
     {
-        osal_debug_error("ewhere.cpp: pushvariable error 1");
+        osal_debug_error("ewhere.cpp: pushvariable error");
         return;
     }
 
@@ -720,39 +717,311 @@ void eWhere::pushvariable(
         case OS_LONG:
             stackitem->value.l = v->getl();
             stackitem->datatype = OS_LONG;
+            stackitem->is_empty = OS_FALSE;
             break;
 
         case OS_DOUBLE:
             stackitem->value.d = v->getd();
             stackitem->datatype = OS_DOUBLE;
+            stackitem->is_empty = OS_FALSE;
             break;
 
         case OS_STRING:
             stackitem->value.s = v->gets();
             stackitem->datatype = OS_STRING;
+            stackitem->is_empty = (os_boolean)(stackitem->value.s == '\0');
             break;
 
         default:
-            osal_debug_error("ewhere.cpp: pushvariable error 2");
             stackitem->value.l = 0;
             stackitem->datatype = OS_LONG;
+            stackitem->is_empty = OS_TRUE;
+            break;
     }
 
     stackitem->is_variable = OS_TRUE;
 }
 
-eStatus eWhere::unaryop(
+/*     EOP_IS_NULL,
+    EOP_IS_NOTNULL
+*/
+eStatus eWhere::evalunaryop(
     os_short op)
 {
+    eStackItem *stackitem;
 
+    if (m_stack_ptr < 1)
+    {
+        m_error->sets("no data for unary OP");
+        return ESTATUS_FAILED;
+    }
+
+    stackitem = (eStackItem*)m_stack->ptr() + m_stack_ptr - 1;
+
+    if (stackitem->is_empty)
+    {
+        stackitem->value.l = (os_boolean)(op == EOP_IS_NULL);
+        stackitem->datatype = OS_LONG;
+        stackitem->is_empty = OS_FALSE;
+    }
+    else
+    {
+        stackitem->value.l = (os_boolean)(op == EOP_IS_NOTNULL);
+        stackitem->datatype = OS_LONG;
+    }
 
     return ESTATUS_SUCCESS;
 }
 
-eStatus eWhere::binaryop(
+eStatus eWhere::evalbinaryop(
     os_short op)
 {
+    eStackItem *item1, *item2, *tmp;
+    osalTypeId datatype;
+    os_int sign;
+    os_boolean swapped;
 
+    if (m_stack_ptr < 2)
+    {
+        m_error->sets("no data for binary OP");
+        return ESTATUS_FAILED;
+    }
+
+    item2 = (eStackItem*)m_stack->ptr() + --m_stack_ptr;
+    item1 = item2 - 1;
+
+    if (op == EOP_AND || op == EOP_OR)
+    {
+        if (item1->datatype != OS_LONG)
+        {
+            changedatatype(item1, OS_LONG);
+        }
+        if (item2->datatype != OS_LONG)
+        {
+            changedatatype(item2, OS_LONG);
+        }
+
+        if (op == EOP_AND)
+        {
+            item1->value.l = (item1->value.l != 0 && item2->value.l != 0);
+        }
+        else
+        {
+            item1->value.l = (item1->value.l != 0 || item2->value.l != 0);
+        }
+
+        return ESTATUS_SUCCESS;
+    }
+
+    /* If types are same, no need to do ponder about conversions.
+     */
+    if (item1->datatype == item2->datatype)
+    {
+        datatype = item1->datatype;
+        goto skipconv;
+    }
+
+    /* Start sorting so that stackitem1 holds desired result
+     * type. If second one is string and first one is not, swap
+     */
+    swapped = OS_FALSE;
+    if (item2->datatype == OS_STRING && item1->datatype != OS_STRING)
+    {
+        tmp = item2;
+        item2 = item1;
+        item1 = tmp;
+        swapped = !swapped;
+    }
+
+    /* If second one is variable and first one is not, swap
+     */
+    if (item2->is_variable && !item1->is_variable)
+    {
+        tmp = item2;
+        item2 = item1;
+        item1 = tmp;
+        swapped = !swapped;
+    }
+
+    /* If second one is double and first one is long, swap
+     */
+    if (item2->datatype == OS_DOUBLE && item1->datatype != OS_LONG)
+    {
+        tmp = item2;
+        item2 = item1;
+        item1 = tmp;
+        swapped = !swapped;
+    }
+
+    /* If first one is empty and second one is not, swap
+     */
+    if (item1->is_empty && !item2->is_empty)
+    {
+        tmp = item2;
+        item2 = item1;
+        item1 = tmp;
+        swapped = !swapped;
+    }
+
+    /* Convert item 2 to same type. datatype is type used.
+     */
+    datatype = item1->datatype;
+    if (datatype != item2->datatype)
+    {
+        changedatatype(item2, datatype);
+    }
+
+    /* Swap order back
+     */
+    if (swapped)
+    {
+        tmp = item2;
+        item2 = item1;
+        item1 = tmp;
+    }
+
+skipconv:
+    switch (datatype)
+    {
+        case OS_LONG:
+            switch (op)
+            {
+                case EOP_LE:
+                    item1->value.l = (item1->value.l <= item2->value.l);
+                    break;
+
+                case EOP_NE:
+                    item1->value.l = (item1->value.l != item2->value.l);
+                    break;
+
+                case EOP_LT:
+                    item1->value.l = (item1->value.l < item2->value.l);
+                    break;
+
+                case EOP_GE:
+                    item1->value.l = (item1->value.l >= item2->value.l);
+                    break;
+
+                case EOP_GT:
+                    item1->value.l = (item1->value.l > item2->value.l);
+                    break;
+
+                case EOP_EQ:
+                    item1->value.l = (item1->value.l == item2->value.l);
+                    break;
+            }
+            break;
+
+        case OS_DOUBLE:
+            switch (op)
+            {
+                case EOP_LE:
+                    item1->value.d = (item1->value.d <= item2->value.d);
+                    break;
+
+                case EOP_NE:
+                    item1->value.d = (item1->value.d != item2->value.d);
+                    break;
+
+                case EOP_LT:
+                    item1->value.d = (item1->value.d < item2->value.d);
+                    break;
+
+                case EOP_GE:
+                    item1->value.d = (item1->value.d >= item2->value.d);
+                    break;
+
+                case EOP_GT:
+                    item1->value.d = (item1->value.d > item2->value.d);
+                    break;
+
+                case EOP_EQ:
+                    item1->value.d = (item1->value.d == item2->value.d);
+                    break;
+            }
+            break;
+
+        case OS_STRING:
+            sign = os_strcmp(item1->value.s, item2->value.s);
+            switch (op)
+            {
+                case EOP_LE:
+                    item1->value.l = (sign <= 0);
+                    break;
+
+                case EOP_NE:
+                    item1->value.l = (sign != 0);
+                    break;
+
+                case EOP_LT:
+                    item1->value.l = (sign < 0);
+                    break;
+
+                case EOP_GE:
+                    item1->value.l = (sign >= 0);
+                    break;
+
+                case EOP_GT:
+                    item1->value.l = (sign > 0);
+                    break;
+
+                case EOP_EQ:
+                    item1->value.l = (sign == 0);
+                    break;
+            }
+            break;
+
+    }
 
     return ESTATUS_SUCCESS;
+}
+
+void eWhere::changedatatype(
+    eStackItem *item,
+    osalTypeId datatype)
+{
+    switch (datatype)
+    {
+        case OS_LONG:
+            switch (item->datatype)
+            {
+                case OS_STRING:
+                    item->value.l = osal_string_to_int(item->value.s, OS_NULL);
+                    break;
+
+                case OS_DOUBLE:
+                    item->value.l = eround_double_to_long(item->value.d);
+                    break;
+            }
+            break;
+
+        case OS_DOUBLE:
+            switch (item->datatype)
+            {
+                case OS_STRING:
+                    item->value.d = osal_string_to_double(item->value.s, OS_NULL);
+                    break;
+
+                case OS_LONG:
+                    item->value.d = (os_double)item->value.l;
+                    break;
+            }
+            break;
+
+        case OS_STRING:
+            switch (item->datatype)
+            {
+                case OS_DOUBLE:
+                    m_tmp->setd(item->value.d);
+                    item->value.s = m_tmp->gets();
+                    break;
+
+                case OS_LONG:
+                    m_tmp->setl(item->value.l);
+                    item->value.s = m_tmp->gets();
+                    break;
+            }
+            break;
+    }
+    item->datatype = datatype;
 }

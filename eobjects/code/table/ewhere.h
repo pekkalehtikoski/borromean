@@ -20,6 +20,35 @@
 
 class eBuffer;
 
+/** Execution stack item
+ */
+typedef struct eStackItem
+{
+    /** Value in stack.
+     */
+    union
+    {
+        os_double d;
+        os_long l;
+        os_char *s;
+    }
+    value;
+
+    /** Data type for value, one of: OS_LONG, OS_DOUBLE or OS_STRING.
+     */
+    osalTypeId datatype;
+
+    /** OS_FALSE if value is from constant, OS_TRUE if from variable.
+     */
+    os_boolean is_variable;
+
+    /** OS_TRUE if variable is empty.
+     */
+    os_boolean is_empty;
+}
+eStackItem;
+
+
 /**
 ****************************************************************************************************
 
@@ -131,8 +160,10 @@ protected:
     void pushconstant(os_short id);
     void pushvariable(os_short id);
 
-    eStatus unaryop(os_short op);
-    eStatus binaryop(os_short op);
+    eStatus evalunaryop(os_short op);
+    eStatus evalbinaryop(os_short op);
+    void changedatatype(eStackItem *item, osalTypeId datatype);
+
 
     /** Container for variables, exists always, has name space.
      */
@@ -162,7 +193,7 @@ protected:
      */
     eBuffer *m_stack;
 
-    /* Stack pointer, index where to push next.
+    /** Stack pointer, index where to push next.
      */
     os_int m_stack_ptr;
 
