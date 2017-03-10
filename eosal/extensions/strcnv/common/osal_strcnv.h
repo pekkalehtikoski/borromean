@@ -24,14 +24,14 @@
  */
 OSAL_C_HEADER_BEGINS
 
-/** Flags for osal_strcnv_float_to_string() function.
+/** Flags for osal_double_to_string() function.
  */
 #define OSAL_FLOAT_DEFAULT 0
 #define OSAL_FLOAT_E_FORMAT 1
 
 /* Convert floating point number to string.
  */
-os_memsz osal_strcnv_float_to_string(
+os_memsz osal_double_to_string(
     os_char *buf, 
     os_memsz buf_sz,
     os_double x, 
@@ -40,15 +40,15 @@ os_memsz osal_strcnv_float_to_string(
 
 /* Convert string to floating point number.
  */
-os_memsz osal_strcnv_string_to_float(
-    os_double *x,
-    const os_char *str);
+os_double osal_string_to_double(
+    const os_char *str,
+    os_memsz *count);
 
-/* #define osal_strcnv_int64_to_string(b,s,x) osal_int_to_string((b),(s),*(x)) */
+/* #define osal_int64_to_string(b,s,x) osal_int_to_string((b),(s),*(x)) */
 
 /* Convert a string to 64 bit integer.
  */
-os_memsz osal_strcnv_string_to_int64(
+os_memsz osal_string_to_int64(
     os_int64 *x, 
     os_char *str);
 
@@ -57,9 +57,9 @@ os_memsz osal_strcnv_string_to_int64(
    If operating system has no 64 bit support, the function implementation is used.
  */
 #if OSAL_LONG_IS_64_BITS
-    #define osal_strcnv_int64_to_string(b,s,x) osal_int_to_string((b),(s),*(x))
+    #define osal_int64_to_string(b,s,x) osal_int_to_string((b),(s),*(x))
 #else
-	os_memsz osal_strcnv_int64_to_string(
+    os_memsz osal_int64_to_string(
 		os_char *buf, 
         os_memsz buf_sz,
         os_int64 *x);

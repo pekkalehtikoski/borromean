@@ -815,11 +815,11 @@ os_double eVariable::getd()
         case OS_STRING:
             if (m_vflags & EVAR_STRBUF_ALLOCATED)
 			{
-				osal_strcnv_string_to_float(&x, m_value.strptr.ptr);
+                x = osal_string_to_double(m_value.strptr.ptr, OS_NULL);
 			}
 			else
 			{
-				osal_strcnv_string_to_float(&x, m_value.strbuf.buf);
+                x = osal_string_to_double(m_value.strbuf.buf, OS_NULL);
 			}
             break;
 
@@ -912,7 +912,7 @@ os_char *eVariable::gets(
             break;
 
         case OS_DOUBLE:
-            vsz = osal_strcnv_float_to_string(buf, sizeof(buf), 
+            vsz = osal_double_to_string(buf, sizeof(buf), 
 				m_value.valbuf.v.d, digs(), OSAL_FLOAT_DEFAULT);
             break;
 
@@ -1361,7 +1361,8 @@ os_boolean eVariable::autotype(
 	if (!digit_found) return OS_FALSE;
 	if (dot_found) 
 	{
-		if (osal_strcnv_string_to_float(&d, q))
+        d = osal_string_to_double(q, &count);
+        if (count)
 		{
 			if (modify_value) setd(d);
 			return OS_TRUE;

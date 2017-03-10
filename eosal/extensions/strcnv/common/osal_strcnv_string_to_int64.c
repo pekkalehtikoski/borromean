@@ -1,12 +1,12 @@
 /**
 
-  @file    strcnv/common/osal_strcnv_string_to_int64.c
+  @file    strcnv/common/osal_string_to_int64.c
   @brief   Convert string to 64 bit integer.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  Function osal_strcnv_string_to_int64() to convert string to 64 bit integer.
+  Function osal_string_to_int64() to convert string to 64 bit integer.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -22,9 +22,9 @@
 ****************************************************************************************************
 
   @brief Convert a string to 64 bit integer.
-  @anchor osal_strcnv_string_to_int64
+  @anchor osal_string_to_int64
 
-  The osal_strcnv_string_to_int64() function converts a string to 64 bit integet value.
+  The osal_string_to_int64() function converts a string to 64 bit integet value.
 
   If os_long type is 64 bits, this function just calls osal_string_to_int() to do the work.
   Otherwise real implementation is needed.
@@ -36,7 +36,7 @@
 
 ****************************************************************************************************
 */
-os_memsz osal_strcnv_string_to_int64(
+os_memsz osal_string_to_int64(
     os_int64 *x, 
     os_char *str)
 {

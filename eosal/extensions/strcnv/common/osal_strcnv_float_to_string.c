@@ -1,12 +1,12 @@
 /**
 
-  @file    strcnv/common/osal_strcnv_float_to_string.c
+  @file    strcnv/common/osal_double_to_string.c
   @brief   Convert floating point number to string.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  Function osal_strcnv_float_to_string() to convert floating point number to string.
+  Function osal_double_to_string() to convert floating point number to string.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -22,9 +22,9 @@
 ****************************************************************************************************
 
   @brief Convert floating point number to string.
-  @anchor osal_strcnv_float_to_string
+  @anchor osal_double_to_string
 
-  The osal_strcnv_float_to_string() function converts a double precision floating point value 
+  The osal_double_to_string() function converts a double precision floating point value 
   to string. 
 
   @param   buf Pointer to buffer to store string into.
@@ -39,7 +39,7 @@
 
 ****************************************************************************************************
 */
-os_memsz osal_strcnv_float_to_string(
+os_memsz osal_double_to_string(
     os_char *buf, 
     os_memsz buf_sz,
     os_double x, 

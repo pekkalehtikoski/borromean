@@ -27,7 +27,8 @@
 
   @param   str Pointer to string to convert to integer. 
   @param   count Pointer to integer into which to store number of parsed characters. The parsed
-		   characters include white space and minus sign. This can be OS_NULL if not needed.
+           characters include white space and minus sign. Set to zero if function failed.
+           This can be OS_NULL if not needed.
 
   @return  Integer value parsed from the string.
 

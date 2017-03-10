@@ -1,12 +1,12 @@
 /**
 
-  @file    strcnv/common/osal_strcnv_float_to_string.c
+  @file    strcnv/common/osal_double_to_string.c
   @brief   Convert string to floating point number.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  Function osal_strcnv_string_to_float() converts string to floating point number.
+  Function osal_string_to_double() converts string to floating point number.
   This code is adopted from code written by "Michael Ringgaard". Original copyright 
   note below.
 
@@ -46,23 +46,23 @@
 ****************************************************************************************************
 
   @brief Convert string to floating point number.
-  @anchor osal_strcnv_string_to_float
+  @anchor osal_string_to_double
 
-  The osal_strcnv_string_to_float() function converts a string to double precision floating point
+  The osal_string_to_double() function converts a string to double precision floating point
   value. Preceeding white space characters are skipped. If the string doesn't contain value, 
-  the function return 0.
+  the function return 0 and count is set to 0.
 
-  @param   x Pointer to os_double into which to store the value. If string cannot be converted,
-		   the x is set to 0.0.
   @param   str Pointer to string to parse.
+  @param   count Pointer to integer where to store number of bytes parsed. Zero if the
+           function failed. Can be OS_NULL if not needed.
 
-  @return  Number of bytes parsed from string, or 0 if conversion failed.
+  @return  String as double precision floating point number.
 
 ****************************************************************************************************
 */
-os_memsz osal_strcnv_string_to_float(
-    os_double *x,
-    const os_char *str)
+os_double osal_string_to_double(
+    const os_char *str,
+    os_memsz *count)
 {
     os_double number, p10;
     os_int exponent, negative, n, num_digits, num_decimals;
@@ -191,10 +191,11 @@ os_memsz osal_strcnv_string_to_float(
 
 	/* if (number == HUGE_VAL) errno = ERANGE; */
 
-	return p - str;
+    if (count) *count = (os_memsz)(p - str);
+    return number;
 
 getout:
-	*x = 0.0;
-	return 0;
+    if (count) *count = 0;
+    return 0.0;
 }
 

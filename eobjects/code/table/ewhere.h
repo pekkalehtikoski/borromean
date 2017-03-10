@@ -107,7 +107,14 @@ protected:
     os_boolean expression();
     os_boolean simple_expression();
     os_boolean element();
+    os_boolean column_name();
     os_boolean number_or_column_name();
+    os_boolean string_constant();
+    os_short addlong(os_long l);
+    os_short adddouble(os_double d);
+    os_short addstring(os_char *str, os_memsz len);
+    os_short addcolumn(os_char *name, os_memsz len);
+
     void skipspace();
     os_char *getword();
     void code(short op);
