@@ -25,9 +25,7 @@
   @brief Where clause interpenter.
 
   The eWhere class interprents and evaluates a where clause. The where clause is simplified
-  SQL where clause, which can be converted easily to SQL where clause. It is only small subset
-  of SQL is included and all names and values are quoted, so real SQL where clauses will not
-  work without modification.
+  SQL where clause, which can be converted easily to SQL where clause.
 
 ****************************************************************************************************
 */
@@ -39,7 +37,7 @@ public:
 
       @name Generic object functionality.
 
-      These functions enable using objects of this class as generic eObjects.
+      These functions enable using this class as generic eObject.
 
     ************************************************************************************************
     */
@@ -79,8 +77,8 @@ public:
 
     /* Compile where clause. Generates byte code and variables.
      */
-    void compile(
-        os_char *where);
+    eStatus compile(
+        os_char *expression);
 
     /* Get pointer to eContainer holding variables.
      */
