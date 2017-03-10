@@ -80,10 +80,6 @@ public:
         e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
-	/* Virtual destructor.
- 	 */
-    /* virtual ~eWhere(); */
-
     /* Get class identifier.
      */
     virtual os_int classid()

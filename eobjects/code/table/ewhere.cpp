@@ -138,22 +138,6 @@ eWhere::eWhere(
 /**
 ****************************************************************************************************
 
-  @brief Virtual destructor.
-
-  Release all resources allocated.
-
-  @return  None.
-
-****************************************************************************************************
-*/
-/* eWhere::~eWhere()
-{
-} */
-
-
-/**
-****************************************************************************************************
-
   @brief Compile where clause. Generates byte code and variables.
 
   The eWhere::compile() function compiles where clause given as argument to code. It also generates
