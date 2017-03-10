@@ -78,7 +78,7 @@
 
 typedef enum eWhereOp
 {
-    EOP_AND,
+    EOP_AND = 1,
     EOP_OR,
 
     EOP_LE,
@@ -88,14 +88,36 @@ typedef enum eWhereOp
     EOP_GT,
     EOP_EQ,
     EOP_IS_NULL,
-    EOP_IS_NOTNULL,
-
-    EOP_PUSH_LONG,
-    EOP_PUSH_DOUBLE,
-    EOP_PUSH_STRING,
-    EOP_PUSH_VARIABLE
+    EOP_IS_NOTNULL
 }
 eWhereOp;
+
+#define EOP_VARIABLE_BASE 10000
+#define EOP_CONSTANT_BASE 20000
+
+/** Execution stack item
+ */
+typedef struct eStackItem
+{
+    /** Value in stack.
+     */
+    union
+    {
+        os_double d;
+        os_long l;
+        os_char *s;
+    }
+    value;
+
+    /** Data type for value, one of: OS_LONG, OS_DOUBLE or OS_STRING.
+     */
+    osalTypeId datatype;
+
+    /** OS_FALSE if value is from constant, OS_TRUE if from variable.
+     */
+    os_boolean is_variable;
+}
+eStackItem;
 
 
 /**
@@ -115,14 +137,23 @@ eWhere::eWhere(
 	os_int flags)
     : eObject(parent, id, flags)
 {
-
     /* Create container for variables and enable name space for it.
      */
     m_vars = new eContainer(this);
     m_vars->ns_create();
 
+    m_constants = new eContainer(this);
+    m_code = new eBuffer(this);
+
+    m_stack = new eBuffer(this);
+    m_stack_ptr = 0;
+
     m_error = new eVariable(this);
     m_word = new eVariable(this);
+    m_tmp = new eVariable(this);
+
+    m_nvars = 0;
+    m_nconstants = 0;
 }
 
 
@@ -157,6 +188,10 @@ eStatus eWhere::compile(
     os_char *whereclause)
 {
     m_vars->clear();
+    m_nvars = 0;
+    m_constants->clear();
+    m_nconstants = 0;
+    m_code->clear();
     m_pos = whereclause;
     return expression() ? ESTATUS_SUCCESS : ESTATUS_FAILED;
 }
@@ -169,13 +204,66 @@ eStatus eWhere::compile(
 
   X...
 
-  @return  None.
+  @return  ESTATUS_SUCCESS if condition is true, ESTATUS_FALSE if no match or ESTATUS_FAILED
+           if something went wrong.
 
 ****************************************************************************************************
 */
-os_boolean eWhere::evaluate()
+eStatus eWhere::evaluate()
 {
-    return OS_FALSE;
+    os_short *code, op;
+    os_int count;
+
+    m_stack_ptr = 0;
+
+    /* Get code pointer.
+     */
+    code = (os_short*)m_code->ptr();
+    if (code == OS_NULL)
+    {
+        m_error->sets("ewhere.cpp: no code to execute");
+        return ESTATUS_FAILED;
+    }
+
+    /* Get number of instructions
+     */
+    count = (os_int)(m_code->used() / sizeof(os_short));
+
+    /* Execute it
+     */
+    while (count--)
+    {
+        op = *(code++);
+        if (op >= EOP_CONSTANT_BASE)
+        {
+            pushconstant(op - EOP_CONSTANT_BASE);
+        }
+        else if (op >= EOP_VARIABLE_BASE)
+        {
+            pushvariable(op - EOP_VARIABLE_BASE);
+        }
+        else switch (op)
+        {
+            case EOP_IS_NULL:
+            case EOP_IS_NOTNULL:
+                if (unaryop(op)) return ESTATUS_FAILED;
+                break;
+
+            default:
+                if (binaryop(op)) return ESTATUS_FAILED;
+                break;
+        }
+    }
+
+    /* If we do not have exactly one item in stack?
+     */
+    if (m_stack_ptr != 1)
+    {
+        m_error->sets("where clause evaluation failed");
+        return ESTATUS_FAILED;
+    }
+
+    return ESTATUS_SUCCESS;
 }
 
 
@@ -363,8 +451,7 @@ os_boolean eWhere::column_name()
         }
     }
 
-    code(EOP_PUSH_VARIABLE);
-    code(addcolumn(m_pos + 1, (os_memsz)(end - m_pos - 1)));
+    code(addvariable(m_pos + 1, (os_memsz)(end - m_pos - 1)));
     m_pos = end+1;
 }
 
@@ -389,8 +476,7 @@ os_boolean eWhere::number_or_column_name()
                osal_char_isdigit(c) ||
                c == '_');
 
-        code(EOP_PUSH_VARIABLE);
-        code(addcolumn(m_pos, (os_memsz)(end - m_pos)));
+        code(addvariable(m_pos, (os_memsz)(end - m_pos)));
         m_pos = end;
     }
 
@@ -434,12 +520,10 @@ os_boolean eWhere::number_or_column_name()
 
         if (isint)
         {
-            code(EOP_PUSH_LONG);
             code(addlong(l));
         }
         else
         {
-            code(EOP_PUSH_DOUBLE);
             code(adddouble(d));
         }
     }
@@ -464,7 +548,6 @@ os_boolean eWhere::string_constant()
         }
     }
 
-    code(EOP_PUSH_STRING);
     code(addstring(m_pos + 1, (os_memsz)(end - m_pos) - 1));
     m_pos = end+1;
     return OS_TRUE;
@@ -473,12 +556,203 @@ os_boolean eWhere::string_constant()
 os_short eWhere::addlong(
     os_long l)
 {
-    return 0;
+    eVariable *v;
+
+    /* Add long to constants.
+     */
+    v = new eVariable(m_constants, ++m_nconstants);
+    v->setl(l);
+
+    /* Return object index for constant.
+     */
+    return m_nconstants + EOP_CONSTANT_BASE;
 }
 
 os_short eWhere::adddouble(
     os_double d)
 {
-    return 0;
+    eVariable *v;
+
+    /* Add double to constants.
+     */
+    v = new eVariable(m_constants, ++m_nconstants);
+    v->setd(d);
+
+    /* Return object index for constant.
+     */
+    return m_nconstants + EOP_CONSTANT_BASE;
 }
 
+os_short eWhere::addstring(
+    os_char *str,
+    os_memsz len)
+{
+    eVariable *v;
+
+    /* Add string to constants.
+     */
+    v = new eVariable(m_constants, ++m_nconstants);
+    v->sets(str, len);
+
+    /* Return object index for constant.
+     */
+    return m_nconstants + EOP_CONSTANT_BASE;
+}
+
+os_short eWhere::addvariable(
+    os_char *name,
+    os_memsz len)
+{
+    eVariable *v;
+
+    m_tmp->sets(name, len);
+    name = m_tmp->gets();
+
+    /* Find variable, if we got it already.
+     * otherwise create new one.
+     */
+    v = eVariable::cast(m_vars->byname(name));
+    if (v == OS_NULL)
+    {
+        v = new eVariable(m_vars, ++m_nvars);
+        v->addname(name);
+    }
+
+    /* Return object index for variable.
+     */
+    return v->oid() + EOP_VARIABLE_BASE;
+}
+
+void eWhere::skipspace()
+{
+    while (*m_pos != '\0' && osal_char_isspace(*m_pos)) m_pos++;
+}
+
+os_char *eWhere::getword()
+{
+    os_char *p;
+
+    p = m_pos;
+    while (osal_char_isaplha(*p) && *p != '\n') p++;
+
+    m_word->sets(m_pos, p - m_pos);
+    m_pos = p;
+    return m_word->gets();
+}
+
+void eWhere::code(os_short op)
+{
+    m_code->write((os_char*)&op, sizeof(os_short));
+}
+
+
+void eWhere::checkstacksize()
+{
+    os_memsz stack_sz;
+
+    stack_sz = m_stack->allocated()/sizeof(eStackItem);
+    if (m_stack_ptr >= stack_sz)
+    {
+        m_stack->allocate((stack_sz+6) * sizeof(eStackItem));
+    }
+}
+
+void eWhere::pushconstant(
+    os_short id)
+{
+    eVariable *v;
+    eStackItem *stackitem;
+
+    checkstacksize();
+
+    v = m_constants->firstv(id);
+    if (v == OS_NULL)
+    {
+        osal_debug_error("ewhere.cpp: pushconstant error 1");
+        return;
+    }
+
+    stackitem = (eStackItem*)m_stack->ptr() + m_stack_ptr++;
+    switch (v->type())
+    {
+        case OS_LONG:
+            stackitem->value.l = v->getl();
+            stackitem->datatype = OS_LONG;
+            break;
+
+        case OS_DOUBLE:
+            stackitem->value.d = v->getd();
+            stackitem->datatype = OS_DOUBLE;
+            break;
+
+        case OS_STRING:
+            stackitem->value.s = v->gets();
+            stackitem->datatype = OS_STRING;
+            break;
+
+        default:
+            osal_debug_error("ewhere.cpp: pushconstant error 2");
+            stackitem->value.l = 0;
+            stackitem->datatype = OS_LONG;
+    }
+
+    stackitem->is_variable = OS_FALSE;
+}
+
+void eWhere::pushvariable(
+    os_short id)
+{
+    eVariable *v;
+    eStackItem *stackitem;
+
+    checkstacksize();
+
+    v = m_vars->firstv(id);
+    if (v == OS_NULL)
+    {
+        osal_debug_error("ewhere.cpp: pushvariable error 1");
+        return;
+    }
+
+    stackitem = (eStackItem*)m_stack->ptr() + m_stack_ptr++;
+    switch (v->type())
+    {
+        case OS_LONG:
+            stackitem->value.l = v->getl();
+            stackitem->datatype = OS_LONG;
+            break;
+
+        case OS_DOUBLE:
+            stackitem->value.d = v->getd();
+            stackitem->datatype = OS_DOUBLE;
+            break;
+
+        case OS_STRING:
+            stackitem->value.s = v->gets();
+            stackitem->datatype = OS_STRING;
+            break;
+
+        default:
+            osal_debug_error("ewhere.cpp: pushvariable error 2");
+            stackitem->value.l = 0;
+            stackitem->datatype = OS_LONG;
+    }
+
+    stackitem->is_variable = OS_TRUE;
+}
+
+eStatus eWhere::unaryop(
+    os_short op)
+{
+
+
+    return ESTATUS_SUCCESS;
+}
+
+eStatus eWhere::binaryop(
+    os_short op)
+{
+
+
+    return ESTATUS_SUCCESS;
+}
