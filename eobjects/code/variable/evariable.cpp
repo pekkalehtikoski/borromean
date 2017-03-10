@@ -1000,7 +1000,7 @@ eObject *eVariable::geto()
   @brief Get pointer value of variable.
 
   The getp() function returns pointer which was stored as variable value, if value type 
-  is OE_POINTER.
+  is OS_POINTER.
 
   @return  Pointer value, or OS_NULL if variable value is pointer or is NULL pointer.
 

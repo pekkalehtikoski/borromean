@@ -11,14 +11,13 @@
 
   Grammar (not formally correct, just to get idea):
 
+  \verbatim
   where_clause
    : WHERE expression
-   ;
 
   expression
    : simple_expression
    | simple_expression expr_op expression
-   ;
 
   simple_expression
    : element
@@ -33,16 +32,13 @@
    | "column_name"
    | column_name
    | '(' expression ')'
-   ;
 
   column_name
    : ['A'-'Z','a'-'z','_'] digits ['0'-'9'], but not as first character.
         Double quoted column names are not checked for content.
-   ;
 
   numeric_constant
    : [-]XXX[.YYY]
-   ;
 
   timestamp_constant
    ; @78872134738217 Time stamp constants are GMT in microseconds since 1.1.1970. These
@@ -52,20 +48,20 @@
 
   expr_op
    : AND | OR
-   ;
 
   relational_op
    : '=' | '<>' | '<' | '>' | '>=' | '<='
-   ;
 
   is_or_is_not
    : IS | IS NOT
-   ;
+  \endverbatim
 
   Notes:
   - SQL requires single quotes around text values.
   - If SQL server doesn't like double quotes, they can be just removed from expression string.
   - GMT time stamps can be expressed as microseconds sin
+  - eWhere is intended for tables, but it could be used to implement other definable conditions.
+    For example it could be useful for setting up show/hide conditions of GUI components.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used,
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -76,6 +72,8 @@
 */
 #include "eobjects/eobjects.h"
 
+/** Enumeration of operators in where clause. Operators are stored in m_code as they are.
+ */
 typedef enum eWhereOp
 {
     EOP_AND = 1,
@@ -88,13 +86,15 @@ typedef enum eWhereOp
     EOP_GT,
     EOP_EQ,
     EOP_IS_NULL,
-    EOP_IS_NOTNULL
+    EOP_IS_NOT_NULL
 }
 eWhereOp;
 
+/* Offsets for push variable and push constant in code. The item ID is added to this base
+   in m_code. For example code value 10001 would mean "push first variable to execution stack".
+ */
 #define EOP_VARIABLE_BASE 10000
 #define EOP_CONSTANT_BASE 20000
-
 
 
 /**
@@ -102,7 +102,7 @@ eWhereOp;
 
   @brief Constructor.
 
-  X...
+  Clear member variables and create child objects which will be needed later.
 
   @return  None.
 
@@ -128,6 +128,7 @@ eWhere::eWhere(
     m_error = new eVariable(this);
     m_word = new eVariable(this);
     m_tmp = new eVariable(this);
+    m_exec_tmp = new eContainer(this);
 
     m_nvars = 0;
     m_nconstants = 0;
@@ -139,15 +140,15 @@ eWhere::eWhere(
 
   @brief Virtual destructor.
 
-  X...
+  Release all resources allocated.
 
   @return  None.
 
 ****************************************************************************************************
 */
-eWhere::~eWhere()
+/* eWhere::~eWhere()
 {
-}
+} */
 
 
 /**
@@ -155,9 +156,15 @@ eWhere::~eWhere()
 
   @brief Compile where clause. Generates byte code and variables.
 
-  X...
+  The eWhere::compile() function compiles where clause given as argument to code. It also generates
+  list of variables needed, this variables container is available by eWhere::variables() function.
+  Each variable is named with column name and needs to be set to appropriate value before calling
+  eWhere::evaluate().
 
-  @return  None.
+  @param  whereclause Where clause, basically simplified SQL where clause, with added time stamp
+          marking. This typically defines to which rows of a table a select, update or remove is
+          applied.
+  @return None.
 
 ****************************************************************************************************
 */
@@ -177,12 +184,19 @@ eStatus eWhere::compile(
 /**
 ****************************************************************************************************
 
-  @brief Evaluate where clause with given set of variable values.
+  @brief Evaluate where clause.
 
-  X...
 
-  @return  ESTATUS_SUCCESS if condition is true, ESTATUS_FALSE if no match or ESTATUS_FAILED
-           if something went wrong.
+  The eWhere::evaluate function evaluates (executes) the where clause. First eWhere::compile()
+  function is called compile string function to generate code, and make list of needed variables.
+  Before calling this function the variable values need to be initialized, use eWhere::variables()
+  function to get pointer container holding variables for values. Each variable is named with
+  column name. Finally call evaluate to see of where clause is true or false. evaluate can
+  be called multiple times wirh different variable values without recompiling the original
+  where code.
+
+  @return ESTATUS_SUCCESS if condition is true, ESTATUS_FALSE if no match or ESTATUS_FAILED
+          if something went wrong.
 
 ****************************************************************************************************
 */
@@ -192,7 +206,10 @@ eStatus eWhere::evaluate()
     os_short *code, op;
     os_int count;
 
+    /* No stack, clear execution tmp vars.
+     */
     m_stack_ptr = 0;
+    m_exec_tmp->clear();
 
     /* Get code pointer.
      */
@@ -223,7 +240,7 @@ eStatus eWhere::evaluate()
         else switch (op)
         {
             case EOP_IS_NULL:
-            case EOP_IS_NOTNULL:
+            case EOP_IS_NOT_NULL:
                 if (evalunaryop(op)) return ESTATUS_FAILED;
                 break;
 
@@ -252,6 +269,29 @@ eStatus eWhere::evaluate()
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Parse an expression.
+
+  The eWhere::expression function is part of interprenter which parses source text and generates
+  code to evaluate the where clause. Current input position within where clause is at m_pos,
+  code is generated into buffer m_code, and variables into m_vars and constants into m_constants.
+  The function parses following part of grammar:
+
+  \verbatim
+  expression
+   : simple_expression
+   | simple_expression expr_op expression
+
+  expr_op
+   : AND | OR
+  \endverbatim
+
+  @return  OS_TRUE if parsing was successfull. OS_FALSE if the function failed on syntaxt error.
+
+****************************************************************************************************
+*/
 os_boolean eWhere::expression()
 {
     os_short op;
@@ -310,6 +350,33 @@ os_boolean eWhere::expression()
     return OS_FALSE;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Parse a simple expression.
+
+  The eWhere::simple_expression function is part of interprenter which parses source text and
+  generates code to evaluate the where clause. The function parses following part of grammar:
+
+  \verbatim
+  simple_expression
+   : element
+   | element relational_op element
+   | element is_or_is_not NULL
+
+  relational_op
+   : '=' | '<>' | '<' | '>' | '>=' | '<='
+
+  is_or_is_not
+   : IS | IS NOT
+
+  \endverbatim
+
+  @return  OS_TRUE if parsing was successfull. OS_FALSE if the function failed on syntaxt error.
+
+****************************************************************************************************
+*/
 os_boolean eWhere::simple_expression()
 {
     os_short op;
@@ -368,7 +435,7 @@ os_boolean eWhere::simple_expression()
         {
             skipspace();
             w = getword();
-            op = EOP_IS_NOTNULL;
+            op = EOP_IS_NOT_NULL;
         }
         if (os_strcmp(w, "NULL"))
         {
@@ -383,6 +450,43 @@ os_boolean eWhere::simple_expression()
     code(op);
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Parse an element.
+
+  The eWhere::element function is part of interprenter which parses source text and generates
+  code to evaluate the where clause. The function parses following part of grammar:
+
+  \verbatim
+  element
+   : numeric_constant
+   : @timestamp_constant
+   | 'string_constant'
+   | "column_name"
+   | column_name
+   | '(' expression ')'
+
+  column_name
+   : ['A'-'Z','a'-'z','_'] digits ['0'-'9'], but not as first character.
+        Double quoted column names are not checked for content.
+
+  numeric_constant
+   : [-]XXX[.YYY]
+
+  timestamp_constant
+   ; @78872134738217 Time stamp constants are GMT in microseconds since 1.1.1970. These
+        are not part of real SQL at all, but must be converted to SQL time stamps when
+        used with SQL server. Within this software these are just integers.
+        Any character not decimal digit ends the timestamp constant.
+
+  \endverbatim
+
+  @return  OS_TRUE if parsing was successfull. OS_FALSE if the function failed on syntaxt error.
+
+****************************************************************************************************
+*/
 os_boolean eWhere::element()
 {
     skipspace();
@@ -418,8 +522,21 @@ os_boolean eWhere::element()
     return OS_TRUE;
 }
 
-/* Column name in double quotes.
- */
+
+/**
+****************************************************************************************************
+
+  @brief Parse an column name in double quotes.
+
+  The eWhere::column_name function is part of interprenter which parses source text and generates
+  code to evaluate the where clause. The function gets column name from within double quotes.
+  The variable for value is created in m_vars container, and code to push variable value
+  when executing is generated.
+
+  @return  OS_TRUE if parsing was successfull. OS_FALSE if the function failed on syntaxt error.
+
+****************************************************************************************************
+*/
 os_boolean eWhere::column_name()
 {
     os_char *end;
@@ -440,6 +557,22 @@ os_boolean eWhere::column_name()
     m_pos = end+1;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Parse a number or column name without quotes.
+
+  The eWhere::number_or_column_name_name function is part of interprenter which parses source
+  text and generates code to evaluate the where clause. The function gets either number constant
+  or column name without quotes. Number constant is stored in m_constants container or
+  variable for column is created in m_vars container, and code to push variable value or numeric
+  constant when executing is generated.
+
+  @return  OS_TRUE if parsing was successfull. OS_FALSE if the function failed on syntaxt error.
+
+****************************************************************************************************
+*/
 os_boolean eWhere::number_or_column_name()
 {
     os_char *end, c;
@@ -517,8 +650,20 @@ os_boolean eWhere::number_or_column_name()
 }
 
 
-/* Column name in double quotes.
- */
+/**
+****************************************************************************************************
+
+  @brief Parse an sting constant in single quotes.
+
+  The eWhere::string_constant function is part of interprenter which parses source text and
+  generates code to evaluate the where clause. The function gets string constant from within
+  single quotes. The string constant is stored in m_constants container and code to push
+  string constant value when executing is generated.
+
+  @return  OS_TRUE if parsing was successfull. OS_FALSE if the function failed on syntaxt error.
+
+****************************************************************************************************
+*/
 os_boolean eWhere::string_constant()
 {
     os_char *end;
@@ -591,6 +736,26 @@ os_short eWhere::addstring(
     return m_nconstants + EOP_CONSTANT_BASE;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Create value variable for a column and name it.
+
+  The eWhere::column_name function creates a value variable for column in m_vars container and
+  names it with column name.
+  code to evaluate the where clause. The function parses following part of grammar:
+
+  \verbatim
+  column_name
+   : ['A'-'Z','a'-'z','_'] digits ['0'-'9'], but not as first character.
+        Double quoted column names are not checked for content.
+  \endverbatim
+
+  @return  OS_TRUE if parsing was successfull. OS_FALSE if the function failed on syntaxt error.
+
+****************************************************************************************************
+*/
 os_short eWhere::addvariable(
     os_char *name,
     os_memsz len)
@@ -615,11 +780,37 @@ os_short eWhere::addvariable(
     return v->oid() + EOP_VARIABLE_BASE;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Skip over empty space in input.
+
+  The eWhere::skipspace function moves m_pos forward until character which is not space character
+  is met.
+
+  @return None.
+
+****************************************************************************************************
+*/
 void eWhere::skipspace()
 {
     while (*m_pos != '\0' && osal_char_isspace(*m_pos)) m_pos++;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Get a word from input.
+
+  The eWhere::getword function gets next word like AND, OR, IS, NOT, NULL from input, stores
+  it to temporary m_word variable and returns pointer to the word.
+
+  @return Pointer to next word, parsed from current input position.
+
+****************************************************************************************************
+*/
 os_char *eWhere::getword()
 {
     os_char *p;
@@ -632,12 +823,41 @@ os_char *eWhere::getword()
     return m_word->gets();
 }
 
-void eWhere::code(os_short op)
+
+/**
+****************************************************************************************************
+
+  @brief Append instruction to code being generated.
+
+  The eWhere::code function appends an instruction (code value) to code being generarated.
+  These values are like 1, 2, 3... for operators, 10001, 1002, 1003... to push variable value
+  to execution stack and 20001, 20002, 20003 to push constants into execution stack. See
+  defines EOP_VARIABLE_BASE (10000) and EOP_CONSTANT_BASE (20000)
+
+  @param  op Code value (instruction) to append to m_code.
+  @return None.
+
+****************************************************************************************************
+*/
+void eWhere::code(
+    os_short op)
 {
     m_code->write((os_char*)&op, sizeof(os_short));
 }
 
 
+/**
+****************************************************************************************************
+
+  @brief Make sure that execution stack has space for one push.
+
+  The eWhere::checkstacksize function is part of code execution. It checks that execution stack
+  is big enough to do one more push. If not, execution stack is expanded.
+
+  @return None.
+
+****************************************************************************************************
+*/
 void eWhere::checkstacksize()
 {
     os_memsz stack_sz;
@@ -649,6 +869,20 @@ void eWhere::checkstacksize()
     }
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Push a constant to execution stack.
+
+  The eWhere::pushconstant function is part of code execution. It pushes constant value from
+  m_constants container into execution stack.
+
+  @param  id Constant identifier within m_constants container: 1, 2, 3...
+  @return None.
+
+****************************************************************************************************
+*/
 void eWhere::pushconstant(
     os_short id)
 {
@@ -696,6 +930,20 @@ void eWhere::pushconstant(
     stackitem->is_variable = OS_FALSE;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Push a variable value to execution stack.
+
+  The eWhere::pushvariable function is part of code execution. It pushes variable value from
+  m_vars container into execution stack.
+
+  @param  id Variable identifier within m_vars container: 1, 2, 3...
+  @return None.
+
+****************************************************************************************************
+*/
 void eWhere::pushvariable(
     os_short id)
 {
@@ -742,8 +990,22 @@ void eWhere::pushvariable(
     stackitem->is_variable = OS_TRUE;
 }
 
-/*     EOP_IS_NULL,
-    EOP_IS_NOTNULL
+
+/**
+****************************************************************************************************
+
+  @brief Unary operator.
+
+  The eWhere::evalunaryop function is part of code execution. Unary operators take one argument
+  from execution stack and push the result back to execution stack, so execution stack size
+  does not change.
+  Unary operator "IS NULL" is true if variable has no value. "IS NOT NULL" is true if variable
+  has value.
+
+  @param  op Unary operator, either EOP_IS_NULL or EOP_IS_NOT_NULL. See eWhereOp enumeration.
+  @return ESTATUS_SUCCESS if all is fine. ESTATUS_FAILED on error.
+
+****************************************************************************************************
 */
 eStatus eWhere::evalunaryop(
     os_short op)
@@ -766,13 +1028,30 @@ eStatus eWhere::evalunaryop(
     }
     else
     {
-        stackitem->value.l = (os_boolean)(op == EOP_IS_NOTNULL);
+        stackitem->value.l = (os_boolean)(op == EOP_IS_NOT_NULL);
         stackitem->datatype = OS_LONG;
     }
 
     return ESTATUS_SUCCESS;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Binary operator.
+
+  The eWhere::evalbinaryop function is part of code execution. Binary operators take two arguments
+  from execution stack and push the result back to execution stack, so execution stack size
+  gets smaller by one item.
+  Binary operators are comparations, like less than, greater than, etc, and then operators
+  like AND, OR.
+
+  @param  op Binary operator, see eWhereOp enumeration.
+  @return ESTATUS_SUCCESS if all is fine. ESTATUS_FAILED on error.
+
+****************************************************************************************************
+*/
 eStatus eWhere::evalbinaryop(
     os_short op)
 {
@@ -976,10 +1255,27 @@ skipconv:
     return ESTATUS_SUCCESS;
 }
 
+
+/**
+****************************************************************************************************
+
+  @brief Change data type of item in execution stack.
+
+  The eWhere::changedatatype function converts data type of item in evecution stack to another.
+  When converting to string, temporary string is allocated from m_exec_tmp container.
+
+  @param  item Item in execution stack to convert.
+  @param  datatype Possible data types are OS_STRING, OS_DOUBLE and OS_LONG.
+  @return ESTATUS_SUCCESS if all is fine. ESTATUS_FAILED on error.
+
+****************************************************************************************************
+*/
 void eWhere::changedatatype(
     eStackItem *item,
     osalTypeId datatype)
 {
+    eVariable *tmp;
+
     switch (datatype)
     {
         case OS_LONG:
@@ -1012,13 +1308,15 @@ void eWhere::changedatatype(
             switch (item->datatype)
             {
                 case OS_DOUBLE:
-                    m_tmp->setd(item->value.d);
-                    item->value.s = m_tmp->gets();
+                    tmp = new eVariable(m_exec_tmp);
+                    tmp->setd(item->value.d);
+                    item->value.s = tmp->gets();
                     break;
 
                 case OS_LONG:
-                    m_tmp->setl(item->value.l);
-                    item->value.s = m_tmp->gets();
+                    tmp = new eVariable(m_exec_tmp);
+                    tmp->setl(item->value.l);
+                    item->value.s = tmp->gets();
                     break;
             }
             break;

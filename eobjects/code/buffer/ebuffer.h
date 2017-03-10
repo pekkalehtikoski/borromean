@@ -222,7 +222,7 @@ private:
     ************************************************************************************************
     */
 
-    /** Pointer to allocated buffer, oe_NULL if none.
+    /** Pointer to allocated buffer, OS_NULL if none.
      */
     os_char *m_ptr;
 

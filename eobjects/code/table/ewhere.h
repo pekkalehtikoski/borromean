@@ -82,7 +82,7 @@ public:
 
 	/* Virtual destructor.
  	 */
-    virtual ~eWhere();
+    /* virtual ~eWhere(); */
 
     /* Get class identifier.
      */
@@ -98,7 +98,7 @@ public:
 
       @name Evaluating where clause.
 
-      First call compile function to generate bytecode and list of needed variables. Then set
+      First call compile function to generate code and list of needed variables. Then set
       values for variables and call evaluate to see of where clause is true or false.
 
 	************************************************************************************************
@@ -208,6 +208,10 @@ protected:
     /** Temporarty variable for parsing, always exists.
      */
     eVariable *m_tmp;
+
+    /** Temporary variables during execution, used to stores strings.
+     */
+    eContainer *m_exec_tmp;
 
     /*@}*/
 };
