@@ -24,8 +24,8 @@
 
   @brief Where clause interpenter.
 
-  The eWhere class interprents and evaluates a where clause. The where clause is simplified
-  SQL where clause, which can be converted easily to SQL where clause.
+  The eWhere class interprents and evaluates a where clause. The where clause here is simplified
+  SQL where clause.
 
 ****************************************************************************************************
 */
@@ -78,7 +78,7 @@ public:
     /* Compile where clause. Generates byte code and variables.
      */
     eStatus compile(
-        os_char *expression);
+        os_char *whereclause);
 
     /* Get pointer to eContainer holding variables.
      */
@@ -104,10 +104,29 @@ protected:
     ************************************************************************************************
     */
     /*@{*/
+    os_boolean expression();
+    os_boolean simple_expression();
+    os_boolean element();
+    os_boolean number_or_column_name();
+    void skipspace();
+    os_char *getword();
+    void code(short op);
 
     /** Container for variables, exists always, has name space.
      */
     eContainer *m_vars;
+
+    /** Current parse position within expression given as argument to compile().
+     */
+    os_char *m_pos;
+
+    /** Last error.
+     */
+    eVariable *m_error;
+
+    /** Last parsed word.
+     */
+    eVariable *m_word;
 
     /*@}*/
 };
