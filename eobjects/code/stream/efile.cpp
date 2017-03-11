@@ -39,7 +39,7 @@ eFile::eFile(
 ****************************************************************************************************
 
   @brief Virtual destructor.
-  Releases memory allocated for the buffer.
+  Releases memory allocated for the file.
 
 ****************************************************************************************************
 */
@@ -51,7 +51,7 @@ eFile::~eFile()
 /**
 ****************************************************************************************************
 
-  @brief Open the buffer as stream.
+  @brief Open the file as stream.
   The open() function sets read position to zero.
 
   @param  parameters Ignored by eFile.
@@ -85,9 +85,9 @@ eStatus eFile::close()
 /**
 ****************************************************************************************************
 
-  @brief Write data to queue.
+  @brief Write data to file.
 
-  The write() function appends data into buffer.
+  The write() function appends data into file.
 
   @param  buf Pointer to data to write.
   @param  buf_sz Number of bytes to write.
@@ -113,9 +113,9 @@ eStatus eFile::write(
 /**
 ****************************************************************************************************
 
-  @brief Read data from queue.
+  @brief Read data from file.
 
-  The read function reads data from buffer.
+  The read function reads data from file.
 
   @param  buf Pointer to buffer into which to read data.
   @param  buf_sz Size of buffer in bytes.
@@ -146,9 +146,9 @@ eStatus eFile::read(
 /**
 ****************************************************************************************************
 
-  @brief Write character to buffer.
+  @brief Write character to file.
 
-  The writechar function appends one character to buffer.
+  The writechar function appends one character to file.
 
   @param  c Character to write.
   @return Always ESTATUS_SUCCESS.
@@ -165,11 +165,11 @@ eStatus eFile::writechar(
 /**
 ****************************************************************************************************
 
-  @brief Read character from buffer.
+  @brief Read character from file.
 
-  The readchar function reads either one byte from the current read position of the buffer.
+  The readchar function reads one characted from file.
 
-  @return If no more data available, the function returnsE_STREM_END_OF_DATA.
+  @return If no more data available, the function returns E_STREM_END_OF_DATA.
           Otherwise if we have data the function returns next character to read.
 
 ****************************************************************************************************

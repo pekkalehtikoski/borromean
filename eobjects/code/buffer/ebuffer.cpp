@@ -302,7 +302,7 @@ eStatus eBuffer::open(
 ****************************************************************************************************
 
   @brief Close the stream.
-  The close() function does nothing for ebuffer.
+  The close() function does nothing for eBuffer.
 
   @return Always ESTATUS_SUCCESS.
 
@@ -317,7 +317,7 @@ eStatus eBuffer::close()
 /**
 ****************************************************************************************************
 
-  @brief Write data to queue.
+  @brief Write data to buffer.
 
   The write() function appends data into buffer.
 
@@ -358,7 +358,7 @@ eStatus eBuffer::write(
 /**
 ****************************************************************************************************
 
-  @brief Read data from queue.
+  @brief Read data from buffer.
 
   The read function reads data from buffer.
 
@@ -440,9 +440,9 @@ eStatus eBuffer::writechar(
 
   @brief Read character from buffer.
 
-  The readchar function reads either one byte from the current read position of the buffer.
+  The readchar function reads one character from the current read position of the buffer.
 
-  @return If no more data available, the function returnsE_STREM_END_OF_DATA.
+  @return If no more data available, the function returns E_STREM_END_OF_DATA.
           Otherwise if we have data the function returns next character to read.
 
 ****************************************************************************************************
