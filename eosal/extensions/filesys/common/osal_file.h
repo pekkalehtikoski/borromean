@@ -80,20 +80,6 @@ osalStatus osal_file_read(
 	os_memsz *n_read,
 	os_int flags);
 
-/* Get file parameter.
- */
-os_long osal_file_get_parameter(
-	osalStream stream,
-	osalStreamParameterIx parameter_ix);
-
-/* Set file parameter.
- */
-void osal_file_set_parameter(
-	osalStream stream,
-	osalStreamParameterIx parameter_ix,
-	os_long value);
-
-
 /*@}*/
 
 #endif

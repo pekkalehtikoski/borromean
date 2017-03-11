@@ -90,7 +90,19 @@ typedef enum
 
     /** Socket has been closed.
      */
-    OSAL_STATUS_SOCKET_CLOSED
+    OSAL_STATUS_SOCKET_CLOSED,
+
+    /** Process does not have access right to object.
+     */
+    OSAL_STATUS_NO_ACCESS_RIGHT,
+
+    /** Device is out of free space.
+     */
+    OSAL_STATUS_DISC_FULL,
+
+    /** Attempt to open file which doesn't exist.
+     */
+    OSAL_FILE_DOES_NOT_EXIST
 }
 osalStatus;
 

@@ -475,7 +475,6 @@ osalStatus osal_stream_select(
 
 osalStream osal_stream_default_accept(
 	osalStream stream,
-	os_char *parameters,
 	osalStatus *status,
 	os_int flags);
 

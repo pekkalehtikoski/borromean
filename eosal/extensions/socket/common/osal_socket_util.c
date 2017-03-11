@@ -53,13 +53,8 @@ os_char *osal_socket_get_host_name_and_port(
 	os_memsz *buf_sz,
     os_boolean *is_ipv6)
 {
-	os_memsz
-		n_chars;
-
-	os_char
-		*value_pos,
-		*port_pos,
-		*buf;
+    os_memsz n_chars;
+    os_char *value_pos, *port_pos, *buf;
 
 	*port = 0;
 	*buf_sz = 0;
