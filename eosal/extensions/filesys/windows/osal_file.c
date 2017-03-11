@@ -1,12 +1,12 @@
 /**
 
-  @file    filesys/linux/osal_file.c
+  @file    filesys/windows/osal_file.c
   @brief   Basic file IO.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  File IO for linux.
+  File IO for Windows.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -86,36 +86,41 @@ osalStream osal_file_open(
 	osalStatus *status,
 	os_int flags)
 {
-    os_char *mode;
+    wchar_t *mode, *path_utf16;
     FILE *handle;
     osalFile *myfile;
+    os_memsz sz;
 	osalStatus rval;
+    errno_t  err;
 
-    /* Sekect fopen mode by flags.
+    /* Select fopen mode by flags. NOTE "c" could be added to commit writes to disc on fflush
      */
     if ((flags & OSAL_STREAM_RW) == OSAL_STREAM_RW)
     {
-        mode = (flags & OSAL_STREAM_APPEND) ? "a+" : "w+";
+        mode = (flags & OSAL_STREAM_APPEND) ? L"a+b" : L"w+b";
     }
     else if (flags & OSAL_STREAM_WRITE)
     {
-        mode = (flags & OSAL_STREAM_APPEND) ? "a" : "w";
+        mode = (flags & OSAL_STREAM_APPEND) ? L"ab" : L"wb";
     }
     else
     {
-        mode = "r";
+        mode = L"rb";
     }
 
-    /* Open the file.
+    /* Open the file. Convert path from UTF8 to UTF16 string, allocate new buffer.
+       Release buffer after open.
      */
-    handle = fopen(parameters, mode);
+    path_utf16 = osal_string_utf8_to_utf16_malloc(parameters, &sz);
+    err = _wfopen_s (&handle, path_utf16, mode); 
+    os_free(path_utf16, sz);
 
     /* If opening file failed, and we are opening file for
        reading, try case insensitive open.
      */
     if (handle == NULL)
     {
-        switch (errno)
+        switch (err)
         {
             case EACCES:
                 rval = OSAL_STATUS_NO_ACCESS_RIGHT;
