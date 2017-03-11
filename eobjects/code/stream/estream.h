@@ -294,20 +294,14 @@ public:
         return ESTATUS_SUCCESS;
     }
 
-	/** Write character, typically control code.
+    /* Write character, typically control code.
      */
     virtual eStatus writechar(
-        os_int c)
-    {
-        return ESTATUS_FAILED;
-    }
+        os_int c);
 
     /* Read character or control code.
      */    
-    virtual os_int readchar()
-    {
-        return E_STREAM_DISCONNECT;
-    }
+    virtual os_int readchar();
 
     /** Number of incoming flush controls in queue at the moment. 
      */

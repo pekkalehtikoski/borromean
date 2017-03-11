@@ -32,6 +32,7 @@ eFile::eFile(
 	os_int flags)
     : eStream(parent, id, flags)
 {
+    m_handle = OS_NULL;
 }
 
 
@@ -45,6 +46,7 @@ eFile::eFile(
 */
 eFile::~eFile()
 {
+    close();
 }
 
 
@@ -54,9 +56,12 @@ eFile::~eFile()
   @brief Open the file as stream.
   The open() function sets read position to zero.
 
-  @param  parameters Ignored by eFile.
-  @param  flags Ignored by eFile.
-  @return Always ESTATUS_SUCCESS.
+  @param  parameters Path to file.
+  @param  flags Bit fields: OSAL_STREAM_READ, OSAL_STREAM_WRITE, OSAL_STREAM_RW,
+          OSAL_STREAM_APPEND.
+
+  @return If successfull, the function returns ESTATUS_SUCCESS (0). Other return values
+          indicate an error.
 
 ****************************************************************************************************
 */
@@ -64,6 +69,12 @@ eStatus eFile::open(
 	os_char *parameters,
     os_int flags) 
 {
+    osalStatus status;
+
+    close();
+
+    m_handle = osal_stream_open(OSAL_FILE_IFACE, parameters, OS_NULL, &status, flags);
+    return status ? ESTATUS_FAILED : ESTATUS_SUCCESS;
 }
 
 
@@ -73,12 +84,44 @@ eStatus eFile::open(
   @brief Close the stream.
   The close() function does nothing for eFile.
 
-  @return Always ESTATUS_SUCCESS.
+  @return If successfull, the function returns ESTATUS_SUCCESS (0). Other return values
+          indicate an error.
 
 ****************************************************************************************************
 */
 eStatus eFile::close()
 {
+    if (m_handle)
+    {
+        osal_stream_close(m_handle);
+        m_handle = OS_NULL;
+    }
+    return ESTATUS_SUCCESS;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Flush written data to stream.
+  The flush() function..
+
+  @return Always ESTATUS_SUCCESS.
+
+****************************************************************************************************
+*/
+/* Flush written data to stream.
+ */
+eStatus eFile::flush(
+    os_int flags)
+{
+    osalStatus status;
+    if (m_handle)
+    {
+        status = osal_stream_flush(m_handle, flags);
+        return status ? ESTATUS_FAILED : ESTATUS_SUCCESS;
+    }
+    return ESTATUS_FAILED;
 }
 
 
@@ -94,7 +137,8 @@ eStatus eFile::close()
   @param  nwritten Pointer to integer where to store number of bytes written to queue. This is
           always same as byte_sz. Can be set to OS_NULL, if not needed.
 
-  @return Always ESTATUS_SUCCESS.
+  @return If successfull, the function returns ESTATUS_SUCCESS (0). Other return values
+          indicate an error.
 
 ****************************************************************************************************
 */
@@ -103,10 +147,22 @@ eStatus eFile::write(
     os_memsz buf_sz, 
     os_memsz *nwritten)
 {
-    /* Return number of bytes written and success code.
+    os_memsz nwr = 0;
+    osalStatus status;
+    eStatus rval = ESTATUS_FAILED;
+
+    /* If we hot handle, try to write.
      */
-//    if (nwritten != OS_NULL) *nwritten = buf_sz;
-    return ESTATUS_SUCCESS;
+    if (m_handle != OS_NULL)
+    {
+        status = osal_stream_write(m_handle, (const os_uchar*)buf, buf_sz, &nwr, 0);
+        if (status == OSAL_SUCCESS && nwr == buf_sz) rval = ESTATUS_SUCCESS;
+    }
+
+    /* Return number of bytes written and status code.
+     */
+    if (nwritten != OS_NULL) *nwritten = nwr;
+    return rval;
 }
 
 
@@ -120,7 +176,7 @@ eStatus eFile::write(
   @param  buf Pointer to buffer into which to read data.
   @param  buf_sz Size of buffer in bytes.
   @param  nread Pointer to integer where to store number of bytes read from queue. This may be
-          less than buffer size if the function runs out of data in queue. Can be set to 
+          less than buffer size if the function runs out of data in file. Can be set to
           OS_NULL, if not needed. 
   @param  flags Ignored.
 
@@ -135,59 +191,20 @@ eStatus eFile::read(
     os_memsz *nread,
     os_int flags)
 {
+    os_memsz nrd = 0;
+    osalStatus status;
+    eStatus rval = ESTATUS_FAILED;
 
-    /* Return number of bytes read and success code.
+    /* If we hot handle, try to write.
      */
-  //  if (nread != OS_NULL) *nread = buf_sz;
-    return ESTATUS_SUCCESS;
-}
+    if (m_handle != OS_NULL)
+    {
+        status = osal_stream_read(m_handle, (os_uchar*)buf, buf_sz, &nrd, 0);
+        if (status == OSAL_SUCCESS) rval = ESTATUS_SUCCESS;
+    }
 
-
-/**
-****************************************************************************************************
-
-  @brief Write character to file.
-
-  The writechar function appends one character to file.
-
-  @param  c Character to write.
-  @return Always ESTATUS_SUCCESS.
-
-****************************************************************************************************
-*/
-eStatus eFile::writechar(
-    os_int c)
-{
-    return ESTATUS_SUCCESS;
-}
-
-
-/**
-****************************************************************************************************
-
-  @brief Read character from file.
-
-  The readchar function reads one characted from file.
-
-  @return If no more data available, the function returns E_STREM_END_OF_DATA.
-          Otherwise if we have data the function returns next character to read.
-
-****************************************************************************************************
-*/
-os_int eFile::readchar()
-{
-    eStatus s;
-    os_char buf;
-    os_memsz nread;
-
-    s = read(&buf, 1, &nread);
-    /* If no data available.
+    /* Return number of bytes written and status code.
      */
-//    if (m_pos == m_used) return E_STREM_END_OF_DATA;
-
-    /* Return the characted.
-     */
-    return s;
+    if (nread != OS_NULL) *nread = nrd;
+    return rval;
 }
-
-

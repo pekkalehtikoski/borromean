@@ -92,6 +92,11 @@ public:
      */
     virtual eStatus close();
 
+    /* Flush writes.
+     */
+    virtual eStatus flush(
+        os_int flags = 0);
+
     /* Write data to file.
      */
     virtual eStatus write(
@@ -107,15 +112,6 @@ public:
         os_memsz *nread = OS_NULL,
         os_int flags = 0);
 
-    /* Write character to queue, typically control code.
-     */
-    virtual eStatus writechar(
-        os_int c);
-
-    /* Read character or control code.
-     */    
-    virtual os_int readchar();
-
     /*@}*/
 
 private:
@@ -127,6 +123,9 @@ private:
 
     ************************************************************************************************
     */
+    /*@{*/
+        osalStream m_handle;
+    /*@}*/
 };
 
 #endif

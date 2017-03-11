@@ -57,12 +57,68 @@ eStream::~eStream()
 /**
 ****************************************************************************************************
 
+  @brief Write one character
+
+  This default implementation calls class'es write function to write one character.
+
+  @param  c Character to write.
+  @return If successfull, the function returns ESTATUS_SUCCESS. Other return values
+          indicate an error.
+
+****************************************************************************************************
+*/
+eStatus eStream::writechar(
+    os_int c)
+{
+    os_memsz nwritten;
+    os_char buf;
+    eStatus rval;
+
+    buf = (os_char)c;
+
+    rval = write(&buf, 1, &nwritten);
+    if (nwritten != 1) rval = ESTATUS_FAILED;
+
+    return rval;
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Write one character
+
+  This default implementation calls class'es read function to read one character.
+
+  @return If successfull, the function returns the character. Otherwise if failed returns
+          E_STREAM_DISCONNECT.
+
+****************************************************************************************************
+*/
+os_int eStream::readchar()
+{
+    os_memsz nread;
+    os_uchar buf;
+    os_int c = E_STREAM_DISCONNECT;
+    eStatus rval;
+
+    rval = read((os_char*)&buf, 1, &nread);
+    if (rval == ESTATUS_SUCCESS && nread == 1) c = buf;
+
+    return c;
+}
+
+
+/**
+****************************************************************************************************
+
   @brief Read until end of object or other block.
 
   The read_end_block() function reads from the stream until end of block character code is 
   found. This skips data added by later versions of object.
 
-  @return  None.
+  @return If successfull, the function returns ESTATUS_SUCCESS. Other return values
+          indicate an error.
 
 ****************************************************************************************************
 */
