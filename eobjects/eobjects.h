@@ -65,6 +65,7 @@ void eobjects_shutdown();
 #include "eobjects/code/stream/estream.h"
 #include "eobjects/code/stream/equeue.h"
 #include "eobjects/code/stream/econsole.h"
+#include "eobjects/code/stream/efile.h"
 #include "eobjects/code/buffer/ebuffer.h"
 #include "eobjects/code/connection/econnection.h"
 #include "eobjects/code/connection/eendpoint.h"

@@ -53,19 +53,12 @@ public:
  	 */
     virtual ~eTable();
 
-    /* Clone object.
-     */
-/*    virtual eObject *clone(
-        eObject *parent, 
-        e_oid id = EOID_CHILD,
-        os_int aflags = 0); */
-
     /* Casting eObject pointer to eTable pointer.
      */
     inline static eTable *cast(
 		eObject *o) 
 	{ 
-        e_assert_type(o, ECLASSID_TABLE)
+        /* e_assert_type(o, ECLASSID_TABLE) */
         return (eTable*)o;
 	}
 
@@ -89,30 +82,6 @@ public:
     {
         return new eTable(parent, id, flags);
     }
-
-    /* Write set content to stream.
-     */
-/*    virtual eStatus writer(
-        eStream *stream, 
-        os_int flags);
- */
-
-    /* Read set content from stream.
-     */
-/*    virtual eStatus reader(
-        eStream *stream, 
-        os_int flags);
- */
-
-#if E_SUPPROT_JSON
-    /* Write set to stream as JSON.
-     */
-/*     eStatus json_writer(
-        eStream *stream, 
-        os_int sflags,
-        os_int indent);
- */
-#endif
 
     /*@}*/
 

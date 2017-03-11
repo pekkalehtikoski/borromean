@@ -50,13 +50,14 @@
 #define ECLASSID_STREAM 25
 #define ECLASSID_SOCKET 26
 #define ECLASSID_QUEUE 27
-#define ECLASSID_CONSOLE 28
-#define ECLASSID_CONNECTION 29
-#define ECLASSID_ENDPOINT 30
-#define ECLASSID_TIMER 31
-#define ECLASSID_TABLE 32
-#define ECLASSID_WHERE 33
-#define ECLASSID_BINDING 34
+#define ECLASSID_FILE 29
+#define ECLASSID_CONSOLE 29
+#define ECLASSID_CONNECTION 30
+#define ECLASSID_ENDPOINT 31
+#define ECLASSID_TIMER 32
+#define ECLASSID_TABLE 33
+#define ECLASSID_WHERE 34
+#define ECLASSID_BINDING 35
 
 /* First class id referved for application applications. All positive 32 bit integers
   starting from ECLASSID_APP_BASE can be used by application.
