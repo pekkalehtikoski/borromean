@@ -51,7 +51,12 @@ osalStatus osal_dir(
     os_memsz path_sz, wildcard_sz, sz, fspath_sz;
     os_memsz fspath_pos;
     os_int64 i64;
-    ULARGE_INTEGER ull;
+    union
+    {
+        FILETIME winftime;
+        os_int64 i64;
+    }
+    conv_union;
     osalStatus rval = OSAL_SUCCESS;
 
     /* In case of errors.
@@ -100,9 +105,8 @@ osalStatus osal_dir(
             osal_int64_set_uint2(&i64, finddata.nFileSizeLow, finddata.nFileSizeHigh);
             item->sz = osal_int64_get_long(&i64);
 
-            ull.LowPart = finddata.ftLastWriteTime.dwLowDateTime;
-            ull.HighPart = finddata.ftLastWriteTime.dwHighDateTime;
-            item->tstamp = ull.QuadPart / 10ULL - 11644473600000000ULL;
+            conv_union.winftime = finddata.ftLastWriteTime;
+            item->tstamp = conv_union.i64/10 - OSAL_WINDOWS_FILETIME_OFFSET;
         }
 
         /* Allocate memory and save file name as UTF8.

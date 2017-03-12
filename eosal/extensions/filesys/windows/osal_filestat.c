@@ -1,6 +1,6 @@
 /**
 
-  @file    filesys/linux/osal_filefstat.c
+  @file    filesys/windows/osal_filefstat.c
   @brief   Get file information.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -14,8 +14,7 @@
 ****************************************************************************************************
 */
 #include "eosal/eosalx.h"
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <windows.h>
 
 /**
 ****************************************************************************************************
@@ -36,34 +35,37 @@ osalStatus osal_filestat(
     const os_char *path,
     osalFileStat *filestat)
 {
-#if 0
-    struct stat osfstat;
+    WIN32_FILE_ATTRIBUTE_DATA winfa;
+    wchar_t *path_utf16;
+    os_memsz path_sz;
+    osalStatus rval = OSAL_SUCCESS;
 
-    /* Clear here, in case new items are added to structure and this implementation
-       is not updated.
-     */
-    os_memclear(filestat, sizeof(osalFileStat));
-
-    /* Request file information from operating system.
-     */
-    if (stat(path, &osfstat))
+    union
     {
-        return OSAL_STATUS_FAILED;
+        FILETIME winftime;
+        os_int64 i64;
     }
+    conv_union;
 
-    /* If this is directory
+    /* Convert path and wild card to UTF16.
      */
-    filestat->isdir = S_ISDIR(osfstat.st_mode) ? OS_TRUE : OS_FALSE;
+    path_utf16 = osal_string_utf8_to_utf16_malloc(path, &path_sz);
 
-    /* File size in bytes.
+    /* Get file stats from windows.
      */
-    filestat->sz = osfstat.st_size;
+    if (!GetFileAttributesExW(path_utf16, GetFileExInfoStandard, &winfa))
+    {
+        rval = OSAL_STATUS_FAILED;
+    }
+    else
+    {
+        filestat->isdir = (winfa.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? OS_TRUE : OS_FALSE;
+        filestat->sz = (((os_long)winfa.nFileSizeHigh) << 32) | winfa.nFileSizeLow;
 
-    /* Modification time stamp in microseconds.
-     */
-    osal_int64_set_long(&filestat->tstamp, osfstat.st_mtime);
-    osal_int64_multiply(&filestat->tstamp, &osal_int64_1000000);
-#endif
+        conv_union.winftime = winfa.ftLastWriteTime;
+        filestat->tstamp = conv_union.i64/10 - OSAL_WINDOWS_FILETIME_OFFSET;
+   }    
 
-    return OSAL_STATUS_FAILED;
+    os_free(path_utf16, path_sz);
+    return rval;
 }

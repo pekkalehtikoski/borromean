@@ -30,6 +30,10 @@ extern osalStreamInterface osal_file_iface;
  */
 #define OSAL_FILE_IFACE &osal_file_iface
 
+/* Offset between Windows FILETIME and UTC in microseconds since 1.1.1970.
+ */
+#define OSAL_WINDOWS_FILETIME_OFFSET 11644473600000000ULL
+
 
 /** 
 ****************************************************************************************************
