@@ -81,6 +81,7 @@ os_int64;
 extern const os_int64 osal_int64_1;
 extern const os_int64 osal_int64_10;
 extern const os_int64 osal_int64_1000;
+extern const os_int64 osal_int64_1000000;
 
 /*@}*/
 

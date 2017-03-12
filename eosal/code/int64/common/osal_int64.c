@@ -37,6 +37,11 @@ const os_int64 osal_int64_10 = 10;
  */
 const os_int64 osal_int64_1000 = 1000;
 
+
+/** 64 bit constant global variable holding value 1000000. Do not modify the value.
+ */
+const os_int64 osal_int64_1000000 = 1000000;
+
 #else
 
 /** 64 bit constant global variable holding value 1. Do not modify the value.
@@ -50,6 +55,10 @@ const os_int64 osal_int64_10 = {{10, 0, 0, 0}};
 /** 64 bit constant global variable holding value 1000. Do not modify the value.
  */
 const os_int64 osal_int64_1000 = {{1000, 0, 0, 0}};
+
+/** 64 bit constant global variable holding value 1000000. Do not modify the value.
+ */
+const os_int64 osal_int64_1000000 = {{0x4240, 0x000F, 0, 0}};
 
 #endif
 

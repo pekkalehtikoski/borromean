@@ -32,7 +32,7 @@ typedef struct osalDirListItem
 
     /** File modification time.
      */
-    os_long tstamp;
+    os_int64 tstamp;
 
     /** OS_TRUE if item is directory, OS_FALSE if file
      */
@@ -44,6 +44,10 @@ typedef struct osalDirListItem
 }
 osalDirListItem;
 
+/* Flags for osal_dir function.
+ */
+#define OSAL_DIR_DEFAULT 0
+#define OSAL_DIR_FILESTAT 1
 
 /** 
 ****************************************************************************************************

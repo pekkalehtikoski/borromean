@@ -40,6 +40,7 @@ OSAL_C_HEADER_BEGINS
 #include "eosal/extensions/socket/common/osal_socket.h"
 #include "eosal/extensions/filesys/common/osal_file.h"
 #include "eosal/extensions/filesys/common/osal_dir.h"
+#include "eosal/extensions/filesys/common/osal_filestat.h"
 #include "eosal/extensions/serialize/common/osal_serialize.h"
 
 /* If C++ compilation, end the undecorated code.

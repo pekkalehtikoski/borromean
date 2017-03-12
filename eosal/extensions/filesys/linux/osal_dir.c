@@ -1,12 +1,12 @@
 /**
 
-  @file    filesys/linux/osal_file.c
-  @brief   Basic file IO.
+  @file    filesys/linux/osal_dir.c
+  @brief   Directory related functions.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
 
-  File IO for linux.
+  Functions for listing, creating and removing a directory.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,
@@ -33,7 +33,8 @@
   @param  wildcard Like "*.txt".
   @param  list Where to store pointer to first item of directory list. The memory for list
           needs to be released by calling osal_free_dirlist().
-  @param  flags Reserved for future, set zero for now.
+  @param  flags Set OSAL_DIR_DEFAULT (0) for simple operation. OSAL_DIR_FILESTAT to get
+          also file size, isdir type and time stamp.
   @return If successfull, the function returns OSAL_SUCCESS(0). Other return values
           indicate an error.
 
@@ -48,11 +49,25 @@ osalStatus osal_dir(
     struct dirent *pDirent;
     DIR *pDir;
     osalDirListItem *item, *prev;
-    int len;
+    os_memsz len;
+    osalFileStat filestat;
+    os_char *fspath = OS_NULL;
+    os_memsz fspath_sz = 0;
+    os_memsz fspath_pos = 0;
 
     /* In case of errors.
      */
     *list = OS_NULL;
+
+    if (flags & OSAL_DIR_FILESTAT)
+    {
+        fspath_pos = os_strlen(path) - 1;
+        fspath = os_malloc(fspath_pos + 64, &fspath_sz);
+        if (fspath_pos > 0) if (fspath[fspath_pos-1] != '/')
+        {
+            fspath[fspath_pos++] = '/';
+        }
+    }
 
     pDir = opendir(path);
     if (pDir == NULL)
@@ -81,15 +96,42 @@ osalStatus osal_dir(
         if (prev) prev->next = item;
         else *list = item;
         prev = item;
+        len = os_strlen(pDirent->d_name);
+
+        if (flags & OSAL_DIR_FILESTAT)
+        {
+            /* If we need to make path buffer longer
+             */
+            if (fspath_pos + len >= fspath_sz)
+            {
+                os_free(fspath, fspath_sz);
+                fspath_pos = os_strlen(path) - 1;
+                fspath = os_malloc(fspath_pos + len + 64, &fspath_sz);
+                if (fspath_pos > 0) if (fspath[fspath_pos-1] != '/')
+                {
+                    fspath[fspath_pos++] = '/';
+                }
+            }
+
+            os_memcpy(fspath + fspath_pos, pDirent->d_name, len);
+            if (!osal_filestat(path, &filestat))
+            {
+                item->isdir = filestat.isdir;
+                item->sz = filestat.sz;
+                osal_int64_copy(&item->tstamp, &filestat.tstamp);
+            }
+        }
 
         /* Allocate memory and save file name.
          */
-        len = os_strlen(pDirent->d_name);
         item->name = os_malloc(len, OS_NULL);
         os_memcpy(item->name, pDirent->d_name, len);
     }
 
     closedir (pDir);
+
+    os_free(fspath, fspath_sz);
+
     return OSAL_SUCCESS;
 }
 
