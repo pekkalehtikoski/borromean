@@ -59,16 +59,6 @@ osalStatus osal_dir(
      */
     *list = OS_NULL;
 
-    if (flags & OSAL_DIR_FILESTAT)
-    {
-        fspath_pos = os_strlen(path) - 1;
-        fspath = os_malloc(fspath_pos + 64, &fspath_sz);
-        if (fspath_pos > 0) if (fspath[fspath_pos-1] != '/')
-        {
-            fspath[fspath_pos++] = '/';
-        }
-    }
-
     pDir = opendir(path);
     if (pDir == NULL)
     {
@@ -79,6 +69,17 @@ osalStatus osal_dir(
 
             default:
                 return OSAL_STATUS_FAILED;
+        }
+    }
+
+    if (flags & OSAL_DIR_FILESTAT)
+    {
+        fspath_pos = os_strlen(path) - 1;
+        fspath = os_malloc(fspath_pos + 64, &fspath_sz);
+        os_strncpy(fspath, path, fspath_sz);
+        if (fspath_pos > 0) if (fspath[fspath_pos-1] != '/')
+        {
+            fspath[fspath_pos++] = '/';
         }
     }
 
@@ -107,6 +108,7 @@ osalStatus osal_dir(
                 os_free(fspath, fspath_sz);
                 fspath_pos = os_strlen(path) - 1;
                 fspath = os_malloc(fspath_pos + len + 64, &fspath_sz);
+                os_strncpy(fspath, path, fspath_sz);
                 if (fspath_pos > 0) if (fspath[fspath_pos-1] != '/')
                 {
                     fspath[fspath_pos++] = '/';

@@ -16,9 +16,6 @@
 #include "eosal/eosalx.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-
-// #include <errno.h>
 
 /**
 ****************************************************************************************************
@@ -39,6 +36,7 @@ osalStatus osal_filestat(
     const os_char *path,
     osalFileStat *filestat)
 {
+#if 0
     struct stat osfstat;
 
     /* Clear here, in case new items are added to structure and this implementation
@@ -65,6 +63,7 @@ osalStatus osal_filestat(
      */
     osal_int64_set_long(&filestat->tstamp, osfstat.st_mtime);
     osal_int64_multiply(&filestat->tstamp, &osal_int64_1000000);
+#endif
 
-    return OSAL_SUCCESS;
+    return OSAL_STATUS_FAILED;
 }

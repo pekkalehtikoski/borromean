@@ -1,6 +1,6 @@
 /**
 
-  @file    filesys/linux/osal_dir.c
+  @file    filesys/windows/osal_dir.c
   @brief   Directory related functions.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -16,10 +16,7 @@
 ****************************************************************************************************
 */
 #include "eosal/eosalx.h"
-#include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <errno.h>
+#include <windows.h>
 
 /**
 ****************************************************************************************************
@@ -46,49 +43,48 @@ osalStatus osal_dir(
     osalDirListItem **list,
     os_int flags)
 {
-    struct dirent *pDirent;
-    DIR *pDir;
+    HANDLE handle;
+    WIN32_FIND_DATAW finddata;
     osalDirListItem *item, *prev;
     os_memsz len;
-    osalFileStat filestat;
-    os_char *fspath = OS_NULL;
-    os_memsz fspath_sz = 0;
-    os_memsz fspath_pos = 0;
+    wchar_t *path_utf16, *wildcard_utf16, *fspath;
+    os_memsz path_sz, wildcard_sz, sz, fspath_sz;
+    os_memsz fspath_pos;
+    os_int64 i64;
+    ULARGE_INTEGER ull;
+    osalStatus rval = OSAL_SUCCESS;
 
     /* In case of errors.
      */
     *list = OS_NULL;
 
-    if (flags & OSAL_DIR_FILESTAT)
+    /* Convert path and wild card to UTF16.
+     */
+    path_utf16 = osal_string_utf8_to_utf16_malloc(path, &path_sz);
+    wildcard_utf16 = osal_string_utf8_to_utf16_malloc(path, &wildcard_sz);
+
+    /* Allocate buffer
+     */
+    len = wcslen(wildcard_utf16) + 1;
+    fspath_pos = wcslen(path_utf16);
+    fspath = (wchar_t*)os_malloc((fspath_pos + len + 2)*sizeof(wchar_t), &sz);
+    fspath_sz = sz/sizeof(wchar_t);
+    wcscpy_s(fspath, fspath_sz, path_utf16);
+    if (fspath_pos > 0) if (fspath[fspath_pos-1] != '/')
     {
-        fspath_pos = os_strlen(path) - 1;
-        fspath = os_malloc(fspath_pos + 64, &fspath_sz);
-        if (fspath_pos > 0) if (fspath[fspath_pos-1] != '/')
-        {
-            fspath[fspath_pos++] = '/';
-        }
+        fspath[fspath_pos++] = '/';
     }
+    wcscpy_s(fspath + fspath_pos, fspath_sz - fspath_pos, wildcard_utf16);
 
-    pDir = opendir(path);
-    if (pDir == NULL)
+    handle = FindFirstFileW(fspath, &finddata);
+    if  (handle != INVALID_HANDLE_VALUE) 
     {
-        switch (errno)
-        {
-            case EACCES:
-                return OSAL_STATUS_NO_ACCESS_RIGHT;
-
-            default:
-                return OSAL_STATUS_FAILED;
-        }
+        rval = OSAL_STATUS_FAILED;
+        goto getout;
     }
 
     prev = OS_NULL;
-    while ((pDirent = readdir(pDir)) != NULL)
-    {
-        /* Skip ones which do not match wildcard.
-         */
-        if (!osal_pattern_match(pDirent->d_name, wildcard, 0)) continue;
-
+    do {
         /* Allocate empty item and join it to chain.
          */
         item = (osalDirListItem*)os_malloc(sizeof(osalDirListItem), OS_NULL);
@@ -96,43 +92,39 @@ osalStatus osal_dir(
         if (prev) prev->next = item;
         else *list = item;
         prev = item;
-        len = os_strlen(pDirent->d_name);
 
         if (flags & OSAL_DIR_FILESTAT)
         {
-            /* If we need to make path buffer longer
-             */
-            if (fspath_pos + len >= fspath_sz)
-            {
-                os_free(fspath, fspath_sz);
-                fspath_pos = os_strlen(path) - 1;
-                fspath = os_malloc(fspath_pos + len + 64, &fspath_sz);
-                if (fspath_pos > 0) if (fspath[fspath_pos-1] != '/')
-                {
-                    fspath[fspath_pos++] = '/';
-                }
-            }
+            item->isdir = (finddata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? OS_TRUE : OS_FALSE;
+       
+            osal_int64_set_uint2(&i64, finddata.nFileSizeLow, finddata.nFileSizeHigh);
+            item->sz = osal_int64_get_long(&i64);
 
-            os_memcpy(fspath + fspath_pos, pDirent->d_name, len);
-            if (!osal_filestat(path, &filestat))
-            {
-                item->isdir = filestat.isdir;
-                item->sz = filestat.sz;
-                osal_int64_copy(&item->tstamp, &filestat.tstamp);
-            }
+            ull.LowPart = finddata.ftLastWriteTime.dwLowDateTime;
+            ull.HighPart = finddata.ftLastWriteTime.dwHighDateTime;
+            item->tstamp = ull.QuadPart / 10ULL - 11644473600000000ULL;
         }
 
-        /* Allocate memory and save file name.
+        /* Allocate memory and save file name as UTF8.
          */
-        item->name = os_malloc(len, OS_NULL);
-        os_memcpy(item->name, pDirent->d_name, len);
+        item->name = osal_string_utf16_to_utf8_malloc(finddata.cFileName, OS_NULL);
     }
+    while (FindNextFileW(handle, &finddata) != 0);
 
-    closedir (pDir);
+    if (GetLastError() != ERROR_NO_MORE_FILES) 
+    {
+        rval = OSAL_STATUS_FAILED;
+    }
+ 
+    FindClose(handle);
 
-    os_free(fspath, fspath_sz);
+getout:
+    os_free(fspath, sz);
 
-    return OSAL_SUCCESS;
+    os_free(path_utf16, path_sz);
+    os_free(wildcard_utf16, wildcard_sz);
+
+    return rval;
 }
 
 /**
@@ -182,30 +174,28 @@ osalStatus osal_mkdir(
     const os_char *path,
     os_int flags)
 {
-    /* Create directory with read/write/search permissions for everybody.
+    wchar_t *path_utf16;
+    os_memsz path_sz;
+    osalStatus rval = OSAL_SUCCESS;
+
+    /* Convert path and wild card to UTF16.
      */
-    if (mkdir(path, S_IRWXU|S_IRWXG|S_IRWXO))
+    path_utf16 = osal_string_utf8_to_utf16_malloc(path, &path_sz);
+
+    /* Create directory.
+     */
+    if (!CreateDirectoryW(path_utf16, NULL))
     {
-        switch (errno)
+        /* Directory already exists is not treated as an error.
+         */
+        if (GetLastError() != ERROR_ALREADY_EXISTS)
         {
-            /* Process does not have rights to create directory.
-             */
-            case EACCES:
-                return OSAL_STATUS_NO_ACCESS_RIGHT;
-
-            /* Directory already exists. This is not treated as an error.
-             */
-            case EEXIST:
-                break;
-
-            /* Other errors.
-             */
-            default:
-                return OSAL_STATUS_FAILED;
+            rval = OSAL_STATUS_FAILED;
         }
     }
 
-    return OSAL_SUCCESS;
+    os_free(path_utf16, path_sz);
+    return rval;
 }
 
 
@@ -228,28 +218,21 @@ osalStatus osal_rmdir(
     const os_char *path,
     os_int flags)
 {
-    if (rmdir(path))
+    wchar_t *path_utf16;
+    os_memsz path_sz;
+    osalStatus rval = OSAL_SUCCESS;
+
+    /* Convert path and wild card to UTF16.
+     */
+    path_utf16 = osal_string_utf8_to_utf16_malloc(path, &path_sz);
+
+    /* Remove directory.
+     */
+    if (!RemoveDirectoryW(path_utf16))
     {
-        switch (errno)
-        {
-            /* Process does not have rights to create directory.
-             */
-            case EACCES:
-            case EPERM:
-                return OSAL_STATUS_NO_ACCESS_RIGHT;
-
-            /* Directory is not empty.
-             */
-            case EEXIST:
-            case ENOTEMPTY:
-                return OSAL_DIR_NOT_EMPTY;
-
-            /* Other errors.
-             */
-            default:
-                return OSAL_STATUS_FAILED;
-        }
+        rval = OSAL_STATUS_FAILED;
     }
 
-    return OSAL_SUCCESS;
+    os_free(path_utf16, path_sz);
+    return rval;
 }
