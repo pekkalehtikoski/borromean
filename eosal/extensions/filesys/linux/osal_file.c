@@ -321,26 +321,26 @@ getout:
   @param   stream Stream pointer representing the file.
   @param   buf Pointer to buffer to read into.
   @param   n Maximum number of bytes to read. The data buffer must large enough to hold
-		   at least this namy bytes. 
-  @param   n_read Pointer to integer into which the function stores the number of bytes read, 
-           which may be less than n if there are fewer bytes available. If the function fails 
-		   n_read is set to zero.
-  @param   flags Flags for the function, use OSAL_STREAM_DEFAULT (0) for default operation. 
+           at least this namy bytes.
+  @param   n_read Pointer to integer into which the function stores the number of bytes read,
+           which may be less than n if there are fewer bytes available. If the function fails
+           n_read is set to zero.
+  @param   flags Flags for the function, use OSAL_STREAM_DEFAULT (0) for default operation.
            The OSAL_STREAM_PEEK flag causes the function to return data in file, but nothing
-           will be removed from the file.
-		   See @ref osalStreamFlags "Flags for Stream Functions" for full list of flags.
-
-  @return  Function status code. Value OSAL_SUCCESS (0) indicates success and all nonzero values
-		   indicate an error. See @ref osalStatus "OSAL function return codes" for full list.
+           will be removed from the file. See @ref osalStreamFlags "Flags for Stream Functions"
+           for list of stream flags.
+  @return  The function returns OSAL_SUCCESS (0) if any data was read. Return code
+.		   Return value OSAL_END_OF_FILE indicates end of file (nread is set to zero).
+           Other return values inficate an error.
 
 ****************************************************************************************************
 */
 osalStatus osal_file_read(
-	osalStream stream,
-	os_uchar *buf,
-	os_memsz n,
-	os_memsz *n_read,
-	os_int flags)
+    osalStream stream,
+    os_uchar *buf,
+    os_memsz n,
+    os_memsz *n_read,
+    os_int flags)
 {
     osalFile *myfile;
     FILE *handle;
@@ -363,13 +363,17 @@ osalStatus osal_file_read(
     handle = myfile->handle;
     if (handle == OS_NULL) goto getout;
 
-    /* Write data to file.
+    /* Read data from file.
      */
     *n_read = fread(buf, 1, n, handle);
-    return *n_read == n ? OSAL_SUCCESS : OSAL_STATUS_FAILED;
+    if (*n_read) return OSAL_SUCCESS;
+
+    /* Return error or end of file.
+     */
+    return ferror(handle) ? OSAL_STATUS_FAILED : OSAL_END_OF_FILE;
 
 getout:
-	*n_read = 0;
+    *n_read = 0;
     return OSAL_STATUS_FAILED;
 }
 

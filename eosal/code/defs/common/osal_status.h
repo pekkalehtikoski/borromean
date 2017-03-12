@@ -102,7 +102,15 @@ typedef enum
 
     /** Attempt to open file which doesn't exist.
      */
-    OSAL_FILE_DOES_NOT_EXIST
+    OSAL_FILE_DOES_NOT_EXIST,
+
+    /** Attempt to open file which doesn't exist.
+     */
+    OSAL_DIR_NOT_EMPTY,
+
+    /** End of file has been reached.
+     */
+    OSAL_END_OF_FILE
 }
 osalStatus;
 

@@ -57,6 +57,13 @@ os_long osal_string_to_int(
     const os_char *str,
 	os_memsz *count);
 
+/* Check if string matches to pattern.
+ */
+os_boolean osal_pattern_match(
+    const os_char *str,
+    const os_char *pattern,
+    os_int flags);
+
 /*@}*/
 
 #endif

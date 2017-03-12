@@ -63,7 +63,7 @@ typedef enum
 	 */
     ESTATUS_NAME_ALREADY_MAPPED = 201,
 
-	/** Propertie, simpleproperty() did not find property.
+    /** Properties, simpleproperty() did not find property.
 	 */
     ESTATUS_NO_SIMPLE_PROPERTY_NR = 300,
 
@@ -83,7 +83,7 @@ typedef enum
     ESTATUS_NO_WHOLE_MESSAGES_TO_READ = 402,
 
     /** No more data available from stream. Like end of file or
-     *  end of memory buffer.
+     *  end of memory buffer or end of file.
      */
     ESTATUS_STREAM_END = 403
 } 

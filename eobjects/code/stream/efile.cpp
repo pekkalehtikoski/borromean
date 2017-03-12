@@ -151,7 +151,7 @@ eStatus eFile::write(
     osalStatus status;
     eStatus rval = ESTATUS_FAILED;
 
-    /* If we hot handle, try to write.
+    /* If we got handle, try to write.
      */
     if (m_handle != OS_NULL)
     {
@@ -195,15 +195,16 @@ eStatus eFile::read(
     osalStatus status;
     eStatus rval = ESTATUS_FAILED;
 
-    /* If we hot handle, try to write.
+    /* If we got handle, try to read.
      */
     if (m_handle != OS_NULL)
     {
         status = osal_stream_read(m_handle, (os_uchar*)buf, buf_sz, &nrd, 0);
         if (status == OSAL_SUCCESS) rval = ESTATUS_SUCCESS;
+        if (status == OSAL_END_OF_FILE) rval = ESTATUS_STREAM_END;
     }
 
-    /* Return number of bytes written and status code.
+    /* Return number of bytes read and status code.
      */
     if (nread != OS_NULL) *nread = nrd;
     return rval;
