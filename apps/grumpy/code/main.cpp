@@ -19,7 +19,6 @@
 #include "eobjects/extensions/socket/esocket.h"
 #include "eobjects/extensions/service/eservice.h"
 
-
 /* Generate entry code for console application.
  */
 EMAIN_CONSOLE_ENTRY
@@ -53,10 +52,10 @@ os_int emain(
     eSocket::setupclass();
     eService::setupclass();
 
-    /* Load eweb service composition, start the eweb service and listen for
+    /* Start the eservice. This loads eservice composition and starts listening for
        incoming TCP socket connections.
      */
-    // eweb_service();
+    // eservice_start();
 
     /* Start the application.
      */
