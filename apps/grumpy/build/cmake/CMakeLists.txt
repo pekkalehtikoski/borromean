@@ -1,13 +1,13 @@
-# eobjects/examples/eproperty/build/cmake/CmakeLists.txt - Cmake build for drago test app.
+# grumpy/build/cmake/CmakeLists.txt - Cmake build for drago grympy  app.
 cmake_minimum_required(VERSION 2.8.11)
 
 # Set project name (= project root folder name).
-set(E_PROJECT "drago")
+set(E_PROJECT "grumpy")
 project(${E_PROJECT})
 
 # include build information common to all projects.
 include(../../../../build/cmake/e-build-defs.txt)
-include(../../../../egui/build/cmake/e-build-egui-defs.txt)
+include(../../../../eweb/build/cmake/e-build-eweb-defs.txt)
 
 # Set path to where to keep libraries.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $ENV{E_BIN})
