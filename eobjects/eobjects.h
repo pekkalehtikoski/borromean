@@ -70,6 +70,6 @@ void eobjects_shutdown();
 #include "eobjects/code/connection/econnection.h"
 #include "eobjects/code/connection/eendpoint.h"
 #include "eobjects/code/main/emain.h"
-#include "eobjects/extensions/socket/esocket.h"
+/* #include "eobjects/extensions/socket/esocket.h" */
 
 #endif

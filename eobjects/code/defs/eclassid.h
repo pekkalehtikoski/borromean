@@ -48,7 +48,6 @@
 #define ECLASSID_THREAD 23
 #define ECLASSID_THREAD_HANDLE 24
 #define ECLASSID_STREAM 25
-#define ECLASSID_SOCKET 26
 #define ECLASSID_QUEUE 27
 #define ECLASSID_FILE 29
 #define ECLASSID_CONSOLE 29
@@ -58,6 +57,11 @@
 #define ECLASSID_TABLE 33
 #define ECLASSID_WHERE 34
 #define ECLASSID_BINDING 35
+
+
+#define ECLASSID_SOCKET 50
+#define ECLASSID_SERVICE 51
+
 
 /* First class id referved for application applications. All positive 32 bit integers
   starting from ECLASSID_APP_BASE can be used by application.

@@ -16,6 +16,9 @@
 ****************************************************************************************************
 */
 #include "eobjects/eobjects.h"
+#include "eobjects/extensions/socket/esocket.h"
+#include "eobjects/extensions/service/eservice.h"
+
 
 /* Generate entry code for console application.
  */
@@ -45,8 +48,10 @@ os_int emain(
 {
     // GrumpyApp grumpy;
 
-    /* Set up optional classes needed by the application, which are not included by default.
+    /* Setup optional classes needed by this application.
      */
+    eSocket::setupclass();
+    eService::setupclass();
 
     /* Load eweb service composition, start the eweb service and listen for
        incoming TCP socket connections.

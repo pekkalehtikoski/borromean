@@ -261,7 +261,7 @@ failed:
 
 ****************************************************************************************************
 */
-eStatus eSet::json_writer(
+eStatus eBuffer::json_writer(
     eStream *stream,
     os_int sflags,
     os_int indent)
