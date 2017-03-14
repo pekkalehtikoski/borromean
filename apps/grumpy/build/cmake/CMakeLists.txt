@@ -7,7 +7,6 @@ project(${E_PROJECT})
 
 # include build information common to all projects.
 include(../../../../build/cmake/e-build-defs.txt)
-include(../../../../eweb/build/cmake/e-build-eweb-defs.txt)
 
 # Set path to where to keep libraries.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $ENV{E_BIN})
