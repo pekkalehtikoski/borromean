@@ -31,7 +31,7 @@ EMAIN_CONSOLE_ENTRY
 
   The emain() function is eobjects application's entry point. When the emain() function is
   called, eobjects library is already initialized. Notice that it is not necessary to start
-  the application this way, you can use any application nentry code and initialize components
+  the application this way, you can use any application entry code and initialize components
   needed from there.
 
   @param   argc Number of command line arguments.
