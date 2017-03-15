@@ -1,6 +1,6 @@
 /**
 
-  @file    eservice.h
+  @file    enetservice.h
   @brief   enet service implementation.
   @author  Pekka Lehtikoski
   @version 1.0
@@ -13,30 +13,30 @@
 
 ****************************************************************************************************
 */
-#ifndef ESERVICE_INCLUDED
-#define ESERVICE_INCLUDED
+#ifndef ENETSERVICE_INCLUDED
+#define ENETSERVICE_INCLUDED
 
 /**
 ****************************************************************************************************
 
-  @brief eService class.
+  @brief eNetService class.
   X...
 
 ****************************************************************************************************
 */
-class eService : public eObject
+class eNetService : public eObject
 {
 public:
     /* Constructor.
 	 */
-    eService(
+    eNetService(
 		eObject *parent = OS_NULL,
         e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
  	 */
-    virtual ~eService();
+    virtual ~eNetService();
 
     /* Clone object.
      */
@@ -45,20 +45,20 @@ public:
         e_oid id = EOID_CHILD,
 		os_int aflags = 0);
 
-    /* Casting eObject pointer to eService pointer.
+    /* Casting eObject pointer to eNetService pointer.
      */
-    inline static eService *cast(
+    inline static eNetService *cast(
 		eObject *o) 
 	{ 
-        e_assert_type(o, ECLASSID_SERVICE)
-        return (eService*)o;
+        e_assert_type(o, ECLASSID_NETSERVICE)
+        return (eNetService*)o;
 	}
 
     /* Get class identifier.
      */
     virtual os_int classid() 
     {
-        return ECLASSID_SERVICE;
+        return ECLASSID_NETSERVICE;
     }
 
     /* Static function to add class to propertysets and class list.
@@ -67,12 +67,12 @@ public:
 
     /* Static constructor function for generating instance by class list.
      */
-    static eService *newobj(
+    static eNetService *newobj(
         eObject *parent,
         e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eService(parent, id, flags);
+        return new eNetService(parent, id, flags);
     }
 };
 

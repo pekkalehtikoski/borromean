@@ -60,7 +60,7 @@
 
 
 #define ECLASSID_SOCKET 50
-#define ECLASSID_SERVICE 51
+#define ECLASSID_NETSERVICE 51
 
 
 /* First class id referved for application applications. All positive 32 bit integers
