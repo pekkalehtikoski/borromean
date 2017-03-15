@@ -16,7 +16,6 @@
 #ifndef ENETPROCESS_INCLUDED
 #define ENETPROCESS_INCLUDED
 
-
 /* Initialize this as enet process. First argument is process name and second argument
    is process identification number.
  */
