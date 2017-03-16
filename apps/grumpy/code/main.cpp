@@ -17,6 +17,7 @@
 */
 #include "eobjects/eobjects.h"
 #include "eobjects/extensions/netprocess/enetprocess.h"
+#include "grumpy.h"
 
 /* Generate entry code for console application.
  */
@@ -47,6 +48,8 @@ os_int emain(
     os_int argc,
     os_char *argv[])
 {
+    Grumpy grumpy;
+
     const os_char
         *process_id,
         *enet_service_ip_address;
@@ -59,8 +62,7 @@ os_int emain(
 
     /* Start the application.
      */
-    // grumpy.start();
-
+    grumpy.run();
 
     /* Finished.
      */
