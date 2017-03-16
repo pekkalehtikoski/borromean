@@ -111,14 +111,14 @@ void enet_process_initialize(
 
   @brief Save enet process settings to file.
 
-  The enet_save_process_settings function needs to be called after process settings in global
+  The enet_process_save_settings function needs to be called after process settings in global
   structure have changed to write the changes to disc.
 
   @return None.
 
 ****************************************************************************************************
 */
-void enet_save_process_settings()
+void enet_process_save_settings()
 {
 }
 

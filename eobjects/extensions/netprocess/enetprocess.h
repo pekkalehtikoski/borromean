@@ -25,7 +25,7 @@ void enet_process_initialize(
 
 /* Save enet process settings to file.
  */
-void enet_save_process_settings();
+void enet_process_save_settings();
 
 /* Load composition JSON files.
  */
@@ -40,5 +40,13 @@ void enet_process_listen(
  */
 void enet_process_connect_ewebservice(
     const os_char *enet_service_ip_address);
+
+/* Startup code for a service process.
+ */
+void enet_process_service_start(
+    const os_char *process_name,
+    const os_char *tcpport,
+    os_int argc,
+    os_char *argv[]);
 
 #endif
