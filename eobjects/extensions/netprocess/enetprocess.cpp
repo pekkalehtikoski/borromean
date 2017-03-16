@@ -98,6 +98,7 @@ void enet_process_initialize(
 
     /* Set default top composition file name.
      */
+    os_strncpy(eglobal->composition, "default", ENET_COMPOSITION_NAME_SZ);
 
     /* Load process specific parameters from file.
      */
@@ -130,7 +131,7 @@ void enet_save_process_settings()
   The enet_process_load_composition function loads JSON composition files for parameters,
   devices and IO mapping. The top level composition file includes other composition files
   which list the files to be loaded. If these lists include wildcard, files are loaded
-  in aplhabetical order.
+  in alphabetical order.
 
   @return None.
 
@@ -141,15 +142,39 @@ void enet_process_load_composition()
 
 }
 
-/* Start listening for incoming TCP connections.
- */
+
+/**
+****************************************************************************************************
+
+  @brief Start listening for incoming TCP connections.
+
+  The enet_process_listen function starts listening TCP socket connections.
+
+  @param  tcpport TCP port number to listen to.
+
+  @return None.
+
+****************************************************************************************************
+*/
 void enet_process_listen(
-    const os_char *tcport)
+    const os_char *tcpport)
 {
 }
 
-/* Connect process to ewebservice.
- */
+
+/**
+****************************************************************************************************
+
+  @brief Connect process to ewebservice.
+
+  The enet_process_connect_ewebservice function...
+
+  @param  enet_service_ip_address
+
+  @return None.
+
+****************************************************************************************************
+*/
 void enet_process_connect_ewebservice(
     const os_char *enet_service_ip_address)
 {

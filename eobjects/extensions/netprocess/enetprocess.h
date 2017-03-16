@@ -34,7 +34,7 @@ void enet_process_load_composition();
 /* Start listening for incoming TCP connections.
  */
 void enet_process_listen(
-    const os_char *tcport);
+    const os_char *tcpport);
 
 /* Connect process to ewebservice.
  */
