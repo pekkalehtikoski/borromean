@@ -159,6 +159,15 @@ void enet_process_load_composition()
 void enet_process_listen(
     const os_char *tcpport)
 {
+    eThread *t;
+
+    /* Create and start thread to listen for incoming socket connections,
+       name it "endpoint". After this t pointer is useless.
+     */
+    t = new eEndPoint();
+    t->addname("//endpoint");
+    t->setpropertys(EENDPP_IPADDR, tcpport);
+    t->start();
 }
 
 

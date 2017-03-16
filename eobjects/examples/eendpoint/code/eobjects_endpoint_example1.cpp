@@ -162,8 +162,8 @@ t->setpropertys(EMYCLASS1P_A, "Nasse");
 // t->json_write(&econsole);
     t->start(&thandle1); /* After this t pointer is useless */
 
-    /* Create and start thread to listen for incoming socket connections, 
-       name it "endpointthread".
+    /* Create and start end point thread to listen for incoming socket connections,
+       name it "myendpoint".
      */
     t = new eEndPoint();
 	t->addname("//myendpoint");

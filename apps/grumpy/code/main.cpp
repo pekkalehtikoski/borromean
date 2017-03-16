@@ -55,7 +55,7 @@ os_int emain(
        listen for TCP socket and optionally connect to ewebservice. Application (process)
        name is "grumpy" and it listens to TCP port 14119 by default.
      */
-    enet_process_service_start("grumpy", "14119", argc, argv);
+    enet_process_service_start("grumpy", ":14119", argc, argv);
 
     /* Start the application.
      */
