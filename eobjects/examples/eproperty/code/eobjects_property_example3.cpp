@@ -136,12 +136,12 @@ void property_example_3()
     converter = new eMyClass();
    
     f = converter->propertyd(EMYCLASSP_FAHRENHEIT);
-    converter->property(EMYCLASSP_OPINION, &v);
+    converter->propertyv(EMYCLASSP_OPINION, &v);
     printf ("initial F = %f, opinion = %s\n", f, v.gets());
    
     converter->setpropertyd(EMYCLASSP_CELCIUS, 40.0);
     f = converter->propertyd(EMYCLASSP_FAHRENHEIT);
-    converter->property(EMYCLASSP_OPINION, &v);
+    converter->propertyv(EMYCLASSP_OPINION, &v);
     printf ("initial F = %f, opinion = %s\n", f, v.gets());
 
     delete converter;

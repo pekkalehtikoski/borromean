@@ -734,7 +734,7 @@ public:
 
     /* Set property value.
      */
-    void setproperty(
+    void setpropertyv(
         os_int propertynr, 
         eVariable *x, 
         eObject *source = OS_NULL, 
@@ -768,7 +768,7 @@ public:
 
     /* Get property value.
      */
-    void property(
+    void propertyv(
         os_int propertynr, 
         eVariable *x, 
         os_int flags = 0);

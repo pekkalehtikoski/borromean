@@ -47,8 +47,8 @@ void property_example_2()
     osal_console_write(v.gets());
 
     v.setpropertys(EVARP_TEXT, "nasse");
-    v.property(EVARP_TEXT, &u);
-    osal_console_write("\nv.property(EVARP_TEXT, &u), u.gets() = ");
+    v.propertyv(EVARP_TEXT, &u);
+    osal_console_write("\nv.propertyv(EVARP_TEXT, &u), u.gets() = ");
     osal_console_write(u.gets());
 
     osal_console_write("\n");

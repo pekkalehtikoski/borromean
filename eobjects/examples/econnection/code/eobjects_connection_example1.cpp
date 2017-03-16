@@ -102,9 +102,9 @@ public:
             {
 //                setpropertyl(EMYCLASS2P_X, -2 * propertyl(EMYCLASS2P_X));
 //                setpropertyl(EMYCLASS2P_Y, propertyl(EMYCLASS2P_Y)+1);
-                property(EMYCLASS2P_X, &v);
+                propertyv(EMYCLASS2P_X, &v);
 printf ("ULLE \'%s\'\n", v.gets());
-                setproperty(EMYCLASS2P_Y, &v);
+                setpropertyv(EMYCLASS2P_Y, &v);
 
 /*    setpropertys_msg("//myconnection/myclass1",
          "message from connection_example1", "A"); */

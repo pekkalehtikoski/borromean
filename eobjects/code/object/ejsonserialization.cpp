@@ -150,7 +150,7 @@ eStatus eObject::json_write(
         {
             /* Get property value and property name. Skip if same as default value or no name.
              */
-            property((os_int)p->oid(), &value);
+            propertyv((os_int)p->oid(), &value);
             if (!value.compare(p)) continue;
             name = p->firstn(EOID_NAME);
             if (name == OS_NULL) continue;

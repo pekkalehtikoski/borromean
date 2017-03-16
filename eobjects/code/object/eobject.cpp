@@ -1967,7 +1967,7 @@ void eObject::onmessage(
                     switch (command)
                     {
                       case ECMD_SETPROPERTY:
-                        setproperty(propertynr(target+3), 
+                        setpropertyv(propertynr(target+3),
                             eVariable::cast(envelope->content()));
                         return;
                     }
@@ -2258,9 +2258,9 @@ void eObject::propertysetdone(
             mp = eVariable::cast(propertyset->byname(v.gets()));
             if (mp)
             {
-                p->property(EVARP_CONF, &v);
+                p->propertyv(EVARP_CONF, &v);
                 v.appends(e);
-                p->setproperty(EVARP_CONF, &v);
+                p->setpropertyv(EVARP_CONF, &v);
             }
         }
     }
@@ -2523,7 +2523,7 @@ notfound:
 
 ****************************************************************************************************
 */
-void eObject::setproperty(
+void eObject::setpropertyv(
     os_int propertynr, 
     eVariable *x, 
     eObject *source, 
@@ -2580,7 +2580,7 @@ void eObject::setproperty(
          */
         if (x->type() != OS_OBJECT)
         {
-            property(propertynr, &v);
+            propertyv(propertynr, &v);
             if (!v.compare(x)) return;
         }
 
@@ -2684,7 +2684,7 @@ void eObject::setpropertyl(
 {
     eVariable v;
     v.setl(x);
-    setproperty(propertynr, &v);
+    setpropertyv(propertynr, &v);
 }
 
 /* Set property value as double.
@@ -2695,7 +2695,7 @@ void eObject::setpropertyd(
 {
     eVariable v;
     v.setd(x);
-    setproperty(propertynr, &v);
+    setpropertyv(propertynr, &v);
 }
 
 /* Set property value as string.
@@ -2706,12 +2706,12 @@ void eObject::setpropertys(
 {
     eVariable v;
     v.sets(x);
-    setproperty(propertynr, &v);
+    setpropertyv(propertynr, &v);
 }
 
 /* Get property value.
  */
-void eObject::property(
+void eObject::propertyv(
     os_int propertynr, 
     eVariable *x, 
     os_int flags)
@@ -2775,7 +2775,7 @@ os_long eObject::propertyl(
     os_int propertynr)
 {
     eVariable v;
-    property(propertynr, &v);
+    propertyv(propertynr, &v);
     return v.geti();
 }
 
@@ -2783,7 +2783,7 @@ os_double eObject::propertyd(
     os_int propertynr)
 {
     eVariable v;
-    property(propertynr, &v);
+    propertyv(propertynr, &v);
     return v.getd();
 }
 

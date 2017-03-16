@@ -730,7 +730,7 @@ os_boolean ePropertyBinding::binding_setproperty(
     
     /* Set property value.
      */
-    obj->setproperty(m_localpropertynr, x, this);
+    obj->setpropertyv(m_localpropertynr, x, this);
 
     return OS_TRUE;
 }
@@ -758,7 +758,7 @@ os_boolean ePropertyBinding::binding_getproperty(
     
     /* Set property value.
      */
-    obj->property(m_localpropertynr, x);
+    obj->propertyv(m_localpropertynr, x);
 
     return OS_TRUE;
 }
@@ -799,6 +799,6 @@ os_boolean ePropertyBinding::listattr(
 
     /* Get subproperty list
      */
-    propertyvar->property(EVARP_CONF, x);
+    propertyvar->propertyv(EVARP_CONF, x);
     return !x->isempty();
 }
