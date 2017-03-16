@@ -7,7 +7,7 @@ project(${E_PROJECT})
 
 # include build information common to all projects.
 include(../../../../build/cmake/e-build-defs.txt)
-include(e-build-epyo-defs.txt)
+include(epyo-defs.txt)
 
 # Set path to where to keep libraries.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_LIB})
