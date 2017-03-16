@@ -97,13 +97,13 @@
 #endif
 
 /** Short name referring operating system and compilation. For example "win32", "linux32", 
-    "linux64", "vxworks", "netos"... There can be several names for same operating system.
+    "linux64", "mint18", "vxworks", "netos"... There can be several names for same operating system.
 	This is useful for example is two compilers are used for the same operating system, 
 	or there are multiple processor architectures, and we need to maintain compiler output
 	for several of these. 
  */
 #ifndef OSAL_BIN_NAME
-#define OSAL_BIN_NAME "linux"
+#define OSAL_BIN_NAME "mint18"
 #endif
 
 /** Default file system root. This is path to default root of the file system.
@@ -162,9 +162,9 @@
 #define OSAL_FUNCTION_POINTER_SUPPORT 1
 #endif
 
- /** If compiler can support recursive function calls, define 1. Define zero
-     only for micro controllers which do not have stack (for example PIC).
-  */
+/** If compiler can support recursive function calls, define 1. Define zero
+    only for micro controllers which do not have stack (for example PIC).
+ */
 #ifndef OSAL_RECURSION_SUPPORT
 #define OSAL_RECURSION_SUPPORT 1
 #endif

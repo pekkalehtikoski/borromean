@@ -22,11 +22,23 @@
 class eThreadHandle;
 class eConsole;
 
+/* Space allocation for process name, nr, id, etc. strings.
+ */
+#define ENET_PROCESS_NAME_SZ 32
+#define ENET_PROCESS_NR_SZ 16
+#define ENET_PROCESS_ID_SZ 48
+#define ENET_PROCESS_NICK_NAME_SZ 48
+
+/* Space allocation for directory string and composition file name.
+ */
+#define ENET_DIR_SZ 128
+#define ENET_COMPOSITION_NAME_SZ 32
+
 
 /**
 ****************************************************************************************************
 
-  @brief Class list structure.
+  @brief Global structure.
 
   X...
 
@@ -45,15 +57,15 @@ typedef struct eGlobal
      */
     eContainer *root;
 
-    /* Empty variable which does not belong to any thread.
+    /** Empty variable which does not belong to any thread.
      */
     eVariable *empty;
 
-    /* Container for class list.
+    /** Container for class list.
      */
     eContainer *classlist;
 
-    /* Container for property sets.
+    /** Container for property sets.
      */
     eContainer *propertysets;
 
@@ -65,7 +77,7 @@ typedef struct eGlobal
      */
     eProcess *process;
 
-    /* Process name space
+    /** Process name space
      */
     eNameSpace *process_ns;
 
@@ -73,9 +85,46 @@ typedef struct eGlobal
      */
     eThreadHandle *timerhandle;
 
-    /* Console stream for debug output.
+    /** Console stream for debug output.
      */
     eConsole *console;
+
+    /** Name of the process, like "grumpy".
+     */
+    os_char process_name[ENET_PROCESS_NAME_SZ];
+
+    /** Process idenfification number, can be serial
+        number or short text.
+     */
+    os_char process_nr[ENET_PROCESS_NR_SZ];
+
+    /** Process identification, process name and identification name together
+     */
+    os_char process_id[ENET_PROCESS_ID_SZ];
+
+    /** Process nick name to display to user.
+     */
+    os_char process_nick_name[ENET_PROCESS_NICK_NAME_SZ];
+
+    /** Composition directory.
+     */
+    os_char composition_dir[ENET_DIR_SZ];
+
+    /** Executable directory.
+     */
+    os_char bin_dir[ENET_DIR_SZ];
+
+    /** Parameter directory.
+     */
+    os_char prm_dir[ENET_DIR_SZ];
+
+    /** Database directory.
+     */
+    os_char db_dir[ENET_DIR_SZ];
+
+    /** Composition file name
+     */
+    os_char composition[ENET_COMPOSITION_NAME_SZ];
 }
 eGlobal;
 

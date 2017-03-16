@@ -16,18 +16,126 @@
 #include "eobjects/eobjects.h"
 #include "eobjects/extensions/netprocess/enetprocess.h"
 
-/* Initialize this as enet process. First argument is process name and second argument
-   is process identification number.
+/* Default root directory.
  */
+#ifndef ENET_ROOT_DIR
+#define ENET_ROOT_DIR OSAL_FS_ROOT "coderoot/borromean/"
+#endif
+
+/* Default composition root directory.
+ */
+#ifndef ENET_COMPOSITION_DIR
+#define ENET_COMPOSITION_DIR ENET_ROOT_DIR "apps/"
+#endif
+
+/* Default executable directory.
+ */
+#ifndef ENET_BIN_DIR
+#define ENET_BIN_DIR ENET_ROOT_DIR "bin/" OSAL_BIN_NAME "/"
+#endif
+
+/* Default root parameter directory.
+ */
+#ifndef ENET_PRM_DIR
+#define ENET_PRM_DIR ENET_ROOT_DIR "prm/"
+#endif
+
+/* Default root database directory.
+ */
+#ifndef ENET_DB_DIR
+#define ENET_DB_DIR ENET_ROOT_DIR "db/"
+#endif
+
+
+/**
+****************************************************************************************************
+
+  @brief Initialize this process as enet process.
+
+  The enet_process_initialize function stores process name and identification number into
+  global structure and loads process settings from file.
+
+  @param  process_name Process name, like "grumpy".
+  @param  process_nr Process identification number. Identifies the instances of the executable.
+          Can be serial number or short string. Foe example "10" could identify the process
+          as "grumpy_10".
+  @return None.
+
+****************************************************************************************************
+*/
 void enet_process_initialize(
     const os_char *process_name,
-    const os_char *process_identification)
+    const os_char *process_nr)
 {
+    /* Save process identification in global flat structure, so synchronization
+       is not needed to access these.
+     */
+    os_strncpy(eglobal->process_name, process_name, ENET_PROCESS_NAME_SZ);
+    os_strncpy(eglobal->process_nr, process_nr, ENET_PROCESS_NR_SZ);
+    os_strncpy(eglobal->process_id, process_name, ENET_PROCESS_ID_SZ);
+    os_strncat(eglobal->process_id, "_", ENET_PROCESS_ID_SZ);
+    os_strncat(eglobal->process_id, process_nr, ENET_PROCESS_ID_SZ);
+    os_strncpy(eglobal->process_nick_name, eglobal->process_id,
+        ENET_PROCESS_NICK_NAME_SZ);
+
+    /* Set paths: to composition folder, executables folder, parameter folder
+       and to database folder. These can be set by environment variables or hard
+       coded during compilation from -D compiler option. There are defaults for
+       each operating system if noting is specified.
+       On some devices, at least on android, it is necessary to locate writable folders
+       at run time.
+     */
+    os_strncpy(eglobal->composition_dir, ENET_COMPOSITION_DIR, ENET_DIR_SZ);
+    os_strncat(eglobal->composition_dir, process_name, ENET_DIR_SZ);
+    os_strncat(eglobal->composition_dir, "/", ENET_DIR_SZ);
+    os_strncpy(eglobal->bin_dir, ENET_BIN_DIR, ENET_DIR_SZ);
+    os_strncpy(eglobal->prm_dir, ENET_PRM_DIR, ENET_DIR_SZ);
+    os_strncat(eglobal->prm_dir, eglobal->process_id, ENET_DIR_SZ);
+    os_strncat(eglobal->prm_dir, "/", ENET_DIR_SZ);
+    os_strncpy(eglobal->db_dir, ENET_DB_DIR, ENET_DIR_SZ);
+    os_strncat(eglobal->db_dir, eglobal->process_id, ENET_DIR_SZ);
+    os_strncat(eglobal->db_dir, "/", ENET_DIR_SZ);
+
+    /* Set default top composition file name.
+     */
+
+    /* Load process specific parameters from file.
+     */
 
 }
 
-/* Load composition JSON files.
- */
+
+/**
+****************************************************************************************************
+
+  @brief Save enet process settings to file.
+
+  The enet_save_process_settings function needs to be called after process settings in global
+  structure have changed to write the changes to disc.
+
+  @return None.
+
+****************************************************************************************************
+*/
+void enet_save_process_settings()
+{
+}
+
+
+/**
+****************************************************************************************************
+
+  @brief Load JSON composition files.
+
+  The enet_process_load_composition function loads JSON composition files for parameters,
+  devices and IO mapping. The top level composition file includes other composition files
+  which list the files to be loaded. If these lists include wildcard, files are loaded
+  in aplhabetical order.
+
+  @return None.
+
+****************************************************************************************************
+*/
 void enet_process_load_composition()
 {
 

@@ -155,9 +155,9 @@
 #define OSAL_FUNCTION_POINTER_SUPPORT 1
 #endif
 
- /** If compiler can support recursive function calls, define 1. Define zero
-     only for micro controllers which do not have stack (for example PIC).
-  */
+/** If compiler can support recursive function calls, define 1. Define zero
+    only for micro controllers which do not have stack (for example PIC).
+ */
 #ifndef OSAL_RECURSION_SUPPORT
 #define OSAL_RECURSION_SUPPORT 1
 #endif

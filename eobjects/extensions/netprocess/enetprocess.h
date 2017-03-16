@@ -21,7 +21,11 @@
  */
 void enet_process_initialize(
     const os_char *process_name,
-    const os_char *process_identification);
+    const os_char *process_nr);
+
+/* Save enet process settings to file.
+ */
+void enet_save_process_settings();
 
 /* Load composition JSON files.
  */
