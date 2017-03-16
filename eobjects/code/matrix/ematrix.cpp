@@ -169,7 +169,6 @@ eStatus eMatrix::writer(
 {
     eBuffer *buffer;
     os_char *dataptr, *typeptr;
-    os_memsz nwritten;
     os_long l;
     os_double d;
     os_float f;
@@ -357,6 +356,9 @@ eStatus eMatrix::elementwrite(
             prev_buffer_nr = buffer_nr;
         }
 
+//        dataptr = buffer->ptr();
+//        typeptr = dataptr + m_elems_per_block * m_typesz;          HERE IS SOMETHING WERY WRONG
+
         datatype = OS_UNDEFINED_TYPE;
         switch (m_datatype)
         {
@@ -497,7 +499,6 @@ eStatus eMatrix::reader(
     eObject *o;
     eVariable tmp;
     os_long datatype, nrows, ncolumns, first_full_ix, full_count, l;
-    os_memsz nbytes, nread;
     os_double d;
     os_float f;
     os_int version, elem_ix, i, row, column;
@@ -843,7 +844,7 @@ void eMatrix::setd(
             break;
 
         case OS_LONG:
-            *((os_int*)dataptr) = eround_double_to_long(x);
+            *((os_long*)dataptr) = eround_double_to_long(x);
             break;
 
         case OS_FLOAT:
@@ -924,10 +925,9 @@ void eMatrix::sets(
 
         case OS_FLOAT:
         case OS_DOUBLE:
-            /* Convert string to float. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX MISSING CONV.
+            /* Convert string to float.
              */
-            l = osal_string_to_int(x, OS_NULL);
-            setl(row, column, l);
+            setd(row, column, osal_string_to_double(x, OS_NULL));
             break;
 
         default:
@@ -1284,15 +1284,15 @@ os_double eMatrix::getd(
             switch (*typeptr)
             {
                 case OS_LONG:
-                    d = mo->l;
+                    d = (os_double)mo->l;
                     break;
 
                 case OS_DOUBLE:
-                    d = eround_double_to_long(mo->d);
+                    d = mo->d;
                     break;
 
                 case OS_STRING:
-                    d = osal_string_to_int(mo->s, OS_NULL); // XXXXXXXXXX CONV MISSING
+                    d = osal_string_to_double(mo->s, OS_NULL);
                     break;
 
                 default:
@@ -1303,25 +1303,25 @@ os_double eMatrix::getd(
         case OS_CHAR:
             l = *((os_char*)dataptr);
             if (l == OS_CHAR_MAX) goto return_empty;
-            d = l;
+            d = (os_double)l;
             break;
 
         case OS_SHORT:
             l = *((os_short*)dataptr);
             if (l == OS_SHORT_MAX) goto return_empty;
-            d = l;
+            d = (os_double)l;
             break;
 
         case OS_INT:
             l = *((os_int*)dataptr);
             if (l == OS_INT_MAX) goto return_empty;
-            d = l;
+            d = (os_double)l;
             break;
 
         case OS_LONG:
             l = *((os_long*)dataptr);
             if (l == OS_INT_MAX) goto return_empty;
-            d = l;
+            d = (os_double)l;
             break;
 
         case OS_FLOAT:
@@ -1543,7 +1543,7 @@ eBuffer *eMatrix::getbuffer(
     if (m_elems_per_block == 0)
     {
         buffer->allocate(OEMATRIX_APPROX_BUF_SZ);
-        m_elems_per_block = buffer->allocated() / bytes_per_elem;
+        m_elems_per_block = (os_int)(buffer->allocated() / bytes_per_elem);
     }
     else
     {
@@ -1668,5 +1668,5 @@ os_short eMatrix::typesz(
     osalTypeId datatype)
 {
     if (datatype == OS_OBJECT) return sizeof(eMatrixObj);
-    return osal_typeid_size(datatype);
+    return (os_short)osal_typeid_size(datatype);
 }

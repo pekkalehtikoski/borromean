@@ -1,6 +1,7 @@
 # eobjects-defs.txt - Set cmake build environment variables common to eobjects projects.
 # 23.12.2016/pekka
 
+include(../../../eosal/build/cmake/eosal-defs.txt)
 
 # Commonly used libraries for objects console application.
 set(ENV{E_COMMON_CONSOLE_APP_LIBS} "eobjects${E_POSTFIX};eosal${E_POSTFIX}")

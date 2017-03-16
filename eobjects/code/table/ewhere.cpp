@@ -432,6 +432,7 @@ os_boolean eWhere::simple_expression()
     if (!element()) return OS_FALSE;
 
     code(op);
+    return OS_TRUE;
 }
 
 
@@ -524,8 +525,6 @@ os_boolean eWhere::element()
 os_boolean eWhere::column_name()
 {
     os_char *end;
-    os_double d;
-    os_long l;
 
     end = m_pos;
     while (*(++end) != '\"')
@@ -539,6 +538,7 @@ os_boolean eWhere::column_name()
 
     code(addvariable(m_pos + 1, (os_memsz)(end - m_pos - 1)));
     m_pos = end+1;
+    return OS_TRUE;
 }
 
 
