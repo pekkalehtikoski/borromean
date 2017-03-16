@@ -74,5 +74,3 @@ else()
   set(ENV{OSAL_CONSOLE_APP_LIBS} "$ENV{OSAL_CONSOLE_APP_LIBS};pthread")
   set(ENV{E_COMMON_CONSOLE_APP_LIBS} "$ENV{E_COMMON_CONSOLE_APP_LIBS};pthread")
 endif()
-
-# LINK_LIBRARY optimized Foo debug Foo_d)

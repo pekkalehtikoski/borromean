@@ -1,8 +1,8 @@
-# epython/epylib/build/cmake/CmakeLists.txt - Cmake build for epylib library.
+# epython/epylib/build/cmake/CmakeLists.txt - Cmake build for epy library.
 cmake_minimum_required(VERSION 2.8.11)
 
 # Set project name (= project root folder name).
-set(E_PROJECT "epylib")
+set(E_PROJECT "epy")
 project(${E_PROJECT})
 
 # include build information common to all projects.
@@ -32,4 +32,10 @@ file(GLOB_RECURSE SOURCES "${E_SOURCE_PATH}/*.cpp")
 add_library(${E_PROJECT}${E_POSTFIX} STATIC ${MAIN_HEADER} ${HEADERS} ${SOURCES})
 
 # Generate the static library
-add_library(${E_PROJECT}XX${E_POSTFIX} SHARED ${MAIN_HEADER} ${HEADERS} ${SOURCES})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_BIN})
+add_library(${E_PROJECT}${E_POSTFIX} SHARED ${MAIN_HEADER} ${HEADERS} ${SOURCES})
+
+# Build executable. Set library folder and libraries to link with
+# link_directories($ENV{E_LIB})
+# add_executable(${E_PROJECT}${E_POSTFIX} ${HEADERS} ${SOURCES})
+# target_link_libraries(${E_PROJECT}${E_POSTFIX} $ENV{E_COMMON_CONSOLE_APP_LIBS})
