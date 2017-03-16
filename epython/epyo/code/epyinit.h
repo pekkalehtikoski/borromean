@@ -17,6 +17,11 @@
 #define EPYINIT_INCLUDED
 
 
+PyMODINIT_FUNC
+PyInit_epyo(void);
+
+static PyObject *
+spam_system(PyObject *self, PyObject *args);
 
 
 #endif

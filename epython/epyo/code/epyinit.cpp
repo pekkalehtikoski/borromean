@@ -15,7 +15,24 @@
 */
 #include "epython/epyo/epyo.h"
 
-static PyObject *
+static PyObject *SpamError;
+
+static PyMethodDef SpamMethods[] = {
+    {"system",  spam_system, METH_VARARGS,
+     "Execute a shell command."},
+    {NULL, NULL, 0, NULL}        /* Sentinel */
+};
+
+static struct PyModuleDef spammodule = {
+   PyModuleDef_HEAD_INIT,
+   "epyo",   /* name of module */
+   NULL,     /* spam_doc module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   SpamMethods
+};
+
+/* static PyObject *
 spam_system(PyObject *self, PyObject *args)
 {
     const char *command;
@@ -26,4 +43,35 @@ spam_system(PyObject *self, PyObject *args)
     sts = system(command);
     return PyLong_FromLong(sts);
 }
+*/
 
+PyMODINIT_FUNC
+PyInit_epyo(void)
+{
+    PyObject *m;
+
+    m = PyModule_Create(&spammodule);
+    if (m == NULL)
+        return NULL;
+
+    SpamError = PyErr_NewException("spam.error", NULL, NULL);
+    Py_INCREF(SpamError);
+    PyModule_AddObject(m, "error", SpamError);
+    return m;
+}
+
+static PyObject *
+spam_system(PyObject *self, PyObject *args)
+{
+    const char *command;
+    int sts;
+
+    if (!PyArg_ParseTuple(args, "s", &command))
+        return NULL;
+    sts = system(command);
+    if (sts < 0) {
+        PyErr_SetString(SpamError, "System command failed");
+        return NULL;
+    }
+    return PyLong_FromLong(sts);
+}

@@ -34,6 +34,7 @@ add_library(${E_PROJECT}s${E_POSTFIX} STATIC ${MAIN_HEADER} ${HEADERS} ${SOURCES
 # Generate the static library
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_BIN})
 add_library(${E_PROJECT}${E_POSTFIX} SHARED ${MAIN_HEADER} ${HEADERS} ${SOURCES})
+SET_TARGET_PROPERTIES(${E_PROJECT}${E_POSTFIX} PROPERTIES PREFIX "")
 
 # Build executable. Set library folder and libraries to link with
 # link_directories($ENV{E_LIB})
