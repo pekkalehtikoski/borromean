@@ -840,7 +840,10 @@ public:
     ************************************************************************************************
     */
     /*@{*/
-    virtual eStatus oncallback() {return ESTATUS_SUCCESS;}
+    virtual eStatus oncallback()
+    {
+        return ESTATUS_SUCCESS;
+    }
     /*@}*/
 
 private:
