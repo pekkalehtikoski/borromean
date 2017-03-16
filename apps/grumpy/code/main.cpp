@@ -50,10 +50,6 @@ os_int emain(
 {
     Grumpy grumpy;
 
-    const os_char
-        *process_id,
-        *enet_service_ip_address;
-
     /* Setup necessary optional classes, initialize as enet process, load composition,
        listen for TCP socket and optionally connect to ewebservice. Application (process)
        name is "grumpy" and it listens to TCP port 14119 by default.
@@ -68,4 +64,3 @@ os_int emain(
      */
     return 0;
 }
-

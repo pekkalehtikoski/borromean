@@ -1,6 +1,6 @@
 /**
 
-  @file    egrumpy.h
+  @file    grumpy.h
   @brief   Grumpy Borg robot application.
   @author  Pekka Lehtikoski
   @version 1.0
