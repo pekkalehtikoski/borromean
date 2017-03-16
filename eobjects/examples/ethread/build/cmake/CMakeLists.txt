@@ -6,6 +6,7 @@ set(E_PROJECT "ethread")
 project(${E_PROJECT})
 
 # include build information common to all projects.
+include(../../../../../eosal/build/cmake/eosal-defs.txt)
 include(../../../../build/cmake/eobjects-defs.txt)
 
 # Set path to where to keep libraries.
@@ -22,7 +23,7 @@ file(GLOB_RECURSE HEADERS "${E_SOURCE_PATH}/*.h")
 
 # Add source files.
 file(GLOB_RECURSE SOURCES "${E_SOURCE_PATH}/*.cpp")
- 
+
 # Build executable. Set library folder and libraries to link with
 link_directories($ENV{E_LIB})
 add_executable(${E_PROJECT}${E_POSTFIX} ${HEADERS} ${SOURCES})

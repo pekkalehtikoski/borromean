@@ -6,7 +6,8 @@ set(E_PROJECT "epyo")
 project(${E_PROJECT})
 
 # include build information common to all projects.
-include(../../../../build/cmake/e-build-defs.txt)
+include(../../../../eosal/build/cmake/eosal-defs.txt)
+include(../../../../eobjects/build/cmake/eobjects-defs.txt)
 include(epyo-defs.txt)
 
 # Set path to where to keep libraries.

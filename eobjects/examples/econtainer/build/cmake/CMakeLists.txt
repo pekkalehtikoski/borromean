@@ -6,8 +6,8 @@ set(E_PROJECT "econtainer")
 project(${E_PROJECT})
 
 # include build information common to all projects.
+include(../../../../../eosal/build/cmake/eosal-defs.txt)
 include(../../../../build/cmake/eobjects-defs.txt)
-# include(../../../../../build/cmake/e-build-defs.txt)
 
 # Set path to where to keep libraries.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $ENV{E_BIN})

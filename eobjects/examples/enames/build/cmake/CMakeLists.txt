@@ -6,6 +6,7 @@ set(E_PROJECT "enames")
 project(${E_PROJECT})
 
 # include build information common to all projects.
+include(../../../../../eosal/build/cmake/eosal-defs.txt)
 include(../../../../build/cmake/eobjects-defs.txt)
 
 # Set path to where to keep libraries.

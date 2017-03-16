@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8.11)
 project(drago-deps)
 
 # include build information common to all projects.
-include(../../../../build/cmake/e-build-defs.txt)
- 
+include(../../../../eosal/build/cmake/eosal-defs.txt)
+
 # Build individual projects.
 add_subdirectory($ENV{E_ROOT}/eosal/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/eosal")
 add_subdirectory($ENV{E_ROOT}/eobjects/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/eobjects")
