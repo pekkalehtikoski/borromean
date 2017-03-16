@@ -13,9 +13,9 @@
 
 ****************************************************************************************************
 */
-#include "epython/epylib/epylib.h"
+#include "epython/epyo/epyo.h"
 
-/* static PyObject *
+static PyObject *
 spam_system(PyObject *self, PyObject *args)
 {
     const char *command;
@@ -26,9 +26,4 @@ spam_system(PyObject *self, PyObject *args)
     sts = system(command);
     return PyLong_FromLong(sts);
 }
-*/
 
-void nasse()
-{
-
-}

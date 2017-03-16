@@ -2,12 +2,12 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 # Set project name (= project root folder name).
-set(E_PROJECT "epy")
+set(E_PROJECT "epyo")
 project(${E_PROJECT})
 
 # include build information common to all projects.
 include(../../../../build/cmake/e-build-defs.txt)
-include(e-build-epylib-defs.txt)
+include(e-build-epyo-defs.txt)
 
 # Set path to where to keep libraries.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_LIB})
@@ -29,7 +29,7 @@ file(GLOB_RECURSE HEADERS "${E_SOURCE_PATH}/*.h")
 file(GLOB_RECURSE SOURCES "${E_SOURCE_PATH}/*.cpp")
 
 # Generate the static library
-add_library(${E_PROJECT}${E_POSTFIX} STATIC ${MAIN_HEADER} ${HEADERS} ${SOURCES})
+add_library(${E_PROJECT}s${E_POSTFIX} STATIC ${MAIN_HEADER} ${HEADERS} ${SOURCES})
 
 # Generate the static library
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_BIN})
