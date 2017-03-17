@@ -1,0 +1,41 @@
+I'd recommend using Python's with statement for managing resources that need to be cleaned up. The problem with using an explicit close() statement is that you have to worry about people forgetting to call it at all or forgetting to place it in a finally block to prevent a resource leak when an exception occurs.
+
+To use the with statement, create a class with the following methods:
+
+  def __enter__(self)
+  def __exit__(self, exc_type, exc_value, traceback)
+In your example above, you'd use
+
+class Package:
+    def __init__(self):
+        self.files = []
+
+    def __enter__(self):
+        return self
+
+    # ...
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        for file in self.files:
+            os.unlink(file)
+Then, when someone wanted to use your class, they'd do the following:
+
+with Package() as package_obj:
+    # use package_obj
+The variable package_obj will be an instance of type Package (it's the value returned by the __enter__ method). Its __exit__ method will automatically be called, regardless of whether or not an exception occurs.
+
+You could even take this approach a step further. In the example above, someone could still instantiate Package using its constructor without using the with clause. You don't want that to happen. You can fix this by creating a PackageResource class that defines the __enter__ and __exit__ methods. Then, the Package class would be defined strictly inside the __enter__ method and returned. That way, the caller never could instantiate the Package class without using a with statement:
+
+class PackageResource:
+    def __enter__(self):
+        class Package:
+            ...
+        self.package_obj = Package()
+        return self.package_obj
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.package_obj.cleanup()
+You'd use this as follows:
+
+with PackageResource() as package_obj:
+    # use package_obj
