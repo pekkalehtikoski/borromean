@@ -32,18 +32,19 @@ static struct PyModuleDef spammodule = {
    SpamMethods
 };
 
-/* static PyObject *
-spam_system(PyObject *self, PyObject *args)
-{
-    const char *command;
-    int sts;
+#if 0
+WHEN CALLING PYTHON FROM THREAD CREATED IN C
+PyGILState_STATE gstate;
+gstate = PyGILState_Ensure();
 
-    if (!PyArg_ParseTuple(args, "s", &command))
-        return NULL;
-    sts = system(command);
-    return PyLong_FromLong(sts);
-}
-*/
+/* Perform Python actions here. */
+result = CallSomeFunction();
+/* evaluate result or handle exception */
+
+/* Release the thread. No Python API allowed beyond this point. */
+PyGILState_Release(gstate);
+#endif
+
 
 PyMODINIT_FUNC
 PyInit_epyo(void)
