@@ -1411,7 +1411,6 @@ void eObject::message(
     eEnvelope *envelope)
 {
     os_char *target, *namespace_id;
-    eVariable *nspacevar;
     os_memsz sz;
 
     /* Resolve path.
@@ -1485,13 +1484,12 @@ void eObject::message(
 
     /* Name or user specified name space.
      */
-    nspacevar = new eVariable();
-    envelope->nexttarget(nspacevar);
-    namespace_id = nspacevar->gets(&sz);
+    eVariable nspacevar;
+    envelope->nexttarget(&nspacevar);
+    namespace_id = nspacevar.gets(&sz);
     envelope->move_target_over_objname((os_short)sz-1);
 
     message_within_thread(envelope, namespace_id);
-    delete nspacevar;
 }
 
 
@@ -1515,7 +1513,7 @@ void eObject::message_within_thread(
     const os_char *namespace_id)
 {
 	eNameSpace *nspace;
-    eVariable *objname;
+    eVariable objname;
     eName *name;
     os_memsz sz;
 
@@ -1525,14 +1523,12 @@ void eObject::message_within_thread(
     /* Get next object name in target path. 
         Remember length of object name.
      */
-    objname = new eVariable();
-    envelope->nexttarget(objname);
-    objname->gets(&sz);
+    envelope->nexttarget(&objname);
+    objname.gets(&sz);
 
     /* Find the name in process name space. Done with objname.
      */
-    name = nspace->findname(objname);
-    delete objname;
+    name = nspace->findname(&objname);
     if (name == OS_NULL)
     {
         goto getout;
@@ -1585,7 +1581,6 @@ getout:
 void eObject::message_process_ns(
     eEnvelope *envelope)
 {
-    eVariable *objname, *savedtarget, *mytarget;
     eNameSpace *process_ns;
     eName *name, *nextname;
     eThread *thread;
@@ -1634,20 +1629,21 @@ void eObject::message_process_ns(
      */
     else
     {
+        eVariable objname;
+
         /* Get next object name in target path. 
            Remember length of object name.
          */
-        objname = new eVariable();
-        envelope->nexttarget(objname);
-        oname = objname->gets(&sz);
+        envelope->nexttarget(&objname);
+        oname = objname.gets(&sz);
 
         /* Synchronize.
          */
         os_lock();
 
-        /* Find the name in process name space. Done with objname.
+        /* Find the name in process name space.
          */
-        name = process_ns->findname(objname);
+        name = process_ns->findname(&objname);
 
         /* If name not found: End synchronization/clen up, reply with ECMD_NOTARGET
            and return.
@@ -1659,10 +1655,9 @@ void eObject::message_process_ns(
             if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
             {
                 osal_debug_error("message() failed: Name not found in process NS");   
-                osal_debug_error(objname->gets());   
+                osal_debug_error(objname.gets());
             }
 #endif
-            delete objname;
             goto getout;
         }
 
@@ -1672,7 +1667,6 @@ void eObject::message_process_ns(
         if (thread == OS_NULL)
         {
             os_unlock();
-            delete objname;
 #if OSAL_DEBUG
             if ((envelope->flags() & EMSG_NO_ERRORS) == 0)
             {
@@ -1730,10 +1724,9 @@ void eObject::message_process_ns(
             /* Save target path in envelope without name of next target.
              */
             envelope->move_target_over_objname((os_short)sz - 1);
-            savedtarget = new eVariable();
 
-            savedtarget->sets(envelope->target());
-            mytarget = new eVariable();
+            eVariable savedtarget, mytarget;
+            savedtarget.sets(envelope->target());
 
             while (name)
             {
@@ -1752,14 +1745,14 @@ void eObject::message_process_ns(
                 if (thread != name->parent()) 
                 {
                     name->parent()->oixstr(buf, sizeof(buf));
-                    mytarget->sets(buf);
-                    if (!savedtarget->isempty()) mytarget->appends("/");
-                    mytarget->appendv(savedtarget);
-                    envelope->settarget(mytarget->gets());
+                    mytarget.sets(buf);
+                    if (!savedtarget.isempty()) mytarget.appends("/");
+                    mytarget.appendv(&savedtarget);
+                    envelope->settarget(mytarget.gets());
                 }
                 else
                 {
-                    envelope->settarget(savedtarget->gets());
+                    envelope->settarget(savedtarget.gets());
                 }
 
                 /* Queue the envelope and move on. If this is last target for 
@@ -1768,16 +1761,11 @@ void eObject::message_process_ns(
                 thread->queue(envelope, nextname == OS_NULL);
                 name = nextname;
             }
-
-            delete savedtarget;
-            delete mytarget;
         }
 
         /* End synchronization
          */
         os_unlock();
-
-        delete objname;
     }
 
     return;

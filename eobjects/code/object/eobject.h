@@ -138,6 +138,23 @@ private:
 	    os_int flags);
 
 public:
+    void* operator new(size_t sz)
+    {
+        size_t *p;
+        sz += sizeof(size_t);
+        p = (size_t*)os_malloc(sz, OS_NULL);
+        *p = sz;
+        return p + 1;
+    }
+
+    void operator delete(void *p)
+    {
+        if (p)
+        {
+            size_t *q = (size_t*)p - 1;
+            os_free(q, *q);
+        }
+    }
 
     /* Delete eObject, virtual destructor.
      */

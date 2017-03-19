@@ -207,6 +207,24 @@ void property_example_4()
     eThreadHandle thandle1, thandle2;
     eContainer c;
 
+    os_int64 st, tn;
+    eVariable *v;
+    os_long i;
+
+    os_timer(&st);
+    for (i = 0; i<100000000; i++)
+    {
+        v = new eVariable();
+        delete v;
+    }
+    os_timer(&tn);
+    tn -= st;
+    tn /= 1000;
+
+    printf ("%d\n", (int)tn);
+    printf ("%d\n", (int)sizeof(eHandle));
+return;
+
     /* Adds the eMyClass1 and eMyClass2 to class list and creates property set for the class.
      */
     eMyClass1::setupclass(); 

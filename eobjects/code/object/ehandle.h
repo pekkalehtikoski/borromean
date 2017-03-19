@@ -26,7 +26,7 @@
 
 /* Do we want to debug object tree
  */
-#define EOBJECT_DBTREE_DEBUG 1
+#define EOBJECT_DBTREE_DEBUG 0
 
 class eObject;
 class eHandleTable;
@@ -382,7 +382,7 @@ protected:
         eRoot *root);
 
 #else
-	/** Red/Black tree: Get grand parent.
+    /** Red/Black tree: Get grand parent.
      */
     inline static eHandle *rb_grandparent(
         eHandle *n)
@@ -469,11 +469,11 @@ protected:
     void delete_case6(
 		eHandle *n);
 
-	/** Object index. 
+    /** Object index. (other theads can access this)
      */
 	e_oix m_oix;
 	
-	/** Reuse counter. 
+    /** Reuse counter (other theads can access this).
      */
 	os_int m_ucnt;
 
@@ -485,7 +485,7 @@ protected:
      */
     os_int m_oflags;
 
-	/** Pointer to parent object of this object.
+    /** Pointer to parent object of this object. (THIS SHOULD PERHAPS MOVE TO OBJ)
      */
 	eHandle *m_parent;
 
@@ -501,13 +501,14 @@ protected:
      */
     eHandle *m_up;
 
-    /* Pointer to contained object.
+    /** Pointer to the C++ object (If this object is thread
+        (has message queue) other theads can access this).
      */
     eObject *m_object; 
 
-	/** Root of the object of the index tree.
+    /** Root of the object of the index tree (other theads can access this).
      */
-	eRoot *m_root; 
+    eRoot *m_root;
 
 	/** Root child object handle in red/black tree.
      */

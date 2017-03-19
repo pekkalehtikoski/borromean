@@ -7,7 +7,12 @@
   @date    9.11.2011
 
   This header file contains functions prototypes for OSAL memory allocation. The OSAL implements
-  it's own memory manager, 
+  it's own memory manager.
+
+  Cache line size: 64 bytes
+  Now, the parity bits are for the use of the memory controller - so cache line size typically
+  is 64 bytes. The processor really controls very little beyond the registers. Everything else
+  going on in the computer is more about getting hardware in to optimize CPU performance.
 
   Copyright 2012 Pekka Lehtikoski. This file is part of the eobjects project and shall only be used, 
   modified, and distributed under the terms of the project licensing. By continuing to use, modify,

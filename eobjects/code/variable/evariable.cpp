@@ -1150,14 +1150,13 @@ os_int eVariable::compare(
                      */
                     if (y->autotype(OS_FALSE))
                     {
-                        tmp = new eVariable(this);
-                        tmp->setv(y);
-                        tmp->autotype(OS_TRUE);
+                        eVariable tmpv;
+                        tmpv.setv(y);
+                        tmpv.autotype(OS_TRUE);
                         dx = (os_double)x->m_value.valbuf.v.l;
-                        dy = tmp->getd();
+                        dy = tmpv.getd();
                         if (dy > dx) rval = 1;
                         if (dy < dx) rval = -1;
-                        delete(tmp);
                     }
                     else
                     {
@@ -1191,14 +1190,13 @@ os_int eVariable::compare(
                      */
                     if (y->autotype(OS_FALSE))
                     {
-                        tmp = new eVariable(this);
-                        tmp->setv(y);
-                        tmp->autotype(OS_TRUE);
+                        eVariable tmpv;
+                        tmpv.setv(y);
+                        tmpv.autotype(OS_TRUE);
                         dx = x->m_value.valbuf.v.d;
-                        dy = tmp->getd();
+                        dy = tmpv.getd();
                         if (dy > dx) rval = 1;
                         if (dy < dx) rval = -1;
-                        delete(tmp);
                     }
                     else
                     {
