@@ -146,7 +146,7 @@ void eTimer::onmessage(
                 n = eVariable::cast(envelope->context());
                 if (n)
                 {
-                    v = ns_getv(n->gets(), E_THIS_NS);
+                    v = ns_getv(n->gets(), eobj_this_ns);
                     delete v;
                 }
                 return;
@@ -185,7 +185,7 @@ void eTimer::settimer(
 
     /* If we have variable for this timer.
      */
-    n = ns_first(name, E_THIS_NS);
+    n = ns_first(name, eobj_this_ns);
     if (n) t = eVariable::cast(n->parent());
     if (t)
     {

@@ -58,7 +58,7 @@ os_int emain(
     /* Create some variables in container in random order. Give object identifier also
        as variable value.
      */
-	for (i = 0; i<40; i++)
+    for (i = 0; i<4000; i++)
 	{
         oid = (e_oid)osal_rand(0,29);
 		v = new eVariable(&c, oid);
@@ -67,7 +67,7 @@ os_int emain(
 
     /* Delete some variables at random.
      */    
-	for (i = 0; i<40; i++)
+    for (i = 0; i<4000; i++)
 	{
 		o = c.first((e_oid)osal_rand(0,19));
 		delete o;
@@ -80,6 +80,10 @@ os_int emain(
 		osal_console_write(v->gets());
 		osal_console_write(", ");
 	} 
+
+#if EOBJECT_DBTREE_DEBUG
+    c.handle()->verify_whole_tree();
+#endif
 
     /* Finished.
      */

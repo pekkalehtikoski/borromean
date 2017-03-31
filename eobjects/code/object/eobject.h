@@ -88,6 +88,15 @@ class ePointer;
 #endif
 
 
+/* Name space identifiers as static strings. eobj_this_ns is default
+   for ns_first and ns_firstv functions()
+ */
+extern os_char eobj_process_ns[];
+extern os_char eobj_thread_ns[];
+extern os_char eobj_parent_ns[];
+extern os_char eobj_this_ns[];
+
+
 /**
 ****************************************************************************************************
 
@@ -138,7 +147,7 @@ private:
 	    os_int flags);
 
 public:
-    void* operator new(size_t sz)
+/*     void* operator new(size_t sz)
     {
         size_t *p;
         sz += sizeof(size_t);
@@ -155,6 +164,7 @@ public:
             os_free(q, *q);
         }
     }
+*/
 
     /* Delete eObject, virtual destructor.
      */
@@ -355,27 +365,33 @@ public:
      */
     inline eObject *parent() 
 	{
-		if (mm_handle) 
+        return mm_parent;
+        /* if (mm_handle)
         {
             eHandle *h;
             h = mm_handle->parent();
             if (h) return h->m_object;
         }
-		return OS_NULL;
+        return OS_NULL; */
 	}
 
     /** Get grandparent of this object.
      */
     inline eObject *grandparent() 
 	{
-		if (mm_handle) 
+        if (mm_parent)
+        {
+            return mm_parent->mm_parent;
+        }
+		return OS_NULL;
+        /* if (mm_handle)
         {
             eHandle *h;
             h = mm_handle->grandparent();
             if (h) return h->m_object;
         }
-		return OS_NULL;
-	}
+        return OS_NULL; */
+    }
 
 
     /** Get thread object.
@@ -552,28 +568,28 @@ public:
      */
 	eName *ns_first(
         const os_char *name = OS_NULL,
-        const os_char *namespace_id = OS_NULL);
+        const os_char *namespace_id = eobj_this_ns);
 
     /* Find eName by name and name space.
      */
     eName *ns_firstv(
         eVariable *name = OS_NULL,
-        const os_char *namespace_id = OS_NULL);
+        const os_char *namespace_id = eobj_this_ns);
 
     /* Find object by name.
      */
     eObject *ns_get(
         const os_char *name,
-        const os_char *namespace_id = OS_NULL,
+        const os_char *namespace_id = eobj_this_ns,
         os_int cid = ECLASSID_OBJECT);
 
     eVariable *ns_getv(
         const os_char *name,
-        const os_char *namespace_id = OS_NULL);
+        const os_char *namespace_id = eobj_this_ns);
 
     eContainer *ns_getc(
         const os_char *name,
-        const os_char *namespace_id = OS_NULL);
+        const os_char *namespace_id = eobj_this_ns);
 
     /* Info bits for findnamespace().
      */
@@ -946,6 +962,11 @@ protected:
 	/* Pointer to object's handle.
      */
 	eHandle *mm_handle;
+
+    /** Pointer to parent object of this object. (THIS SHOULD PERHAPS MOVE TO OBJ)
+     */
+    eObject *mm_parent;
+
 };
 
 #endif

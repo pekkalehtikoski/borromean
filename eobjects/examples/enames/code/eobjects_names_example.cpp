@@ -70,6 +70,8 @@ os_int emain(
 	v->sets("hervalue");
 	v->addname("hername");
 
+    c.handle()->verify_whole_tree();
+
     /* List all names in conteiner's namespace.
      */
     for (n = c.ns_first(); n; n = n->ns_next(OS_FALSE))

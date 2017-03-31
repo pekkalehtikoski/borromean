@@ -31,6 +31,14 @@
 */
 #include "eobjects/eobjects.h"
 
+/* Name space identifiers as static strings. eobj_this_ns is default
+   for ns_first and ns_firstv functions()
+ */
+os_char eobj_process_ns[] = E_PROCESS_NS;
+os_char eobj_thread_ns[] = E_THREAD_NS;
+os_char eobj_parent_ns[] = E_PARENT_NS;
+os_char eobj_this_ns[] = E_THIS_NS;
+
 
 /**
 ****************************************************************************************************
@@ -60,6 +68,8 @@ eObject::eObject(
 
     mm_handle = OS_NULL;
     flags &= EOBJ_CLONE_MASK;
+
+    mm_parent = parent;
 
 	/* If this if not primitive object? 
 	 */
@@ -153,7 +163,10 @@ eObject::~eObject()
     {
         os_lock();
 
-        if (mm_handle->m_parent) 
+        /* if (mm_handle->m_parent)
+        if (mm_parent)
+            */
+        if (mm_handle)
         {
             mm_handle->delete_children();
         }
@@ -162,11 +175,15 @@ eObject::~eObject()
         {
             /* If handle has parent, remove from parent's children.
              */
-            if (mm_handle->m_parent) 
+            /* if (mm_handle->m_parent)
             {
 			    mm_handle->m_parent->rbtree_remove(mm_handle);
+            } */
+            if (mm_parent)
+            {
+                mm_parent->mm_handle->rbtree_remove(mm_handle);
             }
-            
+
             /* Handle no longer needed.
              */
             mm_handle->m_root->freehandle(mm_handle);
@@ -684,6 +701,7 @@ void eObject::adopt(
         sync = OS_FALSE; // || m_root->is_process ???????????????????????????????????????????????????????????????????????
         if (sync) os_lock();
 
+        child->mm_parent = this;
         mm_handle->m_root->newhandle(child, this, id, 0);
 
         if (sync) os_unlock();
@@ -702,7 +720,6 @@ void eObject::adopt(
          */
         sync = (mm_handle->m_root != childh->m_root);
 
-
         if (sync) 
         {
             os_lock();
@@ -713,17 +730,23 @@ void eObject::adopt(
          */
         child->map(E_DETACH_FROM_NAMESPACES_ABOVE);
 
-        if (childh->m_parent)
+        /* if (childh->m_parent)
         {
 		    childh->m_parent->rbtree_remove(childh);
-// childh->m_parent->verify_whole_tree();
+        } */
+        if (child->mm_parent)
+        {
+            child->mm_parent->mm_handle->rbtree_remove(childh);
+
         }
+
+        child->mm_parent = this;
 
         if (id != EOID_CHILD) childh->m_oid = id;
 		childh->m_oflags |= EOBJ_IS_RED;
 		childh->m_left = childh->m_right = childh->m_up = OS_NULL;
 		mm_handle->rbtree_insert(childh);
-        childh->m_parent = mm_handle;
+        /* childh->m_parent = mm_handle; */
 
         /* Map names back: If not disabled by user flag EOBJ_NO_MAP, then attach all names of 
            child object (this) and it's childen to name spaces. If a name is already mapped, 
@@ -1050,7 +1073,8 @@ eNameSpace *eObject::findnamespace(
 
     /* Look upwards for parent or matching name space.
      */
-    h = getparent ? mm_handle->parent() : mm_handle;
+    h = getparent ? (mm_parent ? mm_parent->mm_handle : OS_NULL) : mm_handle;
+    /* h = getparent ? mm_handle->parent() : mm_handle; */
     while (h)
     {
         if (h->flags() & EOBJ_HAS_NAMESPACE)
@@ -1079,7 +1103,9 @@ eNameSpace *eObject::findnamespace(
         }
 
         if (info) if (h->m_object == checkpoint) *info |= E_INFO_ABOVE_CHECKPOINT;
-        h = h->parent();        
+        /* h = h->parent(); */
+        if (h->m_object->mm_parent == OS_NULL) break;
+        h = h->m_object->mm_parent->mm_handle;
     }
 
 	return OS_NULL;
@@ -1126,36 +1152,36 @@ eName *eObject::addname(
     {
         if (flags & ENAME_PROCESS_NS)
         {
-            namespace_id = E_PROCESS_NS;
+            namespace_id = eobj_process_ns;
         }
         else if (flags & ENAME_THREAD_NS)
         {
-            namespace_id = E_THREAD_NS;
+            namespace_id = eobj_thread_ns;
         }
         else if (flags & ENAME_THIS_NS)
         {
-            namespace_id = E_THIS_NS;
+            namespace_id = eobj_this_ns;
         }
         else if (flags & ENAME_PARENT_NS)
         {
-            namespace_id = E_PARENT_NS;
+            namespace_id = eobj_parent_ns;
         }
 
         /* If name starts with namespace id.
            Notice: CUSTOM NAME SPACES MISSING!!!
          */
-        else if (name) 
+        else if (name)
         {
             if (name[0] == '/') 
             {
                 if (name[1] == '/')
                 {
-                    namespace_id = E_PROCESS_NS;
+                    namespace_id = eobj_process_ns;
                     name += 2;
                 }
                 else
                 {
-                    namespace_id = E_THREAD_NS;
+                    namespace_id = eobj_thread_ns;
                     name++;
                 }
             }
@@ -1163,12 +1189,12 @@ eName *eObject::addname(
             {
                 if (name[1] == '/') 
                 {
-                    namespace_id = E_THIS_NS;
+                    namespace_id = eobj_this_ns;
                     name += 2;
                 }
                 else if (name[1] == '.') if (name[2] == '/') 
                 {
-                    namespace_id = E_PARENT_NS;
+                    namespace_id = eobj_parent_ns;
                     name += 3;
                 }
             }
@@ -1466,7 +1492,7 @@ void eObject::message(
         if (target[1] == '/' || target[1] == '\0') 
         {
             envelope->move_target_over_objname(1);
-            message_within_thread(envelope, E_THIS_NS);
+            message_within_thread(envelope, eobj_this_ns);
             return;
         } 
 

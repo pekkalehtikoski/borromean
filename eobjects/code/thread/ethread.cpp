@@ -61,9 +61,9 @@ eThread::eThread(
      */
     m_trigger = osal_event_create();
 
-    /* Create message queue for incoming messages.
+    /* Create message queue for incoming messages. This is not child of the thread object.
      */
-    m_message_queue = new eContainer(this, EOID_INTERNAL, 
+    m_message_queue = new eContainer(OS_NULL, EOID_INTERNAL,
         EOBJ_IS_ATTACHMENT|EOBJ_NOT_CLONABLE|EOBJ_NOT_SERIALIZABLE);
 
     m_exit_requested = OS_FALSE;
@@ -85,7 +85,11 @@ eThread::eThread(
 */
 eThread::~eThread()
 {
-    /* Release thread triggger. 
+    /*Detete the message queue. Not child of the tread, so this needs to be deleted explicitely.
+     */
+    delete m_message_queue;
+
+    /* Release thread triggger.
      */
     osal_event_delete(m_trigger);
 }

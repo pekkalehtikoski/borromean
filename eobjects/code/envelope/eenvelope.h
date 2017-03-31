@@ -292,7 +292,7 @@ public:
         os_short objname_nchars) 
     {
         m_target.str_pos += objname_nchars; 
-        if (m_target.str[m_target.str_pos] == '/') m_target.str_pos++;
+        if (m_target.str) if (m_target.str[m_target.str_pos] == '/') m_target.str_pos++;
     }
 
     /* Prepend target with with name

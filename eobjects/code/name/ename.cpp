@@ -326,19 +326,19 @@ os_char *eName::namespaceid()
     {
         default:
         case E_PARENT_NS_TYPE:  
-            namespace_id = E_PARENT_NS;  
+            namespace_id = eobj_parent_ns;
             break;
 
         case E_PROCESS_NS_TYPE: 
-            namespace_id = E_PROCESS_NS; 
+            namespace_id = eobj_process_ns;
             break;
 
         case E_THREAD_NS_TYPE:  
-            namespace_id = E_THREAD_NS;  
+            namespace_id = eobj_thread_ns;
             break;
 
         case E_THIS_NS_TYPE:    
-            namespace_id = E_THIS_NS;  
+            namespace_id = eobj_this_ns;
             break;
 
         case E_SPECIFIED_NS_TYPE:
@@ -386,7 +386,7 @@ void eName::setnamespaceid(
         {
             m_ns_type = E_PARENT_NS_TYPE;
         }
-        else if (!os_strcmp(namespace_id, E_THIS_NS))
+        else if (!os_strcmp(namespace_id, eobj_this_ns))
         {
             m_ns_type = E_THIS_NS_TYPE;
         }

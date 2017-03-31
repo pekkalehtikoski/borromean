@@ -211,7 +211,7 @@ void property_example_4()
     eVariable *v;
     os_long i;
 
-    os_timer(&st);
+    /* os_timer(&st);
     for (i = 0; i<100000000; i++)
     {
         v = new eVariable();
@@ -222,8 +222,8 @@ void property_example_4()
     tn /= 1000;
 
     printf ("%d\n", (int)tn);
-    printf ("%d\n", (int)sizeof(eHandle));
-return;
+    printf ("%d\n", (int)sizeof(eHandle)); */
+// return;
 
     /* Adds the eMyClass1 and eMyClass2 to class list and creates property set for the class.
      */

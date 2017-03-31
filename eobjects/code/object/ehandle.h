@@ -26,7 +26,7 @@
 
 /* Do we want to debug object tree
  */
-#define EOBJECT_DBTREE_DEBUG 0
+#define EOBJECT_DBTREE_DEBUG 1
 
 class eObject;
 class eHandleTable;
@@ -229,18 +229,19 @@ public:
 
     /** Get parent object's handle.
      */
-    eHandle *parent() 
+/*    eHandle *parent()
     {
         return m_parent;
     }
-
+*/
     /** Get grand parent's handle.
      */
-    eHandle *grandparent() 
+/*    eHandle *grandparent()
     {
         if (m_parent) return m_parent ->m_parent;
         return OS_NULL;
     }
+ */
 
 	/* Get first child object identified by oid.
      */
@@ -284,7 +285,7 @@ public:
 	{
         m_oid = id;
 		m_oflags = EOBJ_IS_RED | flags;
-		m_parent = m_left = m_right = m_up = m_children = OS_NULL;
+        /* m_parent = */ m_left = m_right = m_up = m_children = OS_NULL;
 		m_object = obj;
     }
 
@@ -487,7 +488,7 @@ protected:
 
     /** Pointer to parent object of this object. (THIS SHOULD PERHAPS MOVE TO OBJ)
      */
-	eHandle *m_parent;
+//	eHandle *m_parent;
 
 	/** Left child in red/black tree.
      */

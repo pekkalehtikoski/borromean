@@ -477,48 +477,7 @@ void eHandle::delete_children()
             direc = (p->m_left == n) ? EH_FROM_LEFT : EH_FROM_RIGHT;
 		}
 		n = p;
-	}
-
-#if 0
-	eHandle
-		*n,
-		*p;
-
-	n = m_children;
-	if (n == OS_NULL) return;
-
-	while (OS_TRUE)
-	{
-		while (OS_TRUE)
-		{
-			p = n->m_left;
-			if (p == OS_NULL) 
-			{
-				p = n->m_right;
-				if (p == OS_NULL) break;
-			}
-			n = p;
-		}
-
-		p = n->m_up;
-
-		n->m_oflags |= EOBJ_FAST_DELETE;
-		delete n->m_object;
-
-		if (p) 
-		{
-			if (p->m_left == n) p->m_left = OS_NULL;
-			else p->m_right = OS_NULL;
-		}
-		else
-		{
-			break;
-		}
-
-		n = p;
-	}
-#endif
-
+    }
 }
 
 
@@ -779,6 +738,9 @@ void eHandle::verify_whole_tree()
     eRoot
         *root;
 
+    eObject
+        *pobj;
+
     root = m_root;
     osal_debug_assert(root->classid() == ECLASSID_ROOT);
     verify_node(root);
@@ -789,13 +751,18 @@ void eHandle::verify_whole_tree()
     while (OS_TRUE)
     {
         topmost->verify_node(root);
-        if (topmost->m_parent == OS_NULL) break;
+        /* if (topmost->m_parent == OS_NULL) break;
         topmost = topmost->m_parent;
+        */
+        pobj = topmost->m_object->mm_parent;
+        if (pobj == OS_NULL) break;
+        topmost = pobj->mm_handle;
     }
 
     /* Verify that root object is child of top object.
      */
-    osal_debug_assert(root->mm_handle->m_parent == topmost);
+    /* osal_debug_assert(root->mm_handle->m_parent == topmost); */
+    osal_debug_assert(root->mm_parent->mm_handle == topmost);
 
     /* Verify all child objects
      */
@@ -821,7 +788,7 @@ void eHandle::verify_node(
     if (m_left) osal_debug_assert(m_left->m_up == this);
     if (m_right) osal_debug_assert(m_right->m_up == this);
     if (m_up) osal_debug_assert(m_up->m_left == this || m_up->m_right == this);
-    if (m_children) osal_debug_assert(m_children->m_parent == this);
+    if (m_children) osal_debug_assert(m_children->m_object->mm_parent == this->m_object);
     osal_debug_assert(m_object->mm_handle == this);
     osal_debug_assert(m_root == root);
 }        
