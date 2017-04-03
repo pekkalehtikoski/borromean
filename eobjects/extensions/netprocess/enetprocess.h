@@ -43,7 +43,7 @@ void enet_process_connect_ewebservice(
 
 /* Startup code for a service process.
  */
-void enet_process_service_start(
+void enet_start_service_process(
     const os_char *process_name,
     const os_char *tcpport,
     os_int argc,

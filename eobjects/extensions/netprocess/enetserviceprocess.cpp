@@ -22,7 +22,7 @@
 
   @brief Startup code for a service process.
 
-  The enet_process_service_start() function does default startup procedure for enet process
+  The enet_start_service_process() function does default startup procedure for enet process
   which is expected to run as a service, like a program running a robot, etc.
 
   @param  process_name Process name, like "grumpy".
@@ -33,7 +33,7 @@
 
 ****************************************************************************************************
 */
-void enet_process_service_start(
+void enet_start_service_process(
     const os_char *process_name,
     const os_char *tcpport,
     os_int argc,
