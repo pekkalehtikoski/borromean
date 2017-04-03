@@ -1,7 +1,7 @@
 /**
 
-  @file    enetservice.h
-  @brief   enet service implementation.
+  @file    enetclient.h
+  @brief   enet client implementation.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
@@ -13,30 +13,30 @@
 
 ****************************************************************************************************
 */
-#ifndef ENETSERVICE_INCLUDED
-#define ENETSERVICE_INCLUDED
+#ifndef ENETCLIENT_INCLUDED
+#define ENETCLIENT_INCLUDED
 
 /**
 ****************************************************************************************************
 
-  @brief eNetService class.
+  @brief eNetClient class.
   X...
 
 ****************************************************************************************************
 */
-class eNetService : public eThread
+class eNetClient : public eThread
 {
 public:
     /* Constructor.
 	 */
-    eNetService(
+    eNetClient(
 		eObject *parent = OS_NULL,
         e_oid id = EOID_RITEM,
 		os_int flags = EOBJ_DEFAULT);
 
 	/* Virtual destructor.
  	 */
-    virtual ~eNetService();
+    virtual ~eNetClient();
 
     /* Clone object.
      */
@@ -45,20 +45,20 @@ public:
         e_oid id = EOID_CHILD,
 		os_int aflags = 0);
 
-    /* Casting eObject pointer to eNetService pointer.
+    /* Casting eObject pointer to eNetClient pointer.
      */
-    inline static eNetService *cast(
+    inline static eNetClient *cast(
 		eObject *o) 
 	{ 
-        e_assert_type(o, ECLASSID_NETSERVICE)
-        return (eNetService*)o;
+        e_assert_type(o, ECLASSID_NETCLIENT)
+        return (eNetClient*)o;
 	}
 
     /* Get class identifier.
      */
     virtual os_int classid() 
     {
-        return ECLASSID_NETSERVICE;
+        return ECLASSID_NETCLIENT;
     }
 
     /* Static function to add class to propertysets and class list.
@@ -67,12 +67,12 @@ public:
 
     /* Static constructor function for generating instance by class list.
      */
-    static eNetService *newobj(
+    static eNetClient *newobj(
         eObject *parent,
         e_oid id = EOID_ITEM,
 		os_int flags = EOBJ_DEFAULT)
     {
-        return new eNetService(parent, id, flags);
+        return new eNetClient(parent, id, flags);
     }
 };
 

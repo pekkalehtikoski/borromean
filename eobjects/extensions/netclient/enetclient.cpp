@@ -1,7 +1,7 @@
 /**
 
-  @file    enetservice.cpp
-  @brief   enet service implementation.
+  @file    enetclient.cpp
+  @brief   enet client implementation.
   @author  Pekka Lehtikoski
   @version 1.0
   @date    9.11.2011
@@ -14,7 +14,7 @@
 ****************************************************************************************************
 */
 #include "eobjects/eobjects.h"
-#include "eobjects/extensions/netservice/enetservice.h"
+#include "eobjects/extensions/netclient/enetclient.h"
 
 
 /**
@@ -28,7 +28,7 @@
 
 ****************************************************************************************************
 */
-eNetService::eNetService(
+eNetClient::eNetClient(
 	eObject *parent,
 	e_oid oid,
 	os_int flags)
@@ -49,7 +49,7 @@ eNetService::eNetService(
 
 ****************************************************************************************************
 */
-eNetService::~eNetService()
+eNetClient::~eNetClient()
 {
 }
 
@@ -59,7 +59,7 @@ eNetService::~eNetService()
 
   @brief Clone object
 
-  The eNetService::clone function clones and object including object's children.
+  The eNetClient::clone function clones and object including object's children.
   Names will be left detached in clone.
 
   @param  parent Parent for the clone.
@@ -69,13 +69,13 @@ eNetService::~eNetService()
 
 ****************************************************************************************************
 */
-eObject *eNetService::clone(
+eObject *eNetClient::clone(
     eObject *parent, 
     e_oid id,
     os_int aflags)
 {
     eObject *clonedobj;
-    clonedobj = new eNetService(parent, id == EOID_CHILD ? oid() : id, flags());
+    clonedobj = new eNetClient(parent, id == EOID_CHILD ? oid() : id, flags());
     clonegeneric(clonedobj, aflags|EOBJ_CLONE_ALL_CHILDREN);
     return clonedobj;
 }
@@ -93,14 +93,14 @@ eObject *eNetService::clone(
 
 ****************************************************************************************************
 */
-void eNetService::setupclass()
+void eNetClient::setupclass()
 {
     const os_int cls = ECLASSID_CONTAINER;
 
     /* Add the class to class list.
      */
     os_lock();
-    eclasslist_add(cls, (eNewObjFunc)newobj, "eNetService");
+    eclasslist_add(cls, (eNewObjFunc)newobj, "eNetClient");
     os_unlock();
 }
 
