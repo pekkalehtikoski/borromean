@@ -761,7 +761,7 @@ void eObject::adopt(
         }
 
         if (mapflags)
-        {        
+        {
             childh->m_root = mm_handle->m_root;
             child->map(E_ATTACH_NAMES|E_SET_ROOT_POINTER);
         }

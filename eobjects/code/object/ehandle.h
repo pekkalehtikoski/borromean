@@ -227,22 +227,6 @@ public:
     os_long childcount(
         e_oid id = EOID_CHILD);
 
-    /** Get parent object's handle.
-     */
-/*    eHandle *parent()
-    {
-        return m_parent;
-    }
-*/
-    /** Get grand parent's handle.
-     */
-/*    eHandle *grandparent()
-    {
-        if (m_parent) return m_parent ->m_parent;
-        return OS_NULL;
-    }
- */
-
 	/* Get first child object identified by oid.
      */
     eHandle *first(
@@ -285,7 +269,6 @@ public:
 	{
         m_oid = id;
 		m_oflags = EOBJ_IS_RED | flags;
-        /* m_parent = */ m_left = m_right = m_up = m_children = OS_NULL;
 		m_object = obj;
     }
 
@@ -485,10 +468,6 @@ protected:
     /** Object flags.
      */
     os_int m_oflags;
-
-    /** Pointer to parent object of this object. (THIS SHOULD PERHAPS MOVE TO OBJ)
-     */
-//	eHandle *m_parent;
 
 	/** Left child in red/black tree.
      */

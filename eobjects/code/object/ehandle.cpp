@@ -751,9 +751,6 @@ void eHandle::verify_whole_tree()
     while (OS_TRUE)
     {
         topmost->verify_node(root);
-        /* if (topmost->m_parent == OS_NULL) break;
-        topmost = topmost->m_parent;
-        */
         pobj = topmost->m_object->mm_parent;
         if (pobj == OS_NULL) break;
         topmost = pobj->mm_handle;
@@ -761,7 +758,6 @@ void eHandle::verify_whole_tree()
 
     /* Verify that root object is child of top object.
      */
-    /* osal_debug_assert(root->mm_handle->m_parent == topmost); */
     osal_debug_assert(root->mm_parent->mm_handle == topmost);
 
     /* Verify all child objects
