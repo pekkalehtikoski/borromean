@@ -67,7 +67,7 @@ eConnection::eConnection(
     m_client_bindings->ns_create();
     m_server_bindings = new eContainer(this);
     m_server_bindings->ns_create();
-    os_timer(&m_last_send);
+    os_get_timer(&m_last_send);
 }
 
 
@@ -303,7 +303,7 @@ void eConnection::onmessage(
                     close();
                     return;
                 }
-                os_timer(&m_last_send);
+                os_get_timer(&m_last_send);
             }
         }
 
@@ -420,7 +420,7 @@ void eConnection::run()
                         close();
                         continue;
                     }
-                    os_timer(&m_last_send);
+                    os_get_timer(&m_last_send);
                     m_new_writes = OS_FALSE;
                 }
             }
@@ -647,7 +647,7 @@ eStatus eConnection::connected()
     {
         m_stream->writechar(E_STREAM_FLUSH);
         m_stream->flush();
-        os_timer(&m_last_send);
+        os_get_timer(&m_last_send);
         m_new_writes = OS_FALSE;
     }
 

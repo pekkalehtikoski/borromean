@@ -207,17 +207,17 @@ void property_example_4()
     eThreadHandle thandle1, thandle2;
     eContainer c;
 
-    os_int64 st, tn;
+    os_timer st, tn;
     eVariable *v;
     os_long i;
 
-    /* os_timer(&st);
+    /* os_get_timer(&st);
     for (i = 0; i<100000000; i++)
     {
         v = new eVariable();
         delete v;
     }
-    os_timer(&tn);
+    os_get_timer(&tn);
     tn -= st;
     tn /= 1000;
 

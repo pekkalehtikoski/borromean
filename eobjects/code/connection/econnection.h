@@ -167,7 +167,7 @@ protected:
 
     /* Timer for last send, used to generate keepalives.
      */
-    os_int64 m_last_send;
+    os_timer m_last_send;
 
     /** IP address and optionally port number to connect to.
      */
