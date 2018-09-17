@@ -19,7 +19,7 @@ set(E_SOURCE_PATH "$ENV{E_ROOT}/${E_PROJECT}/code")
 set(E_EXT_SOURCE_PATH "$ENV{E_ROOT}/${E_PROJECT}/extensions")
 
 # Set include paths.
-include_directories($ENV{E_INCLUDE})
+# include_directories($ENV{E_INCLUDE})
 
 # Add library main header.
 set(MAIN_HEADER "$ENV{E_ROOT}/${E_PROJECT}/${E_PROJECT}.h")

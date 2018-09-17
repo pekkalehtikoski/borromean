@@ -19,7 +19,7 @@ message(${E_SOURCE_PATH})
 message(${E_PROJECT})
 
 # Set include paths.
-include_directories($ENV{E_INCLUDE})
+# include_directories($ENV{E_INCLUDE})
 
 # Add header files, the file(GLOB_RECURSE...) allows for wildcards and recurses subdirs.
 file(GLOB_RECURSE HEADERS "${E_SOURCE_PATH}/*.h")

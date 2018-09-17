@@ -21,7 +21,7 @@
 
 /* Include extended eosal headers.
  */
-#include "eosal/eosalx.h"
+#include "eosalx.h"
 
 /* Initialize eobject library for use.
  */

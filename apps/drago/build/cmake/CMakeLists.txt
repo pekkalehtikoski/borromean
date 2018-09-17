@@ -17,7 +17,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $ENV{E_BIN})
 set(E_SOURCE_PATH "$ENV{E_ROOT}/apps/${E_PROJECT}/code")
 
 # Set include paths.
-include_directories($ENV{E_INCLUDE})
+# include_directories($ENV{E_INCLUDE})
 
 # Add header files, the file(GLOB_RECURSE...) allows for wildcards and recurses subdirs.
 file(GLOB_RECURSE HEADERS "${E_SOURCE_PATH}/*.h")

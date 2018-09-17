@@ -18,7 +18,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $ENV{E_LIB})
 set(E_SOURCE_PATH "$ENV{E_ROOT}/epython/${E_PROJECT}/code")
 
 # Set include paths.
-include_directories($ENV{E_INCLUDE})
+# include_directories($ENV{E_INCLUDE})
 
 # Add library main header.
 set(MAIN_HEADER "$ENV{E_ROOT}/epython/${E_PROJECT}/${E_PROJECT}.h")
