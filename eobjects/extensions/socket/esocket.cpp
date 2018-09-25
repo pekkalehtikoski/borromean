@@ -169,8 +169,8 @@ void eSocket::setup(
         if (m_out == OS_NULL) m_out = new eQueue(this);
         m_in->close();
         m_out->close();
-        m_in->open(OS_NULL, OSAL_STREAM_DECODE_ON_READ|OSAL_FLUSH_CTRL_COUNT);
-        m_out->open(OS_NULL, OSAL_STREAM_ENCODE_ON_WRITE);
+        m_in->open(OS_NULL, OSAL_STREAM_DECODE_ON_READ|OSAL_FLUSH_CTRL_COUNT|OSAL_STREAM_SELECT);
+        m_out->open(OS_NULL, OSAL_STREAM_ENCODE_ON_WRITE|OSAL_STREAM_SELECT);
     }
 }
 

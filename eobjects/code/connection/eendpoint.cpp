@@ -302,7 +302,7 @@ void eEndPoint::open()
      */
     m_stream = (eStream*)newchild(m_stream_classid);
 
-    s = m_stream->open(m_ipaddr->gets(), OSAL_STREAM_LISTEN);
+    s = m_stream->open(m_ipaddr->gets(), OSAL_STREAM_LISTEN|OSAL_STREAM_SELECT);
     if (s)
     {
 	    osal_console_write("osal_stream_open failed\n");
