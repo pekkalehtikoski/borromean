@@ -181,7 +181,8 @@ eStatus eStream::putl(
 eStatus eStream::putf(
 	os_float x)
 {
-    os_long m, e;
+    os_long m;
+    os_short e;
     os_char buf[2*OSAL_INTSER_BUF_SZ];
     os_int bytes, bytes2;
 
@@ -192,7 +193,7 @@ eStatus eStream::putf(
     /* Pack mantissa and exponent (unless value is zero) to serialization format.
      */
     bytes = osal_intser_writer(buf, m);
-    if (bytes)
+    if (bytes && m)
     {
         bytes2 = osal_intser_writer(buf + bytes, e);
         bytes += bytes2;
@@ -221,7 +222,8 @@ eStatus eStream::putf(
 eStatus eStream::putd(
 	os_double x)
 {
-    os_long m, e;
+    os_long m;
+    os_short e;
     os_char buf[2*OSAL_INTSER_BUF_SZ];
     os_int bytes, bytes2;
 
@@ -229,10 +231,10 @@ eStatus eStream::putd(
      */
     osal_double2ints(x, &m, &e);
 
-    /* Pack mantissa and exponent (unless value is zero) to serialization format.
+    /* Pack mantissa and exponent to serialization format.
      */
     bytes = osal_intser_writer(buf, m);
-    if (bytes)
+    if (bytes && m)
     {
         bytes2 = osal_intser_writer(buf + bytes, e);
         bytes += bytes2;
@@ -404,7 +406,7 @@ eStatus eStream::getf(
 
     /* Convert to float
      */
-    if (!osal_ints2float(x, m, e))
+    if (!osal_ints2float(x, m, (os_short)e))
     {
         rval = ESTATUS_STREAM_FLOAT_ERROR;
     }
@@ -456,7 +458,7 @@ eStatus eStream::getd(
 
     /* Convert to float
      */
-    if (!osal_ints2double(x, m, e))
+    if (!osal_ints2double(x, m, (os_short)e))
     {
         rval = ESTATUS_STREAM_FLOAT_ERROR;
     }

@@ -169,7 +169,7 @@ void connection_example_1()
 	t->addname("//myconnection");
     t->start(&conthreadhandle); /* After this t pointer is useless */
     c.setpropertys_msg(conthreadhandle.uniquename(), // "//myconnection",
-         "localhost:" OSAL_DEFAULT_SOCKET_PORT_STR, econnp_ipaddr);
+         "localhost", econnp_ipaddr);
 
 //    c.setpropertys_msg("//myconnection/myclass1",
 //         "message from connection_example1", "A");

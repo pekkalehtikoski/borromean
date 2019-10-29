@@ -171,7 +171,7 @@ t->setpropertys(EMYCLASS1P_A, "Nasse");
 // t->json_write(&econsole);
     t->start(&endpointthreadhandle); /* After this t pointer is useless */
     c.setpropertys_msg(endpointthreadhandle.uniquename(),
-         ":" OSAL_DEFAULT_SOCKET_PORT_STR, eendpp_ipaddr);
+         ":" IOC_DEFAULT_SOCKET_PORT_STR, eendpp_ipaddr);
 
     os_sleep(15000000);
 

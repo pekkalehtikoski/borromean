@@ -26,7 +26,7 @@ OSAL_C_HEADER_BEGINS
 
 /* Prototype for application's entry point function.
  */
-os_int emain(
+osalStatus emain(
     os_int argc,
     os_char *argv[]);
 
@@ -47,11 +47,11 @@ OSAL_C_HEADER_ENDS
   @param   argc Number of command line arguments.
   @param   argv Array of string pointers, one for each command line argument plus.
 
-  @return  Integer return value to caller.
+  @return  Integer return value to caller, OSAL_SUCCESS (0) to indicate "all fine".
 
 ****************************************************************************************************
 */
-#define EMAIN_CONSOLE_ENTRY os_int osal_main(os_int argc, os_char *argv[]) { \
+#define EMAIN_CONSOLE_ENTRY osalStatus osal_main(os_int argc, os_char *argv[]) { \
     os_int rval; \
     eobjects_initialize(OS_NULL); \
     eprocess_create(); \
