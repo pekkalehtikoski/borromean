@@ -328,7 +328,7 @@ void eThread::alive(
     osal_event_wait(m_trigger, flags & EALIVE_WAIT_FOR_EVENT
         ? OSAL_EVENT_INFINITE : OSAL_EVENT_NO_WAIT);
 
-    while (OS_TRUE)
+    while (osal_go())
     {
         /* Synchronize and get message (envelope) from queue.
          */

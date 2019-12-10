@@ -607,7 +607,7 @@ os_boolean eWhere::number_or_column_name()
 
         if (isint)
         {
-            l = osal_string_to_int(m_pos, &nbytes);
+            l = osal_str_to_int(m_pos, &nbytes);
         }
         else
         {
@@ -897,9 +897,9 @@ void eWhere::pushconstant(
             stackitem->is_empty = OS_FALSE;
             break;
 
-        case OS_STRING:
+        case OS_STR:
             stackitem->value.s = v->gets();
-            stackitem->datatype = OS_STRING;
+            stackitem->datatype = OS_STR;
             stackitem->is_empty = (os_boolean)(stackitem->value.s == '\0');
             break;
 
@@ -958,9 +958,9 @@ void eWhere::pushvariable(
             stackitem->is_empty = OS_FALSE;
             break;
 
-        case OS_STRING:
+        case OS_STR:
             stackitem->value.s = v->gets();
-            stackitem->datatype = OS_STRING;
+            stackitem->datatype = OS_STR;
             stackitem->is_empty = (os_boolean)(stackitem->value.s == '\0');
             break;
 
@@ -1088,7 +1088,7 @@ eStatus eWhere::evalbinaryop(
      * type. If second one is string and first one is not, swap
      */
     swapped = OS_FALSE;
-    if (item2->datatype == OS_STRING && item1->datatype != OS_STRING)
+    if (item2->datatype == OS_STR && item1->datatype != OS_STR)
     {
         tmp = item2;
         item2 = item1;
@@ -1204,7 +1204,7 @@ skipconv:
             }
             break;
 
-        case OS_STRING:
+        case OS_STR:
             sign = os_strcmp(item1->value.s, item2->value.s);
             switch (op)
             {
@@ -1249,7 +1249,7 @@ skipconv:
   When converting to string, temporary string is allocated from m_exec_tmp container.
 
   @param  item Item in execution stack to convert.
-  @param  datatype Possible data types are OS_STRING, OS_DOUBLE and OS_LONG.
+  @param  datatype Possible data types are OS_STR, OS_DOUBLE and OS_LONG.
   @return ESTATUS_SUCCESS if all is fine. ESTATUS_FAILED on error.
 
 ****************************************************************************************************
@@ -1265,8 +1265,8 @@ void eWhere::changedatatype(
         case OS_LONG:
             switch (item->datatype)
             {
-                case OS_STRING:
-                    item->value.l = osal_string_to_int(item->value.s, OS_NULL);
+                case OS_STR:
+                    item->value.l = osal_str_to_int(item->value.s, OS_NULL);
                     break;
 
                 case OS_DOUBLE:
@@ -1278,7 +1278,7 @@ void eWhere::changedatatype(
         case OS_DOUBLE:
             switch (item->datatype)
             {
-                case OS_STRING:
+                case OS_STR:
                     item->value.d = osal_string_to_double(item->value.s, OS_NULL);
                     break;
 
@@ -1288,7 +1288,7 @@ void eWhere::changedatatype(
             }
             break;
 
-        case OS_STRING:
+        case OS_STR:
             switch (item->datatype)
             {
                 case OS_DOUBLE:

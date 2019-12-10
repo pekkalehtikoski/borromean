@@ -630,7 +630,7 @@ eStatus eSocket::write_socket(
         m_out->read(buf, m_frame_sz, &nread, OSAL_STREAM_PEEK);
         if (nread == 0) break;
 
-        os = osal_stream_write(m_socket, (os_uchar*)buf, 
+        os = osal_stream_write(m_socket, buf,
             nread, &nwritten, OSAL_STREAM_DEFAULT);
         if (os)
         {
@@ -673,7 +673,7 @@ eStatus eSocket::read_socket()
 
     while (OS_TRUE)
     {
-        os = osal_socket_read(m_socket, (os_uchar*)buf, sizeof(buf), &nread, OSAL_STREAM_DEFAULT);
+        os = osal_socket_read(m_socket, buf, sizeof(buf), &nread, OSAL_STREAM_DEFAULT);
         if (os)
         {
             s = ESTATUS_FAILED;

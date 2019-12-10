@@ -440,7 +440,7 @@ os_short eObject::oixparse(
 
     if (*(p++) != '@') goto failed;
 
-    *oix = (e_oix)osal_string_to_int(p, &count);
+    *oix = (e_oix)osal_str_to_int(p, &count);
     if (count == 0) goto failed;
     p += count;
     if (*p != '_') 
@@ -450,7 +450,7 @@ os_short eObject::oixparse(
     }
     p++;
 
-    *ucnt = (os_int)osal_string_to_int(p, &count);
+    *ucnt = (os_int)osal_str_to_int(p, &count);
     p += count;
     return (os_short)(p - str);
 
@@ -910,7 +910,7 @@ eName *eObject::ns_firstv(
 
     /* String type may contain name space prefix, check for it.
      */
-    if (name) if (name->type() == OS_STRING) 
+    if (name) if (name->type() == OS_STR) 
     {
         p = name->gets();
         q = os_strechr(p, '/');
@@ -2366,7 +2366,7 @@ eVariable *eObject::addpropertys(
 {
     eVariable *p;
     p = addproperty(cid, propertynr, propertyname, pflags, text);
-    p->setpropertyl(EVARP_TYPE, OS_STRING);
+    p->setpropertyl(EVARP_TYPE, OS_STR);
     if (x)
     {
         p->sets(x);

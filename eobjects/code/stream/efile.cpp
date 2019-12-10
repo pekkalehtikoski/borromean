@@ -155,7 +155,7 @@ eStatus eFile::write(
      */
     if (m_handle != OS_NULL)
     {
-        status = osal_stream_write(m_handle, (const os_uchar*)buf, buf_sz, &nwr, 0);
+        status = osal_stream_write(m_handle, buf, buf_sz, &nwr, 0);
         if (status == OSAL_SUCCESS && nwr == buf_sz) rval = ESTATUS_SUCCESS;
     }
 

@@ -457,7 +457,7 @@ eStatus eObject::json_putv(
             }
             break;
 
-        case OS_STRING:
+        case OS_STR:
             break;
     }
 

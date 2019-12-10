@@ -222,7 +222,7 @@ eStatus eMatrix::writer(
                     {
                         case OS_LONG:
                         case OS_DOUBLE:
-                        case OS_STRING:
+                        case OS_STR:
                         case OS_OBJECT:
                             isempty = OS_FALSE;
                         break;
@@ -376,9 +376,9 @@ eStatus eMatrix::elementwrite(
                         datatype = OS_DOUBLE;
                         break;
 
-                    case OS_STRING:
+                    case OS_STR:
                         s = mo->s;
-                        datatype = OS_STRING;
+                        datatype = OS_STR;
                         break;
 
                     case OS_OBJECT:
@@ -444,7 +444,7 @@ eStatus eMatrix::elementwrite(
                 if (stream->putd(d)) goto failed;
                 break;
 
-            case OS_STRING:
+            case OS_STR:
                 osal_debug_assert(s);
                 if (stream->puts(s)) goto failed;
                 break;
@@ -563,7 +563,7 @@ eStatus eMatrix::reader(
                     setd(row, column, d);
                     break;
 
-                case OS_STRING:
+                case OS_STR:
                     if (stream->gets(&tmp)) goto failed;
                     setv(row, column, &tmp);
                     break;
@@ -701,7 +701,7 @@ void eMatrix::setv(
             setd(row, column, x->getd());
             break;
 
-        case OS_STRING:
+        case OS_STR:
             sets(row, column, x->gets());
             break;
 
@@ -919,7 +919,7 @@ void eMatrix::sets(
         case OS_LONG:
             /* Convert string to integer.
              */
-            l = osal_string_to_int(x, OS_NULL);
+            l = osal_str_to_int(x, OS_NULL);
             setl(row, column, l);
             break;
 
@@ -1071,7 +1071,7 @@ os_boolean eMatrix::getv(
                     x->setd(mo->d);
                     break;
 
-                case OS_STRING:
+                case OS_STR:
                     x->sets(mo->s);
                     break;
 
@@ -1184,8 +1184,8 @@ os_long eMatrix::getl(
                     l = eround_double_to_long(mo->d);
                     break;
 
-                case OS_STRING:
-                    l = osal_string_to_int(mo->s, OS_NULL);
+                case OS_STR:
+                    l = osal_str_to_int(mo->s, OS_NULL);
                     break;
 
                 default:
@@ -1291,7 +1291,7 @@ os_double eMatrix::getd(
                     d = mo->d;
                     break;
 
-                case OS_STRING:
+                case OS_STR:
                     d = osal_string_to_double(mo->s, OS_NULL);
                     break;
 
@@ -1587,7 +1587,7 @@ void eMatrix::releasebuffer(
         {
             switch (typeptr[i])
             {
-                case OS_STRING:
+                case OS_STR:
                     os_free(mo[i].s, os_strlen(mo[i].s));
                     break;
 
@@ -1619,7 +1619,7 @@ void eMatrix::emptyobject(
             mo = (eMatrixObj*)dataptr;
             switch (*typeptr)
             {
-                case OS_STRING:
+                case OS_STR:
                     os_free(mo->s, os_strlen(mo->s));
                     break;
 

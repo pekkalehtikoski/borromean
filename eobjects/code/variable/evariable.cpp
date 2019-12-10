@@ -165,7 +165,7 @@ void eVariable::setupproperties(
      */
     p = addproperty(cls, EVARP_TEXT, evarp_text, EPRO_METADATA|EPRO_NOONPRCH, "text");
     addpropertyl (cls, EVARP_TYPE, evarp_type, EPRO_METADATA|EPRO_NOONPRCH, "type");
-    p->setpropertyl(EVARP_TYPE, OS_STRING);
+    p->setpropertyl(EVARP_TYPE, OS_STR);
 
     addproperty (cls, EVARP_VALUE, evarp_value, EPRO_PERSISTENT|EPRO_SIMPLE, "value");
     addproperty (cls, EVARP_DEFAULT, evarp_default, EPRO_METADATA|EPRO_NOONPRCH, "default");
@@ -335,7 +335,7 @@ void eVariable::clear()
         /* If this is string, check if long string has been allocated in separate
            buffer.
          */
-        case OS_STRING:
+        case OS_STR:
             /* If separate string buffer has been allocated.
              */
             if (m_vflags & EVAR_STRBUF_ALLOCATED)
@@ -462,7 +462,7 @@ void eVariable::sets(
     /* Save temporary buffer if any, in case it is used as argument.
      */
     tmpstr = OS_NULL;
-    if (type() != OS_STRING)
+    if (type() != OS_STR)
     {
         tmpstr = m_value.valbuf.tmpstr;
         tmpstr_sz = m_value.valbuf.tmpstr_sz;
@@ -506,7 +506,7 @@ void eVariable::sets(
 
     /* Set data type.
      */
-	settype(OS_STRING);
+	settype(OS_STR);
 
     /* Release temporary string buffer.
      */
@@ -559,7 +559,7 @@ void eVariable::setv(
         /* If this is string, check if long string has been allocated in separate
            buffer.
          */
-        case OS_STRING:
+        case OS_STR:
             /* If separate string buffer has been allocated.
              */
             if (x->m_vflags & EVAR_STRBUF_ALLOCATED)
@@ -712,7 +712,7 @@ os_boolean eVariable::isempty()
 		case OS_UNDEFINED_TYPE: 
 			return OS_TRUE;
 
-		case OS_STRING: 
+		case OS_STR: 
             if (m_vflags & EVAR_STRBUF_ALLOCATED)
 			{
 				c = *m_value.strptr.ptr;
@@ -765,8 +765,8 @@ os_long eVariable::getl()
             }
             break;
 
-        case OS_STRING:
-			x = osal_string_to_int(
+        case OS_STR:
+			x = osal_str_to_int(
 				(m_vflags & EVAR_STRBUF_ALLOCATED) 
 				? m_value.strptr.ptr 
 				: m_value.strbuf.buf, 
@@ -812,7 +812,7 @@ os_double eVariable::getd()
             x = m_value.valbuf.v.d;
             break;
 
-        case OS_STRING:
+        case OS_STR:
             if (m_vflags & EVAR_STRBUF_ALLOCATED)
 			{
                 x = osal_string_to_double(m_value.strptr.ptr, OS_NULL);
@@ -873,7 +873,7 @@ os_char *eVariable::gets(
         
         /* If this is string, just return pointer to the string.
          */
-        case OS_STRING:
+        case OS_STR:
             /* If separate string buffer has been allocated.
              */
             if (m_vflags & EVAR_STRBUF_ALLOCATED)
@@ -962,7 +962,7 @@ getout:
 */
 void eVariable::gets_free()
 {
-    if (type() != OS_STRING && m_value.valbuf.tmpstr)
+    if (type() != OS_STR && m_value.valbuf.tmpstr)
     {
         os_free(m_value.valbuf.tmpstr, 
             m_value.valbuf.tmpstr_sz);
@@ -1145,7 +1145,7 @@ os_int eVariable::compare(
                     if (dy < dx) rval = -1;
                     break;
 
-                case OS_STRING:
+                case OS_STR:
                     /* If string can be converted to number, compare as numbers.
                      */
                     if (y->autotype(OS_FALSE))
@@ -1185,7 +1185,7 @@ os_int eVariable::compare(
                     if (dy < dx) rval = -1;
                     break;
 
-                case OS_STRING:
+                case OS_STR:
                     /* If string can be converted to number, compare as numbers.
                      */
                     if (y->autotype(OS_FALSE))
@@ -1214,10 +1214,10 @@ os_int eVariable::compare(
             }
             break;
 
-        case OS_STRING:
+        case OS_STR:
             switch (y->type())
             {
-                case OS_STRING:
+                case OS_STR:
                     rval = os_strcmp(x->gets(), y->gets());
                     break;
     
@@ -1293,7 +1293,7 @@ os_boolean eVariable::autotype(
 
     /* If this variable isn't a string, do nothing.
      */
-    if (type() != OS_STRING) return OS_FALSE;
+    if (type() != OS_STR) return OS_FALSE;
 
     /* Pointer to string content.
      */
@@ -1368,7 +1368,7 @@ os_boolean eVariable::autotype(
 	}
 	else
 	{
-        l = osal_string_to_int(q, &count);
+        l = osal_str_to_int(q, &count);
 		if (count)
 		{
 			if (modify_value) setl(l);
@@ -1395,7 +1395,7 @@ os_char *eVariable::tostring()
 {
     /* If this variable isn't a string, convert to one.
      */
-    if (type() != OS_STRING)
+    if (type() != OS_STR)
     {
         sets(gets());
     }
@@ -1452,7 +1452,7 @@ eStatus eVariable::writer(
             if (*stream << m_value.valbuf.v.d) goto failed;
             break;
 
-        case OS_STRING:
+        case OS_STR:
             if (m_vflags & EVAR_STRBUF_ALLOCATED)
 			{
                 if (*stream << m_value.strptr.used - 1) goto failed;
@@ -1542,7 +1542,7 @@ eStatus eVariable::reader(
             if (*stream >> m_value.valbuf.v.d) goto failed;
             break;
 
-        case OS_STRING:
+        case OS_STR:
             if (*stream >> sz) goto failed;
 
             /* If string fits into small buffer, copy it and save used size.
@@ -1629,7 +1629,7 @@ void eVariable::appends_internal(
 
     /* If this variable isn't a string, convert to one.
      */
-    if (type() != OS_STRING)
+    if (type() != OS_STR)
     {
         sets(gets());
     }

@@ -471,7 +471,7 @@ public:
      */
     inline os_boolean tmpstrallocated()
     {
-        return (type() != OS_STRING && m_value.valbuf.tmpstr) 
+        return (type() != OS_STR && m_value.valbuf.tmpstr) 
             ? OS_TRUE : OS_FALSE;
     }
 

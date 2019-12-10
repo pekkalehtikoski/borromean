@@ -34,7 +34,7 @@ typedef struct eStackItem
     }
     value;
 
-    /** Data type for value, one of: OS_LONG, OS_DOUBLE or OS_STRING.
+    /** Data type for value, one of: OS_LONG, OS_DOUBLE or OS_STR.
      */
     osalTypeId datatype;
 

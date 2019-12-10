@@ -140,7 +140,7 @@ eObject *eSet::clone(
 
                 switch (itype)
                 {
-                    case -OS_STRING:
+                    case -OS_STR:
                         strptr = *(os_char**)p;
                         strsz = *(os_int*)(p + sizeof(os_char*));
                         newstr = os_malloc(strsz, OS_NULL);
@@ -286,7 +286,7 @@ eStatus eSet::writer(
 
             switch (itype)
             {
-                case -OS_STRING:
+                case -OS_STR:
                     strptr = *(os_char**)p;
                     strsz = *(os_int*)(p + sizeof(char*)) - 1;
                     if (stream->putl(strsz)) goto failed;
@@ -429,7 +429,7 @@ eStatus eSet::reader(
 
             switch (itype)
             {
-                case -OS_STRING:
+                case -OS_STR:
                     if (stream->getl(&lval)) goto failed;
                     strsz = (os_int)(lval+1);
                     strptr = os_malloc(strsz, OS_NULL);
@@ -569,11 +569,11 @@ eStatus eSet::json_writer(
                         x.setd(*(os_double*)p);
                     break;
 
-                case OS_STRING:
+                case OS_STR:
                     x.sets(p, ibytes);
                     break;
 
-                case -OS_STRING:
+                case -OS_STR:
                     strptr = *(os_char**)p;
                     x.sets(strptr);
                     break;
@@ -742,7 +742,7 @@ void eSet::set(
             break;
 
         default:
-        case OS_STRING:
+        case OS_STR:
             q = x->gets(&sz);
             if (q == '\0')
             {
@@ -752,7 +752,7 @@ void eSet::set(
             }
             else if (sz > 64) 
             {
-                itype = -OS_STRING;
+                itype = -OS_STR;
                 ibytes = sizeof(os_char*) + sizeof(os_int);
                 sptr = os_malloc(sz, OS_NULL);
                 os_memcpy(sptr, q, sz);
@@ -761,7 +761,7 @@ void eSet::set(
             }
             else
             {
-                itype = OS_STRING;
+                itype = OS_STR;
                 ibytes = (os_uchar)sz;
                 iptr = q;
             }
@@ -796,7 +796,7 @@ void eSet::set(
             {
                 delete *(eObject**)p;
             }
-            else if (jtype == -OS_STRING) 
+            else if (jtype == -OS_STR) 
             {
                 os_free(*(void**)p, *(os_int*)(p + sizeof(os_char*)));
             }
@@ -812,7 +812,7 @@ void eSet::set(
                 *(os_schar*)(p++) = itype;
 
                 os_memcpy(p, iptr, ibytes);
-                if (itype == -OS_STRING)
+                if (itype == -OS_STR)
                 {
                     p += ibytes;
                     *(os_int*)p = isz;
@@ -858,7 +858,7 @@ void eSet::set(
     if (ibytes)
     {
         *(os_schar*)(p++) = itype;
-        if (itype != -OS_STRING)
+        if (itype != -OS_STR)
         {
             os_memcpy(p, iptr, ibytes);
             p += ibytes;
@@ -969,11 +969,11 @@ os_boolean eSet::get(
                         x->setd(*(os_double*)p);
                     break;
 
-                case OS_STRING:
+                case OS_STR:
                     x->sets(p, ibytes);
                     break;
 
-                case -OS_STRING:
+                case -OS_STR:
                     strptr = *(os_char**)p;
                     x->sets(strptr);
                     break;
@@ -1040,7 +1040,7 @@ void eSet::clear()
 
             switch (itype)
             {
-                case -OS_STRING:
+                case -OS_STR:
                     strptr = *(os_char**)p;
                     strsz = *(os_int*)(p + sizeof(char*)) ;
                     os_free(strptr, strsz);
