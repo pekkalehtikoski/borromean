@@ -11,8 +11,8 @@ include(../../../eobjects/build/cmake/eobjects-defs.txt)
 include(egui-defs.txt)
 
 # Set path to where to keep libraries.
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_LIB})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $ENV{E_LIB})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{E_LIBOUT})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $ENV{E_LIBOUT})
 
 # Set paths to source files.
 set(E_SOURCE_PATH "$ENV{E_ROOT}/${E_PROJECT}/code")
